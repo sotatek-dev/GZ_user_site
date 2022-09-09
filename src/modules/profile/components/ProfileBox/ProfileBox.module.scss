@@ -60,11 +60,9 @@ $labelFont: 'Open Sans', sans-serif;
 	.form-field {
 		.label {
 			font-size: pxToRem(14px);
-			font-weight: 400;
 			color: #fff;
-			color: #ffffff;
 			opacity: 0.4;
-			font-family: 'Open Sans', sans-serif;
+			font-family: $labelFont;
 		}
 
 		.input {
