@@ -1,44 +1,38 @@
-import 'src/styles/globals.css';
-<<<<<<< Updated upstream
-=======
 import 'antd/dist/antd.css';
+import 'styles/globals.scss';
+import 'styles/index.scss';
 
 import Head from 'next/head';
->>>>>>> Stashed changes
 import type { AppProps } from 'next/app';
 import { Web3ReactProvider } from '@web3-react/core';
 import { providers } from 'ethers';
+import DefaultLayout from 'modules/common/layouts';
+// import DefaultLayout from '@common/layouts';
 
-<<<<<<< Updated upstream
-function App({ Component, pageProps }: AppProps) {
-	return <Component {...pageProps} />;
-=======
-import DefaultLayout from '@common/layouts';
-
-// import { useStore } from 'react-redux';
-// import { PersistGate } from 'redux-persist/integration/react';
+import { Provider } from 'react-redux';
+import store from 'stores';
 
 function getLibrary(provider: any) {
 	const library = new providers.Web3Provider(provider);
 	library.pollingInterval = 15000;
 	return library;
->>>>>>> Stashed changes
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-	// const store: any = useStore();
-	// const Gate: any = typeof window !== 'undefined' ? PersistGate : Box;
+	// const Gate: any = typeof window !== 'undefined' && PersistGate;
 	return (
 		<>
 			<Head>
 				<title>Galactox Zone</title>
 			</Head>
 			<Web3ReactProvider getLibrary={getLibrary}>
-				<DefaultLayout>
-					<div suppressHydrationWarning>
-						<Component {...pageProps} />
-					</div>
-				</DefaultLayout>
+				<Provider store={store}>
+					<DefaultLayout>
+						<div suppressHydrationWarning>
+							<Component {...pageProps} />
+						</div>
+					</DefaultLayout>
+				</Provider>
 			</Web3ReactProvider>
 		</>
 	);

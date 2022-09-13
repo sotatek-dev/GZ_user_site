@@ -1,0 +1,28 @@
+.connect-wallet {
+	background: linear-gradient(
+		102.92deg,
+		#36c1ff 6.55%,
+		#77a3f8 47.11%,
+		#bd81f1 71.51%,
+		#cf79ee 98.22%
+	);
+	padding: 12px 22px;
+	border-radius: 40px;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 24px;
+	border: none;
+	height: auto;
+	color: #ffffff;
+	&:hover,
+	&:focus {
+		color: #ffffff;
+		background: linear-gradient(
+			102.92deg,
+			#36c1ff 6.55%,
+			#77a3f8 47.11%,
+			#bd81f1 71.51%,
+			#cf79ee 98.22%
+		);
+	}
+}
