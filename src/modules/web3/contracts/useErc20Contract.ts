@@ -1,4 +1,4 @@
-import Erc20ABI from '@web3/abis/erc20.json';
+import Erc20ABI from 'web3/abis/erc20.json';
 import { Erc20 } from '../abis/types';
 import { useContract } from './useContract';
 

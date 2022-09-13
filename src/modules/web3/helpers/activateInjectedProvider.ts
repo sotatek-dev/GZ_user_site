@@ -1,4 +1,4 @@
-import { ConnectorKey } from '@web3/connectors';
+import { ConnectorKey } from 'web3/connectors';
 
 /**
  * Injected connector activation opening both Metamask and Coinbase wallet popups

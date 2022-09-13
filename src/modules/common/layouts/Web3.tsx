@@ -1,4 +1,4 @@
-import { useEagerConnect, useWalletListener } from '@web3/hooks';
+import { useEagerConnect } from 'web3/hooks';
 
 interface Props {
 	children: JSX.Element;
@@ -6,7 +6,7 @@ interface Props {
 
 export default function Web3Layout({ children }: Props) {
 	useEagerConnect();
-	useWalletListener();
+	// useWalletListener();
 
 	return children;
 }

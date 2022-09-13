@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js';
 import { formatEther } from 'ethers/lib/utils';
 // import { useQuery } from 'react-query';
-import { BIG_ZERO } from '@common/constants/bignumbers';
-import { useErc20Contract } from '@web3/contracts';
-import { useActiveWeb3React } from '@web3/hooks';
+import { BIG_ZERO } from 'common/constants/bignumbers';
+import { useErc20Contract } from 'web3/contracts';
+import { useActiveWeb3React } from 'web3/hooks';
 import useSWR from 'swr';
 
 export const useBalance = (address: string) => {

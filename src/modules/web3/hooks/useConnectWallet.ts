@@ -1,10 +1,14 @@
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector';
 import { toast } from 'react-toastify';
-import { useActiveWeb3React } from '@web3/hooks/useActiveWeb3React';
-import { activateInjectedProvider } from '../helpers/activateInjectedProvider';
-import { ConnectorKey, connectors } from '@web3/connectors';
-import { CONNECTOR_KEY } from '@web3/constants/storages';
+import { ConnectorKey } from 'web3/connectors';
+import { CONNECTOR_KEY, NETWORK_ID } from 'web3/constants/storages';
+import { useActiveWeb3React } from './useActiveWeb3React';
+import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
+import { checkNetwork } from 'web3/helpers/functions';
+import { setAddressWallet, setNetworkValid } from 'stores/wallet';
+import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
+import { setStatusModalConnectWallet } from 'stores/modal';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -13,14 +17,30 @@ import { CONNECTOR_KEY } from '@web3/constants/storages';
 export const useConnectWallet = () => {
 	const { activate, deactivate } = useActiveWeb3React();
 
-	async function connectWallet(connectorKey: ConnectorKey) {
-		const connector = connectors[connectorKey];
-
+	async function connectWallet(walletSelected: any, networkConnected?: any) {
+		const { connector, walletName } = walletSelected;
 		try {
-			activateInjectedProvider(connectorKey);
-
-			await activate(connector, undefined, true);
-			setStorageWallet(connectorKey);
+			activateInjectedProvider(walletName);
+			activate(connector, undefined, true)
+				.then(async () => {
+					const addressWallet = await connector.getAccount();
+					let networkId = await connector.getChainId();
+					networkId = parseInt(networkId, 16);
+					const isNetworkValid = checkNetwork(
+						networkId,
+						networkConnected.chainId
+					);
+					if (isNetworkValid && addressWallet) {
+						setNetworkValid(isNetworkValid);
+						setAddressWallet(addressWallet);
+						setStatusModalConnectWallet(false);
+					}
+				})
+				.catch((error: any) => {
+					console.log('error', error);
+				});
+			setStorageWallet(connector);
+			setStorageNetwork(networkConnected);
 		} catch (error) {
 			if (
 				error instanceof UserRejectedRequestErrorInjected ||
@@ -28,6 +48,9 @@ export const useConnectWallet = () => {
 					error.message === 'User denied account authorization') // Coinbase wallet
 			) {
 				toast.error('');
+			}
+			if (error instanceof UnsupportedChainIdError) {
+				//
 			}
 
 			if (error instanceof UnsupportedChainIdError) {
@@ -53,9 +76,14 @@ export const useConnectWallet = () => {
 };
 
 function setStorageWallet(connector: ConnectorKey) {
-	localStorage.setItem(CONNECTOR_KEY, connector);
+	StorageUtils.setItemObject(STORAGE_KEYS.CONNECTOR, connector);
+}
+
+function setStorageNetwork(networkConnected: any) {
+	StorageUtils.setItemObject(STORAGE_KEYS.NETWORK, networkConnected);
 }
 
 function removeStorageWallet() {
 	window.localStorage.removeItem(CONNECTOR_KEY);
+	window.localStorage.removeItem(NETWORK_ID);
 }
