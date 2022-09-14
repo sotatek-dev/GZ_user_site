@@ -1,27 +1,38 @@
-import { UnsupportedChainIdError } from '@web3-react/core';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector';
 import { toast } from 'react-toastify';
-import { ConnectorKey } from 'web3/connectors';
-import { CONNECTOR_KEY, NETWORK_ID } from 'web3/constants/storages';
-import { useActiveWeb3React } from './useActiveWeb3React';
+import { ConnectorKey, connectors } from 'web3/connectors';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 import { checkNetwork } from 'web3/helpers/functions';
 import { setAddressWallet, setNetworkValid } from 'stores/wallet';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
-import { setStatusModalConnectWallet } from 'stores/modal';
+import {
+	setStatusModalConnectWallet,
+	setStepModalConnectWallet,
+} from 'stores/modal';
+import { BSC_NETWORK } from 'web3/constants/networks';
+import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 
 /**
  * Hook for connect/disconnect to a wallet
  * @returns `connectWallet` and `disconnectWallet` functions .
  */
 export const useConnectWallet = () => {
-	const { activate, deactivate } = useActiveWeb3React();
+	const windowObj = typeof window !== 'undefined' && (window as any);
+	const { ethereum } = windowObj;
+	const { activate, deactivate } = useWeb3React();
 
-	async function connectWallet(walletSelected: any, networkConnected?: any) {
-		const { connector, walletName } = walletSelected;
+	async function connectWallet(
+		walletName: ConnectorKey,
+		networkConnected?: any
+	) {
+		const connector = connectors[walletName] as any;
 		try {
+			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 			activateInjectedProvider(walletName);
-			activate(connector, undefined, true)
+			setStorageWallet(walletName);
+			setStorageNetwork(networkConnected);
+			await activate(connector, undefined, true)
 				.then(async () => {
 					const addressWallet = await connector.getAccount();
 					let networkId = await connector.getChainId();
@@ -30,17 +41,17 @@ export const useConnectWallet = () => {
 						networkId,
 						networkConnected.chainId
 					);
-					if (isNetworkValid && addressWallet) {
+					if (isNetworkValid) {
 						setNetworkValid(isNetworkValid);
 						setAddressWallet(addressWallet);
-						setStatusModalConnectWallet(false);
+						setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
 					}
 				})
-				.catch((error: any) => {
-					console.log('error', error);
+				.catch(async (error: any) => {
+					if (error instanceof UnsupportedChainIdError) {
+						await changeNetwork(walletName, networkConnected);
+					}
 				});
-			setStorageWallet(connector);
-			setStorageNetwork(networkConnected);
 		} catch (error) {
 			if (
 				error instanceof UserRejectedRequestErrorInjected ||
@@ -54,16 +65,15 @@ export const useConnectWallet = () => {
 			}
 
 			if (error instanceof UnsupportedChainIdError) {
-				// const provider = await connector.getProvider();
-				toast.error('');
-				// const hasSetup = await setupNetwork(library?.provider);
-				// if (hasSetup) {
-				//   await activate(connector);
-				//   throw error;
-				// }
+				await changeNetwork(walletName, networkConnected);
 			}
 
 			throw error;
+		} finally {
+			setStepModalConnectWallet(
+				STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+			);
+			setStatusModalConnectWallet(false);
 		}
 	}
 
@@ -72,18 +82,57 @@ export const useConnectWallet = () => {
 		deactivate();
 	}
 
+	const changeNetwork = async (
+		walletName: ConnectorKey,
+		networkConnected: any
+	) => {
+		try {
+			await ethereum?.request({
+				method: 'wallet_switchEthereumChain',
+				params: [{ chainId: BSC_NETWORK.CHAIN_ID_HEX }],
+			});
+			connectWallet(walletName, networkConnected);
+		} catch (switchError: any) {
+			if (switchError.code === 4902) {
+				try {
+					await ethereum?.request({
+						method: 'wallet_addEthereumChain',
+						params: [
+							{
+								chainId: BSC_NETWORK.CHAIN_ID_HEX,
+								rpcUrls: [BSC_NETWORK.RPC_URLS],
+								chainName: BSC_NETWORK.CHAIN_NAME,
+								blockExplorerUrls: [BSC_NETWORK.BLOCK_EXPLORER_URLS],
+								nativeCurrency: {
+									name: BSC_NETWORK.NATIVE_CURRENCY.NAME,
+									symbol: BSC_NETWORK.NATIVE_CURRENCY.SYMBOL,
+									decimals: BSC_NETWORK.NATIVE_CURRENCY.DECIMAL,
+								},
+							},
+						],
+					});
+					connectWallet(walletName, networkConnected);
+				} catch (addError) {
+					deactivate();
+				}
+			} else {
+				deactivate();
+			}
+		}
+	};
+
 	return { connectWallet, disconnectWallet };
 };
 
 function setStorageWallet(connector: ConnectorKey) {
-	StorageUtils.setItemObject(STORAGE_KEYS.CONNECTOR, connector);
+	StorageUtils.setItem(STORAGE_KEYS.WALLET_CONNECTED, connector);
 }
 
 function setStorageNetwork(networkConnected: any) {
 	StorageUtils.setItemObject(STORAGE_KEYS.NETWORK, networkConnected);
 }
 
-function removeStorageWallet() {
-	window.localStorage.removeItem(CONNECTOR_KEY);
-	window.localStorage.removeItem(NETWORK_ID);
+export function removeStorageWallet() {
+	window.localStorage.removeItem(STORAGE_KEYS.WALLET_CONNECTED);
+	window.localStorage.removeItem(STORAGE_KEYS.NETWORK);
 }

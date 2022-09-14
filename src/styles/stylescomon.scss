@@ -1,0 +1,29 @@
+.countdown {
+	display: flex;
+	@apply gap-x-5;
+	@apply text-chetwode-blue;
+
+	.box {
+		@apply bg-purple px-1 py-2 flex flex-col justify-center items-center rounded-lg text-2xl font-bold;
+		width: 68px;
+		height: 68px;
+		position: relative;
+
+		&:not(:last-child)::after {
+			content: ':';
+			position: absolute;
+			right: -12px;
+			font-weight: 500;
+			font-size: 16px;
+			color: white;
+		}
+	}
+
+	.description {
+		@apply text-sm font-normal;
+	}
+}
+
+.box-pool {
+	@apply bg-black-russian rounded-[10px] p-6 text-white;
+}

@@ -1,6 +1,6 @@
 import store from '.';
 
-export * from 'react-redux/index';
+export * from 'react-redux/es/index';
 
 export type RootState = ReturnType<typeof store.getState>;
 

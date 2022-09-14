@@ -1,5 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import './buttons.scss';
 @import './overrideAntd.scss';
+@import './stylescomon.scss';
 
 body {
 	margin: 0;

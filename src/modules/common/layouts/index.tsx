@@ -100,7 +100,7 @@ const DefaultLayout = ({ children }: any) => {
 			</Sider>
 			<Layout>
 				<LayoutHeader />
-				<Content className='px-[35px] !bg-background-dark'>{children}</Content>
+				<Content className='p-8 !bg-background-dark'>{children}</Content>
 				<Footer />
 			</Layout>
 		</Layout>

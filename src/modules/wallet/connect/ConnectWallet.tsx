@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
-import ModalCustom from 'common/components/modal';
+import ModalCustom from 'common/components/modals';
 import { useSelector } from 'react-redux';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import { setStatusModalConnectWallet } from 'stores/modal';
-import { Button } from 'antd';
 import { NETWORK_LIST } from 'web3/constants/networks';
 import { SUPPORTED_WALLETS } from 'web3/constants/wallets';
+import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
+import ModalSignin from 'common/components/modals/SignIn';
+import Loading from 'common/components/loading';
 
 interface WalletType {
 	connector: any;
@@ -16,16 +18,24 @@ interface WalletType {
 }
 
 export default function ConnectWallet() {
-	const { active } = useActiveWeb3React();
+	const { active, deactivate } = useActiveWeb3React();
 	const { connectWallet } = useConnectWallet();
-	const { modalConnectWallet } = useSelector((state: any) => state?.modal);
-	const [selectedNetwork, setSelectedNetwork] = useState<any>();
+	const { modalConnectWallet, stepModalConnectWallet } = useSelector(
+		(state: any) => state?.modal
+	);
+	const [selectedNetwork, setSelectedNetwork] = useState<any>(NETWORK_LIST[0]);
 	const [connector, setConnector] = useState<any>();
+	console.log('selectedNetwork', selectedNetwork);
 
-	function handleConnect() {
+	const handleConnect = (walletName: any) => {
 		if ((!selectedNetwork && !connector) || active) return;
-		connectWallet(connector, selectedNetwork);
-	}
+		connectWallet(walletName, selectedNetwork);
+	};
+
+	const handleCloseModalConnectWallet = () => {
+		setStatusModalConnectWallet(false);
+		deactivate();
+	};
 
 	const renderNetworkBox = (network: any) => {
 		const { icon, networkName } = network;
@@ -48,6 +58,7 @@ export default function ConnectWallet() {
 		return (
 			<div
 				onClick={() => {
+					handleConnect(walletName);
 					setConnector(wallet);
 				}}
 				className='p-4 bg-ebony-20 rounded-lg w-fit min-w-[170px] flex text-blue-zodiac font-medium text-sm cursor-pointer'
@@ -58,32 +69,60 @@ export default function ConnectWallet() {
 		);
 	};
 
+	const renderStepModal = () => {
+		switch (stepModalConnectWallet) {
+			case STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET:
+				return (
+					<div>
+						<h5 className='font-bold text-lg text-white text-center border-solid border-b border-ebony pb-6'>
+							Connect Wallet
+						</h5>
+						<div className='pt-6'>
+							<p className='font-bold text-sm pb-4'>Choose Network</p>
+							{NETWORK_LIST.map((network) => {
+								return renderNetworkBox(network);
+							})}
+						</div>
+						<div className='pt-6'>
+							<p className='font-bold text-sm pb-4'>Choose Wallet</p>
+							{SUPPORTED_WALLETS.map((wallet) => {
+								return renderWalletBox(wallet);
+							})}
+						</div>
+					</div>
+				);
+			case STEP_MODAL_CONNECTWALLET.CONNECT_WALLET:
+				return (
+					<div>
+						<h5 className='font-bold text-lg text-white text-center border-solid border-b border-ebony pb-6'>
+							Connect Wallet
+						</h5>
+						<div>
+							<Loading />
+						</div>
+					</div>
+				);
+			case STEP_MODAL_CONNECTWALLET.SIGN_IN:
+				return <ModalSignin />;
+			default:
+				break;
+		}
+	};
+
 	return (
 		<div className='wallet'>
 			<ModalCustom
 				isShow={modalConnectWallet}
-				onCancel={() => setStatusModalConnectWallet(false)}
+				onOk={handleCloseModalConnectWallet}
+				onCancel={handleCloseModalConnectWallet}
+				closable={
+					stepModalConnectWallet ===
+					STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+						? true
+						: false
+				}
 			>
-				<div>
-					<h5 className='font-bold text-lg text-white text-center border-solid border-b border-ebony pb-6'>
-						Connect Wallet
-					</h5>
-					<div className='pt-6'>
-						<p className='font-bold text-sm pb-4'>Choose Network</p>
-						{NETWORK_LIST.map((network) => {
-							return renderNetworkBox(network);
-						})}
-					</div>
-					<div className='pt-6'>
-						<p className='font-bold text-sm pb-4'>Choose Wallet</p>
-						{SUPPORTED_WALLETS.map((wallet) => {
-							return renderWalletBox(wallet);
-						})}
-					</div>
-				</div>
-				<Button onClick={handleConnect} className='connect-wallet mt-4'>
-					Confirm
-				</Button>
+				<div className='w-full'>{renderStepModal()}</div>
 			</ModalCustom>
 		</div>
 	);

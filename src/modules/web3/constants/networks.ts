@@ -26,11 +26,11 @@ export const BSC_NETWORK = {
 	CHAIN_ID_HEX: ETH_CHAIN_ID_HEX,
 	CHAIN_ID_DECIMAL: ETH_CHAIN_ID,
 	CHAIN_NAME: 'Binance Smart Chain',
-	RPC_URLS: 'https://bsc-dataseed.binance.org/',
-	BLOCK_EXPLORER_URLS: 'https://www.bscscan.com/',
+	RPC_URLS: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+	BLOCK_EXPLORER_URLS: 'https://testnet.bscscan.com/',
 	NATIVE_CURRENCY: {
-		NAME: 'Binance Smart Chain',
-		SYMBOL: 'BSC',
+		NAME: 'Binance Smart Chain Testnet',
+		SYMBOL: 'BSC Testnet',
 		DECIMAL: 18,
 	},
 };
