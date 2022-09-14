@@ -1,7 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
+import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { useEffect, useState } from 'react';
 import { ConnectorKey, connectors } from '../connectors';
-import { CONNECTOR_KEY } from '../constants/storages';
 import { useConnectWallet } from './useConnectWallet';
 
 /**
@@ -12,13 +12,10 @@ export function useEagerConnect() {
 	const { active } = useWeb3React();
 	const { connectWallet } = useConnectWallet();
 	const [tried, setTried] = useState(false);
-	const wallet = window.localStorage.getItem(CONNECTOR_KEY);
-	useEffect(() => {
-		if (!active) {
-			// Ensure that `isAuthorize` function below return true if wallet is injected
-			// https://github.com/NoahZinsmeister/web3-react/blob/17882f0e4279a8fa425f79b96a1536bbf292e1db/packages/injected-connector/src/index.ts#L196
-			// activateInjectedProvider(wallet as ConnectorKey);
 
+	useEffect(() => {
+		const wallet = StorageUtils.getItem(STORAGE_KEYS.WALLET_CONNECTED);
+		if (!active) {
 			connectors[ConnectorKey.injected]
 				.isAuthorized()
 				.then((isAuthorized) => {
@@ -36,7 +33,6 @@ export function useEagerConnect() {
 			return;
 		}
 
-		// Update `tried` only when active was `true`
 		setTried(true);
 	}, [active]);
 

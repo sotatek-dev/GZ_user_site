@@ -6,13 +6,19 @@ export const setUserStore = (store: Store) => {
 	customStore = store;
 };
 
+interface ITypeUserInfo {
+	walletAddress: string;
+}
+
 interface initialStateProps {
-	userInfo: any;
+	userInfo: ITypeUserInfo;
 	isLogin: boolean;
 }
 
 const initialState: initialStateProps = {
-	userInfo: {},
+	userInfo: {
+		walletAddress: '',
+	},
 	isLogin: false,
 };
 

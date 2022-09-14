@@ -1,25 +1,35 @@
+import Cookies from 'js-cookie';
+import jwt_decode from 'jwt-decode';
+
 export const STORAGE_KEYS = {
 	WALLET_CONNECT: 'walletconnect',
 	ACCOUNT: 'account',
 	NETWORK: 'network',
 	SIGNATURE: 'signature',
-	CONNECTOR: 'connector',
+	WALLET_CONNECTED: 'walletConnected',
 	WALLET_LAST_CONNECTED: 'walletLastConnected',
+	ACCESS_TOKEN: 'accessToken',
+	EXPIRE_IN: 'expireIn',
 };
+
+interface DataStorage {
+	key: string;
+	value: any;
+}
 
 const StorageUtils = {
 	setItem: (key: string, value: string) => {
-		window.localStorage && window.localStorage.setItem(key, value);
+		window.localStorage.setItem(key, value);
 	},
 
 	getItem: (key: string, defaultValue?: string) => {
-		const result = window.localStorage && window.localStorage.getItem(key);
+		const result = window.localStorage.getItem(key);
 		if (result === null || result === undefined) return defaultValue;
 		return result;
 	},
 
 	removeItem: (key: string) => {
-		window.localStorage && window.localStorage.removeItem(key);
+		window.localStorage.removeItem(key);
 	},
 
 	setItemObject: (key: string, itemObject: any) => {
@@ -36,6 +46,43 @@ const StorageUtils = {
 		} catch (e) {
 			return defaultValue;
 		}
+	},
+
+	removeSessionStorageItem: (key: string) => {
+		sessionStorage.removeItem(key);
+	},
+
+	// cookie
+	getCookieStorage: (key: string): any => Cookies.get(key),
+
+	setOneCookieStorage: (key: string, data: string | number | any): any => {
+		const domain = process.env.REACT_APP_COOKIE_DOMAIN || '';
+		Cookies.set(key, typeof data === 'object' ? JSON.stringify(data) : data, {
+			domain,
+		});
+	},
+
+	setAllCookieStorage: (data: DataStorage[]): any =>
+		data.forEach((item) =>
+			StorageUtils.setOneCookieStorage(item.key, item.value)
+		),
+
+	removeOneCookieStorage: (key: string): any => {
+		const domain = process.env.REACT_APP_COOKIE_DOMAIN || '';
+		Cookies.remove(key, { domain });
+	},
+
+	removeAllCookieStorage: (data: string[]): any =>
+		data.forEach((item) => StorageUtils.removeOneCookieStorage(item)),
+
+	setTokenCookie: (access_token: string): void => {
+		const tokenDecoded: any = jwt_decode(access_token);
+		const expToken = tokenDecoded.exp ? parseFloat(tokenDecoded.exp) * 1000 : 0;
+
+		StorageUtils.setAllCookieStorage([
+			{ key: 'access_token', value: access_token },
+			{ key: 'expire_token', value: expToken },
+		]);
 	},
 
 	// section storage

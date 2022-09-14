@@ -25,6 +25,7 @@ const ModalCustom = (props: ModalProps) => {
 		onOk,
 		closable = true,
 		onCancel,
+		...rest
 	} = props;
 
 	return (
@@ -38,7 +39,9 @@ const ModalCustom = (props: ModalProps) => {
 			footer={[footer]}
 			closable={closable}
 			closeIcon={closeIcon || <img src='./icons/close.svg' alt='close icon' />}
-			destroyOnClose={true}
+			destroyOnClose={false}
+			maskClosable={false}
+			{...rest}
 		>
 			{children}
 		</Modal>

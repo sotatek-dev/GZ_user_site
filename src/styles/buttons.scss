@@ -26,3 +26,20 @@
 		);
 	}
 }
+
+.common-normal-button {
+	border-radius: 10px;
+	height: auto;
+	width: fit-content !important;
+	outline: none;
+	border: none;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 25px;
+	padding: 8px 20px;
+}
+
+.button-disabled {
+	opacity: 0.2;
+	cursor: not-allowed;
+}

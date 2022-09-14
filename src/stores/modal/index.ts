@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, Store } from '@reduxjs/toolkit';
+import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 
 let customStore: Store | undefined;
 
@@ -8,10 +9,12 @@ export const setModalStore = (store: Store) => {
 
 interface initialStateProps {
 	modalConnectWallet: boolean;
+	stepModalConnectWallet: string;
 }
 
 const initialState: initialStateProps = {
 	modalConnectWallet: false,
+	stepModalConnectWallet: STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET,
 };
 
 const modalStore = createSlice({
@@ -24,6 +27,13 @@ const modalStore = createSlice({
 				modalConnectWallet: action.payload,
 			};
 		},
+
+		setStepModalConnectWallet: (state, action: PayloadAction<any>) => {
+			return {
+				...state,
+				stepModalConnectWallet: action.payload,
+			};
+		},
 	},
 });
 
@@ -32,6 +42,11 @@ export const setStatusModalConnectWallet = (status: boolean) => {
 		customStore.dispatch(
 			modalStore.actions.setStatusModalConnectWallet(status)
 		);
+};
+
+export const setStepModalConnectWallet = (step: string) => {
+	customStore &&
+		customStore.dispatch(modalStore.actions.setStepModalConnectWallet(step));
 };
 
 export { modalStore };
