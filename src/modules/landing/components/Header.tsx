@@ -1,4 +1,4 @@
-import styles from '../style/landing.module.css';
+import styles from '../style/landing.module.scss';
 export default function Header() {
 	return (
 		<div className='h-[6.875rem] w-[100%] flex justify-between	' id='header'>
@@ -13,10 +13,18 @@ export default function Header() {
 				id='menu'
 				className='laptop:flex items-center pt-[2.8125rem] mr-[9.375rem] mobile:hidden'
 			>
-				<li className={styles['menu-item']}>About</li>
-				<li className={styles['menu-item']}>Whitepaper</li>
-				<li className={styles['menu-item']}>Roadmap</li>
-				<li className={styles['menu-item']}>GXZ Token</li>
+				<li className={styles['menu-item']}>
+					<a href='#about'>About</a>
+				</li>
+				<li className={styles['menu-item']}>
+					<a href='#'>Whitepaper</a>
+				</li>
+				<li className={styles['menu-item']}>
+					<a href='#roadmap'>Roadmap</a>
+				</li>
+				<li className={styles['menu-item']}>
+					<a href='#'>GXZ Token</a>
+				</li>
 				<button className={`${styles['laucher-btn']}`}>Launch App</button>
 			</ul>
 		</div>

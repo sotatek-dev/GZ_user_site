@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
-import styles from '../style/landing.module.css';
+import styles from '../style/landing.module.scss';
 export default function Footer() {
 	return (
-		<div className='w-[100%] h-[21.875rem] flex justify-center items-end  bg-[#071423]'>
-			<div className='w-[100%] h-[100%] pt-[3.875rem] mx-[9.375rem] flex flex-col'>
+		<div className='w-[100vw] h-[21.875rem] flex justify-center items-end  bg-[#071423]'>
+			<div className='m-w-[100%] h-[100%] pt-[3.875rem] mx-[9.375rem] flex flex-col'>
 				<div className='flex flex-row'>
 					<img
 						src='images/logo.svg'

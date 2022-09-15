@@ -1,10 +1,13 @@
+import styles from '../style/landing.module.scss';
 export default function About() {
 	return (
-		<div>
+		<div id='about'>
 			<div className='flex flex-row justify-center items-center  mt-[6.875rem]'>
 				<div className='w-[50%] flex justify-end'>
-					<div className='flex-col w-[31rem] mr-[5rem]'>
-						<p className='text-[3.125rem] text-white font-semibold text-right'>
+					<div className='flex-col w-[31rem] mr-[5rem] flex items-end'>
+						<p
+							className={`text-[3.125rem] inline-block text-right font-semibold mt-[4.75rem] ${styles['gradient-text']}`}
+						>
 							About
 						</p>
 						<p className='text-[#D47AF5] text-[1.375rem] font-medium text-right mt-[1.25rem]'>
@@ -32,7 +35,7 @@ export default function About() {
 					</div>
 				</div>
 				<div className='w-[50%]'>
-					<img src={'/images/about-section.png'} className='w-[46.125rem]  ' />
+					<img src={'/images/about-section.svg'} className='w-[46.125rem]  ' />
 				</div>
 			</div>
 		</div>

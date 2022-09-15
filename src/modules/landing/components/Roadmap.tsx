@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../style/landing.module.css';
+import styles from '../style/landing.module.scss';
 
 interface Timeline {
 	imgSrc: string;
@@ -14,8 +14,9 @@ export default function Roadmap() {
 		{
 			imgSrc: '/images/roadmap_1.svg',
 			imgStyle: {
-				width: '45.1875rem',
-				height: '41.0625rem',
+				width: '35.5406rem',
+				height: '28.2156rem',
+				marginLeft: '3rem',
 			},
 			title: 'Q3 2022',
 			descriptions: [
@@ -30,9 +31,9 @@ export default function Roadmap() {
 		{
 			imgSrc: '/images/roadmap_2.svg',
 			imgStyle: {
-				width: '32.4787rem',
-				height: '29.375rem',
-				marginRight: '2.9375rem',
+				width: '23.8256rem',
+				height: '27.25rem',
+				marginRight: '7.6875rem',
 			},
 			title: 'Q4 2022',
 			descriptions: [
@@ -51,8 +52,9 @@ export default function Roadmap() {
 		{
 			imgSrc: '/images/roadmap_3.svg',
 			imgStyle: {
-				width: '36.1775rem',
-				height: '34.9669rem',
+				width: '34.25rem',
+				height: '31.2081rem',
+				marginLeft: '6.5rem',
 			},
 			title: 'Q1 2023',
 			descriptions: [
@@ -73,9 +75,9 @@ export default function Roadmap() {
 		{
 			imgSrc: '/images/roadmap_4.svg',
 			imgStyle: {
-				width: '20.4375rem',
-				height: '23.375rem',
-				marginRight: '6.875rem',
+				width: '19.5963rem',
+				height: '23.7294rem',
+				marginRight: '6.8125rem',
 			},
 			title: 'Q2 2023',
 			descriptions: [
@@ -92,11 +94,10 @@ export default function Roadmap() {
 		{
 			imgSrc: '/images/roadmap_5.svg',
 			imgStyle: {
-				width: '26.6875rem',
-				height: '24.4525rem',
-				marginLeft: '5.9375rem',
+				width: '44.8125rem',
+				height: '27.625rem',
 			},
-			title: 'Q4 2023',
+			title: 'Q3 2023',
 			descriptions: [
 				'Game UAT (continue)',
 				'Prepapre for Google/Apple Store submission',
@@ -113,9 +114,9 @@ export default function Roadmap() {
 		{
 			imgSrc: '/images/roadmap_6.svg',
 			imgStyle: {
-				width: '19.375rem',
-				height: '19.375rem',
-				marginRight: '5rem',
+				width: '27.3781rem',
+				height: '25.125rem',
+				marginRight: '6rem',
 			},
 			title: 'Q4 2023',
 			descriptions: [
@@ -130,13 +131,8 @@ export default function Roadmap() {
 	];
 
 	return (
-		<div className='mt-[4.5rem] w-[100%]'>
-			<div className='flex items-center flex-col mb-[20px]'>
-				<img
-					src='/images/road_map_1.svg'
-					className={`w-[1.9169rem] h-[4.375rem] object-contain`}
-				/>
-
+		<div className='mt-[9.8125rem] w-[100%]' id='roadmap'>
+			<div className='flex justify-center mb-[1.25rem]'>
 				<p
 					className={`text-[3.125rem] font-semibold mt-[4.75rem] ${styles['gradient-text']}`}
 				>

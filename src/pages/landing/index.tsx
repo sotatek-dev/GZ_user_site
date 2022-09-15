@@ -5,22 +5,24 @@ import Footer from 'src/modules/landing/components/Footer';
 import Header from 'src/modules/landing/components/Header';
 import PreFooter from 'src/modules/landing/components/PreFooter';
 import Roadmap from 'src/modules/landing/components/Roadmap';
-import styles from '../../modules/landing/style/landing.module.css';
+import Statistic from 'src/modules/landing/components/Statistic';
+import styles from '../../modules/landing/style/landing.module.scss';
 export default function LandingPage() {
 	return (
-		<div className={`${styles['landing']} bg-[#0C1E32] w-[100vw]`}>
+		<div className={`${styles['landing']}`}>
 			<div
-				className='bg-repeat'
+				className='bg-repeat bg-center bg-contain flex items-center flex-col'
 				style={{
 					backgroundImage: 'url(/images/background.svg)',
-					backgroundPosition: 'center',
-					backgroundSize: 'contain',
 				}}
 			>
-				<Header />
-				<About />
-				<Roadmap />
-				<PreFooter />
+				<div className='max-w-[90rem]'>
+					<Header />
+					<About />
+					<Statistic />
+					<Roadmap />
+					<PreFooter />
+				</div>
 				<Footer />
 			</div>
 		</div>

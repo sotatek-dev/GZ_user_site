@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../style/landing.module.css';
+import styles from '../style/landing.module.scss';
 export default function PreFooter() {
 	return (
 		<div
@@ -7,7 +7,7 @@ export default function PreFooter() {
 			style={{
 				backgroundImage: 'url(/images/footer_1.svg)',
 				backgroundPosition: 'center',
-				backgroundSize: 'contain',
+				backgroundSize: 'cover',
 				backgroundRepeat: 'no-repeat',
 			}}
 		>
