@@ -12,7 +12,7 @@ export default function PreFooter() {
 			}}
 		>
 			<div className='px-[19.75rem]  flex flex-col items-center'>
-				<p className='font-medium text-[1.875rem] text-[#D47AF5] text-center leading-[2.8125rem]'>
+				<p className='font-medium text-[1.875rem] text-[#D47AF5] w-[46.25rem] text-center leading-[2.8125rem]'>
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
 					vulputate libero et velit interdum, ac aliquet odio mattis.
 				</p>
