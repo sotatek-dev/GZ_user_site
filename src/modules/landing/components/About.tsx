@@ -6,15 +6,15 @@ export default function About() {
 				<div className='w-[50%] flex justify-end'>
 					<div className='flex-col w-[31rem] mr-[5rem] flex items-end'>
 						<p
-							className={`text-[3.125rem] inline-block text-right font-semibold mt-[4.75rem] ${styles['gradient-text']}`}
+							className={`text-[3.125rem] inline-block text-right font-semibold mt-[4.75rem] leading-[4.6875rem] ${styles['gradient-text']}`}
 						>
 							About
 						</p>
-						<p className='text-[#D47AF5] text-[1.375rem] font-medium text-right mt-[1.25rem]'>
+						<p className='text-[#D47AF5] text-[1.375rem] font-medium text-right mt-[1.25rem] leading-[1.75rem]'>
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
 							vulputate libero et velit interdum, ac aliquet odio mattis.
 						</p>
-						<p className='text-[#FFFFFF] opacity-80 text-[0.875rem] text-right mt-[1.25rem]'>
+						<p className='text-[#FFFFFF] opacity-80 text-[0.875rem] text-right mt-[1.25rem] leading-[1.375rem]'>
 							per inceptos himenaeos. Curabitur tempus urna at turpis
 							condimentum lobortis. Ut commodo efficitur neque. Ut diam quam,
 							semper iaculis condimentum ac, vestibulum eu nisl.Lorem ipsum
