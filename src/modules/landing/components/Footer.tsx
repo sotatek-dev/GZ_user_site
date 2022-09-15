@@ -67,10 +67,12 @@ export default function Footer() {
 						</div>
 						<div className='flex flex-col w-[10rem]'>
 							<button className={styles['footer-btn']}>
-								<p>PITCH DECK</p> <img src='/icons/arrow-right.svg' />
+								<p className={styles['footer-btn_label']}>PITCH DECK</p>{' '}
+								<img src='/icons/arrow-right.svg' />
 							</button>
 							<button className={`${styles['footer-btn']} mt-[1.125rem]`}>
-								<p>WHITE PAPER</p> <img src='/icons/arrow-right.svg' />
+								<p className={styles['footer-btn_label']}>WHITE PAPER</p>{' '}
+								<img src='/icons/arrow-right.svg' />
 							</button>
 						</div>
 					</div>
@@ -96,16 +98,15 @@ export default function Footer() {
 						</a>
 						<a>
 							<img
-								src='/icons/twitter.svg'
-								alt='twitter'
+								src='/icons/telegram.svg'
+								alt='telegram'
 								className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
 							/>
 						</a>
-
 						<a>
 							<img
-								src='/icons/telegram.svg'
-								alt='telegram'
+								src='/icons/twitter.svg'
+								alt='twitter'
 								className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
 							/>
 						</a>
