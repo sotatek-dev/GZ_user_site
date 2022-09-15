@@ -1,11 +1,11 @@
+import About from 'modules/landing/components/About';
+import Footer from 'modules/landing/components/Footer';
+import Header from 'modules/landing/components/Header';
+import PreFooter from 'modules/landing/components/PreFooter';
+import Roadmap from 'modules/landing/components/Roadmap';
+import Statistic from 'modules/landing/components/Statistic';
 import React from 'react';
-import About from 'src/modules/landing/components/About';
-import Footer from 'src/modules/landing/components/Footer';
 
-import Header from 'src/modules/landing/components/Header';
-import PreFooter from 'src/modules/landing/components/PreFooter';
-import Roadmap from 'src/modules/landing/components/Roadmap';
-import Statistic from 'src/modules/landing/components/Statistic';
 import styles from '../../modules/landing/style/landing.module.scss';
 export default function LandingPage() {
 	return (

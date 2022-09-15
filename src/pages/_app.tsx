@@ -2,11 +2,10 @@ import 'antd/dist/antd.css';
 import 'styles/globals.scss';
 import 'styles/index.scss';
 
-import Head from 'next/head';
-import type { AppProps } from 'next/app';
 import { Web3ReactProvider } from '@web3-react/core';
 import { providers } from 'ethers';
-import DefaultLayout from 'modules/common/layouts';
+import type { AppProps } from 'next/app';
+import Head from 'next/head';
 // import DefaultLayout from '@common/layouts';
 
 import { Provider } from 'react-redux';
@@ -29,11 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 			<Web3ReactProvider getLibrary={getLibrary}>
 				<Provider store={store}>
 					<AuthProvider>
-						<DefaultLayout>
-							<div suppressHydrationWarning>
-								<Component {...pageProps} />
-							</div>
-						</DefaultLayout>
+						<Component {...pageProps} />
 					</AuthProvider>
 				</Provider>
 			</Web3ReactProvider>
