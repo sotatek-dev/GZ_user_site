@@ -7,6 +7,7 @@ import LayoutHeader from './Header';
 import { ROUTES } from 'common/constants/constants';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import Link from 'next/link';
+import { get } from 'lodash';
 
 const { Sider, Content } = Layout;
 
@@ -43,9 +44,10 @@ const LIST_SIDER = [
 	},
 ];
 
-const DefaultLayout = ({ children }: any) => {
-	// const [collapsed, setCollapsed] = useState(false);
-	// const router = useRouter();
+const DefaultLayout = ({ children, appProps }: any) => {
+	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
+		return <>{children}</>;
+	}
 
 	return (
 		<Layout className='!bg-background-dark'>
