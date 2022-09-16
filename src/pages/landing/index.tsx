@@ -16,7 +16,7 @@ export default function LandingPage() {
 					backgroundImage: 'url(/images/background.svg)',
 				}}
 			>
-				<div className='max-w-[90rem]'>
+				<div className='desktop:max-w-[90rem] mobile:max-w-[100vw]'>
 					<Header />
 					<About />
 					<Statistic />
