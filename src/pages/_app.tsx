@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 	return (
 		<>
 			<Head>
-				<title>Galactox Zone</title>
+				<title>Galactix Zone</title>
 			</Head>
 			<Web3ReactProvider getLibrary={getLibrary}>
 				<Provider store={store}>
