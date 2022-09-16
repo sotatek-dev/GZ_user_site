@@ -65,13 +65,13 @@ export default function Footer() {
 								Terms of service
 							</a>
 						</div>
-						<div className='flex flex-col w-[10rem]'>
+						<div className='flex flex-col'>
 							<button className={styles['footer-btn']}>
-								<p className={styles['footer-btn_label']}>PITCH DECK</p>{' '}
+								<p className={styles['footer-btn_label']}>PITCH DECK</p>
 								<img src='/icons/arrow-right.svg' />
 							</button>
 							<button className={`${styles['footer-btn']} mt-[1.125rem]`}>
-								<p className={styles['footer-btn_label']}>WHITE PAPER</p>{' '}
+								<p className={styles['footer-btn_label']}>WHITE PAPER</p>
 								<img src='/icons/arrow-right.svg' />
 							</button>
 						</div>
@@ -84,7 +84,7 @@ export default function Footer() {
 						borderTop: '1px solid rgba(255, 255, 255, 0.2)',
 					}}
 				>
-					<p className='opacity-50 text-white text-[0.875rem] font-medium'>
+					<p className='opacity-50 text-white text-[0.875rem]'>
 						©2022 Galactix Zone. All rights reserved
 					</p>
 

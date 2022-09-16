@@ -267,17 +267,17 @@
 
 	background: rgba(212, 122, 245, 0.3);
 	border-radius: 5px;
-	padding: 3px 12px;
+	padding: 0.1875rem 0.75rem;
+	gap: 10px;
 	&_label {
 		font-weight: 700;
 		font-size: 0.75rem;
-		line-height: 1.25rem;
-		letter-spacing: 2px;
+		line-height: 1rem;
+		letter-spacing: 5px;
 		color: #d47af5;
 	}
 
 	> img {
-		margin-left: 0.625rem;
 		width: 0.625rem;
 		height: 0.5rem;
 	}
