@@ -169,6 +169,56 @@
 	}
 }
 
+//TimelineMintRound
+
+.timeline-mint-round {
+	width: 100%;
+	.ant-steps-item-custom
+		> .ant-steps-item-container
+		> .ant-steps-item-icon
+		> .ant-steps-icon {
+		width: 20px !important;
+		height: 20px !important;
+		line-height: 1 !important;
+	}
+
+	.ant-steps-item-title {
+		color: white !important;
+		font-weight: 700 !important;
+		font-size: 13px !important;
+
+		&::after {
+			content: '';
+			display: none !important;
+		}
+	}
+
+	.ant-steps-item-finish {
+		.ant-steps-item-icon {
+			.ant-steps-icon {
+				color: white !important;
+			}
+		}
+	}
+
+	.ant-steps-item-process,
+	.ant-steps-item-active {
+		.ant-steps-item-icon {
+			.ant-steps-icon {
+				color: #35b770 !important;
+			}
+		}
+	}
+
+	.ant-steps-item-wait {
+		.ant-steps-item-icon {
+			.ant-steps-icon {
+				color: white !important;
+			}
+		}
+	}
+}
+
 ::placeholder {
 	/* Chrome, Firefox, Opera, Safari 10.1+ */
 	color: #ffffff !important;

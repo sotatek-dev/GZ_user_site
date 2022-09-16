@@ -84,7 +84,7 @@ const DefaultLayout = ({ children, appProps }: any) => {
 								// onClick={() => router.push(ROUTES.TOKEN_PRESALE_ROUNDS)}
 								className='!px-0 '
 							>
-								<Link href={ROUTES.TOKEN_PRESALE_ROUNDS}>
+								<Link href={router}>
 									<a className='flex items-center font-normal text-base'>
 										{icon && (
 											<IconDynamic
