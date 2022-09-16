@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../style/landing.module.scss';
+import styles from '../style/statistic.module.scss';
 export default function Statistic() {
 	const totalSupply = '438.752.067';
 	const currentSupply = '64.155.460';
@@ -30,13 +30,12 @@ export default function Statistic() {
 	];
 
 	return (
-		<div className='w-[100%] flex flex-col items-center mt-[1rem]'>
+		<div className={styles['statistic-container']}>
 			<img
 				src='/images/roadmap_0.svg'
 				className={`w-[1.9169rem] h-[4.375rem] object-contain`}
 			/>
-
-			<div className='flex flex-row justify-center items-center mt-[2.375rem]'>
+			<div className={styles['statistic-list']}>
 				{statisticBoxes.map((box, index) => (
 					<StatisticBox key={index} {...box} />
 				))}
