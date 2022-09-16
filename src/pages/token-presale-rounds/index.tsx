@@ -8,7 +8,7 @@ import Stepper from 'common/components/steps';
 
 const STEP_CREATE_ASSET = ['Upcoming', 'Buy', 'Claimable', 'End'];
 
-const selectList = [
+export const selectList = [
 	{
 		label: (
 			<div className='select-card-wrapper'>

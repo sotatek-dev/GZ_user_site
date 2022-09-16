@@ -20,6 +20,8 @@ module.exports = {
 			'black-velvet': '#232436',
 			'dim-gray': '#71717d',
 			'butterfly-bush': '#59518C',
+			green: '#35B770',
+			'red-10': '#FF0000',
 		},
 	},
 	plugins: [],

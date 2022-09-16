@@ -2,8 +2,9 @@ import { secondsToTime } from 'common/utils/functions';
 import { FC, memo, useEffect, useState } from 'react';
 
 interface ICountdownProps {
-	millisecondsRemain?: any;
+	millisecondsRemain?: number;
 	title?: string;
+	customClass?: string;
 }
 
 interface ITimeRemain {
@@ -23,6 +24,7 @@ const timeRemainDefault = {
 const Countdown: FC<ICountdownProps> = ({
 	millisecondsRemain = 1663344791 - 1663153149,
 	title = 'You can buy tokens in',
+	customClass,
 }) => {
 	const [secCountDown, setSecCountDown] = useState<number>(millisecondsRemain);
 	const [timeRemain, settimeRemain] = useState<ITimeRemain>(timeRemainDefault);
@@ -50,7 +52,7 @@ const Countdown: FC<ICountdownProps> = ({
 	}, []);
 
 	return (
-		<div>
+		<div className={customClass}>
 			{title && <div className='font-bold pb-4'>{title}</div>}
 			<div className='countdown'>
 				<div className='box'>

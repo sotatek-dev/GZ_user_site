@@ -9,8 +9,8 @@ export interface IPramsLogin {
 
 export const login = async (
 	params: IPramsLogin,
-	successCallback: any,
-	failCallback: any
+	successCallback: (data: object) => void,
+	failCallback: (error: object) => void
 ) => {
 	const queryString = `user/auth`;
 	return await axiosInstance()

@@ -3,15 +3,15 @@ import { Button as AntButton, Spin } from 'antd';
 
 type Props = {
 	buttonType?: string;
-	type?: any;
+	type?: string | undefined;
 	label: string;
-	htmlType?: any;
-	onClick?: any;
+	htmlType?: string | undefined;
+	onClick?: () => void;
 	isDisabled?: boolean;
-	classCustom?: any;
+	classCustom?: string;
 	ghost?: boolean;
 	isLoading?: boolean;
-	styles?: any;
+	styles?: object | string | undefined;
 };
 
 const Button = (props: Props) => {
