@@ -1,71 +1,73 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
-import styles from '../style/landing.module.scss';
+import styles from '../style/footer.module.scss';
 export default function Footer() {
 	return (
-		<div className='w-[100vw] h-[21.875rem] flex justify-center items-end  bg-[#071423]'>
-			<div className='m-w-[100%] h-[100%] pt-[3.875rem] mx-[9.375rem] flex flex-col'>
-				<div className='flex flex-row'>
+		<div className={styles['footer-section']}>
+			<div className={styles['footer-container']}>
+				<div className={styles['footer-1']}>
 					<img
 						src='images/logo.svg'
 						alt='logo'
 						className='w-[8.125rem] h-[8.125rem]'
 					/>
-					<div className='flex flex-row justify-around flex-grow ml-[10rem]'>
-						<div className='flex flex-col justify-between  w-[10rem] h-[10rem]  mr-[8.125rem]'>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								About
-							</a>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								Introduction
-							</a>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								Token
-							</a>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								Team
-							</a>
-						</div>
+					<div className={styles['footer-1_menu']}>
+						<div className={styles['footer-1_menu_text']}>
+							<div className={styles['footer-1_menu_text_list']}>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									About
+								</a>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									Introduction
+								</a>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									Token
+								</a>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									Team
+								</a>
+							</div>
 
-						<div className='flex flex-col justify-between w-[10rem] h-[10rem]  mr-[8.125rem]'>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								Contact
-							</a>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								Roadmap
-							</a>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								FAQ
-							</a>
-							<a
-								href='#'
-								className='text-white font-semibold opacity-70 font-[14px]'
-							>
-								Terms of service
-							</a>
+							<div className={styles['footer-1_menu_text_list']}>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									Contact
+								</a>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									Roadmap
+								</a>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									FAQ
+								</a>
+								<a
+									href='#'
+									className='text-white font-semibold opacity-70 font-[14px]'
+								>
+									Terms of service
+								</a>
+							</div>
 						</div>
-						<div className='flex flex-col'>
+						<div className={styles['footer-1_menu_btn']}>
 							<button className={styles['footer-btn']}>
 								<p className={styles['footer-btn_label']}>PITCH DECK</p>
 								<img src='/icons/arrow-right.svg' />
@@ -78,12 +80,7 @@ export default function Footer() {
 					</div>
 				</div>
 
-				<div
-					className='flex justify-between items-center mt-[3rem] flex-grow'
-					style={{
-						borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-					}}
-				>
+				<div className={styles['footer-2']}>
 					<p className='opacity-50 text-white text-[0.875rem]'>
 						©2022 Galactix Zone. All rights reserved
 					</p>
