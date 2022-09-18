@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react';
 // import { convertUrlImage } from 'utils/image';
 
 interface Props extends Omit<ImageProps, 'src'> {
-	url?: string;
+	url: string;
 	errorImg?: 'NoData' | 'Default' | 'Avatar' | 'Banner';
 	type?: 'HtmlImage' | 'NextImage';
-	style?: any;
-	onFinish?: any;
+	style?: object;
+	onFinish?: () => void;
 }
 const ImageBase = (props: Props) => {
 	const { url, type, style = {} } = props;
-	const [img, setImg] = useState<any>('');
+	const [img, setImg] = useState<string>('');
 
 	const newProps = { ...props };
 	delete newProps.errorImg;

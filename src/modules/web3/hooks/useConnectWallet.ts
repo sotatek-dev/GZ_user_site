@@ -12,6 +12,8 @@ import {
 } from 'stores/modal';
 import { BSC_NETWORK } from 'web3/constants/networks';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
+import { checkEmailUser } from 'apis/login';
+import { setLogin } from 'stores/user';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -41,10 +43,23 @@ export const useConnectWallet = () => {
 						networkId,
 						networkConnected.chainId
 					);
+					const [dataCheckUser] = await checkEmailUser(addressWallet);
+
 					if (isNetworkValid) {
+						console.log('isNetworkValid', isNetworkValid);
+
 						setNetworkValid(isNetworkValid);
-						setAddressWallet(addressWallet);
-						setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
+						if (dataCheckUser.is_user_exist) {
+							// check user đăng nhập lần đầu
+							setStepModalConnectWallet(
+								STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+							);
+							setStatusModalConnectWallet(false);
+							setLogin(true);
+							setAddressWallet(addressWallet);
+						} else {
+							setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
+						}
 					}
 				})
 				.catch(async (error: any) => {
@@ -70,15 +85,20 @@ export const useConnectWallet = () => {
 
 			throw error;
 		} finally {
-			setStepModalConnectWallet(
-				STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
-			);
-			setStatusModalConnectWallet(false);
+			// setStepModalConnectWallet(
+			// 	STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+			// );
+			// setStatusModalConnectWallet(false);
 		}
 	}
 
 	function disconnectWallet() {
 		removeStorageWallet();
+		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
+		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
+		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
+		setLogin(false);
+		setAddressWallet('');
 		deactivate();
 	}
 

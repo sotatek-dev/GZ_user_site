@@ -1,0 +1,49 @@
+.ant-table {
+	background: none;
+	overflow: hidden;
+	border-radius: 5px;
+	border: 1px solid #ffffff1f;
+}
+
+.table-border-top {
+	.ant-table-thead > tr > th {
+		// border: none;
+	}
+}
+
+.ant-table table {
+}
+
+.ant-table-thead > tr > th {
+	background: #232436 !important;
+	color: #ffffff !important;
+	border-bottom: none;
+	font-weight: 400;
+	padding: 10px;
+	font-size: 14px;
+	line-height: 24px;
+	font-family: 'Montserrat';
+}
+
+.ant-table-tbody > tr > td {
+	border-bottom: none;
+	padding: 10px;
+	border-top: 1px solid #2f3041 !important;
+	color: white !important;
+	&:hover {
+		background-color: #121327;
+	}
+}
+
+.ant-table-row {
+	cursor: pointer;
+	// border-top: 1px solid #2f3041 !important;
+}
+
+.ant-table-row:hover {
+	background: #121327 !important;
+}
+
+.ant-table-cell-row-hover {
+	background: #121327 !important;
+}

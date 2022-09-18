@@ -35,7 +35,7 @@ export const setNetworkValid = (isNetworkValid: boolean) => {
 		customStore.dispatch(storeWallet.actions.setNetworkValid(isNetworkValid));
 };
 
-export const setAddressWallet = (addressWallet: boolean) => {
+export const setAddressWallet = (addressWallet: string) => {
 	customStore &&
 		customStore.dispatch(storeWallet.actions.setAddressWallet(addressWallet));
 };

@@ -119,8 +119,7 @@
 	outline: none !important;
 
 	&custom-input-wrapper &::placeholder {
-		color: #ffffff !important;
-		opacity: 1 !important;
+		color: rgba(255, 255, 255, 0.12) !important;
 	}
 
 	.ant-input:focus,
@@ -219,6 +218,21 @@
 	}
 }
 
+.dropdown-button,
+.dropdown-button:hover,
+.dropdown-button:active,
+.dropdown-button:focus {
+	background: none;
+	border: 1px solid #515151;
+	box-sizing: border-box;
+	border-radius: 3px;
+	font-size: 14px;
+	line-height: 17px;
+	height: 43px;
+	color: #787c83;
+	width: fit-content;
+}
+
 ::placeholder {
 	/* Chrome, Firefox, Opera, Safari 10.1+ */
 	color: #ffffff !important;
@@ -250,4 +264,12 @@
 ::-ms-input-placeholder {
 	/* Microsoft Edge */
 	color: #ffffff !important;
+}
+
+.ant-form-item-label > label {
+	@apply text-dim-gray;
+}
+
+.ant-form-item {
+	margin-bottom: 16px !important;
 }

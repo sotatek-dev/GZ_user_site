@@ -1,17 +1,19 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button as AntButton, Spin } from 'antd';
+import { ButtonType } from 'antd/lib/button';
+import { ButtonHTMLType } from 'antd/lib/button/button';
 
 type Props = {
 	buttonType?: string;
-	type?: any;
+	type?: ButtonType;
 	label: string;
-	htmlType?: any;
+	htmlType?: ButtonHTMLType;
 	onClick?: () => void;
 	isDisabled?: boolean;
 	classCustom?: string;
 	ghost?: boolean;
 	isLoading?: boolean;
-	styles?: any;
+	styles?: object;
 };
 
 const Button = (props: Props) => {
