@@ -1,4 +1,4 @@
-export const EllipsisMiddle = (account: any) => {
+export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
 };
 

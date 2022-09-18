@@ -1,0 +1,97 @@
+@import '../../utils/_variables.scss';
+
+.ant-table {
+	background: none;
+	overflow: hidden;
+	border-radius: 6px;
+}
+
+.table-border-top {
+	.ant-table-thead > tr > th {
+		border-top: 4px solid #3bc485;
+	}
+}
+
+.ant-table table {
+	background: $background-table;
+	color: $color-table-text;
+	font-family: 'Play-Regular';
+}
+.ant-table-thead > tr > th {
+	background: $background-table;
+	color: $color-table-text;
+	border-color: #323438;
+}
+.ant-table-tbody > tr > td {
+	border-color: #323438;
+	// fix ant-cell-hover
+	background: $background-table !important;
+}
+.ant-table-row:hover {
+	background: $background-table !important;
+}
+.ant-table-tbody > tr.ant-table-row:hover > td,
+.ant-table-tbody > tr > td.ant-table-cell-row:hover {
+	background: $background-table !important;
+	color: $color-table-text;
+}
+// pagination
+.ant-pagination-item-active {
+	border-color: #323438;
+	border-radius: 50%;
+	background: #323438 !important;
+}
+.ant-pagination-item-active a {
+	color: #efeff0;
+}
+.ant-pagination-item {
+	background: none;
+	border: none;
+	font-family: 'Play-Bold';
+}
+.ant-pagination-item a {
+	color: #efeff0;
+}
+.ant-pagination-prev {
+	border: 1px solid #515151;
+	padding: 0 2rem;
+}
+.ant-pagination-prev a {
+	color: $color-table-text;
+	font-size: 1.4rem;
+	font-family: 'Play-Bold';
+}
+.ant-pagination-next {
+	border: 1px solid #515151;
+	padding: 0 2rem;
+	font-family: 'Play-Bold';
+	font-size: 1.4rem;
+}
+.ant-pagination-next a {
+	color: $color-table-text;
+	font-family: 'Play-Bold';
+	font-size: 1.4rem;
+}
+
+// empty
+.ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
+	color: $color-table-text;
+}
+.ant-table-empty .ant-table-tbody > tr.ant-table-placeholder:hover {
+	background: $background-table;
+}
+.ant-table-placeholder:hover {
+	background: $background-table;
+}
+.ant-table-tbody > tr.ant-table-placeholder:hover > td {
+	background: $background-table;
+}
+
+.ant-pagination-jump-prev
+	.ant-pagination-item-container
+	.ant-pagination-item-ellipsis,
+.ant-pagination-jump-next
+	.ant-pagination-item-container
+	.ant-pagination-item-ellipsis {
+	color: $color-table-text;
+}

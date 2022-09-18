@@ -32,7 +32,7 @@ const StorageUtils = {
 		window.localStorage.removeItem(key);
 	},
 
-	setItemObject: (key: string, itemObject: any) => {
+	setItemObject: (key: string, itemObject: object) => {
 		StorageUtils.setItem(key, JSON.stringify(itemObject));
 	},
 
@@ -50,6 +50,11 @@ const StorageUtils = {
 
 	removeSessionStorageItem: (key: string) => {
 		sessionStorage.removeItem(key);
+	},
+
+	getSectionStorageItem: (key: string) => {
+		const result = sessionStorage.getItem(key);
+		return result || '';
 	},
 
 	// cookie
@@ -88,10 +93,6 @@ const StorageUtils = {
 	// section storage
 	// static setSectionStorageItem(key: string, value: string) {
 	//   window.sessionStorage.setItem(key, value);
-	// }
-
-	// static getSectionStorageItem(key: string) {
-	//   return window.sessionStorage.getItem(key);
 	// }
 
 	// static removeUser() {

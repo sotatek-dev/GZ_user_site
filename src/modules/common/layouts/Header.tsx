@@ -10,6 +10,7 @@ import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { EllipsisMiddle } from 'common/utils/functions';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
+import { useSelector } from 'react-redux';
 
 const { Header } = Layout;
 
@@ -18,9 +19,12 @@ const LayoutHeader = () => {
 	const [currency, setCurrency] = useState();
 	const { disconnectWallet } = useConnectWallet();
 
+	const islogin = useSelector((state) => state.user.isLogin);
+	// const addressWallet = useSelector(state => state.wallet.addressWallet);
+	// const wallet = useSelector(state => state.wallet)
+
 	useEffect(() => {
 		const { currency } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
-		console.log('account', account, active);
 		setCurrency(currency);
 	}, [account, active]);
 
@@ -43,7 +47,7 @@ const LayoutHeader = () => {
 
 	return (
 		<Header className='site-layout-sub-header-background !bg-background-dark w-full flex !p-6 !h-fit'>
-			{account ? (
+			{islogin ? (
 				<Dropdown overlay={menu} trigger={['click']}>
 					<div className='ml-auto rounded-[20px] bg-black-russian flex items-center text-white py-2 px-5 !h-[40px] font-medium text-base cursor-pointer'>
 						<div className='mr-3'>{currency}</div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
 import ModalCustom from 'common/components/modals';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import { SUPPORTED_WALLETS } from 'web3/constants/wallets';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import ModalSignin from 'common/components/modals/SignIn';
 import Loading from 'common/components/loading';
+import { isEmpty } from 'lodash';
 
 interface WalletType {
 	connector: any;
@@ -25,10 +26,15 @@ export default function ConnectWallet() {
 	);
 	const [selectedNetwork, setSelectedNetwork] = useState<any>(NETWORK_LIST[0]);
 	const [connector, setConnector] = useState<any>();
-	console.log('selectedNetwork', selectedNetwork);
+
+	useEffect(() => {
+		return () => {
+			setConnector({});
+		};
+	}, []);
 
 	const handleConnect = (walletName: any) => {
-		if ((!selectedNetwork && !connector) || active) return;
+		if ((!selectedNetwork && isEmpty(connector)) || active) return;
 		connectWallet(walletName, selectedNetwork);
 	};
 
@@ -43,7 +49,11 @@ export default function ConnectWallet() {
 		return (
 			<div
 				onClick={() => setSelectedNetwork(network)}
-				className='p-4 bg-ebony-20 rounded-lg w-fit min-w-[130px] flex text-blue-zodiac font-medium text-sm cursor-pointer'
+				className={`p-4 bg-ebony-20 rounded-lg w-fit min-w-[130px] flex text-blue-zodiac font-medium text-sm cursor-pointer ${
+					selectedNetwork.networkName === networkName
+						? 'chosse-active'
+						: 'chosse-disable'
+				}`}
 			>
 				<IconDynamic image={icon} className='mr-2' />
 				{networkName}
@@ -61,13 +71,18 @@ export default function ConnectWallet() {
 					handleConnect(walletName);
 					setConnector(wallet);
 				}}
-				className='p-4 bg-ebony-20 rounded-lg w-fit min-w-[170px] flex text-blue-zodiac font-medium text-sm cursor-pointer'
+				className={`p-4 bg-ebony-20 rounded-lg w-fit min-w-[170px] flex text-blue-zodiac font-medium text-sm cursor-pointer ${
+					connector?.walletName === walletName
+						? 'chosse-active'
+						: 'chosse-disable'
+				}`}
 			>
 				<IconDynamic image={icon} className='mr-2' />
 				{walletName}
 			</div>
 		);
 	};
+	console.log('stepModalConnectWallet', stepModalConnectWallet);
 
 	const renderStepModal = () => {
 		switch (stepModalConnectWallet) {

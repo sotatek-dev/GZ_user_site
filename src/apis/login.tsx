@@ -18,3 +18,11 @@ export const login = async (
 		.then((data) => successCallback(data))
 		.catch((error) => failCallback(error));
 };
+
+export const checkEmailUser = async (address: string) => {
+	const queryString = `user/validate/${address}`;
+	return await axiosInstance()
+		.get(queryString)
+		.then((data) => [data?.data?.data, null])
+		.catch((error) => [null, error]);
+};

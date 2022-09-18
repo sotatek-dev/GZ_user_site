@@ -16,7 +16,7 @@ const Stepper: FC<IStepperProps> = ({ steps, activeStep }) => {
 			return step === activeStep;
 		});
 		setCurrent(current);
-	}, [activeStep]);
+	}, [activeStep, steps]);
 	return (
 		<div className='steps-custom'>
 			<Steps current={current} labelPlacement='vertical'>

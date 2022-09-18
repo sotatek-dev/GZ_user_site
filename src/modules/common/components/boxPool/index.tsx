@@ -1,9 +1,9 @@
 import { FC } from 'react';
 
 interface IBoxPoolProps {
-	title: string;
+	title?: string;
 	children: React.ReactNode;
-	customClass: string;
+	customClass?: string;
 }
 
 const BoxPool: FC<IBoxPoolProps> = ({ title, children, customClass }) => {
