@@ -9,7 +9,7 @@
 	background-repeat: no-repeat;
 	background-image: url('../../../../public/images/footer_1.svg');
 
-	@media screen and (max-width: 480px) {
+	@media screen and (max-width: 1200px) {
 		// justify-content: flex-start;
 		align-items: flex-start;
 		height: 27.375rem;
@@ -31,7 +31,7 @@
 			text-align: center;
 			line-height: 2.8125rem;
 
-			@media screen and (max-width: 480px) {
+			@media screen and (max-width: 1200px) {
 				font-size: 2rem;
 				width: 19.4375rem;
 				font-weight: 600;
@@ -39,7 +39,7 @@
 			}
 		}
 
-		@media screen and (max-width: 480px) {
+		@media screen and (max-width: 1200px) {
 			padding: 0;
 		}
 	}
