@@ -10,6 +10,7 @@ import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import ModalSignin from 'common/components/modals/SignIn';
 import Loading from 'common/components/loading';
 import { isEmpty } from 'lodash';
+import { setStatusConnect } from 'stores/wallet';
 
 interface WalletType {
 	connector: any;
@@ -19,12 +20,14 @@ interface WalletType {
 }
 
 export default function ConnectWallet() {
-	const { active, deactivate } = useActiveWeb3React();
-	const { connectWallet } = useConnectWallet();
+	const { active, deactivate, account, library } = useActiveWeb3React();
+	const { connectWallet, handleLogin } = useConnectWallet();
 	const { modalConnectWallet, stepModalConnectWallet } = useSelector(
-		(state: any) => state?.modal
+		(state) => state?.modal
 	);
-	const [selectedNetwork, setSelectedNetwork] = useState<any>(NETWORK_LIST[0]);
+	const { isLogin } = useSelector((state) => state.user);
+	const { isConnect } = useSelector((state) => state.wallet);
+	const [selectedNetwork, setSelectedNetwork] = useState(NETWORK_LIST[0]);
 	const [connector, setConnector] = useState<any>();
 
 	useEffect(() => {
@@ -32,6 +35,13 @@ export default function ConnectWallet() {
 			setConnector({});
 		};
 	}, []);
+
+	useEffect(() => {
+		if (!isLogin && account && library && isConnect) {
+			setStatusConnect(false);
+			handleLogin(account);
+		}
+	}, [isLogin, library, account, handleLogin, isConnect]);
 
 	const handleConnect = (walletName: any) => {
 		if ((!selectedNetwork && isEmpty(connector)) || active) return;
@@ -68,7 +78,7 @@ export default function ConnectWallet() {
 		return (
 			<div
 				onClick={() => {
-					handleConnect(walletName);
+					handleConnect(wallet);
 					setConnector(wallet);
 				}}
 				className={`p-4 bg-ebony-20 rounded-lg w-fit min-w-[170px] flex text-blue-zodiac font-medium text-sm cursor-pointer ${
@@ -82,7 +92,6 @@ export default function ConnectWallet() {
 			</div>
 		);
 	};
-	console.log('stepModalConnectWallet', stepModalConnectWallet);
 
 	const renderStepModal = () => {
 		switch (stepModalConnectWallet) {

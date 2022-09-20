@@ -2,9 +2,9 @@ import Button from 'common/components/button';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Divider, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import { selectList } from 'pages/token-presale-rounds';
 import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
 import Countdown from 'common/components/countdown';
+import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 
 const STEP_CREATE_ASSET = ['Whitelist', 'Presale 1', 'Presale 2', 'Public'];
 

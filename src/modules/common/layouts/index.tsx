@@ -34,7 +34,7 @@ const LIST_SIDER = [
 		title: 'Mint Key',
 	},
 	{
-		router: ROUTES.MERGE_DNFT,
+		router: ROUTES.MERGE_NFT,
 		icon: './icons/merge-dNFT.svg',
 		title: 'Merge dNFT',
 	},

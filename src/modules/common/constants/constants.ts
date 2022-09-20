@@ -3,7 +3,7 @@ export const ROUTES = {
 	MY_PROFILE: 'my-profile',
 	MINT_DNFT: 'mint-dnft',
 	MINT_KEY: 'mint-key',
-	MERGE_DNFT: 'merge-dnft',
+	MERGE_NFT: 'merge-nft',
 	RESCUE_NFT: 'rescue-nft',
 };
 
@@ -20,3 +20,6 @@ export enum STATUS_STEP {
 	PROCESS = 'process',
 	FINISH = 'finish',
 }
+
+export const LIMIT_10 = 10 as number;
+export const CURRENCY = 'BUSD';

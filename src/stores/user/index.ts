@@ -10,12 +10,12 @@ interface ITypeUserInfo {
 	walletAddress: string;
 }
 
-interface initialStateProps {
+interface IUserStates {
 	userInfo: ITypeUserInfo;
 	isLogin: boolean;
 }
 
-const initialState: initialStateProps = {
+export const initialState: IUserStates = {
 	userInfo: {
 		walletAddress: '',
 	},

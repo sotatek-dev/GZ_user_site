@@ -7,16 +7,12 @@ export interface IPramsLogin {
 	email: string;
 }
 
-export const login = async (
-	params: IPramsLogin,
-	successCallback: (data: object) => void,
-	failCallback: (error: object) => void
-) => {
+export const login = async (params: IPramsLogin) => {
 	const queryString = `user/auth`;
 	return await axiosInstance()
 		.post(queryString, { ...params })
-		.then((data) => successCallback(data))
-		.catch((error) => failCallback(error));
+		.then((data) => [data.data, null])
+		.catch((error) => [null, error]);
 };
 
 export const checkEmailUser = async (address: string) => {
