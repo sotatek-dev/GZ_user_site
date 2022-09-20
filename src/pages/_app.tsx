@@ -24,6 +24,25 @@ function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 		<>
 			<Head>
 				<title>Galactix Zone</title>
+				<meta
+					key='og:title'
+					property='og:title'
+					content='Galactix Zone: NFT Marketplace'
+				/>
+				<meta
+					key='og:image'
+					property='og:image'
+					content='https://i.ibb.co/QmvkjKB/thumbnail-head.png'
+				/>
+
+				<meta key='og:url' property='og:url' content='URL OF YOUR WEBSITE' />
+				<meta key='og:image:width' property='og:image:width' content='1200' />
+				<meta key='og:image:height' property='og:image:height' content='627' />
+				<meta
+					key='og:description'
+					property='og:description'
+					content='Turn your products, arts or services into publicly tradable items'
+				/>
 			</Head>
 			<Web3ReactProvider getLibrary={getLibrary}>
 				<Provider store={store}>
