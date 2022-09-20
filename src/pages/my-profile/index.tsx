@@ -7,7 +7,7 @@ import Dropdown from 'common/components/dropdown';
 import CustomRadio from 'common/components/radio';
 import MyTable from 'common/components/table';
 import Link from 'next/link';
-import { selectList } from 'pages/token-presale-rounds';
+import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 
 const columns: ColumnType<any>[] = [
 	{

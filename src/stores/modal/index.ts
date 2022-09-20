@@ -7,12 +7,12 @@ export const setModalStore = (store: Store) => {
 	customStore = store;
 };
 
-interface initialStateProps {
+export interface IModalStates {
 	modalConnectWallet: boolean;
 	stepModalConnectWallet: string;
 }
 
-const initialState: initialStateProps = {
+const initialState: IModalStates = {
 	modalConnectWallet: false,
 	stepModalConnectWallet: STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET,
 };

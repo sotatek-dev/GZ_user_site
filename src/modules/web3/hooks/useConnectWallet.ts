@@ -1,10 +1,14 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector';
 import { toast } from 'react-toastify';
-import { ConnectorKey, connectors } from 'web3/connectors';
+import { ConnectorKey } from 'web3/connectors';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 import { checkNetwork } from 'web3/helpers/functions';
-import { setAddressWallet, setNetworkValid } from 'stores/wallet';
+import {
+	setAddressWallet,
+	setNetworkValid,
+	setStatusConnect,
+} from 'stores/wallet';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import {
 	setStatusModalConnectWallet,
@@ -12,8 +16,10 @@ import {
 } from 'stores/modal';
 import { BSC_NETWORK } from 'web3/constants/networks';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
-import { checkEmailUser } from 'apis/login';
-import { setLogin } from 'stores/user';
+import { checkEmailUser, IPramsLogin, login } from 'apis/login';
+import { setLogin, setUserInfo } from 'stores/user';
+import { SIGN_MESSAGE } from 'web3/constants/envs';
+import { get } from 'lodash';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -22,13 +28,10 @@ import { setLogin } from 'stores/user';
 export const useConnectWallet = () => {
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
-	const { activate, deactivate } = useWeb3React();
+	const { activate, deactivate, library } = useWeb3React();
 
-	async function connectWallet(
-		walletName: ConnectorKey,
-		networkConnected?: any
-	) {
-		const connector = connectors[walletName] as any;
+	async function connectWallet(walletSelected: any, networkConnected?: any) {
+		const { walletName, connector } = walletSelected;
 		try {
 			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 			activateInjectedProvider(walletName);
@@ -46,28 +49,28 @@ export const useConnectWallet = () => {
 					const [dataCheckUser] = await checkEmailUser(addressWallet);
 
 					if (isNetworkValid) {
-						console.log('isNetworkValid', isNetworkValid);
-
 						setNetworkValid(isNetworkValid);
 						if (dataCheckUser.is_user_exist) {
 							// check user đăng nhập lần đầu
 							setStepModalConnectWallet(
 								STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
 							);
-							setStatusModalConnectWallet(false);
-							setLogin(true);
-							setAddressWallet(addressWallet);
+							setStatusConnect(true);
 						} else {
 							setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
 						}
+					} else {
+						await changeNetwork(walletName, networkConnected);
 					}
 				})
 				.catch(async (error: any) => {
+					// console.log('error', error);
 					if (error instanceof UnsupportedChainIdError) {
 						await changeNetwork(walletName, networkConnected);
 					}
 				});
 		} catch (error) {
+			// console.log('error==',error );
 			if (
 				error instanceof UserRejectedRequestErrorInjected ||
 				(error instanceof Error &&
@@ -92,14 +95,14 @@ export const useConnectWallet = () => {
 		}
 	}
 
-	function disconnectWallet() {
+	async function disconnectWallet() {
+		await deactivate();
 		removeStorageWallet();
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
 		setLogin(false);
 		setAddressWallet('');
-		deactivate();
 	}
 
 	const changeNetwork = async (
@@ -141,7 +144,45 @@ export const useConnectWallet = () => {
 		}
 	};
 
-	return { connectWallet, disconnectWallet };
+	async function handleLogin(address: string, email?: string) {
+		try {
+			const signer = (library as any).getSigner();
+			const signature = await signer.signMessage(`${SIGN_MESSAGE}`, address);
+			if (signature) {
+				const params = {
+					wallet_address: address,
+					signature,
+					sign_message: SIGN_MESSAGE,
+				} as IPramsLogin;
+				if (email) params.email = email;
+				const [response] = await login(params);
+				if (response) {
+					const {
+						auth: { expire_in, token },
+						wallet_address,
+					} = get(response, 'data', {});
+					sessionStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
+					sessionStorage.setItem(STORAGE_KEYS.EXPIRE_IN, expire_in);
+					sessionStorage.setItem(STORAGE_KEYS.ACCOUNT, wallet_address);
+					const userInfo = {
+						walletAddress: wallet_address,
+					};
+					setUserInfo(userInfo);
+					setLogin(true);
+					setAddressWallet(wallet_address);
+					setStatusModalConnectWallet(false);
+					setStepModalConnectWallet(
+						STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+					);
+				}
+			}
+		} catch (error) {
+			// console.log('error', error);
+			removeStorageWallet();
+		}
+	}
+
+	return { connectWallet, disconnectWallet, handleLogin };
 };
 
 function setStorageWallet(connector: ConnectorKey) {

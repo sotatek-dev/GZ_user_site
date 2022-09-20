@@ -2,9 +2,9 @@ import Button from 'common/components/button';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import { selectList } from 'pages/token-presale-rounds';
 import Countdown from 'common/components/countdown';
 import { useState } from 'react';
+import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 
 const RescueDNFT = () => {
 	const [isRescue] = useState<boolean>(false);

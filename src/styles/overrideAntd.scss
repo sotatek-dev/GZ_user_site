@@ -1,4 +1,19 @@
 .modal-custom {
+	.ant-modal-header {
+		background-color: #1f242c;
+		color: #efeff0 !important;
+		border: none;
+		padding: 0;
+	}
+
+	.ant-modal-title {
+		color: #efeff0 !important;
+		font-weight: 600;
+		font-size: 32px;
+		line-height: 34px;
+		margin-bottom: 16px;
+	}
+
 	.ant-modal-mask {
 		background-color: #1f242c;
 	}
