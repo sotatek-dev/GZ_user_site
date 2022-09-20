@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../style/landing.module.scss';
+import styles from '../style/roadmap.module.scss';
 
 interface Timeline {
 	imgSrc: string;
@@ -131,10 +131,10 @@ export default function Roadmap() {
 	];
 
 	return (
-		<div className='mt-[9.8125rem] w-[100%]' id='roadmap'>
+		<div className={styles['roadmap-section']} id='roadmap'>
 			<div className='flex justify-center mb-[1.25rem]'>
 				<p
-					className={`text-[3.125rem] font-semibold mt-[4.75rem] ${styles['gradient-text']}`}
+					className={`text-[3.125rem] font-semibold  ${styles['gradient-text']}`}
 				>
 					Roadmap
 				</p>
@@ -151,13 +151,13 @@ export default function Roadmap() {
 
 function TimelineSection({ timeline }: { timeline: Timeline }) {
 	const { imgSrc, title, descriptions, position, imgStyle } = timeline;
-	const flex = position === 'left' ? 'flex-row' : 'flex-row-reverse';
+	const flex = position === 'left' ? 'flex-row ' : 'flex-row-reverse ';
 	const boxClass = `timeline-box-${position}`;
 	const imgClass = `timeline-img-${position}`;
 	const listTimelineClass = `timeline-list-${position}`;
 	const timelinePointClass = `timeline-point-${position}`;
 	return (
-		<div className={`${flex} ${styles['timeline-child-container']}`}>
+		<div className={`${flex}  ${styles['timeline-child-container']}`}>
 			<div className={`${styles['timeline-box']} ${styles[boxClass]}`}>
 				<p className={styles['timeline-title']}>{title}</p>
 				<div

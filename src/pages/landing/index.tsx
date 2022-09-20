@@ -10,13 +10,8 @@ import styles from '../../modules/landing/style/landing.module.scss';
 export default function LandingPage() {
 	return (
 		<div className={`${styles['landing']}`}>
-			<div
-				className='bg-repeat bg-center bg-contain flex items-center flex-col'
-				style={{
-					backgroundImage: 'url(/images/background.svg)',
-				}}
-			>
-				<div className='max-w-[90rem]'>
+			<div className={styles['landing_background']}>
+				<div className='desktop:max-w-[90rem] mobile:max-w-[100vw]'>
 					<Header />
 					<About />
 					<Statistic />

@@ -1,20 +1,20 @@
-import styles from '../style/landing.module.scss';
+import styles from '../style/about.module.scss';
 export default function About() {
 	return (
 		<div id='about'>
-			<div className='flex flex-row justify-center items-center  mt-[6.875rem]'>
-				<div className='w-[50%] flex justify-end'>
-					<div className='flex-col w-[31rem] mr-[5rem] flex items-end'>
+			<div className={styles['about-section']}>
+				<div className={styles['text-container-section']}>
+					<div className={styles['text-section']}>
 						<p
-							className={`text-[3.125rem] inline-block text-right font-semibold mt-[4.75rem] leading-[4.6875rem] ${styles['gradient-text']}`}
+							className={`${styles['text-section_title']} ${styles['gradient-text']}`}
 						>
 							About
 						</p>
-						<p className='text-[#D47AF5] text-[1.375rem] font-medium text-right mt-[1.25rem] leading-[1.75rem]'>
+						<p className={styles['text-section_subtitle']}>
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
 							vulputate libero et velit interdum, ac aliquet odio mattis.
 						</p>
-						<p className='text-[#FFFFFF] opacity-80 text-[0.875rem] text-right mt-[1.25rem] leading-[1.375rem]'>
+						<p className={styles['text-section_p']}>
 							per inceptos himenaeos. Curabitur tempus urna at turpis
 							condimentum lobortis. Ut commodo efficitur neque. Ut diam quam,
 							semper iaculis condimentum ac, vestibulum eu nisl.Lorem ipsum
@@ -34,7 +34,7 @@ export default function About() {
 						</p>
 					</div>
 				</div>
-				<div className='w-[50%]'>
+				<div className={styles['img-section']}>
 					<img src={'/images/about-section.svg'} className='w-[46.125rem]  ' />
 				</div>
 			</div>

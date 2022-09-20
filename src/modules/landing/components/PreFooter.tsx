@@ -1,18 +1,10 @@
 import React from 'react';
-import styles from '../style/landing.module.scss';
+import styles from '../style/pre-footer.module.scss';
 export default function PreFooter() {
 	return (
-		<div
-			className='w-[100%] h-[28.125rem] flex justify-center items-center '
-			style={{
-				backgroundImage: 'url(/images/footer_1.svg)',
-				backgroundPosition: 'center',
-				backgroundSize: 'cover',
-				backgroundRepeat: 'no-repeat',
-			}}
-		>
-			<div className='px-[19.75rem]  flex flex-col items-center'>
-				<p className='font-medium text-[1.875rem] text-[#D47AF5] w-[46.25rem] text-center leading-[2.8125rem]'>
+		<div className={styles['pre-footer-section']}>
+			<div className={styles['pre-footer-section_box']}>
+				<p className={styles['pre-footer-section_box_content']}>
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
 					vulputate libero et velit interdum, ac aliquet odio mattis.
 				</p>
