@@ -59,6 +59,7 @@ export default function ConnectWallet() {
 
 		return (
 			<div
+				key={networkName}
 				onClick={() => setSelectedNetwork(network)}
 				className={`p-4 bg-[#ffffff0d] rounded-lg w-fit max-w-[180px] max-h-[110px] relative  text-blue-zodiac font-medium text-sm cursor-pointer ${
 					isActive ? 'chosse-active' : 'chosse-disable'
@@ -85,6 +86,7 @@ export default function ConnectWallet() {
 		const isActive = get(connector, 'walletName', '') === walletName;
 		return (
 			<div
+				key={walletName}
 				onClick={() => {
 					handleConnect(wallet);
 					setConnector(wallet);

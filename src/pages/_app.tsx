@@ -1,6 +1,7 @@
 import 'antd/dist/antd.css';
 import 'styles/globals.scss';
 import 'styles/index.scss';
+
 import { Web3ReactProvider } from '@web3-react/core';
 import { providers } from 'ethers';
 import type { AppProps } from 'next/app';

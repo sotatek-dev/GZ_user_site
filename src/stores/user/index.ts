@@ -6,20 +6,23 @@ export const setUserStore = (store: Store) => {
 	customStore = store;
 };
 
-interface ITypeUserInfo {
+export interface ITypeUserInfo {
 	walletAddress: string;
+	email: string;
+	firstName?: string;
+	lastName?: string;
+	keyHolding: boolean;
+	keyHoldingCount: number;
+	nftHolding: number;
 }
 
-interface IUserStates {
-	userInfo: ITypeUserInfo;
+interface initialStateProps {
+	userInfo?: ITypeUserInfo;
 	isLogin: boolean;
 	accessToken: string;
 }
 
-export const initialState: IUserStates = {
-	userInfo: {
-		walletAddress: '',
-	},
+const initialState: initialStateProps = {
 	isLogin: false,
 	accessToken: '',
 };
@@ -28,7 +31,7 @@ const userStore = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		setUserInfo: (state, action: PayloadAction<ITypeUserInfo>) => {
+		setUserInfo: (state, action: PayloadAction<ITypeUserInfo | undefined>) => {
 			return {
 				...state,
 				userInfo: action.payload,
@@ -49,7 +52,7 @@ const userStore = createSlice({
 	},
 });
 
-export const setUserInfo = (userInfo: ITypeUserInfo) => {
+export const setUserInfo = (userInfo?: ITypeUserInfo) => {
 	customStore && customStore.dispatch(userStore.actions.setUserInfo(userInfo));
 };
 

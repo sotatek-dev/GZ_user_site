@@ -1,4 +1,5 @@
-import { Form, Input, Pagination } from 'antd';
+import { Form, Input, message, Pagination } from 'antd';
+import { getMyProfile } from 'apis/my-profile';
 import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
 // import Dropdown from 'common/components/dropdown';
@@ -7,11 +8,15 @@ import CustomRadio from 'common/components/radio';
 import MyTable from 'common/components/table';
 import { ROUTES } from 'common/constants/constants';
 import Image from 'next/image';
+import { get } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { selectList } from 'pages/token-presale-rounds/detail/[index]';
-import { useEffect, useState } from 'react';
 import ReactGa from 'react-ga';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ITypeUserInfo, setUserInfo } from 'stores/user';
+
 const columns = [
 	{
 		title: 'Species',
@@ -72,7 +77,6 @@ const MyProfile = () => {
 	const price = 1000;
 	const [tokenCode, setTokenCode] = useState('BUSD');
 	const canBuyKey = true;
-	const onFinish = () => {};
 	const router = useRouter();
 	useEffect(() => {
 		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
@@ -80,6 +84,47 @@ const MyProfile = () => {
 		ReactGa.pageview(router?.pathname || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	const { isLogin } = useSelector((state) => state.user);
+
+	const onFinish = () => {};
+
+	const handleGetMyProfile = async () => {
+		await getMyProfile(
+			(res) => {
+				const {
+					wallet_address,
+					email,
+					firstname,
+
+					key_holding,
+					lastname,
+					nft_holding,
+					key_holding_count,
+				} = get(res, 'data.data.profile', {});
+
+				const userInfo: ITypeUserInfo = {
+					walletAddress: wallet_address,
+					email,
+					firstName: firstname,
+					lastName: lastname,
+					keyHolding: key_holding,
+					nftHolding: nft_holding,
+					keyHoldingCount: key_holding_count,
+				};
+				setUserInfo(userInfo);
+			},
+			(err) => {
+				message.error(JSON.stringify(err));
+			}
+		);
+	};
+
+	useEffect(() => {
+		if (isLogin) {
+			handleGetMyProfile();
+		}
+	}, [isLogin]);
+
 	return (
 		<>
 			<HelmetCommon
