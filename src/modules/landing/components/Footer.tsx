@@ -15,7 +15,7 @@ export default function Footer() {
 						<div className={styles['footer-1_menu_text']}>
 							<div className={styles['footer-1_menu_text_list']}>
 								<a
-									href='#'
+									href='#about'
 									className='text-white font-semibold opacity-70 font-[14px]'
 								>
 									About
@@ -48,7 +48,7 @@ export default function Footer() {
 									Contact
 								</a>
 								<a
-									href='#'
+									href='#roadmap'
 									className='text-white font-semibold opacity-70 font-[14px]'
 								>
 									Roadmap
