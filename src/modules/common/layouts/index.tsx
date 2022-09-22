@@ -29,11 +29,6 @@ const LIST_SIDER = [
 		title: 'Mint dNFT',
 	},
 	{
-		router: ROUTES.MINT_KEY,
-		icon: './images/logo.svg',
-		title: 'Mint Key',
-	},
-	{
 		router: ROUTES.MERGE_NFT,
 		icon: './icons/merge-dNFT.svg',
 		title: 'Merge dNFT',

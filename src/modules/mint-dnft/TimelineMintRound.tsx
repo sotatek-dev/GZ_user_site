@@ -1,36 +1,46 @@
-import { Steps } from 'antd';
-import { FC, useEffect, useState } from 'react';
-import { CheckCircleOutlined } from '@ant-design/icons';
-
-const { Step } = Steps;
+import { FC } from 'react';
+import { ITimelineMintNftState } from 'pages/mint-dnft';
+import { LIST_STATUS_TIME_LINE } from 'common/constants/constants';
+import {
+	CheckCircleFilled,
+	PlayCircleFilled,
+	CheckCircleOutlined,
+} from '@ant-design/icons';
 
 interface ITimelineMintRoundProps {
-	steps: Array<string>;
-	activeStep: string;
+	timelineMintNft: Array<ITimelineMintNftState>;
 }
 
 const TimelineMintRound: FC<ITimelineMintRoundProps> = ({
-	steps,
-	activeStep,
+	timelineMintNft,
 }) => {
-	const [current, setCurrent] = useState<number>(0);
-
-	useEffect(() => {
-		const current = steps.findIndex((step: string) => {
-			return step === activeStep;
-		});
-		setCurrent(current);
-	}, [activeStep, steps]);
+	const renderIcon = (status: string) => {
+		if (status === LIST_STATUS_TIME_LINE.DONE) {
+			return (
+				<CheckCircleFilled style={{ fontSize: '20px', color: '#35B770' }} />
+			);
+		} else if (status === LIST_STATUS_TIME_LINE.RUNNING) {
+			return (
+				<PlayCircleFilled style={{ fontSize: '20px', color: '#35B770' }} />
+			);
+		} else {
+			return <CheckCircleOutlined style={{ fontSize: '20px' }} />;
+		}
+	};
 
 	return (
-		<div className='timeline-mint-round'>
-			<Steps current={current}>
-				{steps.map((step: string, index: number) => {
+		<div className='flex justify-between'>
+			{timelineMintNft.map(
+				(phaseInfo: ITimelineMintNftState, index: number) => {
+					const { status, label } = phaseInfo;
 					return (
-						<Step key={index} title={step} icon={<CheckCircleOutlined />} />
+						<div className='w-[20%] flex items-center' key={index}>
+							<div className='mr-2'>{renderIcon(status)}</div>
+							<div className='text-sm	'>{label}</div>
+						</div>
 					);
-				})}
-			</Steps>
+				}
+			)}
 		</div>
 	);
 };

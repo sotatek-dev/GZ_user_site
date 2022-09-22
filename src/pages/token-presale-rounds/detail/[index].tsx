@@ -5,11 +5,15 @@ import Button from 'common/components/button';
 import Countdown from 'common/components/countdown';
 import CustomRadio from 'common/components/radio';
 import Stepper from 'common/components/steps';
+import { TIME_LINE_SALE_ROUND, UPCOMING } from 'common/constants/constants';
+import {
+	convertTimeLine,
+	convertTimeStampToDate,
+} from 'common/utils/functions';
 import { get } from 'lodash';
+import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-
-const STEP_CREATE_ASSET = ['Upcoming', 'Buy', 'Claimable', 'End'];
 
 export const selectList = [
 	{
@@ -39,14 +43,27 @@ const TokenSaleRoundDetail = () => {
 	} = router;
 
 	const [detailSaleRound, setDetailSaleRound] = useState({});
-	console.log('detailSaleRound', detailSaleRound);
+	// console.log('detailSaleRound', detailSaleRound);
+	const [statusTimeLine, setStatusTimeLine] = useState<string>(UPCOMING);
+	const [timeCountDow, setTimeCountDow] = useState<number>(0);
+	// console.log('timeCountDow', timeCountDow);
+	const { start_time, end_time } = get(detailSaleRound, 'buy_time', {});
+	// const { buy_time: {start_time, end_time} } = detailSaleRound;
 
 	useEffect(() => {
 		const getDetailSaleRound = async () => {
-			const [data, error] = await getDetailTokenSaleRound(index as string);
+			const [data] = await getDetailTokenSaleRound(index as string);
 			const detailSaleRound = get(data, 'data', {});
+			const { start_time, end_time } = get(detailSaleRound, 'buy_time', {});
+			const timestampNow = moment().unix();
+			const { status, timeCountDow } = convertTimeLine(
+				start_time,
+				end_time,
+				timestampNow
+			);
+			setStatusTimeLine(status);
+			setTimeCountDow(timeCountDow);
 			setDetailSaleRound(detailSaleRound);
-			console.log('error', error);
 		};
 
 		if (index) {
@@ -59,9 +76,12 @@ const TokenSaleRoundDetail = () => {
 			<div className='flex gap-x-8 justify-between'>
 				<BoxPool title='Pool Timeline' customClass='w-[50%]'>
 					<div className='py-6'>
-						<Stepper steps={STEP_CREATE_ASSET} activeStep='Buy' />
+						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
 					</div>
-					<Countdown title='You can buy tokens in' />
+					<Countdown
+						millisecondsRemain={timeCountDow}
+						title='You can buy tokens in'
+					/>
 				</BoxPool>
 				<BoxPool title='Buy Info' customClass='w-[50%]'>
 					<div className='pt-6 flex'>
@@ -95,7 +115,13 @@ const TokenSaleRoundDetail = () => {
 					<div className='w-[50%]'>
 						<div className='flex gap-x-2 mb-4'>
 							<div className='text-dim-gray font-normal'>Token Buy Time:</div>
-							<div className='font-medium'>TBA</div>
+							<div className='font-medium'>
+								{start_time && end_time
+									? `${convertTimeStampToDate(
+											start_time
+									  )} - ${convertTimeStampToDate(end_time)}`
+									: 'TBA'}
+							</div>
 						</div>
 						<div className='flex gap-x-2'>
 							<div className='text-dim-gray font-normal'>Token Claim Time:</div>
