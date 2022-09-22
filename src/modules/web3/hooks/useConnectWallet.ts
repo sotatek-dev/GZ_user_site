@@ -103,6 +103,9 @@ export const useConnectWallet = () => {
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
 		setLogin(false);
 		setAddressWallet('');
+		setStepModalConnectWallet(
+			STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+		);
 	}
 
 	const changeNetwork = async (

@@ -1,3 +1,12 @@
+import {
+	BUY,
+	CLAIMABLE,
+	LIST_PHASE_MINT_NFT,
+	UPCOMING,
+} from 'common/constants/constants';
+import moment from 'moment';
+import { IListPhaseMintNft } from 'pages/mint-dnft';
+
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
 };
@@ -9,4 +18,64 @@ export const secondsToTime = (time: number) => {
 	const seconds = Math.floor(time % 60);
 
 	return { days, hours, minutes, seconds };
+};
+
+export const convertTimeLine = (
+	startTime: number,
+	endTime: number,
+	timestampNow: number
+) => {
+	let status = UPCOMING;
+	let timeCountDow = 0;
+	if (startTime >= timestampNow) {
+		status = UPCOMING;
+		timeCountDow = startTime - timestampNow;
+	}
+	if (timestampNow > startTime && timestampNow <= endTime) {
+		status = BUY;
+		timeCountDow = endTime - timestampNow;
+	} else if (timestampNow > endTime) {
+		status = CLAIMABLE;
+		timeCountDow = 0;
+	} else if (timestampNow) {
+		// end
+	}
+	return { status, timeCountDow };
+};
+
+export const convertTimeStampToDate = (date: number, formatDate?: string) => {
+	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
+};
+
+export const convertTimelineMintNft = (
+	listPhaseMintNft: Array<IListPhaseMintNft>
+) => {
+	const timeLineMintNft = listPhaseMintNft.map((phase: IListPhaseMintNft) => {
+		const { type, status, start_mint_time, end_mint_time } = phase;
+		const label = LIST_PHASE_MINT_NFT.find(
+			(item: { label: string; value: string }) => item.value === type
+		)?.label;
+
+		return {
+			label,
+			status,
+			startMintTime: start_mint_time,
+			endMintTime: end_mint_time,
+		};
+	});
+
+	const phaseRunning = listPhaseMintNft.find(
+		(phase: IListPhaseMintNft) => phase.status === 'RUNNING'
+	);
+	const labelPhaseRunning = LIST_PHASE_MINT_NFT.find(
+		(phase: { label: string; value: string }) =>
+			phase.value === phaseRunning?.type
+	)?.label;
+	return {
+		timeLineMintNft,
+		phaseRunning: {
+			endTime: phaseRunning?.end_mint_time,
+			phase: labelPhaseRunning,
+		},
+	};
 };

@@ -1,39 +1,16 @@
 import { useWeb3React } from '@web3-react/core';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { setLogin } from 'stores/user';
 import { setAddressWallet } from 'stores/wallet';
-// import { useQueryClient } from 'react-query';
-// import { Web3Provider } from '@ethersproject/providers';
-// import { useLocation } from 'react-router';
-// import {
-// 	hasStorageJwtToken,
-// 	isJwtTokenExpired,
-// 	removeStorageJwtToken,
-// } from 'common/helpers/jwt';
-// import { ConnectorKey } from 'web3/connectors';
-import {
-	useConnectWallet,
-	useEagerConnect,
-	// useConnectWallet,
-} from 'web3/hooks';
-// import { useLogin } from 'common/services/mutations';
-
-// export const authContext = React.createContext<
-// 	| {
-// 			isAuthChecking: boolean;
-// 			isAuth: boolean;
-// 			signIn: (connector: ConnectorKey) => Promise<void>;
-// 			signOut: VoidFunction;
-// 	  }
-// 	| undefined
-// >(undefined);
+import { useConnectWallet, useEagerConnect } from 'web3/hooks';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const triedEagerConnect = useEagerConnect();
 	const { account, chainId, library } = useWeb3React();
 	const { disconnectWallet } = useConnectWallet();
-	// const { disconnectWallet } = useConnectWallet();
+	const { isLogin } = useSelector((state) => state.user);
 
 	useEffect(() => {
 		const accountConnected = StorageUtils.getSectionStorageItem(
@@ -47,12 +24,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			account &&
 			accessToken &&
 			accountConnected &&
-			account === accountConnected
+			account === accountConnected &&
+			!isLogin
 		) {
 			setLogin(true);
 			setAddressWallet(account);
 		}
-	}, [account, chainId]);
+	}, [account, chainId, isLogin]);
 
 	useEffect(() => {
 		const { ethereum } = window as any;
