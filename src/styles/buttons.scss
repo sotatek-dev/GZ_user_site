@@ -30,10 +30,14 @@
 
 .chosse-active {
 	border: 1px solid #36c1ff;
+	color: #ffffff;
+	mix-blend-mode: normal;
 }
 
 .chosse-disable {
 	border: none;
+	color: #ffffff0d;
+	mix-blend-mode: luminosity;
 }
 
 .common-normal-button {

@@ -1,14 +1,12 @@
 import { Layout, Menu } from 'antd';
-import React, { useEffect } from 'react';
 import ImageBase from 'common/components/imageBase';
 // import ImageBase from 'common/components/imageBase';
+import { IconDynamic } from 'common/assets/iconography/iconBundle';
+import { ROUTES } from 'common/constants/constants';
+import { get } from 'lodash';
+import Link from 'next/link';
 import Footer from './Footer';
 import LayoutHeader from './Header';
-import { ROUTES } from 'common/constants/constants';
-import { IconDynamic } from 'common/assets/iconography/iconBundle';
-import Link from 'next/link';
-import { get } from 'lodash';
-import { useRouter } from 'next/router';
 
 const { Sider, Content } = Layout;
 
@@ -41,13 +39,6 @@ const LIST_SIDER = [
 ];
 
 const DefaultLayout = ({ children, appProps }: any) => {
-	const router = useRouter();
-	useEffect(() => {
-		if (['/'].includes(appProps.router.pathname)) {
-			router.replace('/landing');
-		}
-	}, []);
-
 	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
 		return <>{children}</>;
 	}
