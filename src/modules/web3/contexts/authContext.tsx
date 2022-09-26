@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		const accessToken = StorageUtils.getSectionStorageItem(
 			STORAGE_KEYS.ACCESS_TOKEN
 		);
-
+		if (!accountConnected && !accessToken) return;
 		if (
 			account &&
 			accessToken &&
@@ -33,16 +33,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [account, chainId, isLogin]);
 
 	useEffect(() => {
-		const { ethereum } = window as any;
-		ethereum?._metamask.isUnlocked().then((isUnlocked: any) => {
+		const { ethereum } = window;
+		ethereum?._metamask.isUnlocked().then((isUnlocked: boolean) => {
 			if (!isUnlocked) {
 				disconnectWallet();
+				return;
 			}
 		});
 
-		if (!library && !library?.provider && !account) {
-			return;
-		}
+		if (!library && !library?.provider && !account) return;
 
 		const onChangeAccount = () => {
 			disconnectWallet();
@@ -61,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			library?.provider?.removeListener('accountsChanged', onChangeAccount); // need func reference to remove correctly
 			library?.provider?.removeListener('chainChanged', onChangeNetwork); // need func reference to remove correctly
 		};
-	}, [account, library, disconnectWallet]);
+	}, [account, library]);
 
 	triedEagerConnect;
 
