@@ -13,13 +13,14 @@ import {
 } from 'common/utils/functions';
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
+import { useBalance } from 'web3/queries';
 
 const selectList = ['BUSD', 'BNB'];
 
 const PoolRemaining = [
 	{
 		label: 'Total NFT',
-		value: 6000,
+		value: 600,
 	},
 	{
 		label: 'NFT Minted',
@@ -61,6 +62,7 @@ const MintDNFT: React.FC = () => {
 	const [upcomingPhase, setUpcomingPhase] = useState<any>();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [token, setToken] = useState(selectList[0]);
+	const balance = useBalance('');
 
 	const { addressWallet } = useSelector((state) => state.wallet);
 
