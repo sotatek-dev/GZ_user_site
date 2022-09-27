@@ -1,4 +1,5 @@
 import { Form, Input } from 'antd';
+import { useActiveWeb3React } from 'web3/hooks';
 import { useConnectWallet } from 'web3/hooks/useConnectWallet';
 import Button from '../button';
 
@@ -8,10 +9,12 @@ interface IFormRule {
 
 export default function ModalSignin() {
 	const { handleLogin } = useConnectWallet();
+	const { account } = useActiveWeb3React();
 
 	const onFinish = (values: IFormRule) => {
 		const { email } = values;
-		handleLogin(email);
+		if (!account) return;
+		handleLogin(account, email);
 	};
 
 	return (

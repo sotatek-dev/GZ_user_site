@@ -20,6 +20,7 @@ const ImageBase = (props: Props) => {
 	 */
 	useEffect(() => {
 		getImageURL();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [url]);
 
 	const onFinish = () => {

@@ -58,9 +58,9 @@ const StorageUtils = {
 	},
 
 	// cookie
-	getCookieStorage: (key: string): any => Cookies.get(key),
+	getCookieStorage: (key: string) => Cookies.get(key),
 
-	setOneCookieStorage: (key: string, data: string | number | any): any => {
+	setOneCookieStorage: (key: string, data: string | number | any) => {
 		const domain = process.env.REACT_APP_COOKIE_DOMAIN || '';
 		Cookies.set(key, typeof data === 'object' ? JSON.stringify(data) : data, {
 			domain,

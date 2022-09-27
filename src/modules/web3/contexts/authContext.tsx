@@ -3,7 +3,8 @@ import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { setLogin } from 'stores/user';
-import { setAddressWallet } from 'stores/wallet';
+import { setAddressWallet, setNetwork } from 'stores/wallet';
+import { ETH_CHAIN_ID_HEX } from 'web3/constants/envs';
 import { useConnectWallet, useEagerConnect } from 'web3/hooks';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -19,7 +20,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		const accessToken = StorageUtils.getSectionStorageItem(
 			STORAGE_KEYS.ACCESS_TOKEN
 		);
-
+		const networkConnected = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
+		if (!accountConnected && !accessToken) return;
 		if (
 			account &&
 			accessToken &&
@@ -29,26 +31,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		) {
 			setLogin(true);
 			setAddressWallet(account);
+			setNetwork(networkConnected);
 		}
 	}, [account, chainId, isLogin]);
 
 	useEffect(() => {
-		const { ethereum } = window as any;
-		ethereum?._metamask.isUnlocked().then((isUnlocked: any) => {
+		const { ethereum } = window;
+		ethereum?._metamask.isUnlocked().then((isUnlocked: boolean) => {
 			if (!isUnlocked) {
 				disconnectWallet();
+				return;
 			}
 		});
 
-		if (!library && !library?.provider && !account) {
-			return;
-		}
+		if (!library && !library?.provider && !account) return;
 
 		const onChangeAccount = () => {
 			disconnectWallet();
 		};
 
-		const onChangeNetwork = () => {
+		const onChangeNetwork = (chainId: string | number) => {
+			if (chainId !== ETH_CHAIN_ID_HEX) return;
 			disconnectWallet();
 		};
 
@@ -61,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			library?.provider?.removeListener('accountsChanged', onChangeAccount); // need func reference to remove correctly
 			library?.provider?.removeListener('chainChanged', onChangeNetwork); // need func reference to remove correctly
 		};
-	}, [account, library, disconnectWallet]);
+	}, [account, library]);
 
 	triedEagerConnect;
 
