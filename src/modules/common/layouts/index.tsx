@@ -53,7 +53,7 @@ const DefaultLayout = ({ children, appProps }: any) => {
 			<Sider
 				breakpoint='lg'
 				collapsedWidth='0'
-				className='!bg-[#0E1A2B] min-h-screen !w-fit !max-w-fit !flex-auto'
+				className='!bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'
 			>
 				<div className='flex items-center justify-center pb-[1rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
 					<ImageBase
