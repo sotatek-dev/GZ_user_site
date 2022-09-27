@@ -91,6 +91,7 @@ export const convertTimelineMintNft = (
 			startTime: phaseRunning?.start_mint_time,
 			endTime: phaseRunning?.end_mint_time,
 			phase: labelPhaseRunning,
+			id: phaseRunning?.order,
 		},
 		upcomingPhase: {
 			startTime: upcomingPhase?.start_mint_time,

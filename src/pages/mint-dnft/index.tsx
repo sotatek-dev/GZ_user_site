@@ -11,24 +11,19 @@ import { convertTimelineMintNft, convertTimeStampToDate, } from 'common/utils/fu
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
+import { useContract } from 'web3/contracts/useContract';
+import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
+import BigNumber from 'bignumber.js';
 
-const selectList = ['BUSD', 'BNB'];
+enum TOKENS {
+  BUSD = 'BUSD',
+  BNB = 'BNB',
+}
+
+const selectList = [TOKENS.BUSD, TOKENS.BNB];
 const minBalanceForMint = 5000;
-
-const PoolRemaining = [
-  {
-    label: 'Total NFT',
-    value: 600,
-  },
-  {
-    label: 'NFT Minted',
-    value: 200,
-  },
-  {
-    label: 'Remaining',
-    value: 400,
-  },
-];
+const DECIMAL = 4;
+const TOKEN_DECIMAL = new BigNumber(10).pow(18);
 
 export interface ITimelineMintNftState {
   label: string | undefined;
@@ -52,25 +47,87 @@ export interface IListPhaseMintNft {
   _id: string;
 }
 
+export interface IPoolStatistic {
+  startTime: BigNumber.Value,
+  endTime: BigNumber.Value,
+  priceInBUSD: BigNumber.Value,
+  priceAfter24Hours: BigNumber.Value,
+  maxAmountUserCanBuy: BigNumber.Value,
+  maxSaleAmount: BigNumber.Value,
+  totalSold: BigNumber.Value,
+}
+
 const MintDNFT: React.FC = () => {
   const [timelineMintNft, setTimelineMintNft] = useState<Array<ITimelineMintNftState>>([]);
   const [phaseRunning, setPhaseRunning] = useState<any>();
   const [upcomingPhase, setUpcomingPhase] = useState<any>();
   const [publicPhase, setPublicPhase] = useState<any>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [token, setToken] = useState(selectList[ 0 ]);
+  const [token, setToken] = useState<TOKENS>(selectList[0]);
   const balance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
-
+  const dnftContract = useContract(DNFTABI, process.env.NEXT_PUBLIC_DNFT_ADDRESS || '');
   const { addressWallet } = useSelector((state) => state.wallet);
+  const [poolStatistic, setPoolStatistic] = useState<IPoolStatistic>({
+    startTime: 0,
+    endTime: 0,
+    priceInBUSD: 0,
+    priceAfter24Hours: 0,
+    maxAmountUserCanBuy: 0,
+    maxSaleAmount: 0,
+    totalSold: 0
+  });
+  const { priceInBUSD: priceInBUSD, priceAfter24Hours, maxSaleAmount, totalSold } = poolStatistic;
+  // BUSD / BNB
+  const [rate, setRate] = useState<BigNumber.Value>(1);
+  const price = token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
+  const priceAfter = token === TOKENS.BUSD ? priceAfter24Hours : new BigNumber(priceAfter24Hours).div(rate);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { upcomingPhaseLabel, startTime: upcomingPhaseStartTime } = upcomingPhase || {};
+  const { startTime: upcomingPhaseStartTime } = upcomingPhase || {};
   const { endPubLicPhaseTime: pubLicPhaseEndTime } = publicPhase || {};
-  const { runningPhaseLabel, endTime: runningPhaseEndTime, startTime: runningPhaseStartTime } = phaseRunning || {};
+  const {
+    runningPhaseLabel,
+    endTime: runningPhaseEndTime,
+    startTime: runningPhaseStartTime,
+    id: runningPhaseId
+  } = phaseRunning || {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isConnectWallet = !!addressWallet;
   const haveEnoughBalance = balance.gte(minBalanceForMint);
+
+  const fetchPoolStatisticData = async (id: number) => {
+    try {
+      // get statistic
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const res = await dnftContract?.salePhaseStatistics(id);
+      const { startTime, endTime, priceInBUSD, priceAfter24Hours, maxAmountUserCanBuy, maxSaleAmount, totalSold } = res;
+      setPoolStatistic({
+        startTime: startTime._hex,
+        endTime: endTime._hex,
+        priceInBUSD: new BigNumber(priceInBUSD._hex).div(TOKEN_DECIMAL),
+        priceAfter24Hours: new BigNumber(priceAfter24Hours._hex).div(TOKEN_DECIMAL),
+        maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex).div(TOKEN_DECIMAL),
+        maxSaleAmount: new BigNumber(maxSaleAmount._hex).div(TOKEN_DECIMAL),
+        totalSold: new BigNumber(totalSold._hex).div(TOKEN_DECIMAL)
+      });
+    } catch (e) {
+      // console.log(e)
+    }
+  }
+  const fetchRate = async () => {
+    try {
+      // get rate
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const res = await dnftContract?.convertBNBToBUSD(TOKEN_DECIMAL.toString(10));
+      const rate = new BigNumber(res._hex).toString(10);
+      setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
+    } catch (e) {
+      setRate(1)
+      // console.log(e);
+    }
+  }
 
   useEffect(() => {
     const handleGetListPhaseMintNft = async () => {
@@ -86,6 +143,16 @@ const MintDNFT: React.FC = () => {
 
     handleGetListPhaseMintNft();
   }, []);
+
+  useEffect(() => {
+    // if (phaseRunning && runningPhaseEndTime > new Date().getTime() && new Date().getTime() > runningPhaseStartTime && dnftContract) {
+    //   fetchPoolStatisticData(runningPhaseId);
+    // }
+    if (dnftContract) {
+      fetchPoolStatisticData(1);
+      fetchRate();
+    }
+  }, [phaseRunning, dnftContract])
 
   return (
     <div className="flex gap-x-3">
@@ -110,14 +177,23 @@ const MintDNFT: React.FC = () => {
         <div className={'flex items-center rounded-[10px] text-h8 mb-4'}>
           <div className="flex items-center mr-10">
             <div className={'text-white/[.5] mr-[20px]'}>Price:</div>
-            <div>175 BUSD</div>
-            <Tooltip
-              className="ml-2"
-              placement="bottom"
-              title="First 24h: 175 BUSD then 235 BUSD"
-            >
-              <ExclamationCircleOutlined/>
-            </Tooltip>
+            <div>{new BigNumber(price).toFixed(DECIMAL)} {token}</div>
+            {new BigNumber(priceAfter).gt(0) && (
+              <Tooltip
+                className={'ml-2'}
+                placement={'bottom'}
+                title={(
+                  <>
+                    <div>
+                      First 24h: {new BigNumber(price).toFixed(DECIMAL)} {token} then {new BigNumber(priceAfter).toFixed(DECIMAL)} {token}
+                    </div>
+                  </>
+                )}
+              >
+                <ExclamationCircleOutlined/>
+              </Tooltip>
+            )}
+
           </div>
           <CustomRadio
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -135,31 +211,35 @@ const MintDNFT: React.FC = () => {
 
         <div className={'mb-1 text-h8 font-medium mb-4'}>Pool remaining</div>
         <div className="flex justify-center items-center gap-x-6 mb-5 font-medium text-h8 h-fit">
-          {PoolRemaining.map((item: any, index: number) => {
-            const { label, value } = item;
-            return (
-              <>
-                <div
-                  key={index}
-                  className="flex justify-between items-center w-[33%]"
-                >
-                  <div className="flex items-center">
-                    <div className="min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2"/>
-                    {label}
-                  </div>
-                  <div>{value}</div>
-                </div>
-
-                {index + 1 < PoolRemaining.length && (
-                  <div
-                    className={
-                      'border border-white/[.07] h-full min-h-[1.25em]'
-                    }
-                  />
-                )}
-              </>
-            );
-          })}
+          <div
+            className="flex justify-between items-center w-[33%]"
+          >
+            <div className="flex items-center">
+              <div className="min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2"/>
+              Total NFT
+            </div>
+            <div>{new BigNumber(maxSaleAmount).toFixed(DECIMAL)}</div>
+          </div>
+          <div className={'border border-white/[.07] h-full min-h-[1.25em]'}/>
+          <div
+            className="flex justify-between items-center w-[33%]"
+          >
+            <div className="flex items-center">
+              <div className="min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2"/>
+              Remaining
+            </div>
+            <div>{new BigNumber(maxSaleAmount).minus(totalSold).toFixed(DECIMAL)}</div>
+          </div>
+          <div className={'border border-white/[.07] h-full min-h-[1.25em]'}/>
+          <div
+            className="flex justify-between items-center w-[33%]"
+          >
+            <div className="flex items-center">
+              <div className="min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2"/>
+              NFT Minted
+            </div>
+            <div>{new BigNumber(totalSold).toFixed(DECIMAL)}</div>
+          </div>
         </div>
 
         {/* divider*/}
@@ -240,10 +320,9 @@ const MintDNFT: React.FC = () => {
           }
 
           <div className={'flex flex-col items-end rounded-[10px] text-h8'}>
-            <Button
-              label={`You are ${isConnectWallet && haveEnoughBalance || 'not'} eligible to mint this dNFT `}
-              classCustom={'bg-blue-to-pink-102deg !text-h8'}
-            />
+            <div className={'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'}>
+              You are {isConnectWallet && haveEnoughBalance || 'not'} eligible to mint this dNFT
+            </div>
             <div className={'text-h8 mt-4'}>
               Notice: to mint this dNFT requires 5,000 GXZ Token
             </div>
