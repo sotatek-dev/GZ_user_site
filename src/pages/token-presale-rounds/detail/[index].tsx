@@ -47,7 +47,7 @@ const TokenSaleRoundDetail = () => {
 	const [statusTimeLine, setStatusTimeLine] = useState<string>(UPCOMING);
 	const [timeCountDow, setTimeCountDow] = useState<number>(0);
 	// console.log('timeCountDow', timeCountDow);
-	const { start_time, end_time } = get(detailSaleRound, 'buy_time', {});
+	const { start_time = 0, end_time = 0 } = get(detailSaleRound, 'buy_time', {});
 	// const { buy_time: {start_time, end_time} } = detailSaleRound;
 
 	useEffect(() => {
