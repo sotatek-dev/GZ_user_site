@@ -66,6 +66,11 @@ const LayoutHeader = () => {
 					}}
 				>
 					Connect wallet
+					<img
+						src='/icons/uwallet.svg'
+						className='h-[1.375rem] w-[1.375rem]'
+						alt='wallet_icon'
+					/>
 				</Button>
 			)}
 			<ConnectWallet />

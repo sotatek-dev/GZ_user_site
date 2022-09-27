@@ -288,3 +288,27 @@
 .ant-form-item {
 	margin-bottom: 16px !important;
 }
+.ant-menu-item {
+	img {
+		opacity: 0.67 !important;
+	}
+
+	&:hover {
+		img {
+			opacity: 1 !important;
+		}
+	}
+}
+.ant-menu-item-selected {
+	background: linear-gradient(
+		90deg,
+		#1b2e42 0%,
+		rgba(27, 46, 66, 0) 100%
+	) !important;
+	backdrop-filter: blur(10px) !important;
+	border-left: 4px solid #36c1ff !important;
+
+	img {
+		opacity: 1 !important;
+	}
+}
