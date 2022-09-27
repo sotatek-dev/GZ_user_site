@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, Store } from '@reduxjs/toolkit';
+import { INetworkList } from 'web3/constants/networks';
 
 let customStore: Store | undefined;
 export const setStoreWallet = (store: Store) => {
@@ -9,12 +10,14 @@ interface IWalletState {
 	isNetworkValid: boolean;
 	addressWallet: string;
 	isConnect: boolean;
+	network: INetworkList | null;
 }
 
 const initialState: IWalletState = {
 	isNetworkValid: false,
 	addressWallet: '',
 	isConnect: false,
+	network: null,
 };
 
 const storeWallet = createSlice({
@@ -30,6 +33,10 @@ const storeWallet = createSlice({
 			addressWallet: action.payload,
 		}),
 		setStatusConnect: (state, action: PayloadAction<any>) => ({
+			...state,
+			isConnect: action.payload,
+		}),
+		setNetwork: (state, action: PayloadAction<any>) => ({
 			...state,
 			isConnect: action.payload,
 		}),
@@ -49,6 +56,10 @@ export const setAddressWallet = (addressWallet: string) => {
 export const setStatusConnect = (isConnect: boolean) => {
 	customStore &&
 		customStore.dispatch(storeWallet.actions.setStatusConnect(isConnect));
+};
+
+export const setNetwork = (network: object) => {
+	customStore && customStore.dispatch(storeWallet.actions.setNetwork(network));
 };
 
 export { storeWallet };

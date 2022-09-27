@@ -3,7 +3,8 @@ import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { setLogin } from 'stores/user';
-import { setAddressWallet } from 'stores/wallet';
+import { setAddressWallet, setNetwork } from 'stores/wallet';
+import { ETH_CHAIN_ID_HEX } from 'web3/constants/envs';
 import { useConnectWallet, useEagerConnect } from 'web3/hooks';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		const accessToken = StorageUtils.getSectionStorageItem(
 			STORAGE_KEYS.ACCESS_TOKEN
 		);
+		const networkConnected = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
 		if (!accountConnected && !accessToken) return;
 		if (
 			account &&
@@ -29,6 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		) {
 			setLogin(true);
 			setAddressWallet(account);
+			setNetwork(networkConnected);
 		}
 	}, [account, chainId, isLogin]);
 
@@ -47,7 +50,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			disconnectWallet();
 		};
 
-		const onChangeNetwork = () => {
+		const onChangeNetwork = (chainId: string | number) => {
+			if (chainId !== ETH_CHAIN_ID_HEX) return;
 			disconnectWallet();
 		};
 

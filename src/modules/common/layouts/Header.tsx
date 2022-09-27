@@ -26,7 +26,7 @@ const LayoutHeader = () => {
 	useEffect(() => {
 		const { currency } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
 		setCurrency(currency);
-	}, [account, active]);
+	}, [account, active, islogin]);
 
 	const menu = (
 		<Menu className='remove-ant-menu'>
