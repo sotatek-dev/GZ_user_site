@@ -65,7 +65,7 @@ const MintDNFT: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { upcomingPhaseLabel, startTime: upcomingPhaseStartTime } = upcomingPhase || {};
-  const { endPubLicPhaseTime } = publicPhase || {};
+  const { endPubLicPhaseTime: pubLicPhaseEndTime } = publicPhase || {};
   const { runningPhaseLabel, endTime: runningPhaseEndTime, startTime: runningPhaseStartTime } = phaseRunning || {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -206,7 +206,30 @@ const MintDNFT: React.FC = () => {
 
         <div className={'flex items-end'}>
           {
-            endPubLicPhaseTime< new Date().getTime() ?
+            phaseRunning && runningPhaseEndTime > new Date().getTime() && new Date().getTime() > runningPhaseStartTime ? (
+              <>
+                <Countdown
+                  customClass={'grow'}
+                  title={`Minting phase for ${runningPhaseLabel} end in`}
+                  millisecondsRemain={runningPhaseEndTime || 0}
+                />
+              </>
+            ) : upcomingPhase && new Date().getTime() < upcomingPhaseStartTime ? (
+              <>
+                <Countdown
+                  customClass={'grow'}
+                  title={'You can mint dNFT in'}
+                  millisecondsRemain={upcomingPhaseStartTime || 0}
+                />
+              </>
+            ) : pubLicPhaseEndTime < new Date().getTime() ?
+              (
+                <Countdown
+                  customClass={'grow'}
+                  title={'Presale for dNFT is ended'}
+                  millisecondsRemain={0}
+                />
+              ) :
               (
                 <Countdown
                   customClass={'grow'}
@@ -214,25 +237,7 @@ const MintDNFT: React.FC = () => {
                   millisecondsRemain={0}
                 />
               )
-              : phaseRunning && runningPhaseEndTime > new Date().getTime() && new Date().getTime() > runningPhaseStartTime? (
-                <>
-                  <Countdown
-                    customClass={'grow'}
-                    title={`Minting phase for ${runningPhaseLabel} end in`}
-                    millisecondsRemain={runningPhaseEndTime || 0}
-                  />
-                </>
-              ) : upcomingPhase && new Date().getTime() < upcomingPhaseStartTime ? (
-                <>
-                  <Countdown
-                    customClass={'grow'}
-                    title={'You can mint dNFT in'}
-                    millisecondsRemain={upcomingPhaseStartTime || 0}
-                  />
-                </>
-              ) : (
-                <></>
-              )}
+          }
 
           <div className={'flex flex-col items-end rounded-[10px] text-h8'}>
             <Button
