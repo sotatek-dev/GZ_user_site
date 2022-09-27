@@ -71,6 +71,12 @@ const TokenSaleRoundDetail = () => {
 		}
 	}, [index, detailSaleRound]);
 
+	const renderTokenBuyTime = (startTime: number, endTime: number) => {
+		return `${convertTimeStampToDate(startTime)} - ${convertTimeStampToDate(
+			endTime
+		)}`;
+	};
+
 	return (
 		<div className='flex flex-col gap-y-8'>
 			<div className='flex gap-x-8 justify-between'>
@@ -117,9 +123,7 @@ const TokenSaleRoundDetail = () => {
 							<div className='text-dim-gray font-normal'>Token Buy Time:</div>
 							<div className='font-medium'>
 								{start_time && end_time
-									? `${convertTimeStampToDate(
-											start_time
-									  )} - ${convertTimeStampToDate(end_time)}`
+									? renderTokenBuyTime(start_time, end_time)
 									: 'TBA'}
 							</div>
 						</div>
