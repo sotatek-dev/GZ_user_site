@@ -13,6 +13,7 @@ import store from 'stores';
 import { AuthProvider } from 'web3/contexts/authContext';
 import DefaultLayout from 'common/layouts';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getLibrary(provider: any) {
 	const library = new providers.Web3Provider(provider);
 	library.pollingInterval = 15000;

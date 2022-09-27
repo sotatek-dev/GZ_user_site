@@ -25,6 +25,7 @@ const TokenPresaleRound = () => {
 		};
 
 		getListTokenSaleRounds();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const columns = [

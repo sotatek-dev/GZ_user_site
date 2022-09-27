@@ -49,13 +49,16 @@ export interface IListPhaseMintNft {
 	updated_at: Date;
 	_id: string;
 }
+export type IphaseRunning = {
+	phase: string | undefined;
+	endTime: number | undefined;
+};
 
 const MintDNFT = () => {
 	const [timelineMintNft, setTimelineMintNft] = useState<
 		Array<ITimelineMintNftState>
 	>([]);
-	const [phaseRunning, setPhaseRunning] = useState<any>({});
-	const { phase, endTime } = phaseRunning;
+	const [phaseRunning, setPhaseRunning] = useState<IphaseRunning>();
 	useEffect(() => {
 		const handleGetListPhaseMintNft = async () => {
 			const [data] = await getListPhaseMintNft();
@@ -133,8 +136,8 @@ const MintDNFT = () => {
 					</div>
 					<Countdown
 						customClass='mt-6 mr-auto'
-						title={`Minting phase for ${phase} end in`}
-						millisecondsRemain={endTime}
+						title={`Minting phase for ${phaseRunning?.phase} end in`}
+						millisecondsRemain={phaseRunning?.endTime}
 					/>
 				</div>
 
