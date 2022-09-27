@@ -19,11 +19,11 @@ export default function ModalSignin() {
 
 	return (
 		<div>
-			<h5 className='font-bold text-white text-center pb-8 text-[32px] leading-10 font-semibold'>
+			<h5 className='font-bold text-white text-center  text-[32px] leading-10 font-semibold'>
 				Enter your email
 			</h5>
-			<div className='pt-6'>
-				<p className='font-normal text-sm pb-3 text-center text-[#ffffffb3]'>
+			<div className='pt-[35px]'>
+				<p className='font-normal text-[16px] pb-3 text-center text-[#ffffffb3] leading-[24px]'>
 					Please enter your email to be notified of account updates
 				</p>
 				<Form
@@ -46,7 +46,7 @@ export default function ModalSignin() {
 						/>
 					</Form.Item>
 					<Button
-						classCustom='bg-charcoal-purple !rounded-[40px] mx-auto'
+						classCustom='bg-charcoal-purple !rounded-[40px] !mt-[30px] mx-auto !px-[45px] !py-[11px] text-[#777] !font-semibold'
 						htmlType='submit'
 						label='Confirm'
 					/>

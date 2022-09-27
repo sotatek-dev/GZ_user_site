@@ -30,7 +30,7 @@ const ModalCustom = (props: ModalProps) => {
 
 	return (
 		<Modal
-			visible={isShow}
+			open={isShow}
 			title={title}
 			width={width}
 			className={`modal-custom ${customClass}`}
