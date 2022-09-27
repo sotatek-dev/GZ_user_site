@@ -21,14 +21,14 @@ const modalStore = createSlice({
 	name: 'modalStore',
 	initialState,
 	reducers: {
-		setStatusModalConnectWallet: (state, action: PayloadAction<any>) => {
+		setStatusModalConnectWallet: (state, action: PayloadAction<boolean>) => {
 			return {
 				...state,
 				modalConnectWallet: action.payload,
 			};
 		},
 
-		setStepModalConnectWallet: (state, action: PayloadAction<any>) => {
+		setStepModalConnectWallet: (state, action: PayloadAction<string>) => {
 			return {
 				...state,
 				stepModalConnectWallet: action.payload,

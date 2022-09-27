@@ -24,21 +24,21 @@ const storeWallet = createSlice({
 	name: 'storeWallet',
 	initialState,
 	reducers: {
-		setNetworkValid: (state, action: PayloadAction<any>) => ({
+		setNetworkValid: (state, action: PayloadAction<boolean>) => ({
 			...state,
-			isNetworkValid: action.payload.isNetworkValid,
+			isNetworkValid: action.payload,
 		}),
-		setAddressWallet: (state, action: PayloadAction<any>) => ({
+		setAddressWallet: (state, action: PayloadAction<string>) => ({
 			...state,
 			addressWallet: action.payload,
 		}),
-		setStatusConnect: (state, action: PayloadAction<any>) => ({
+		setStatusConnect: (state, action: PayloadAction<boolean>) => ({
 			...state,
 			isConnect: action.payload,
 		}),
-		setNetwork: (state, action: PayloadAction<any>) => ({
+		setNetwork: (state, action: PayloadAction<INetworkList | null>) => ({
 			...state,
-			isConnect: action.payload,
+			network: action.payload,
 		}),
 	},
 });
@@ -58,7 +58,7 @@ export const setStatusConnect = (isConnect: boolean) => {
 		customStore.dispatch(storeWallet.actions.setStatusConnect(isConnect));
 };
 
-export const setNetwork = (network: object) => {
+export const setNetwork = (network: INetworkList | null) => {
 	customStore && customStore.dispatch(storeWallet.actions.setNetwork(network));
 };
 
