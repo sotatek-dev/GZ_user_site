@@ -2,6 +2,7 @@ import {
 	BUY,
 	CLAIMABLE,
 	LIST_PHASE_MINT_NFT,
+	LIST_STATUS_TIME_LINE,
 	UPCOMING,
 } from 'common/constants/constants';
 import moment from 'moment';
@@ -65,7 +66,7 @@ export const convertTimelineMintNft = (
 	});
 
 	const phaseRunning = listPhaseMintNft.find(
-		(phase: IListPhaseMintNft) => phase.status === 'RUNNING'
+		(phase: IListPhaseMintNft) => phase.status === LIST_STATUS_TIME_LINE.RUNNING
 	);
 	const labelPhaseRunning = LIST_PHASE_MINT_NFT.find(
 		(phase: { label: string; value: string }) =>

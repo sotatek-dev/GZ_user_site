@@ -17,11 +17,26 @@ module.exports = {
 			// => @media (min-width: 1280px) { ... }
 		},
 
-		extend: {},
+		extend: {
+			fontSize: {
+				'h1': ['60px', '75px'],
+				'h2': ['40px', '52px'],
+				'h3': ['32px', '42px'],
+				'h4': ['24px', '32px'],
+				'h5': ['20px', '28px'],
+				'h6': ['18px', '26px'],
+				'h7': ['16px', '24px'],
+				'h8': ['14px', '22px'],
+				'h9': ['12px', '16px'],
+				'h10': ['10px', '12px'],
+
+			}
+		},
 		colors: {
 			transparent: 'transparent',
 			current: 'currentColor',
 			'background-dark': '#0C1E32',
+			'box': '#0E1A2B',
 			white: '#FFFFFF',
 			ebony: '#2C313D',
 			'ebony-20': '#272E39',
