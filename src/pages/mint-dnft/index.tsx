@@ -64,9 +64,9 @@ const MintDNFT: React.FC = () => {
   const { addressWallet } = useSelector((state) => state.wallet);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { upcomingPhaseLabel, startTime } = upcomingPhase || {};
+  const { upcomingPhaseLabel, startTime: upcomingPhaseStartTime } = upcomingPhase || {};
   const { endPubLicPhaseTime } = publicPhase || {};
-  const { runningPhaseLabel, endTime } = phaseRunning || {};
+  const { runningPhaseLabel, endTime: runningPhaseEndTime, startTime: runningPhaseStartTime } = phaseRunning || {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isConnectWallet = !!addressWallet;
@@ -206,7 +206,7 @@ const MintDNFT: React.FC = () => {
 
         <div className={'flex items-end'}>
           {
-            new Date(endPubLicPhaseTime).getTime() < new Date().getTime() ?
+            endPubLicPhaseTime< new Date().getTime() ?
               (
                 <Countdown
                   customClass={'grow'}
@@ -214,20 +214,20 @@ const MintDNFT: React.FC = () => {
                   millisecondsRemain={0}
                 />
               )
-              : phaseRunning ? (
+              : phaseRunning && runningPhaseEndTime > new Date().getTime() && new Date().getTime() > runningPhaseStartTime? (
                 <>
                   <Countdown
                     customClass={'grow'}
                     title={`Minting phase for ${runningPhaseLabel} end in`}
-                    millisecondsRemain={endTime || 0}
+                    millisecondsRemain={runningPhaseEndTime || 0}
                   />
                 </>
-              ) : upcomingPhase ? (
+              ) : upcomingPhase && new Date().getTime() < upcomingPhaseStartTime ? (
                 <>
                   <Countdown
                     customClass={'grow'}
                     title={'You can mint dNFT in'}
-                    millisecondsRemain={startTime || 0}
+                    millisecondsRemain={upcomingPhaseStartTime || 0}
                   />
                 </>
               ) : (
