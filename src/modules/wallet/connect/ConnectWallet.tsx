@@ -61,8 +61,9 @@ export default function ConnectWallet() {
 		return (
 			<div
 				onClick={() => setSelectedNetwork(network)}
-				className={`p-4 bg-[#ffffff0d] rounded-lg w-fit max-w-[180px] max-h-[110px] relative  text-blue-zodiac font-medium text-sm cursor-pointer ${isActive ? 'chosse-active' : 'chosse-disable'
-					}`}
+				className={`p-4 bg-[#ffffff0d] rounded-lg w-fit max-w-[180px] max-h-[110px] relative  text-blue-zodiac font-medium text-sm cursor-pointer ${
+					isActive ? 'chosse-active' : 'chosse-disable'
+				}`}
 			>
 				{isActive && (
 					<IconDynamic
@@ -91,8 +92,9 @@ export default function ConnectWallet() {
 				}}
 				className={`p-4 bg-[#ffffff0d] shadow-[
 					0px 3px 50px rgba(0, 0, 0, 0.078)
-				] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer ${isActive ? 'chosse-active' : 'chosse-disable'
-					}`}
+				] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer ${
+					isActive ? 'chosse-active' : 'chosse-disable'
+				}`}
 			>
 				{isActive && (
 					<IconDynamic
@@ -160,7 +162,7 @@ export default function ConnectWallet() {
 				onCancel={handleCloseModalConnectWallet}
 				closable={
 					stepModalConnectWallet ===
-						STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+					STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
 						? true
 						: false
 				}
