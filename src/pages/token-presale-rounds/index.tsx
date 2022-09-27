@@ -11,8 +11,6 @@ const TokenPresaleRound = () => {
 	const [perPage] = useState<number>(1);
 	const [listTokenSaleRound, setListTokenSaleRound] = useState([]);
 
-	console.log('listTokenSaleRound', listTokenSaleRound);
-
 	useEffect(() => {
 		const getListTokenSaleRounds = async () => {
 			const params: IPramsTokenSaleRounds = {
@@ -20,10 +18,10 @@ const TokenPresaleRound = () => {
 				page: perPage,
 			};
 
-			const [data, error] = await getListSaleRound(params);
+			const [data] = await getListSaleRound(params);
 			const resultTokenSaleRound = get(data, 'data.list', []);
 			setListTokenSaleRound(resultTokenSaleRound);
-			console.log('error', error);
+			// console.log('error', error);
 		};
 
 		getListTokenSaleRounds();

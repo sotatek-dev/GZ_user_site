@@ -1,14 +1,7 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import { UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector';
-import { toast } from 'react-toastify';
 import { ConnectorKey } from 'web3/connectors';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
-import { checkNetwork } from 'web3/helpers/functions';
-import {
-	setAddressWallet,
-	setNetworkValid,
-	setStatusConnect,
-} from 'stores/wallet';
+import { setAddressWallet, setStatusConnect } from 'stores/wallet';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import {
 	setStatusModalConnectWallet,
@@ -32,67 +25,20 @@ export const useConnectWallet = () => {
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		const { walletName, connector } = walletSelected;
-		try {
-			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
-			activateInjectedProvider(walletName);
-			setStorageWallet(walletName);
-			setStorageNetwork(networkConnected);
-			await activate(connector, undefined, true)
-				.then(async () => {
-					const addressWallet = await connector.getAccount();
-					let networkId = await connector.getChainId();
-					networkId = parseInt(networkId, 16);
-					const isNetworkValid = checkNetwork(
-						networkId,
-						networkConnected.chainId
-					);
-					const [dataCheckUser] = await checkEmailUser(addressWallet);
-
-					if (isNetworkValid) {
-						setNetworkValid(isNetworkValid);
-						if (dataCheckUser.is_user_exist) {
-							// check user đăng nhập lần đầu
-							setStepModalConnectWallet(
-								STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
-							);
-							setStatusConnect(true);
-						} else {
-							setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
-						}
-					} else {
-						await changeNetwork(walletName, networkConnected);
-					}
-				})
-				.catch(async (error: any) => {
-					// console.log('error', error);
-					if (error instanceof UnsupportedChainIdError) {
-						await changeNetwork(walletName, networkConnected);
-					}
-				});
-		} catch (error) {
-			// console.log('error==',error );
-			if (
-				error instanceof UserRejectedRequestErrorInjected ||
-				(error instanceof Error &&
-					error.message === 'User denied account authorization') // Coinbase wallet
-			) {
-				toast.error('');
-			}
-			if (error instanceof UnsupportedChainIdError) {
-				//
-			}
-
-			if (error instanceof UnsupportedChainIdError) {
-				await changeNetwork(walletName, networkConnected);
-			}
-
-			throw error;
-		} finally {
-			// setStepModalConnectWallet(
-			// 	STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
-			// );
-			// setStatusModalConnectWallet(false);
-		}
+		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
+		activateInjectedProvider(walletName);
+		setStorageWallet(walletName);
+		setStorageNetwork(networkConnected);
+		await activate(connector, undefined, true)
+			.then(async () => {
+				const addressWallet = await connector.getAccount();
+				checkLogin(addressWallet);
+			})
+			.catch(async (error: Error) => {
+				if (error instanceof UnsupportedChainIdError) {
+					await changeNetwork(connector);
+				}
+			});
 	}
 
 	async function disconnectWallet() {
@@ -108,16 +54,14 @@ export const useConnectWallet = () => {
 		);
 	}
 
-	const changeNetwork = async (
-		walletName: ConnectorKey,
-		networkConnected: any
-	) => {
+	const changeNetwork = async (connector: any) => {
+		const addressWallet = await connector.getAccount();
 		try {
 			await ethereum?.request({
 				method: 'wallet_switchEthereumChain',
 				params: [{ chainId: BSC_NETWORK.CHAIN_ID_HEX }],
 			});
-			connectWallet(walletName, networkConnected);
+			checkLogin(addressWallet);
 		} catch (switchError: any) {
 			if (switchError.code === 4902) {
 				try {
@@ -137,7 +81,7 @@ export const useConnectWallet = () => {
 							},
 						],
 					});
-					connectWallet(walletName, networkConnected);
+					checkLogin(addressWallet);
 				} catch (addError) {
 					deactivate();
 				}
@@ -173,15 +117,25 @@ export const useConnectWallet = () => {
 					setUserInfo(userInfo);
 					setLogin(true);
 					setAddressWallet(wallet_address);
-					setStatusModalConnectWallet(false);
-					setStepModalConnectWallet(
-						STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
-					);
 				}
 			}
 		} catch (error) {
-			// console.log('error', error);
 			removeStorageWallet();
+		} finally {
+			setStatusModalConnectWallet(false);
+			setStepModalConnectWallet(
+				STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
+			);
+		}
+	}
+
+	async function checkLogin(addressWallet: string) {
+		const [dataCheckUser] = await checkEmailUser(addressWallet);
+		if (dataCheckUser.is_user_exist) {
+			// check user đăng nhập lần đầu
+			setStatusConnect(true);
+		} else {
+			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
 		}
 	}
 

@@ -26,13 +26,13 @@ const userStore = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		setUserInfo: (state, action: PayloadAction<any>) => {
+		setUserInfo: (state, action: PayloadAction<ITypeUserInfo>) => {
 			return {
 				...state,
 				userInfo: action.payload,
 			};
 		},
-		setLogin: (state, action: PayloadAction<any>) => {
+		setLogin: (state, action: PayloadAction<boolean>) => {
 			return {
 				...state,
 				isLogin: action.payload,
@@ -41,7 +41,7 @@ const userStore = createSlice({
 	},
 });
 
-export const setUserInfo = (userInfo: any) => {
+export const setUserInfo = (userInfo: ITypeUserInfo) => {
 	customStore && customStore.dispatch(userStore.actions.setUserInfo(userInfo));
 };
 

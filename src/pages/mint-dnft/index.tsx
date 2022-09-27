@@ -54,7 +54,7 @@ const MintDNFT = () => {
 	const [timelineMintNft, setTimelineMintNft] = useState<
 		Array<ITimelineMintNftState>
 	>([]);
-	const [phaseRunning, setPhaseRunning] = useState<any>();
+	const [phaseRunning, setPhaseRunning] = useState<any>({});
 	const { phase, endTime } = phaseRunning;
 	useEffect(() => {
 		const handleGetListPhaseMintNft = async () => {

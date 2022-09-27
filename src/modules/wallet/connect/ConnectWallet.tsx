@@ -9,7 +9,6 @@ import { SUPPORTED_WALLETS } from 'web3/constants/wallets';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import ModalSignin from 'common/components/modals/SignIn';
 import Loading from 'common/components/loading';
-import { isEmpty } from 'lodash';
 import { setStatusConnect } from 'stores/wallet';
 
 interface WalletType {
@@ -20,7 +19,7 @@ interface WalletType {
 }
 
 export default function ConnectWallet() {
-	const { active, deactivate, account, library } = useActiveWeb3React();
+	const { deactivate, account, library } = useActiveWeb3React();
 	const { connectWallet, handleLogin } = useConnectWallet();
 	const { modalConnectWallet, stepModalConnectWallet } = useSelector(
 		(state) => state?.modal
@@ -29,6 +28,7 @@ export default function ConnectWallet() {
 	const { isConnect } = useSelector((state) => state.wallet);
 	const [selectedNetwork, setSelectedNetwork] = useState(NETWORK_LIST[0]);
 	const [connector, setConnector] = useState<any>();
+	console.log('stepModalConnectWallet', stepModalConnectWallet);
 
 	useEffect(() => {
 		return () => {
@@ -44,7 +44,6 @@ export default function ConnectWallet() {
 	}, [isLogin, library, account, handleLogin, isConnect]);
 
 	const handleConnect = (walletName: any) => {
-		if ((!selectedNetwork && isEmpty(connector)) || active) return;
 		connectWallet(walletName, selectedNetwork);
 	};
 
