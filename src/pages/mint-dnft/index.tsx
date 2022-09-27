@@ -4,8 +4,7 @@ import { Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
 import Countdown from 'common/components/countdown';
-import { selectList } from 'pages/token-presale-rounds/detail/[index]';
-import { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { getListPhaseMintNft } from 'apis/mintDNFt';
 import { get } from 'lodash';
 import {
@@ -13,6 +12,9 @@ import {
 	convertTimeStampToDate,
 } from 'common/utils/functions';
 import NftGroup from 'assets/svg-components/nftGroup';
+import { useSelector } from 'react-redux';
+
+const selectList = ['BUSD', 'BNB'];
 
 const PoolRemaining = [
 	{
@@ -51,24 +53,38 @@ export interface IListPhaseMintNft {
 	_id: string;
 }
 
-const MintDNFT = () => {
+const MintDNFT: React.FC = () => {
 	const [timelineMintNft, setTimelineMintNft] = useState<
 		Array<ITimelineMintNftState>
 	>([]);
 	const [phaseRunning, setPhaseRunning] = useState<any>();
-	const { phase, endTime } = phaseRunning || {};
+	const [upcomingPhase, setUpcomingPhase] = useState<any>();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [token, setToken] = useState(selectList[0]);
+
+	const { addressWallet } = useSelector((state) => state.wallet);
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { upcomingPhaseLabel, startTime } = upcomingPhase || {};
+	const { runningPhaseLabel, endTime } = phaseRunning || {};
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const isConnectWallet = !!addressWallet;
+
 	useEffect(() => {
 		const handleGetListPhaseMintNft = async () => {
 			const [data] = await getListPhaseMintNft();
 			const listPhaseMintNft = get(data, 'data', []);
-			const { timeLineMintNft, phaseRunning } =
+			const { timeLineMintNft, upcomingPhase, phaseRunning } =
 				convertTimelineMintNft(listPhaseMintNft);
 			setTimelineMintNft(timeLineMintNft);
 			setPhaseRunning(phaseRunning);
+			setUpcomingPhase(upcomingPhase);
 		};
 
 		handleGetListPhaseMintNft();
 	}, []);
+
 	return (
 		<div className='flex gap-x-3'>
 			<div className='w-[300px] h-[587px] rounded-[10px] flex flex-col items-center'>
@@ -102,8 +118,12 @@ const MintDNFT = () => {
 						</Tooltip>
 					</div>
 					<CustomRadio
-						onChange={() => {}}
-						defaultValue='BUSD'
+						onChange={(e: ChangeEvent<HTMLInputElement>) => {
+							const item = e.target.value;
+							const selectedToken = selectList.find((i) => i == item);
+							selectedToken && setToken(selectedToken);
+						}}
+						defaultValue={token}
 						options={selectList}
 					/>
 				</div>
@@ -146,7 +166,7 @@ const MintDNFT = () => {
 				<div className='flex flex-col text-sm mb-8	'>
 					<TimelineMintRound timelineMintNft={timelineMintNft} />
 					{/* divider*/}
-					<hr className={'border border-green my-8'} />
+					<hr className={'border border-green mx-3 my-8'} />
 					<div className='flex justify-between w-full'>
 						{timelineMintNft.map(
 							(phaseInfo: ITimelineMintNftState, index: number) => {
@@ -182,21 +202,35 @@ const MintDNFT = () => {
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-8'} />
 
-				{phase && endTime && (
-					<Countdown
-						customClass='mt-6 mr-auto'
-						title={`Minting phase for ${phase} end in`}
-						millisecondsRemain={endTime}
-					/>
-				)}
+				<div className={'flex items-end'}>
+					{phaseRunning ? (
+						<>
+							<Countdown
+								customClass={'grow'}
+								title={`Minting phase for ${runningPhaseLabel} end in`}
+								millisecondsRemain={endTime || 0}
+							/>
+						</>
+					) : upcomingPhase ? (
+						<>
+							<Countdown
+								customClass={'grow'}
+								title={'You can mint dNFT in'}
+								millisecondsRemain={startTime || 0}
+							/>
+						</>
+					) : (
+						<></>
+					)}
 
-				<div className='flex flex-col bg-black-russian rounded-[10px] px-6 py-3 text-sm mb-5'>
-					<Button
-						label='You are eligible to mint this dNFT '
-						classCustom='bg-green'
-					/>
-					<div className='font-medium text-sm mt-6'>
-						Notice: to mint this dNFT requires 5,000 GXZ Token
+					<div className={'flex flex-col items-end rounded-[10px] text-h8'}>
+						<Button
+							label={'You are eligible to mint this dNFT '}
+							classCustom={'bg-blue-to-pink-102deg !text-h8'}
+						/>
+						<div className={'font-medium text-h8 mt-4'}>
+							Notice: to mint this dNFT requires 5,000 GXZ Token
+						</div>
 					</div>
 				</div>
 			</div>

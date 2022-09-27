@@ -72,11 +72,24 @@ export const convertTimelineMintNft = (
 		(phase: { label: string; value: string }) =>
 			phase.value === phaseRunning?.type
 	)?.label;
+
+	const upcomingPhase = listPhaseMintNft.find(
+		(phase: IListPhaseMintNft) => phase.status === LIST_STATUS_TIME_LINE.PENDING
+	);
+	const upcomingPhaseLabel = LIST_PHASE_MINT_NFT.find(
+		(phase: { label: string; value: string }) =>
+			phase.value === upcomingPhase?.type
+	)?.label;
+
 	return {
 		timeLineMintNft,
 		phaseRunning: {
 			endTime: phaseRunning?.end_mint_time,
 			phase: labelPhaseRunning,
+		},
+		upcomingPhase: {
+			startTime: upcomingPhase?.start_mint_time,
+			phase: upcomingPhaseLabel,
 		},
 	};
 };

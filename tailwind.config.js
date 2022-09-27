@@ -30,6 +30,9 @@ module.exports = {
 				h9: ['12px', '16px'],
 				h10: ['10px', '12px'],
 			},
+			backgroundImage: {
+				'blue-to-pink-102deg': 'linear-gradient(102.92deg, #36C1FF 6.55%, #77A3F8 47.11%, #BD81F1 71.51%, #CF79EE 98.22%);'
+			}
 		},
 		colors: {
 			transparent: 'transparent',
