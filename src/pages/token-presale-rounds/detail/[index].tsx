@@ -10,7 +10,7 @@ import {
 	convertTimeLine,
 	convertTimeStampToDate,
 } from 'common/utils/functions';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -66,10 +66,10 @@ const TokenSaleRoundDetail = () => {
 			setDetailSaleRound(detailSaleRound);
 		};
 
-		if (index) {
+		if (index && isEmpty(detailSaleRound)) {
 			getDetailSaleRound();
 		}
-	}, [index]);
+	}, [index, detailSaleRound]);
 
 	return (
 		<div className='flex flex-col gap-y-8'>
