@@ -36,6 +36,7 @@ export function useEagerConnect() {
 		}
 
 		setTried(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active]);
 
 	return tried;
