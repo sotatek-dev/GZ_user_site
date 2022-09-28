@@ -23,38 +23,10 @@ import {
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mint-dnft/constants';
-
-export interface ITimelineMintNftState {
-	label: string | undefined;
-	status: string;
-	endMintTime: number;
-	startMintTime: number;
-}
-
-export interface IListPhaseMintNft {
-	created_at: Date;
-	end_mint_time: number;
-	nft_mint_limit: number;
-	order: number;
-	price: number;
-	price_after_24h: number;
-	start_mint_time: number;
-	status: string;
-	tax: number;
-	type: string;
-	updated_at: Date;
-	_id: string;
-}
-
-export interface IPoolStatistic {
-	startTime: BigNumber.Value;
-	endTime: BigNumber.Value;
-	priceInBUSD: BigNumber.Value;
-	priceAfter24Hours: BigNumber.Value;
-	maxAmountUserCanBuy: BigNumber.Value;
-	maxSaleAmount: BigNumber.Value;
-	totalSold: BigNumber.Value;
-}
+import {
+	IPoolStatistic,
+	ITimelineMintNftState,
+} from 'modules/mint-dnft/interfaces';
 
 const MintDNFT: React.FC = () => {
 	const [timelineMintNft, setTimelineMintNft] = useState<
@@ -93,8 +65,6 @@ const MintDNFT: React.FC = () => {
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { startTime: upcomingPhaseStartTime } = upcomingPhase || {};
 	const { endPubLicPhaseTime: pubLicPhaseEndTime } = publicPhase || {};
 	const {

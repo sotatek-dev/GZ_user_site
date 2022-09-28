@@ -6,7 +6,7 @@ import {
 	UPCOMING,
 } from 'common/constants/constants';
 import moment from 'moment';
-import { IListPhaseMintNft } from 'pages/mint-dnft';
+import { IListPhaseMintNft } from 'modules/mint-dnft/interfaces';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
