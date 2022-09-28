@@ -1,5 +1,4 @@
 import { Form, Input } from 'antd';
-import { ColumnType } from 'antd/lib/table';
 import BoxPool from 'common/components/boxPool';
 import Button from 'common/components/button';
 import Countdown from 'common/components/countdown';
@@ -9,7 +8,7 @@ import MyTable from 'common/components/table';
 import Link from 'next/link';
 import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 
-const columns: ColumnType<any>[] = [
+const columns = [
 	{
 		title: 'Species',
 		dataIndex: 'Species',

@@ -49,10 +49,14 @@ const LayoutHeader = () => {
 		<Header className='site-layout-sub-header-background !bg-background-dark w-full flex !p-6 !h-fit'>
 			{islogin ? (
 				<Dropdown overlay={menu} trigger={['click']}>
-					<div className='ml-auto rounded-[20px] bg-black-russian flex items-center text-white py-2 px-5 !h-[40px] font-medium text-base cursor-pointer'>
-						<div className='mr-3'>{currency}</div>
-						<IconDynamic image='./icons/wallet.svg' className='mr-3' />
-						{EllipsisMiddle(account)}
+					<div className='ml-auto rounded-[40px] bg-black-russian flex justify-center items-center px-5 !h-[42px] cursor-pointer border-[2px] border-[#ffffff1a]'>
+						<div className='text-[#ffffff80]'>{currency}</div>
+						<div className='mx-[12px] text-[#ffffff80]'>|</div>
+						<IconDynamic image='./icons/wallet-color.svg' className='mr-3' />
+						<div className='text-[#D47AF5] font-semibold leading-[1.5rem] mr-[0.75rem]'>
+							{EllipsisMiddle(account)}
+						</div>
+						<img src='/icons/arrow-down.svg' />
 					</div>
 				</Dropdown>
 			) : (
@@ -66,6 +70,11 @@ const LayoutHeader = () => {
 					}}
 				>
 					Connect wallet
+					<img
+						src='/icons/uwallet.svg'
+						className='h-[1.375rem] w-[1.375rem]'
+						alt='wallet_icon'
+					/>
 				</Button>
 			)}
 			<ConnectWallet />

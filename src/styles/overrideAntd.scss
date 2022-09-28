@@ -1,52 +1,52 @@
 .modal-custom {
 	.ant-modal-header {
-		background-color: #1f242c;
+		background-color: #38424e;
 		color: #efeff0 !important;
 		border: none;
 		padding: 0;
+		font-family: 'Avenir Next LT Pro';
 	}
 
 	.ant-modal-title {
 		color: #efeff0 !important;
 		font-weight: 600;
 		font-size: 32px;
-		line-height: 34px;
-		margin-bottom: 16px;
+		line-height: 42px;
 	}
 
 	.ant-modal-mask {
-		background-color: #1f242c;
+		background-color: #38424e;
 	}
 
 	.ant-modal-content {
-		background-color: #1f242c;
+		background-color: #38424e;
 		color: #efeff0;
 		border-radius: 12px !important;
-		padding: 24px;
+		padding: 50px 65px 50px 65px;
 	}
 
 	.ant-modal-body {
-		background-color: #1f242c;
+		background-color: #38424e;
 		color: #efeff0;
 		padding: 0;
 	}
 
 	.ant-modal-footer {
 		border: none;
-		background-color: #1f242c;
+		background-color: #38424e;
 		display: flex;
 		justify-content: center;
 		padding: 0;
 	}
 
 	.ant-modal-close {
-		top: 24px;
-		right: 24px;
+		top: 12px;
+		right: 12px;
 		margin: 0;
 
 		.ant-modal-close-x {
-			width: 24px;
-			height: 24px;
+			width: 32px;
+			height: 32px;
 		}
 	}
 }
@@ -287,4 +287,28 @@
 
 .ant-form-item {
 	margin-bottom: 16px !important;
+}
+.ant-menu-item {
+	img {
+		opacity: 0.67 !important;
+	}
+
+	&:hover {
+		img {
+			opacity: 1 !important;
+		}
+	}
+}
+.ant-menu-item-selected {
+	background: linear-gradient(
+		90deg,
+		#1b2e42 0%,
+		rgba(27, 46, 66, 0) 100%
+	) !important;
+	backdrop-filter: blur(10px) !important;
+	border-left: 4px solid #36c1ff !important;
+
+	img {
+		opacity: 1 !important;
+	}
 }

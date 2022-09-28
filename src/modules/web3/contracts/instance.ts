@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // import { getContractInstanceEther } from 'blockchain/ether';
 
 import DNFTABI from '../abis/abi-dnft.json';
@@ -7,10 +8,9 @@ import PreSalePoolABI from '../abis/abi-presalepool.json';
 import { getContractInstanceEther } from './ether';
 
 // const NEXT_PUBLIC_BUSD = process.env.NEXT_PUBLIC_BUSD_ADDRESS || '';
-const NEXT_PUBLIC_DNFT = process.env.NEXT_PUBLIC_DNFT_ADDRESS || '';
-const NEXT_PUBLIC_KEYNFT = process.env.NEXT_PUBLIC_KEYNFT_ADDRESS || '';
-const NEXT_PUBLIC_PRESALE_POOL =
-	process.env.NEXT_PUBLIC_PRESALE_POOL_ADDRESS || '';
+const NEXT_PUBLIC_DNFT = process.env.NEXT_PUBLIC_DNFT_ADDRESS!;
+const NEXT_PUBLIC_KEYNFT = process.env.NEXT_PUBLIC_KEYNFT_ADDRESS!;
+const NEXT_PUBLIC_PRESALE_POOL = process.env.NEXT_PUBLIC_PRESALE_POOL_ADDRESS!;
 
 // export const genMainContractEther = () => {
 //   return getContractInstanceEther(DNFTABI, NEXT_PUBLIC_BUSD);

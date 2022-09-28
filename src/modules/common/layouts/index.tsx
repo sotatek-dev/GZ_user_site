@@ -1,14 +1,12 @@
 import { Layout, Menu } from 'antd';
-import React, { useEffect } from 'react';
 import ImageBase from 'common/components/imageBase';
 // import ImageBase from 'common/components/imageBase';
+import { IconDynamic } from 'common/assets/iconography/iconBundle';
+import { ROUTES } from 'common/constants/constants';
+import { get } from 'lodash';
+import Link from 'next/link';
 import Footer from './Footer';
 import LayoutHeader from './Header';
-import { ROUTES } from 'common/constants/constants';
-import { IconDynamic } from 'common/assets/iconography/iconBundle';
-import Link from 'next/link';
-import { get } from 'lodash';
-import { useRouter } from 'next/router';
 
 const { Sider, Content } = Layout;
 
@@ -25,8 +23,13 @@ const LIST_SIDER = [
 	},
 	{
 		router: ROUTES.MINT_DNFT,
-		icon: './images/logo.svg',
+		icon: './icons/mint-dnft.svg',
 		title: 'Mint dNFT',
+	},
+	{
+		router: ROUTES.MINT_KEY,
+		icon: './icons/mint-key.svg',
+		title: 'Mint Key',
 	},
 	{
 		router: ROUTES.MERGE_NFT,
@@ -35,47 +38,36 @@ const LIST_SIDER = [
 	},
 	{
 		router: ROUTES.RESCUE_NFT,
-		// icon: './images/logo.svg',
+		icon: './icons/rescue-nft.svg',
 		title: 'Rescue NFT',
 	},
 ];
 
 const DefaultLayout = ({ children, appProps }: any) => {
-	const router = useRouter();
-	useEffect(() => {
-		if (['/'].includes(appProps.router.pathname)) {
-			router.replace('/landing');
-		}
-	}, []);
-
 	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
 		return <>{children}</>;
 	}
 
 	return (
-		<Layout className='!bg-background-dark'>
+		<Layout className='!bg-[#061322]'>
 			<Sider
 				breakpoint='lg'
 				collapsedWidth='0'
-				// onBreakpoint={(broken) => {
-				// console.log(broken);
-				// }}
-				// onCollapse={(collapsed, type) => {
-				// 	console.log(collapsed, type);
-				// }}
-				className='px-[35px] !bg-background-dark min-h-screen !w-fit !max-w-fit	!flex-auto'
+				className='!bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'
 			>
-				<ImageBase
-					url='./images/logo.svg'
-					type='HtmlImage'
-					style={{
-						objectFit: 'contain',
-					}}
-					className='w-[140px] h-[140px]'
-				/>
+				<div className='flex items-center justify-center pb-[1rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
+					<ImageBase
+						url='./images/logo.svg'
+						type='HtmlImage'
+						style={{
+							objectFit: 'contain',
+						}}
+						className='w-[5.0625rem] h-[5.0625rem] mt-[1.25rem] '
+					/>
+				</div>
 				<Menu
 					theme='dark'
-					className='!bg-background-dark'
+					className='!bg-[#0E1A2B]  mt-[1.5625rem]'
 					mode='inline'
 					defaultSelectedKeys={['4']}
 				>
@@ -85,14 +77,14 @@ const DefaultLayout = ({ children, appProps }: any) => {
 							<Menu.Item
 								key={router}
 								// onClick={() => router.push(ROUTES.TOKEN_PRESALE_ROUNDS)}
-								className='!px-0 '
+								className='!py-[13px] !px-[24px] !h-fit'
 							>
 								<Link href={router}>
-									<a className='flex items-center font-normal text-base'>
+									<a className='flex items-center font-semibold text-base'>
 										{icon && (
 											<IconDynamic
 												image={icon}
-												className='!w-[22px] !h-[22px] mr-4 mb-0'
+												className='!w-[22px] !h-[22px] mr-[1rem] mb-0'
 											/>
 										)}
 										{title}
