@@ -82,7 +82,8 @@ export const convertTimelineMintNft = (
 	)?.label;
 
 	const publicPhase = listPhaseMintNft.find(
-		(phase: IListPhaseMintNft) => phase.status === LIST_STATUS_TIME_LINE.PENDING && phase.type === 'PUBLIC'
+		(phase: IListPhaseMintNft) =>
+			phase.status === LIST_STATUS_TIME_LINE.PENDING && phase.type === 'PUBLIC'
 	);
 
 	return {
