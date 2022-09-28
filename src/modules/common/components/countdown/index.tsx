@@ -1,10 +1,14 @@
 import { secondsToTime } from 'common/utils/functions';
+import { capitalize, get, keys, map } from 'lodash';
 import { FC, memo, useEffect, useState } from 'react';
 
 interface ICountdownProps {
 	millisecondsRemain?: number;
 	title?: string;
 	customClass?: string;
+	boxStyle?: string;
+	titleStyle?: string;
+	descriptionStyle?: string;
 }
 
 interface ITimeRemain {
@@ -25,10 +29,12 @@ const Countdown: FC<ICountdownProps> = ({
 	millisecondsRemain = 1663344791 - 1663153149,
 	title = 'You can buy tokens in',
 	customClass,
+	boxStyle,
+	titleStyle,
+	descriptionStyle,
 }) => {
 	const [secCountDown, setSecCountDown] = useState<number>(millisecondsRemain);
 	const [timeRemain, settimeRemain] = useState<ITimeRemain>(timeRemainDefault);
-	const { days, hours, minutes, seconds } = timeRemain;
 
 	useEffect(() => {
 		setSecCountDown(millisecondsRemain);
@@ -53,27 +59,23 @@ const Countdown: FC<ICountdownProps> = ({
 
 	return (
 		<div className={customClass}>
-			{title && <div className='font-bold pb-4'>{title}</div>}
+			{title && <div className={`font-bold pb-4 ${titleStyle}`}>{title}</div>}
 			<div className='countdown'>
-				<div className='box'>
-					{days}
-					<div className='description'>Days</div>
-				</div>
-				<div className='box'>
-					{hours}
-					<div className='description'>Hours</div>
-				</div>
-				<div className='box'>
-					{minutes}
-					<div className='description'>Minutes</div>
-				</div>
-				<div className='box'>
-					{seconds}
-					<div className='description'>Seconds</div>
-				</div>
+				{map(keys(timeRemain), (key: string) => (
+					<div className={`box ${boxStyle}`}>
+						{addZeroToHead(get(timeRemain, key) || 0)}
+						<div className={`description ${descriptionStyle}`}>
+							{capitalize(key)}
+						</div>
+					</div>
+				))}
 			</div>
 		</div>
 	);
 };
 
 export default memo(Countdown);
+
+function addZeroToHead(number: number) {
+	return `0${number}`.slice(-2);
+}

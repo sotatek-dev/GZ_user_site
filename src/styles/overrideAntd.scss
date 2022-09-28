@@ -127,10 +127,10 @@
 
 .custom-input-wrapper {
 	color: #efeff0 !important;
-	background: rgba(255, 255, 255, 0.07) !important;
-	border: none;
+	background: transparent !important;
+	border: 2px solid #ffffff33;
 	border-radius: 5px !important;
-	height: 40px !important;
+	height: 2.9375rem !important;
 	outline: none !important;
 
 	&custom-input-wrapper &::placeholder {
@@ -159,12 +159,33 @@
 
 .card-radio {
 	.ant-radio-wrapper {
-		// margin-right: 16px;
-		@apply text-white;
+		@apply text-[#ffffff80];
+
+		.ant-radio {
+			.ant-radio-inner {
+				border-width: 3px;
+				border-color: #ffffff80;
+				background-color: #0c1e32;
+				transition: none;
+			}
+		}
 	}
 
 	.ant-radio-wrapper-checked {
+		@apply text-[#ffffff];
 		.ant-radio-checked {
+			.ant-radio-inner {
+				background-color: #36c1ff;
+				border-color: #36c1ff;
+			}
+			.ant-radio-inner::after {
+				background-color: #0c1e32;
+				width: 12px;
+				height: 12px;
+				margin: 0;
+				translate: -50% -50%;
+				transition: none;
+			}
 		}
 	}
 
@@ -282,11 +303,12 @@
 }
 
 .ant-form-item-label > label {
-	@apply text-dim-gray;
+	color: #ffffff !important;
+	opacity: 0.5 !important;
 }
 
 .ant-form-item {
-	margin-bottom: 16px !important;
+	margin-bottom: 20px !important;
 }
 .ant-menu-item {
 	img {
@@ -311,4 +333,62 @@
 	img {
 		opacity: 1 !important;
 	}
+}
+.ant-pagination-item-active {
+	border-radius: 50% !important;
+	border: 2px solid white !important;
+}
+.ant-pagination-item-active a {
+	color: white !important;
+}
+.ant-pagination-item {
+	background-color: transparent !important;
+	border: none;
+	width: 50px !important;
+	height: 50px !important;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+
+	transition: none !important;
+}
+
+.ant-pagination-item a {
+	color: #ffffff80;
+	font-weight: 700 !important;
+	font-size: 18px;
+	line-height: 26px;
+}
+.ant-pagination-prev {
+	.ant-pagination-item-link {
+		background-color: transparent !important;
+		border: none !important;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+.ant-pagination-prev a {
+	color: white;
+}
+.ant-pagination-next {
+	.ant-pagination-item-link {
+		background-color: transparent !important;
+		border: none !important;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+.ant-pagination-next a {
+	color: white;
+}
+.ant-pagination-item-ellipsis {
+	color: #ffffff80 !important;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
