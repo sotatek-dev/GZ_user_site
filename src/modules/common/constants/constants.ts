@@ -42,3 +42,10 @@ export enum LIST_STATUS_TIME_LINE {
 	RUNNING = 'RUNNING',
 	PENDING = 'PENDING',
 }
+
+export const HEX_ZERO = '0x00';
+export const BUSD_CURRENCY = 'BUSD';
+export const BNB_CURRENCY = 'BNB';
+export const GXZ_CURRENCY = 'GXZ';
+export const BSC_DECIMAL = 18;
+export const TYPE_SALE_ROUND = 'sale-round';

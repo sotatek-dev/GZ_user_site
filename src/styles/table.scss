@@ -2,7 +2,9 @@
 	background: none;
 	overflow: hidden;
 	border-radius: 5px;
-	border: 1px solid #ffffff1f;
+	border: none;
+	background-color: #0e1a2b !important;
+	padding: 20px 40px;
 }
 
 .table-border-top {
@@ -16,10 +18,10 @@
 
 .ant-table-thead > tr > th {
 	background: transparent !important;
-	color: #ffffff4d !important;
+	color: #ffffff;
 	border-bottom: none;
 	font-weight: 400;
-	padding: 10px;
+	padding: 10px 0 !important;
 	font-size: 14px;
 	line-height: 24px;
 	font-family: 'Avenir Next LT Pro';
@@ -28,7 +30,8 @@
 
 .ant-table-tbody > tr > td {
 	border-bottom: none;
-	padding: 10px;
+	padding: 10px 0 !important;
+	border-top: 1px solid #2f3041 !important;
 	color: white !important;
 	&:hover {
 		background-color: #121327;
@@ -46,4 +49,10 @@
 
 .ant-table-cell-row-hover {
 	background: #121327 !important;
+}
+
+.table-sale-round {
+	.ant-table-thead > tr > th {
+		color: #36c1ff;
+	}
 }

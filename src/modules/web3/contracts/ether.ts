@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, providers, utils } from 'ethers';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';

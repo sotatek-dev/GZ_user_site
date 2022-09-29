@@ -15,7 +15,7 @@ import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
 interface WalletType {
 	connector: any;
 	walletName: string;
-	icon: any;
+	icon: string;
 	isDisabled: boolean;
 }
 
@@ -29,7 +29,6 @@ export default function ConnectWallet() {
 	const { isConnect } = useSelector((state) => state.wallet);
 	const [selectedNetwork, setSelectedNetwork] = useState(NETWORK_LIST[0]);
 	const [connector, setConnector] = useState<any>();
-	console.log('stepModalConnectWallet', stepModalConnectWallet);
 
 	useEffect(() => {
 		return () => {

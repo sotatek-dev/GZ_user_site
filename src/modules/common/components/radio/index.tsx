@@ -1,8 +1,8 @@
-import { Radio } from 'antd';
+import { Radio, RadioChangeEvent } from 'antd';
 import { FC } from 'react';
 
 interface ICustomRadioProps {
-	onChange: (e: any) => void;
+	onChange: (event: RadioChangeEvent) => void;
 	defaultValue: string;
 	options: Array<any>;
 }

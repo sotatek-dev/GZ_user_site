@@ -1,9 +1,12 @@
+import BigNumber from 'bignumber.js';
 import {
+	BSC_DECIMAL,
 	BUY,
 	CLAIMABLE,
 	LIST_PHASE_MINT_NFT,
 	UPCOMING,
 } from 'common/constants/constants';
+import { toNumber } from 'lodash';
 import moment from 'moment';
 import { IListPhaseMintNft } from 'pages/mint-dnft';
 
@@ -79,3 +82,88 @@ export const convertTimelineMintNft = (
 		},
 	};
 };
+
+export const convertHexToNumber = (data: string) => {
+	return new BigNumber(data).toNumber();
+};
+
+export const toWei = (value: number | string, decimal = BSC_DECIMAL) => {
+	BigNumber.config({ EXPONENTIAL_AT: 50 });
+	return new BigNumber(value).multipliedBy(Math.pow(10, decimal)).toString();
+};
+
+export const fromWei = (value: string | number) => {
+	const result = new BigNumber(value)
+		.div(new BigNumber(10).exponentiatedBy(BSC_DECIMAL))
+		.toString(); // divide by token decimal
+	return JSON.parse(result);
+};
+
+export function formatNumber(value: string | number): string {
+	const MIN_NUMBER = 0.0001;
+	const SUPER_MIN = '< 0.0001';
+	if (value === undefined) {
+		return '';
+	}
+	const comps = String(value).split('.');
+
+	if (
+		comps.length > 2 ||
+		!comps[0].match(/^[0-9,]*$/) ||
+		(comps[1] && !comps[1].match(/^[0-9]*$/)) ||
+		value === '.' ||
+		value === '-.'
+	) {
+		return '';
+	}
+
+	let suffix = '';
+	if (comps.length === 1) {
+		suffix = '.00';
+	}
+	if (comps.length === 2) {
+		suffix = '.' + (comps[1] || '0');
+	}
+	while (suffix.length > 3 && suffix[suffix.length - 1] === '0') {
+		suffix = suffix.substring(0, suffix.length - 1);
+	}
+
+	const formatted = [];
+	let whole = comps[0].replace(/[^0-9]/g, '');
+	while (whole.substring(0, 1) === '0') {
+		whole = whole.substring(1);
+	}
+
+	if (whole === '') {
+		whole = '0';
+		if (
+			toNumber(whole + suffix) !== 0 &&
+			toNumber(whole + suffix) < MIN_NUMBER
+		) {
+			return SUPER_MIN;
+		}
+	}
+
+	const roundNumber = Number(
+		Math.floor(toNumber('0' + suffix) * 10000) / 10000
+	);
+
+	if (roundNumber) {
+		suffix = '.' + String(roundNumber).split('.')[1];
+	} else {
+		suffix = '';
+	}
+
+	while (whole.length) {
+		if (whole.length <= 3) {
+			formatted.unshift(whole);
+			break;
+		} else {
+			const index = whole.length - 3;
+			formatted.unshift(whole.substring(index));
+			whole = whole.substring(0, index);
+		}
+	}
+
+	return formatted.join(',') + suffix;
+}
