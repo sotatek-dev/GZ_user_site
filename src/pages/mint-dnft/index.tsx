@@ -18,7 +18,6 @@ import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
-	DECIMAL_PLACED,
 	listPhaseId,
 	minBalanceForMint,
 	MINT_PHASE,
