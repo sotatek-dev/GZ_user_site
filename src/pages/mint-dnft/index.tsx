@@ -18,7 +18,9 @@ import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
 	DECIMAL,
+	listPhaseId,
 	minBalanceForMint,
+	SALE_PHASE_ID,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
