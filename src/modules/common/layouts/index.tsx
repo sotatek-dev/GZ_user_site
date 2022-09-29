@@ -5,6 +5,7 @@ import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import { ROUTES } from 'common/constants/constants';
 import { get } from 'lodash';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
 import Footer from './Footer';
 import LayoutHeader from './Header';
 
@@ -20,17 +21,14 @@ const LIST_SIDER = [
 		router: ROUTES.MY_PROFILE,
 		icon: './icons/my-profile.svg',
 		title: 'My Profile',
+		needLogin: true,
 	},
 	{
 		router: ROUTES.MINT_DNFT,
 		icon: './icons/mint-dnft.svg',
 		title: 'Mint dNFT',
 	},
-	{
-		router: ROUTES.MINT_KEY,
-		icon: './icons/mint-key.svg',
-		title: 'Mint Key',
-	},
+
 	{
 		router: ROUTES.MERGE_NFT,
 		icon: './icons/merge-dNFT.svg',
@@ -44,10 +42,10 @@ const LIST_SIDER = [
 ];
 
 const DefaultLayout = ({ children, appProps }: any) => {
+	const { isLogin } = useSelector((state) => state.user);
 	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
 		return <>{children}</>;
 	}
-
 	return (
 		<Layout className='!bg-[#061322]'>
 			<Sider
@@ -72,7 +70,10 @@ const DefaultLayout = ({ children, appProps }: any) => {
 					defaultSelectedKeys={['4']}
 				>
 					{LIST_SIDER.map((sider: any) => {
-						const { router, icon, title } = sider;
+						const { router, icon, title, needLogin } = sider;
+						if (needLogin && !isLogin) {
+							return null;
+						}
 						return (
 							<Menu.Item
 								key={router}

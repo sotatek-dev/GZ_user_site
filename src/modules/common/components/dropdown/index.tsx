@@ -6,6 +6,7 @@ type Props = {
 	type?: string;
 	list: Item[];
 	label: string;
+	customStyle?: string;
 };
 
 type Item = {
@@ -13,7 +14,7 @@ type Item = {
 };
 
 const Dropdown = (props: Props) => {
-	const { list, label } = props;
+	const { list, label, customStyle } = props;
 
 	const menu = (
 		<Menu onClick={() => {}}>
@@ -24,7 +25,7 @@ const Dropdown = (props: Props) => {
 	);
 
 	return (
-		<AntDropdown overlay={menu} trigger={['click']}>
+		<AntDropdown className={customStyle} overlay={menu} trigger={['click']}>
 			<Button className='dropdown-button'>
 				{label} <DownOutlined />
 			</Button>
