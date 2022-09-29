@@ -1,15 +1,24 @@
-import { BUY, CLAIMABLE, now, UPCOMING } from 'common/constants/constants';
+import {
+	billion,
+	BUY,
+	CLAIMABLE,
+	million,
+	now,
+	UPCOMING,
+} from 'common/constants/constants';
 import moment from 'moment';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
 import {
+	DECIMAL_PLACED,
 	MINT_PHASE,
 	MINT_PHASE_ID,
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
 } from 'modules/mint-dnft/constants';
+import BigNumber from 'bignumber.js';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
@@ -98,4 +107,30 @@ export const convertTimelineMintNft = (
 			endMintTime: endTime,
 		};
 	});
+};
+
+export const formatNumber = (
+	number: BigNumber.Value,
+	decimalPlaced = DECIMAL_PLACED,
+	noDataString = '-'
+): string => {
+	const n = new BigNumber(number);
+	const nabs = n.abs();
+
+	if (n.isNaN()) {
+		return noDataString;
+	}
+	if (n.eq(0)) {
+		return '0';
+	}
+
+	const negative = n.lt(0) ? '-' : '';
+
+	if (nabs.gte(billion)) {
+		return `${negative}${nabs.div(billion).dp(decimalPlaced).toString(10)}B`;
+	} else if (nabs.gte(million) && nabs.lt(billion)) {
+		return `${negative}${nabs.div(million).dp(decimalPlaced).toString(10)}M`;
+	}
+
+	return `${negative}${nabs.div(million).dp(decimalPlaced).toString(10)}`;
 };

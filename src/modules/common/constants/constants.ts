@@ -37,3 +37,6 @@ export const second = 1000;
 export const minute = 1000 * 60;
 export const hour = 1000 * 60 * 60;
 export const day = 1000 * 60 * 60 * 24;
+
+export const billion = 1000000000;
+export const million = 1000000;

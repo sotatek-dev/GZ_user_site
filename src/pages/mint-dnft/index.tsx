@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
@@ -9,6 +9,7 @@ import {
 	convertMiliSecondTimestampToDate,
 	geMintPhaseType,
 	getMintPhaseLabel,
+	formatNumber,
 } from 'common/utils/functions';
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
@@ -17,7 +18,7 @@ import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
-	DECIMAL,
+	DECIMAL_PLACED,
 	listPhaseId,
 	minBalanceForMint,
 	MINT_PHASE,
@@ -31,7 +32,7 @@ import {
 	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
 import Countdown from 'common/components/countdown';
-import { now, second } from 'common/constants/constants';
+import { billion, million, now, second } from 'common/constants/constants';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
@@ -206,7 +207,7 @@ const MintDNFT: React.FC = () => {
 					<div className='flex items-center mr-10'>
 						<div className={'text-white/[.5] mr-[20px]'}>Price:</div>
 						<div>
-							{new BigNumber(price).toFixed(DECIMAL)} {token}
+							{formatNumber(price)} {token}
 						</div>
 						{new BigNumber(priceAfter).gt(0) && (
 							<Tooltip
@@ -215,8 +216,8 @@ const MintDNFT: React.FC = () => {
 								title={
 									<>
 										<div>
-											First 24h: {new BigNumber(price).toFixed(DECIMAL)} {token}{' '}
-											then {new BigNumber(priceAfter).toFixed(DECIMAL)} {token}
+											First 24h: {formatNumber(price)} {token} then{' '}
+											{formatNumber(priceAfter)} {token}
 										</div>
 									</>
 								}
@@ -246,7 +247,7 @@ const MintDNFT: React.FC = () => {
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							Total NFT
 						</div>
-						<div>{new BigNumber(maxSaleAmount).toFixed(DECIMAL)}</div>
+						<div>{formatNumber(maxSaleAmount)}</div>
 					</div>
 					<div className={'border border-white/[.07] h-full min-h-[1.25em]'} />
 					<div className='flex justify-between items-center w-[33%]'>
@@ -255,7 +256,7 @@ const MintDNFT: React.FC = () => {
 							Remaining
 						</div>
 						<div>
-							{new BigNumber(maxSaleAmount).minus(totalSold).toFixed(DECIMAL)}
+							{formatNumber(new BigNumber(maxSaleAmount).minus(totalSold))}
 						</div>
 					</div>
 					<div className={'border border-white/[.07] h-full min-h-[1.25em]'} />
@@ -264,7 +265,7 @@ const MintDNFT: React.FC = () => {
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							NFT Minted
 						</div>
-						<div>{new BigNumber(totalSold).toFixed(DECIMAL)}</div>
+						<div>{formatNumber(totalSold)}</div>
 					</div>
 				</div>
 

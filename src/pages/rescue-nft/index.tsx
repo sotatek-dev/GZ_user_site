@@ -3,7 +3,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import {
-	DECIMAL,
+	DECIMAL_PLACED,
 	listPhaseId,
 	minBalanceForMint,
 	MINT_PHASE_ID,
@@ -161,7 +161,7 @@ const RescueDNFT = () => {
 					<div className='flex items-center mr-10'>
 						<div className={'text-white/[.5] mr-[20px]'}>Price:</div>
 						<div>
-							{new BigNumber(price).toFixed(DECIMAL)} {token}
+							{new BigNumber(price).toFixed(DECIMAL_PLACED)} {token}
 						</div>
 						{new BigNumber(priceAfter).gt(0) && (
 							<Tooltip
@@ -170,8 +170,10 @@ const RescueDNFT = () => {
 								title={
 									<>
 										<div>
-											First 24h: {new BigNumber(price).toFixed(DECIMAL)} {token}{' '}
-											then {new BigNumber(priceAfter).toFixed(DECIMAL)} {token}
+											First 24h: {new BigNumber(price).toFixed(DECIMAL_PLACED)}{' '}
+											{token} then{' '}
+											{new BigNumber(priceAfter).toFixed(DECIMAL_PLACED)}{' '}
+											{token}
 										</div>
 									</>
 								}
@@ -201,7 +203,7 @@ const RescueDNFT = () => {
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							Current NFTs can be rescued
 						</div>
-						<div>{new BigNumber(600).toFixed(DECIMAL)}</div>
+						<div>{new BigNumber(600).toFixed(DECIMAL_PLACED)}</div>
 					</div>
 				</div>
 
