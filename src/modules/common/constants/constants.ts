@@ -29,6 +29,11 @@ export const CLAIMABLE = 'Claimable';
 export const END = 'End';
 export const TIME_LINE_SALE_ROUND = [UPCOMING, BUY, CLAIMABLE, END];
 
+export enum ROUND_TYPE {
+	MINT_NFT = 'mint-nft',
+	SALE_ROUND = 'sale-round',
+}
+
 export const now = () => {
 	return Date.now();
 };

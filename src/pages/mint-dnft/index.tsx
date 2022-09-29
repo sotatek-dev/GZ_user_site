@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
 import React, { ChangeEvent, useEffect, useState } from 'react';
@@ -32,10 +32,13 @@ import {
 	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
 import Countdown from 'common/components/countdown';
-import { now, second } from 'common/constants/constants';
+import { now, ROUND_TYPE, second } from 'common/constants/constants';
 import { useApproval } from 'web3/hooks';
 import { AbiDnft } from 'web3/abis/types';
-import { getMintDnftSignature } from 'modules/mint-dnft/services';
+import {
+	checkWhitelist,
+	getMintDnftSignature,
+} from 'modules/mint-dnft/services';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
@@ -86,12 +89,118 @@ const MintDNFT: React.FC = () => {
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
+	const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false);
+	const [isLoadingMint, setIsLoadingMint] = useState<boolean>(false);
 
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughBalance = balance.gte(minBalanceForMint);
 
+	const handleGetListPhaseMintNft = async () => {
+		try {
+			if (dnftContract) {
+				const runningPhaseId = await dnftContract.currentSalePhase();
+
+				const list = await Promise.all(
+					listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
+						// @ts-ignore
+						const res = await dnftContract.salePhaseStatistics(salephaseid);
+						const {
+							endTime,
+							maxAmountUserCanBuy,
+							maxSaleAmount,
+							priceAfter24Hours,
+							priceInBUSD,
+							startTime,
+							totalSold,
+						} = res;
+						const phase: IPhaseStatistic = {
+							id: salephaseid,
+							type: geMintPhaseType(salephaseid) || '',
+							startTime: new BigNumber(startTime._hex).times(1000).toNumber(),
+							endTime: new BigNumber(endTime._hex).times(1000).toNumber(),
+							priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
+								.div(TOKEN_DECIMAL)
+								.toString(10),
+							priceInBUSD: new BigNumber(priceInBUSD._hex)
+								.div(TOKEN_DECIMAL)
+								.toString(10),
+							maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex)
+								.div(TOKEN_DECIMAL)
+								.toString(10),
+							maxSaleAmount: new BigNumber(maxSaleAmount._hex)
+								.div(TOKEN_DECIMAL)
+								.toString(10),
+							totalSold: new BigNumber(totalSold._hex)
+								.div(TOKEN_DECIMAL)
+								.toString(10),
+						};
+						return phase;
+					})
+				);
+				setRunningPhaseId(runningPhaseId);
+				setListPhase(list);
+			}
+		} catch (e) {
+			// handle e
+		}
+	};
+
+	const fetchRate = async () => {
+		try {
+			if (dnftContract) {
+				// get rate
+				const res = await dnftContract.convertBNBToBUSD(
+					TOKEN_DECIMAL.toString(10)
+				);
+				const rate = new BigNumber(res._hex).toString(10);
+				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
+			}
+		} catch (e) {
+			setRate(1);
+			// handle e
+			// console.log(e);
+		}
+	};
+
+	const fetchIsWhitelisted = async () => {
+		if (runningPhase && runningPhaseId) {
+			setIsWhitelisted(
+				await checkWhitelist(
+					addressWallet,
+					ROUND_TYPE.MINT_NFT,
+					runningPhase.type
+				)
+			);
+		}
+	};
+
+	const reloadData = async () => {
+		handleGetListPhaseMintNft();
+		fetchRate();
+		fetchIsWhitelisted();
+	};
+
+	useEffect(() => {
+		handleGetListPhaseMintNft();
+	}, [dnftContract]);
+
+	useEffect(() => {
+		fetchRate();
+	}, [runningPhaseId, runningPhase, dnftContract]);
+
+	useEffect(() => {
+		fetchIsWhitelisted();
+	}, [runningPhaseId, runningPhase]);
+
+	useEffect(() => {
+		if (listPhase.length) {
+			setTimelineMintNft(convertTimelineMintNft(listPhase));
+		}
+	}, [listPhase]);
+
 	const mint = async () => {
 		try {
+			setIsLoadingMint(true);
 			if (dnftContract && runningPhase && runningPhaseId) {
 				// set up signature
 				const signature = await getMintDnftSignature();
@@ -120,104 +229,35 @@ const MintDNFT: React.FC = () => {
 		} catch (e) {
 			// handle e
 			// console.log(e);
+		} finally {
+			setIsLoadingMint(false);
+			reloadData();
 		}
 	};
-
-	useEffect(() => {
-		const handleGetListPhaseMintNft = async () => {
-			try {
-				if (dnftContract) {
-					const runningPhaseId = await dnftContract.currentSalePhase();
-
-					const list = await Promise.all(
-						listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
-							// @ts-ignore
-							const res = await dnftContract.salePhaseStatistics(salephaseid);
-							const {
-								endTime,
-								maxAmountUserCanBuy,
-								maxSaleAmount,
-								priceAfter24Hours,
-								priceInBUSD,
-								startTime,
-								totalSold,
-							} = res;
-							const phase: IPhaseStatistic = {
-								id: salephaseid,
-								type: geMintPhaseType(salephaseid) || '',
-								startTime: new BigNumber(startTime._hex).times(1000).toNumber(),
-								endTime: new BigNumber(endTime._hex).times(1000).toNumber(),
-								priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								priceInBUSD: new BigNumber(priceInBUSD._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								maxSaleAmount: new BigNumber(maxSaleAmount._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								totalSold: new BigNumber(totalSold._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-							};
-							return phase;
-						})
-					);
-					setRunningPhaseId(runningPhaseId);
-					setListPhase(list);
-				}
-			} catch (e) {
-				// handle e
-			}
-		};
-
-		handleGetListPhaseMintNft();
-	}, [dnftContract]);
-
-	useEffect(() => {
-		const fetchRate = async () => {
-			try {
-				if (dnftContract) {
-					// get rate
-					const res = await dnftContract.convertBNBToBUSD(
-						TOKEN_DECIMAL.toString(10)
-					);
-					const rate = new BigNumber(res._hex).toString(10);
-					setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
-				}
-			} catch (e) {
-				setRate(1);
-				// handle e
-				// console.log(e);
-			}
-		};
-
-		if (dnftContract) {
-			fetchRate();
-		}
-	}, [runningPhaseId, runningPhase, dnftContract]);
-
-	useEffect(() => {
-		if (listPhase.length) {
-			setTimelineMintNft(convertTimelineMintNft(listPhase));
-		}
-	}, [listPhase]);
 
 	return (
 		<div className='flex gap-x-3'>
 			<div className='w-[300px] h-[587px] rounded-[10px] flex flex-col items-center'>
 				<NftGroup className={'w-full h-fit mt-11 mb-20'} />
-				<div
-					onClick={mint}
-					className={
-						'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
-					}
-				>
-					Mint
-				</div>
+				{isWhitelisted ? (
+					<div
+						onClick={mint}
+						className={
+							'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
+						}
+					>
+						{isLoadingMint ? <Spin className={'flex'} /> : 'Mint'}
+					</div>
+				) : (
+					<div
+						onClick={mint}
+						className={
+							'flex justify-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
+						}
+					>
+						Mint
+					</div>
+				)}
 			</div>
 
 			<div className='w-full bg-box p-8 rounded-[10px]'>
