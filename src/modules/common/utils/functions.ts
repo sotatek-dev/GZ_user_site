@@ -1,19 +1,14 @@
-import {
-	BUY,
-	CLAIMABLE,
-	LIST_PHASE_MINT_NFT,
-	LIST_STATUS_TIME_LINE,
-	UPCOMING,
-} from 'common/constants/constants';
+import { BUY, CLAIMABLE, now, UPCOMING } from 'common/constants/constants';
 import moment from 'moment';
 import {
-	IListPhaseMintNft,
 	IPhaseStatistic,
+	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
 import {
 	MINT_PHASE,
 	MINT_PHASE_ID,
 	MINT_PHASE_LABEL,
+	MINT_PHASE_STATUS,
 } from 'modules/mint-dnft/constants';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
@@ -56,6 +51,13 @@ export const convertTimeStampToDate = (date: number, formatDate?: string) => {
 	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
 };
 
+export const convertMiliSecondTimestampToDate = (
+	date: number,
+	formatDate?: string
+) => {
+	return moment(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
+};
+
 export const geMintPhaseType = (id: MINT_PHASE_ID): MINT_PHASE | void => {
 	if (id === MINT_PHASE_ID.WHITE_LIST) return MINT_PHASE.WHITE_LIST;
 	if (id === MINT_PHASE_ID.PRESALE_1) return MINT_PHASE.PRESALE_1;
@@ -72,38 +74,28 @@ export const getMintPhaseLabel = (
 	if (id === MINT_PHASE_ID.PUBLIC) return MINT_PHASE_LABEL.PUBLIC;
 };
 
-export const convertTimelineMintNft = (
-	listPhaseMintNft: Array<IListPhaseMintNft>
-) => {
-	const timeLineMintNft = listPhaseMintNft.map((phase: IListPhaseMintNft) => {
-		const { type, status, start_mint_time, end_mint_time } = phase;
-		const label = LIST_PHASE_MINT_NFT.find(
-			(item: { label: string; value: string }) => item.value === type
-		)?.label;
+export const getMintPhaseStatus = (
+	phase: IPhaseStatistic
+): MINT_PHASE_STATUS => {
+	if (phase.endTime < now()) {
+		return MINT_PHASE_STATUS.DONE;
+	} else if (phase.endTime > now() && phase.startTime < now()) {
+		return MINT_PHASE_STATUS.RUNNING;
+	} else {
+		return MINT_PHASE_STATUS.PENDING;
+	}
+};
 
+export const convertTimelineMintNft = (
+	listPhase: Array<IPhaseStatistic>
+): Array<ITimelineMintNftState> => {
+	return listPhase.map((phase: IPhaseStatistic) => {
+		const { id, startTime, endTime } = phase;
 		return {
-			label,
-			status,
-			startMintTime: start_mint_time,
-			endMintTime: end_mint_time,
+			label: getMintPhaseLabel(id) || '',
+			status: getMintPhaseStatus(phase),
+			startMintTime: startTime,
+			endMintTime: endTime,
 		};
 	});
-
-	const phaseRunning = listPhaseMintNft.find(
-		(phase: IListPhaseMintNft) => phase.status === LIST_STATUS_TIME_LINE.RUNNING
-	);
-	const labelPhaseRunning = LIST_PHASE_MINT_NFT.find(
-		(phase: { label: string; value: string }) =>
-			phase.value === phaseRunning?.type
-	)?.label;
-
-	return {
-		timeLineMintNft,
-		phaseRunning: {
-			startTime: phaseRunning?.start_mint_time,
-			endTime: phaseRunning?.end_mint_time,
-			phase: labelPhaseRunning,
-			id: phaseRunning?.order,
-		},
-	};
 };

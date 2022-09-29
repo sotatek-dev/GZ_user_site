@@ -5,7 +5,8 @@ import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
-	convertTimeStampToDate,
+	convertTimelineMintNft,
+	convertMiliSecondTimestampToDate,
 	geMintPhaseType,
 	getMintPhaseLabel,
 } from 'common/utils/functions';
@@ -30,7 +31,7 @@ import {
 	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
 import Countdown from 'common/components/countdown';
-import { now } from 'common/constants/constants';
+import { now, second } from 'common/constants/constants';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
@@ -121,8 +122,8 @@ const MintDNFT: React.FC = () => {
 							const phase: IPhaseStatistic = {
 								id: salephaseid,
 								type: geMintPhaseType(salephaseid) || '',
-								startTime: new BigNumber(startTime._hex).toNumber(),
-								endTime: new BigNumber(endTime._hex).toNumber(),
+								startTime: new BigNumber(startTime._hex).times(1000).toNumber(),
+								endTime: new BigNumber(endTime._hex).times(1000).toNumber(),
 								priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
 									.div(TOKEN_DECIMAL)
 									.toString(10),
@@ -174,6 +175,12 @@ const MintDNFT: React.FC = () => {
 			fetchRate();
 		}
 	}, [runningPhaseId, runningPhase, dnftContract]);
+
+	useEffect(() => {
+		if (listPhase.length) {
+			setTimelineMintNft(convertTimelineMintNft(listPhase));
+		}
+	}, [listPhase]);
 
 	return (
 		<div className='flex gap-x-3'>
@@ -281,14 +288,14 @@ const MintDNFT: React.FC = () => {
 									>
 										<div className='mb-4'>
 											Start from:{' '}
-											{convertTimeStampToDate(
+											{convertMiliSecondTimestampToDate(
 												startMintTime,
 												'hh:mm - MM/DD/YYYY'
 											)}
 										</div>
 										<div>
 											End in:{' '}
-											{convertTimeStampToDate(
+											{convertMiliSecondTimestampToDate(
 												endMintTime,
 												'hh:mm - MM/DD/YYYY'
 											)}
@@ -313,7 +320,12 @@ const MintDNFT: React.FC = () => {
 								title={`Minting phase for ${getMintPhaseLabel(
 									runningPhase.id
 								)} end in`}
-								millisecondsRemain={runningPhase.endTime || 0}
+								millisecondsRemain={
+									new BigNumber(runningPhase.endTime)
+										.minus(now())
+										.div(second)
+										.toNumber() || 0
+								}
 							/>
 						</>
 					) : upcomingPhase && upcomingPhase.startTime > now() ? (
@@ -321,7 +333,12 @@ const MintDNFT: React.FC = () => {
 							<Countdown
 								customClass={'grow'}
 								title={'You can mint dNFT in'}
-								millisecondsRemain={upcomingPhase.startTime || 0}
+								millisecondsRemain={
+									new BigNumber(upcomingPhase.startTime)
+										.minus(now())
+										.div(second)
+										.toNumber() || 0
+								}
 							/>
 						</>
 					) : publicPhase && publicPhase.endTime < now() ? (
@@ -348,7 +365,7 @@ const MintDNFT: React.FC = () => {
 							to mint this dNFT
 						</div>
 						<div className={'text-h8 mt-4'}>
-							Notice: to mint this dNFT requires 5,000 GXZ Token
+							Notice: to mint this dNFT requires {minBalanceForMint} GXZ Token
 						</div>
 					</div>
 				</div>

@@ -30,6 +30,13 @@ export enum MINT_PHASE_ID {
 	PRESALE_2 = 3,
 	PUBLIC = 4,
 }
+
+export enum MINT_PHASE_STATUS {
+	DONE = 'DONE',
+	RUNNING = 'RUNNING',
+	PENDING = 'PENDING',
+}
+
 export const listPhaseId = [
 	MINT_PHASE_ID.WHITE_LIST,
 	MINT_PHASE_ID.PRESALE_1,
