@@ -1,0 +1,95 @@
+.switch {
+	position: relative;
+	display: flex;
+	width: 256px;
+	height: 46px;
+	border-radius: 50px;
+	background: rgba(247, 247, 247, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: row;
+	z-index: 1;
+	cursor: pointer;
+	user-select: none;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider {
+	-webkit-transition: 0.4s;
+	transition: 0.4s;
+	display: flex;
+	height: 100%;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	background-color: transparent;
+	font-weight: 600;
+	z-index: 3;
+}
+.switch-btn {
+	-webkit-transition: 0.4s;
+	transition: 0.4s;
+	position: absolute;
+	cursor: pointer;
+	top: 4px;
+	left: 6px;
+
+	width: 122px;
+	height: 38px;
+	-webkit-transition: 0.4s;
+	transition: 0.4s;
+	border-radius: 50px;
+
+	z-index: 2;
+	background-color: #d47af5;
+}
+
+.switch input:checked + .switch-btn {
+	-webkit-transform: translateX(100%);
+	-ms-transform: translateX(100%);
+	transform: translateX(100%);
+}
+
+.nft-detail {
+	@apply mt-[35px] flex flex-row w-[100%];
+
+	&_img {
+		@apply w-[345px] h-[410px] relative mr-[50px];
+	}
+
+	&_point {
+		@apply flex flex-grow;
+	}
+}
+.nft-material {
+	@apply mt-[72px] pt-[16px] border-t border-[#ffffff1a];
+
+	&_title {
+		@apply text-[#ffffff] text-[24px] font-semibold leading-[32px];
+	}
+
+	&_carousel {
+		@apply mt-[16px]  w-[100%]  overflow-x-scroll whitespace-nowrap;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		&_item {
+			@apply w-[252px] h-[300px] relative inline-block mr-[30px];
+			user-select: none;
+
+			&-img {
+				@apply w-[100%] h-[100%] object-contain;
+			}
+		}
+	}
+}
