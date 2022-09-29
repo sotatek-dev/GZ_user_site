@@ -6,7 +6,15 @@ import {
 	UPCOMING,
 } from 'common/constants/constants';
 import moment from 'moment';
-import { IListPhaseMintNft } from 'modules/mint-dnft/interfaces';
+import {
+	IListPhaseMintNft,
+	IPhaseStatistic,
+} from 'modules/mint-dnft/interfaces';
+import {
+	MINT_PHASE,
+	MINT_PHASE_ID,
+	MINT_PHASE_LABEL,
+} from 'modules/mint-dnft/constants';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
@@ -48,6 +56,22 @@ export const convertTimeStampToDate = (date: number, formatDate?: string) => {
 	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
 };
 
+export const geMintPhaseType = (id: MINT_PHASE_ID): MINT_PHASE | void => {
+	if (id === MINT_PHASE_ID.WHITE_LIST) return MINT_PHASE.WHITE_LIST;
+	if (id === MINT_PHASE_ID.PRESALE_1) return MINT_PHASE.PRESALE_1;
+	if (id === MINT_PHASE_ID.PRESALE_2) return MINT_PHASE.PRESALE_2;
+	if (id === MINT_PHASE_ID.PUBLIC) return MINT_PHASE.PUBLIC;
+};
+
+export const getMintPhaseLabel = (
+	id: MINT_PHASE_ID
+): MINT_PHASE_LABEL | void => {
+	if (id === MINT_PHASE_ID.WHITE_LIST) return MINT_PHASE_LABEL.WHITE_LIST;
+	if (id === MINT_PHASE_ID.PRESALE_1) return MINT_PHASE_LABEL.PRESALE_1;
+	if (id === MINT_PHASE_ID.PRESALE_2) return MINT_PHASE_LABEL.PRESALE_2;
+	if (id === MINT_PHASE_ID.PUBLIC) return MINT_PHASE_LABEL.PUBLIC;
+};
+
 export const convertTimelineMintNft = (
 	listPhaseMintNft: Array<IListPhaseMintNft>
 ) => {
@@ -73,19 +97,6 @@ export const convertTimelineMintNft = (
 			phase.value === phaseRunning?.type
 	)?.label;
 
-	const upcomingPhase = listPhaseMintNft.find(
-		(phase: IListPhaseMintNft) => phase.status === LIST_STATUS_TIME_LINE.PENDING
-	);
-	const upcomingPhaseLabel = LIST_PHASE_MINT_NFT.find(
-		(phase: { label: string; value: string }) =>
-			phase.value === upcomingPhase?.type
-	)?.label;
-
-	const publicPhase = listPhaseMintNft.find(
-		(phase: IListPhaseMintNft) =>
-			phase.status === LIST_STATUS_TIME_LINE.PENDING && phase.type === 'PUBLIC'
-	);
-
 	return {
 		timeLineMintNft,
 		phaseRunning: {
@@ -93,13 +104,6 @@ export const convertTimelineMintNft = (
 			endTime: phaseRunning?.end_mint_time,
 			phase: labelPhaseRunning,
 			id: phaseRunning?.order,
-		},
-		upcomingPhase: {
-			startTime: upcomingPhase?.start_mint_time,
-			phase: upcomingPhaseLabel,
-		},
-		publicPhase: {
-			endTime: publicPhase?.end_mint_time,
 		},
 	};
 };

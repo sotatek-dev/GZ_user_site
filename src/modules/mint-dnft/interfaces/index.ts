@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { MINT_PHASE } from 'modules/mint-dnft/constants';
 
 export interface ITimelineMintNftState {
 	label: string | undefined;
@@ -22,9 +23,11 @@ export interface IListPhaseMintNft {
 	_id: string;
 }
 
-export interface IPoolStatistic {
-	startTime: BigNumber.Value;
-	endTime: BigNumber.Value;
+export interface IPhaseStatistic {
+	id: number;
+	type: MINT_PHASE | string;
+	startTime: number;
+	endTime: number;
 	priceInBUSD: BigNumber.Value;
 	priceAfter24Hours: BigNumber.Value;
 	maxAmountUserCanBuy: BigNumber.Value;

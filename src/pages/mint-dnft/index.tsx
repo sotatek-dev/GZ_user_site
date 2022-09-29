@@ -1,14 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
-import Countdown from 'common/components/countdown';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { getListPhaseMintNft } from 'apis/mintDNFt';
-import { get } from 'lodash';
 import {
-	convertTimelineMintNft,
 	convertTimeStampToDate,
+	geMintPhaseType,
+	getMintPhaseLabel,
 } from 'common/utils/functions';
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
@@ -20,23 +19,41 @@ import {
 	DECIMAL,
 	listPhaseId,
 	minBalanceForMint,
-	SALE_PHASE_ID,
+	MINT_PHASE,
+	MINT_PHASE_ID,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mint-dnft/constants';
 import {
-	IPoolStatistic,
+	IPhaseStatistic,
 	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
+import Countdown from 'common/components/countdown';
+import { now } from 'common/constants/constants';
 
 const MintDNFT: React.FC = () => {
+	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
+	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
+		0
+	);
+	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
+		return (
+			item.id === runningPhaseId &&
+			item.startTime < now() &&
+			item.endTime > now()
+		);
+	});
+	const upcomingPhase = listPhase.find((item) => {
+		return item.id === runningPhaseId + 1 && item.startTime > now();
+	});
+	const publicPhase = listPhase.find((item: IPhaseStatistic) => {
+		return item.type === MINT_PHASE.PUBLIC;
+	});
+
 	const [timelineMintNft, setTimelineMintNft] = useState<
 		Array<ITimelineMintNftState>
 	>([]);
-	const [phaseRunning, setPhaseRunning] = useState<any>();
-	const [upcomingPhase, setUpcomingPhase] = useState<any>();
-	const [publicPhase, setPublicPhase] = useState<any>();
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const balance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
 	const dnftContract = useContract(
@@ -44,21 +61,12 @@ const MintDNFT: React.FC = () => {
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
 	const { addressWallet } = useSelector((state) => state.wallet);
-	const [poolStatistic, setPoolStatistic] = useState<IPoolStatistic>({
-		startTime: 0,
-		endTime: 0,
-		priceInBUSD: 0,
-		priceAfter24Hours: 0,
-		maxAmountUserCanBuy: 0,
-		maxSaleAmount: 0,
-		totalSold: 0,
-	});
 	const {
-		priceInBUSD: priceInBUSD,
-		priceAfter24Hours,
-		maxSaleAmount,
-		totalSold,
-	} = poolStatistic;
+		priceInBUSD: priceInBUSD = 0,
+		priceAfter24Hours: priceAfter24Hours = 0,
+		maxSaleAmount: maxSaleAmount = 0,
+		totalSold: totalSold = 0,
+	} = runningPhase || {};
 	// BUSD / BNB
 	const [rate, setRate] = useState<BigNumber.Value>(1);
 	const price =
@@ -67,65 +75,9 @@ const MintDNFT: React.FC = () => {
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
-	const { startTime: upcomingPhaseStartTime } = upcomingPhase || {};
-	const { endPubLicPhaseTime: pubLicPhaseEndTime } = publicPhase || {};
-	const {
-		runningPhaseLabel,
-		endTime: runningPhaseEndTime,
-		startTime: runningPhaseStartTime,
-		id: runningPhaseId,
-	} = phaseRunning || {};
 
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughBalance = balance.gte(minBalanceForMint);
-
-	const fetchPoolStatisticData = async (id: number) => {
-		try {
-			// get statistic
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const res = await dnftContract?.salePhaseStatistics(id);
-			const {
-				startTime,
-				endTime,
-				priceInBUSD,
-				priceAfter24Hours,
-				maxAmountUserCanBuy,
-				maxSaleAmount,
-				totalSold,
-			} = res;
-			setPoolStatistic({
-				startTime: startTime._hex,
-				endTime: endTime._hex,
-				priceInBUSD: new BigNumber(priceInBUSD._hex).div(TOKEN_DECIMAL),
-				priceAfter24Hours: new BigNumber(priceAfter24Hours._hex).div(
-					TOKEN_DECIMAL
-				),
-				maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex).div(
-					TOKEN_DECIMAL
-				),
-				maxSaleAmount: new BigNumber(maxSaleAmount._hex).div(TOKEN_DECIMAL),
-				totalSold: new BigNumber(totalSold._hex).div(TOKEN_DECIMAL),
-			});
-		} catch (e) {
-			// console.log(e)
-		}
-	};
-	const fetchRate = async () => {
-		try {
-			// get rate
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const res = await dnftContract?.convertBNBToBUSD(
-				TOKEN_DECIMAL.toString(10)
-			);
-			const rate = new BigNumber(res._hex).toString(10);
-			setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
-		} catch (e) {
-			setRate(1);
-			// console.log(e);
-		}
-	};
 
 	// // eslint-disable-next-line @typescript-eslint/no-unused-vars
 	// const mint = async () => {
@@ -148,34 +100,80 @@ const MintDNFT: React.FC = () => {
 
 	useEffect(() => {
 		const handleGetListPhaseMintNft = async () => {
-			const [data] = await getListPhaseMintNft();
-			const listPhaseMintNft = get(data, 'data', []);
-			const { timeLineMintNft, upcomingPhase, phaseRunning, publicPhase } =
-				convertTimelineMintNft(listPhaseMintNft);
-			setTimelineMintNft(timeLineMintNft);
-			setPhaseRunning(phaseRunning);
-			setUpcomingPhase(upcomingPhase);
-			setPublicPhase(publicPhase);
+			try {
+				if (dnftContract) {
+					// @ts-ignore
+					const runningPhaseId = await dnftContract?.currentSalePhase();
+
+					const list = await Promise.all(
+						listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
+							// @ts-ignore
+							const res = await dnftContract?.salePhaseStatistics(salephaseid);
+							const {
+								endTime,
+								maxAmountUserCanBuy,
+								maxSaleAmount,
+								priceAfter24Hours,
+								priceInBUSD,
+								startTime,
+								totalSold,
+							} = res;
+							const phase: IPhaseStatistic = {
+								id: salephaseid,
+								type: geMintPhaseType(salephaseid) || '',
+								startTime: new BigNumber(startTime._hex).toNumber(),
+								endTime: new BigNumber(endTime._hex).toNumber(),
+								priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								priceInBUSD: new BigNumber(priceInBUSD._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								maxSaleAmount: new BigNumber(maxSaleAmount._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								totalSold: new BigNumber(totalSold._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+							};
+							return phase;
+						})
+					);
+					setRunningPhaseId(runningPhaseId);
+					setListPhase(list);
+				}
+			} catch (e) {
+				// handle e
+			}
 		};
 
 		handleGetListPhaseMintNft();
-	}, []);
+	}, [dnftContract]);
 
 	useEffect(() => {
-		if (
-			phaseRunning &&
-			runningPhaseEndTime > new Date().getTime() &&
-			new Date().getTime() > runningPhaseStartTime &&
-			dnftContract
-		) {
-			fetchPoolStatisticData(runningPhaseId);
+		const fetchRate = async () => {
+			try {
+				// get rate
+				// @ts-ignore
+				const res = await dnftContract?.convertBNBToBUSD(
+					TOKEN_DECIMAL.toString(10)
+				);
+				const rate = new BigNumber(res._hex).toString(10);
+				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
+			} catch (e) {
+				setRate(1);
+				// handle e
+				// console.log(e);
+			}
+		};
+
+		if (dnftContract) {
 			fetchRate();
 		}
-		// if (dnftContract) {
-		//   fetchPoolStatisticData(1);
-		//   fetchRate();
-		// }
-	}, [phaseRunning, dnftContract]);
+	}, [runningPhaseId, runningPhase, dnftContract]);
 
 	return (
 		<div className='flex gap-x-3'>
@@ -306,25 +304,27 @@ const MintDNFT: React.FC = () => {
 				<hr className={'border border-white/[.07] mb-8'} />
 
 				<div className={'flex items-end'}>
-					{phaseRunning &&
-					runningPhaseEndTime > new Date().getTime() &&
-					new Date().getTime() > runningPhaseStartTime ? (
+					{runningPhase &&
+					runningPhase.endTime > now() &&
+					runningPhase.startTime < now() ? (
 						<>
 							<Countdown
 								customClass={'grow'}
-								title={`Minting phase for ${runningPhaseLabel} end in`}
-								millisecondsRemain={runningPhaseEndTime || 0}
+								title={`Minting phase for ${getMintPhaseLabel(
+									runningPhase.id
+								)} end in`}
+								millisecondsRemain={runningPhase.endTime || 0}
 							/>
 						</>
-					) : upcomingPhase && new Date().getTime() < upcomingPhaseStartTime ? (
+					) : upcomingPhase && upcomingPhase.startTime > now() ? (
 						<>
 							<Countdown
 								customClass={'grow'}
 								title={'You can mint dNFT in'}
-								millisecondsRemain={upcomingPhaseStartTime || 0}
+								millisecondsRemain={upcomingPhase.startTime || 0}
 							/>
 						</>
-					) : pubLicPhaseEndTime < new Date().getTime() ? (
+					) : publicPhase && publicPhase.endTime < now() ? (
 						<Countdown
 							customClass={'grow'}
 							title={'Presale for dNFT is ended'}

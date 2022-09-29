@@ -1,24 +1,41 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import {
 	DECIMAL,
+	listPhaseId,
 	minBalanceForMint,
+	MINT_PHASE_ID,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mint-dnft/constants';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
-import { IPoolStatistic } from 'modules/mint-dnft/interfaces';
+import { IPhaseStatistic } from 'modules/mint-dnft/interfaces';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
 import CustomRadio from 'common/components/radio';
 import { Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { geMintPhaseType } from 'common/utils/functions';
+import { now } from 'common/constants/constants';
 
 const RescueDNFT = () => {
-	// const [isRescue] = useState<boolean>(false);
+	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
+	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
+		0
+	);
+
+	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
+		return (
+			item.id === runningPhaseId &&
+			item.startTime < now() &&
+			item.endTime > now()
+		);
+	});
+
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const dnftContract = useContract(
 		DNFTABI,
@@ -26,21 +43,12 @@ const RescueDNFT = () => {
 	);
 	const balance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
 	const { addressWallet } = useSelector((state) => state.wallet);
-	const [poolStatistic, setPoolStatistic] = useState<IPoolStatistic>({
-		startTime: 0,
-		endTime: 0,
-		priceInBUSD: 0,
-		priceAfter24Hours: 0,
-		maxAmountUserCanBuy: 0,
-		maxSaleAmount: 0,
-		totalSold: 0,
-	});
 	const {
-		priceInBUSD: priceInBUSD,
-		priceAfter24Hours,
-		// maxSaleAmount,
-		// totalSold,
-	} = poolStatistic;
+		priceInBUSD: priceInBUSD = 0,
+		priceAfter24Hours: priceAfter24Hours = 0,
+		// maxSaleAmount: maxSaleAmount = 0,
+		// totalSold: totalSold = 0,
+	} = runningPhase || {};
 	// BUSD / BNB
 	const [rate, setRate] = useState<BigNumber.Value>(1);
 	const price =
@@ -53,61 +61,82 @@ const RescueDNFT = () => {
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughBalance = balance.gte(minBalanceForMint);
 
-	const fetchPoolStatisticData = async (id: number) => {
-		try {
-			// get statistic
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const res = await dnftContract?.salePhaseStatistics(id);
-			const {
-				startTime,
-				endTime,
-				priceInBUSD,
-				priceAfter24Hours,
-				maxAmountUserCanBuy,
-				maxSaleAmount,
-				totalSold,
-			} = res;
-			setPoolStatistic({
-				startTime: startTime._hex,
-				endTime: endTime._hex,
-				priceInBUSD: new BigNumber(priceInBUSD._hex).div(TOKEN_DECIMAL),
-				priceAfter24Hours: new BigNumber(priceAfter24Hours._hex).div(
-					TOKEN_DECIMAL
-				),
-				maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex).div(
-					TOKEN_DECIMAL
-				),
-				maxSaleAmount: new BigNumber(maxSaleAmount._hex).div(TOKEN_DECIMAL),
-				totalSold: new BigNumber(totalSold._hex).div(TOKEN_DECIMAL),
-			});
-		} catch (e) {
-			// console.log(e)
-		}
-	};
+	useEffect(() => {
+		const handleGetListPhaseMintNft = async () => {
+			try {
+				if (dnftContract) {
+					// @ts-ignore
+					const runningPhaseId = await dnftContract?.currentSalePhase();
 
-	const fetchRate = async () => {
-		try {
-			// get rate
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const res = await dnftContract?.convertBNBToBUSD(
-				TOKEN_DECIMAL.toString(10)
-			);
-			const rate = new BigNumber(res._hex).toString(10);
-			setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
-		} catch (e) {
-			setRate(1);
-			// console.log(e);
-		}
-	};
+					const list = await Promise.all(
+						listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
+							// @ts-ignore
+							const res = await dnftContract?.salePhaseStatistics(salephaseid);
+							const {
+								endTime,
+								maxAmountUserCanBuy,
+								maxSaleAmount,
+								priceAfter24Hours,
+								priceInBUSD,
+								startTime,
+								totalSold,
+							} = res;
+							const phase: IPhaseStatistic = {
+								id: salephaseid,
+								type: geMintPhaseType(salephaseid) || '',
+								startTime: new BigNumber(startTime._hex).toNumber(),
+								endTime: new BigNumber(endTime._hex).toNumber(),
+								priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								priceInBUSD: new BigNumber(priceInBUSD._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								maxSaleAmount: new BigNumber(maxSaleAmount._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+								totalSold: new BigNumber(totalSold._hex)
+									.div(TOKEN_DECIMAL)
+									.toString(10),
+							};
+							return phase;
+						})
+					);
+					setRunningPhaseId(runningPhaseId);
+					setListPhase(list);
+				}
+			} catch (e) {
+				// handle e
+			}
+		};
+
+		handleGetListPhaseMintNft();
+	}, [dnftContract]);
 
 	useEffect(() => {
+		const fetchRate = async () => {
+			try {
+				// get rate
+				// @ts-ignore
+				const res = await dnftContract?.convertBNBToBUSD(
+					TOKEN_DECIMAL.toString(10)
+				);
+				const rate = new BigNumber(res._hex).toString(10);
+				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
+			} catch (e) {
+				setRate(1);
+				// handle e
+				// console.log(e);
+			}
+		};
+
 		if (dnftContract) {
-			fetchPoolStatisticData(1);
 			fetchRate();
 		}
-	}, [dnftContract]);
+	}, [runningPhaseId, runningPhase, dnftContract]);
 
 	return (
 		<div className='flex gap-x-3'>

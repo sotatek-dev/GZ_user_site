@@ -42,3 +42,7 @@ export enum LIST_STATUS_TIME_LINE {
 	RUNNING = 'RUNNING',
 	PENDING = 'PENDING',
 }
+
+export const now = () => {
+	return Date.now();
+};
