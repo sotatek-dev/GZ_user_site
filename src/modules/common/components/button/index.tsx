@@ -8,7 +8,7 @@ type Props = {
 	type?: ButtonType;
 	label: string;
 	htmlType?: ButtonHTMLType;
-	onClick?: () => void;
+	onClick?: any;
 	isDisabled?: boolean;
 	classCustom?: string;
 	ghost?: boolean;
@@ -43,8 +43,7 @@ const Button = (props: Props) => {
 	return (
 		<AntButton
 			type={type}
-			className={`common-normal-button
-        ${classCustom}`}
+			className={`common-normal-button ${classCustom}`}
 			disabled={isDisabled}
 			onClick={() => {
 				if (onClick) onClick();

@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { useEffect, useState } from 'react';
+import { ConnectorKey } from 'web3/connectors';
 import { Injected } from 'web3/connectors/injected';
 
 /**
@@ -15,7 +16,7 @@ export function useEagerConnect() {
 		const walletSelected = StorageUtils.getItem(STORAGE_KEYS.WALLET_CONNECTED);
 		const { ethereum } = window;
 		if (!walletSelected) return;
-		if (!active) {
+		if (!active && walletSelected === ConnectorKey.injected) {
 			Injected.isAuthorized().then((isAuthorized: boolean) => {
 				if (isAuthorized) {
 					activate(Injected, undefined, true).catch(() => {

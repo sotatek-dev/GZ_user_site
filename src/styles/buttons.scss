@@ -50,7 +50,7 @@
 .common-normal-button {
 	border-radius: 10px;
 	height: auto;
-	width: fit-content !important;
+	width: auto;
 	outline: none;
 	border: none;
 	font-weight: 500;
@@ -66,4 +66,31 @@
 .button-disabled {
 	opacity: 0.2;
 	cursor: not-allowed;
+}
+
+.buy-token {
+	padding: 9px 36px;
+	height: fit-content;
+	background: linear-gradient(
+		102.92deg,
+		#36c1ff 6.55%,
+		#77a3f8 47.11%,
+		#bd81f1 71.51%,
+		#cf79ee 98.22%
+	);
+	border-radius: 40px;
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 24px;
+
+	&:hover,
+	&:focus {
+		background: linear-gradient(
+			102.92deg,
+			#36c1ff 6.55%,
+			#77a3f8 47.11%,
+			#bd81f1 71.51%,
+			#cf79ee 98.22%
+		);
+	}
 }
