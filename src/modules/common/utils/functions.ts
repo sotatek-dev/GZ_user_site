@@ -20,7 +20,6 @@ import {
 	TOKEN_DECIMAL,
 } from 'modules/mint-dnft/constants';
 import BigNumber from 'bignumber.js';
-import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from 'common/constants/bignumbers';
 import { constants } from 'ethers';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
