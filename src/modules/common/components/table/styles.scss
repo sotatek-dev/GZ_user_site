@@ -18,12 +18,12 @@
 	font-family: 'Play-Regular';
 }
 .ant-table-thead > tr > th {
-	background: $background-table;
+	background: inherit;
 	color: $color-table-text;
-	border-color: #323438;
+	border-color: #ffffff12;
 }
 .ant-table-tbody > tr > td {
-	border-color: #323438;
+	border-color: #ffffff12;
 	// fix ant-cell-hover
 	background: $background-table !important;
 }

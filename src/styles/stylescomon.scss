@@ -1,29 +1,41 @@
 .countdown {
 	display: flex;
 	@apply gap-x-5;
-	@apply text-chetwode-blue;
 
 	.box {
-		@apply bg-purple px-1 py-2 flex flex-col justify-center items-center rounded-lg text-2xl font-bold;
+		@apply bg-purple text-chetwode-blue px-1 py-2 flex flex-col justify-center items-center rounded-lg text-2xl font-bold;
 		width: 68px;
 		height: 68px;
 		position: relative;
+		font-weight: 700;
+		font-size: 1.5rem;
+		line-height: 2rem;
 
 		&:not(:last-child)::after {
 			content: ':';
 			position: absolute;
-			right: -12px;
-			font-weight: 500;
-			font-size: 16px;
+			right: -14px;
+			font-weight: 700;
+			font-size: 24px;
 			color: white;
 		}
 	}
 
 	.description {
-		@apply text-sm font-normal;
+		@apply text-sm font-normal text-chetwode-blue;
 	}
 }
 
 .box-pool {
-	@apply bg-black-russian rounded-[10px] p-6 text-white;
+	@apply bg-[#0E1A2B] rounded-[10px] p-[30px] text-white;
+}
+
+.btn-gradient {
+	background: linear-gradient(
+		102.92deg,
+		#36c1ff 6.55%,
+		#77a3f8 47.11%,
+		#bd81f1 71.51%,
+		#cf79ee 98.22%
+	);
 }

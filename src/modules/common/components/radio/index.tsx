@@ -2,7 +2,7 @@ import { Radio } from 'antd';
 import { FC } from 'react';
 
 interface ICustomRadioProps {
-	onChange: (item: any) => void;
+	onChange: (e: any) => void;
 	defaultValue: string;
 	options: Array<any>;
 }

@@ -1,34 +1,137 @@
-import Dropdown from 'common/components/dropdown';
+import { Input } from 'antd';
+import CustomDropdown from 'common/components/dropdown/custom-dropdown';
+import { map, range } from 'lodash';
+import Image from 'next/image';
+import { useState } from 'react';
+import styles from './nft-detail.module.scss';
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 const NFTDetail = () => {
+	const [tab, setTab] = useState(false);
+	const materialItems = range(0, 10);
 	return (
 		<div>
-			<div className='text-[32px] font-medium mb-6'>NFT Detail</div>
-			<div className='flex gap-x-16'>
-				<div className='text-[32px] font-medium'>
-					<div className='mb-6'>Property</div>
-					<div className='bg-black-russian rounded-[10px] w-[300px] h-[370px] flex justify-center items-center'>
-						NFT IMAGE
-					</div>
+			<label className={styles['switch']}>
+				<input
+					type='checkbox'
+					onChange={(e) => {
+						setTab(e.target.checked);
+					}}
+				/>
+				<div className={styles['switch-btn']} />
+				<span
+					className={`${styles['slider']} ${styles['slider_left']} ${
+						tab ? 'text-[#ffffff4d]' : 'text-white'
+					}`}
+				>
+					Property
+				</span>
+				<span
+					className={`${styles['slider']} ${styles['slider_right']} ${
+						tab ? 'text-white' : 'text-[#ffffff4d]'
+					}`}
+				>
+					Attribute
+				</span>
+			</label>
+
+			<div className={styles['nft-detail']}>
+				<div className={styles['nft-detail_img']}>
+					<Image
+						src='/images/ntf-example.svg'
+						alt=''
+						width='100%'
+						height='100%'
+						layout='fill'
+						objectFit='contain'
+					/>
 				</div>
-				<div className='text-[32px] font-medium '>
-					<div className='mb-6'>Attribute</div>
-					<div className='flex flex-col gap-y-2'>
-						<Dropdown label='Attribute 1' list={[]} />
-						<Dropdown label='Attribute 2' list={[]} />
-						<Dropdown label='Attribute 3' list={[]} />
-						<Dropdown label='Attribute 4' list={[]} />
-						<Dropdown label='Attribute 5' list={[]} />
-						<Dropdown label='Attribute 6' list={[]} />
-						<Dropdown label='Attribute 7' list={[]} />
-						<Dropdown label='Attribute 8' list={[]} />
-						<Dropdown label='Attribute 9' list={[]} />
-						<Dropdown label='Attribute 10' list={[]} />
-					</div>
+
+				<div className={styles['nft-detail_point']}>
+					{!tab ? (
+						<div className='flex flex-row justify-between gap-x-[50px]  w-[100%]'>
+							<div className='flex flex-col gap-y-[20px] flex-grow'>
+								<PropertyInput placeholder='00000' label='Strength' />
+								<PropertyInput placeholder='00000' label='Speed' />
+								<PropertyInput placeholder='00000' label='Agility' />
+							</div>
+
+							<div className='flex flex-col gap-y-[20px] flex-grow'>
+								<PropertyInput placeholder='00000' label='Durability' />
+								<PropertyInput placeholder='00000' label='Intelligence' />
+							</div>
+						</div>
+					) : (
+						<div className='flex flex-row justify-between gap-x-[50px]  w-[100%]'>
+							<div className='flex flex-col gap-y-[20px] flex-grow'>
+								<CustomDropdown label='Armor' list={[]} />
+								<CustomDropdown label='Shoes' list={[]} />
+								<CustomDropdown label='Gloves' list={[]} />
+								<CustomDropdown label='Fur' list={[]} />
+								<CustomDropdown label='Eyes' list={[]} />
+								<CustomDropdown label='Summoning Masks' list={[]} />
+							</div>
+
+							<div className='flex flex-col gap-y-[20px] flex-grow'>
+								<CustomDropdown label='Helmet' list={[]} />
+								<CustomDropdown label='Hairstyle' list={[]} />
+								<CustomDropdown label='Forcefield' list={[]} />
+								<CustomDropdown label='Weapons/Accessory	' list={[]} />
+								<CustomDropdown label='Background' list={[]} />
+								<CustomDropdown label='Cosmic Power' list={[]} />
+							</div>
+						</div>
+					)}
 				</div>
+			</div>
+			<div className={styles['nft-material']}>
+				<div className={styles['nft-material_title']}>Material</div>
+				<ScrollContainer className={styles['nft-material_carousel']} horizontal>
+					{map(materialItems, (item, index) => (
+						<div className={styles['nft-material_carousel_item']} key={index}>
+							<Image
+								src='/images/ntf-example.svg'
+								alt=''
+								width='100%'
+								height='100%'
+								layout='fill'
+								objectFit='contain'
+							/>
+						</div>
+					))}
+				</ScrollContainer>
 			</div>
 		</div>
 	);
 };
 
 export default NFTDetail;
+
+interface PropertyInputProps {
+	label?: string;
+	placeholder?: string;
+	onChange?: (e: any) => void;
+	value?: string;
+	name?: string;
+}
+
+function PropertyInput({
+	label,
+	placeholder,
+	onChange,
+	value,
+}: PropertyInputProps) {
+	return (
+		<div className='flex flex-col'>
+			<label className='text-[#ffffff80] mb-[8px] leading-[24px]'>
+				{label}
+			</label>
+			<Input
+				onChange={onChange}
+				value={value}
+				placeholder={placeholder}
+				className='!placeholder-[#ffffff1a] bg-transparent border-[2px] !border-[#ffffff33] text-white outline-none shadow-none h-[47px]'
+			/>
+		</div>
+	);
+}

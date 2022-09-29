@@ -15,20 +15,20 @@
 }
 
 .ant-table-thead > tr > th {
-	background: #232436 !important;
-	color: #ffffff !important;
+	background: transparent !important;
+	color: #ffffff4d !important;
 	border-bottom: none;
 	font-weight: 400;
 	padding: 10px;
 	font-size: 14px;
 	line-height: 24px;
-	font-family: 'Montserrat';
+	font-family: 'Avenir Next LT Pro';
+	border-color: #ffffff12;
 }
 
 .ant-table-tbody > tr > td {
 	border-bottom: none;
 	padding: 10px;
-	border-top: 1px solid #2f3041 !important;
 	color: white !important;
 	&:hover {
 		background-color: #121327;
