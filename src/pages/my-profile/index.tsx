@@ -8,12 +8,13 @@ import CustomRadio from 'common/components/radio';
 import MyTable from 'common/components/table';
 import { ROUTES } from 'common/constants/constants';
 import Image from 'next/image';
+import { isValidEmail } from 'common/helpers/email';
 import { get } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 import ReactGa from 'react-ga';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ITypeUserInfo, setUserInfo } from 'stores/user';
 
@@ -111,12 +112,23 @@ const MyProfile = () => {
 					nftHolding: nft_holding,
 					keyHoldingCount: key_holding_count,
 				};
+
 				setUserInfo(userInfo);
 			},
 			(err) => {
 				message.error(JSON.stringify(err));
 			}
 		);
+	};
+
+	const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+		const currentMail = get(e.target, 'value', '');
+
+		if (currentMail !== userInfo?.email && isValidEmail(currentMail)) {
+			setIsCanSave(true);
+		} else {
+			setIsCanSave(false);
+		}
 	};
 
 	useEffect(() => {
@@ -136,29 +148,34 @@ const MyProfile = () => {
 				<div
 					className={'flex flex-col desktop:flex-row gap-2.5 desktop:gap-x-6'}
 				>
-					<BoxPool customClass={'desktop:w-[50%]'}>
-						<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
-							<h5 className={`text-[18px] font-semibold text-white`}>
-								My profile
-							</h5>
+					{userInfo && (
+						<BoxPool customClass={'desktop:w-[50%]'}>
+							<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
+								<h5 className={`text-[18px] font-semibold text-white`}>
+									My profile
+								</h5>
 
-							<button className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px]'>
-								Save
-							</button>
-						</div>
-						<Form
-							name='verify-email'
-							className='mt-[22px]'
-							layout='vertical'
-							onFinish={onFinish}
-							onFinishFailed={() => {}}
-							autoComplete='off'
-							initialValues={{}}
-						>
-							<Form.Item
-								label='My wallet address:'
-								name='my-wallet-address'
-								rules={[]}
+								<button
+									disabled={!isCanSave}
+									onClick={() => handleUpdateMyProfile()}
+									className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
+								>
+									Save
+								</button>
+							</div>
+
+							<Form
+								name='verify-email'
+								className='mt-[22px]'
+								layout='vertical'
+								onFinish={onFinish}
+								onFinishFailed={() => {}}
+								autoComplete='off'
+								initialValues={{
+									'email-address': userInfo.email,
+									'my-wallet-address': userInfo.walletAddress,
+									'number-of-key': userInfo.keyHoldingCount,
+								}}
 							>
 								<Input
 									suffix={
@@ -171,42 +188,60 @@ const MyProfile = () => {
 												alt='AddressMyProfile'
 											/>
 										</button>
+								<Form.Item
+									label='My wallet address:'
+									name='my-wallet-address'
+									rules={[]}
+								>
+									<Input
+										disabled
+										suffix={
+											<button
+												className='px-[10px]'
+												onClick={() => onCopy(userInfo.walletAddress)}
+											>
+												<img src='/icons/copy.svg' alt='' />
+											</button>
+										}
+										className='custom-input-wrapper'
+									/>
+								</Form.Item>
+								<Form.Item
+									label='Email address:'
+									name='email-address'
+									rules={
+										[
+											// { required: true, message: 'This field cannot be empty.' },
+										]
 									}
-									placeholder='My wallet address'
-									className='custom-input-wrapper'
-								/>
-							</Form.Item>
-							<Form.Item
-								label='Email address:'
-								name='email-address'
-								rules={
-									[
-										// { required: true, message: 'This field cannot be empty.' },
-									]
-								}
-							>
-								<Input
-									placeholder='Email address'
-									className='custom-input-wrapper'
-								/>
-							</Form.Item>
-							<Form.Item
-								label='Number of key(s): '
-								name='number-of-key'
-								rules={
-									[
-										// { required: true, message: 'This field cannot be empty.' },
-									]
-								}
-							>
-								<Input
-									placeholder='Number of key'
-									className='custom-input-wrapper'
-								/>
-							</Form.Item>
-						</Form>
-					</BoxPool>
-					<BoxPool customClass={'desktop:w-[50%]'}>
+								>
+									<Input
+										ref={emailRef}
+										onChange={(e) => onChangeEmail(e)}
+										placeholder='Email address'
+										className='custom-input-wrapper'
+									/>
+								</Form.Item>
+								<Form.Item
+									label='Number of key(s): '
+									name='number-of-key'
+									rules={
+										[
+											// { required: true, message: 'This field cannot be empty.' },
+										]
+									}
+								>
+									<Input
+										disabled
+										placeholder='Number of key'
+										className='custom-input-wrapper disabled:border-[#ffffff33]'
+									/>
+								</Form.Item>
+							</Form>
+						</BoxPool>
+					)}
+
+					<BoxPool customClass='w-[50%]'>
 						<h5 className={`text-[18px] font-semibold text-white  pb-[27px] `}>
 							Buy Info
 						</h5>
