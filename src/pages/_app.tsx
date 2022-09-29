@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 import store from 'stores';
 import { AuthProvider } from 'web3/contexts/authContext';
 import DefaultLayout from 'common/layouts';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getLibrary(provider: any) {
@@ -19,6 +20,8 @@ function getLibrary(provider: any) {
 	library.pollingInterval = 15000;
 	return library;
 }
+
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 	return (
@@ -45,15 +48,17 @@ function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 					content='Turn your products, arts or services into publicly tradable items'
 				/>
 			</Head>
-			<Web3ReactProvider getLibrary={getLibrary}>
-				<Provider store={store}>
-					<AuthProvider>
-						<DefaultLayout appProps={appProps}>
-							<Component {...pageProps} />
-						</DefaultLayout>
-					</AuthProvider>
-				</Provider>
-			</Web3ReactProvider>
+			<QueryClientProvider client={queryClient}>
+				<Web3ReactProvider getLibrary={getLibrary}>
+					<Provider store={store}>
+						<AuthProvider>
+							<DefaultLayout appProps={appProps}>
+								<Component {...pageProps} />
+							</DefaultLayout>
+						</AuthProvider>
+					</Provider>
+				</Web3ReactProvider>
+			</QueryClientProvider>
 		</>
 	);
 }

@@ -17,8 +17,11 @@ import {
 	MINT_PHASE_ID,
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
+	TOKEN_DECIMAL,
 } from 'modules/mint-dnft/constants';
 import BigNumber from 'bignumber.js';
+import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from 'common/constants/bignumbers';
+import { constants } from 'ethers';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
@@ -132,5 +135,17 @@ export const formatNumber = (
 		return `${negative}${nabs.div(million).dp(decimalPlaced).toString(10)}M`;
 	}
 
-	return `${negative}${nabs.div(million).dp(decimalPlaced).toString(10)}`;
+	return `${negative}${nabs.dp(decimalPlaced).toString(10)}`;
+};
+
+export const isApproved = (allowance?: BigNumber.Value): boolean => {
+	return (
+		!!allowance &&
+		new BigNumber(allowance).gt(
+			new BigNumber(constants.MaxUint256.toString())
+				.div(TOKEN_DECIMAL)
+				.idiv(2)
+				.dp(0)
+		)
+	);
 };

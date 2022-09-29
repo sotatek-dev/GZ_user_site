@@ -5,11 +5,12 @@ import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
-	convertTimelineMintNft,
 	convertMiliSecondTimestampToDate,
+	convertTimelineMintNft,
+	formatNumber,
 	geMintPhaseType,
 	getMintPhaseLabel,
-	formatNumber,
+	isApproved,
 } from 'common/utils/functions';
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
@@ -32,6 +33,9 @@ import {
 } from 'modules/mint-dnft/interfaces';
 import Countdown from 'common/components/countdown';
 import { now, second } from 'common/constants/constants';
+import { useApproval } from 'web3/hooks';
+import { AbiDnft } from 'web3/abis/types';
+import { getMintDnftSignature } from 'modules/mint-dnft/services';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
@@ -57,7 +61,13 @@ const MintDNFT: React.FC = () => {
 	>([]);
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const balance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
-	const dnftContract = useContract(
+	// BUSD
+	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
+		useApproval(
+			process.env.NEXT_PUBLIC_BUSD_ADDRESS || '',
+			process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+		);
+	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
@@ -80,36 +90,49 @@ const MintDNFT: React.FC = () => {
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughBalance = balance.gte(minBalanceForMint);
 
-	// // eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// const mint = async () => {
-	//   // set up signature
-	//   const signature = '';
-	//   const amount = new BigNumber(1).times(TOKEN_DECIMAL).toString(10);
-	//   // axiosInstant.post  POST api/setting-mint/signature
-	//   if (token === TOKENS.BUSD) {
-	//     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	//     // @ts-ignore
-	//     const res = await dnftContract?.buyUsingBUSD(amount, runningPhaseId, addressWallet, signature);
-	//     console.log(res);
-	//   } else if (token === TOKENS.BNB) {
-	//     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	//     // @ts-ignore
-	//     const res = await dnftContract?.buyUsingBNB(amount, runningPhaseId, addressWallet, signature);
-	//     console.log(res);
-	//   }
-	// }
+	const mint = async () => {
+		try {
+			if (dnftContract && runningPhase && runningPhaseId) {
+				// set up signature
+				const signature = await getMintDnftSignature();
+				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+					await tryApproveBusd(false);
+				}
+				const amount =
+					token === TOKENS.BNB
+						? new BigNumber(price).times(TOKEN_DECIMAL).toString(10)
+						: new BigNumber(0).times(TOKEN_DECIMAL).toString(10);
+				if (token === TOKENS.BUSD) {
+					await dnftContract.buyUsingBUSD(
+						`${runningPhaseId}`,
+						addressWallet,
+						signature
+					);
+				} else if (token === TOKENS.BNB) {
+					await dnftContract.buyUsingBNB(
+						`${runningPhaseId}`,
+						addressWallet,
+						signature,
+						{ value: amount }
+					);
+				}
+			}
+		} catch (e) {
+			// handle e
+			// console.log(e);
+		}
+	};
 
 	useEffect(() => {
 		const handleGetListPhaseMintNft = async () => {
 			try {
 				if (dnftContract) {
-					// @ts-ignore
-					const runningPhaseId = await dnftContract?.currentSalePhase();
+					const runningPhaseId = await dnftContract.currentSalePhase();
 
 					const list = await Promise.all(
 						listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
 							// @ts-ignore
-							const res = await dnftContract?.salePhaseStatistics(salephaseid);
+							const res = await dnftContract.salePhaseStatistics(salephaseid);
 							const {
 								endTime,
 								maxAmountUserCanBuy,
@@ -157,13 +180,14 @@ const MintDNFT: React.FC = () => {
 	useEffect(() => {
 		const fetchRate = async () => {
 			try {
-				// get rate
-				// @ts-ignore
-				const res = await dnftContract?.convertBNBToBUSD(
-					TOKEN_DECIMAL.toString(10)
-				);
-				const rate = new BigNumber(res._hex).toString(10);
-				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
+				if (dnftContract) {
+					// get rate
+					const res = await dnftContract.convertBNBToBUSD(
+						TOKEN_DECIMAL.toString(10)
+					);
+					const rate = new BigNumber(res._hex).toString(10);
+					setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
+				}
 			} catch (e) {
 				setRate(1);
 				// handle e
@@ -187,8 +211,9 @@ const MintDNFT: React.FC = () => {
 			<div className='w-[300px] h-[587px] rounded-[10px] flex flex-col items-center'>
 				<NftGroup className={'w-full h-fit mt-11 mb-20'} />
 				<div
+					onClick={mint}
 					className={
-						'flex justify-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
+						'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
 					}
 				>
 					Mint
