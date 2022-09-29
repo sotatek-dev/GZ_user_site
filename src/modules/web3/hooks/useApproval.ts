@@ -5,7 +5,6 @@ import { formatEther } from 'ethers/lib/utils';
 import { toast } from 'react-toastify';
 import { useErc20Contract } from '../contracts/useErc20Contract';
 import { useActiveWeb3React } from './useActiveWeb3React';
-import { UNLIMITED_ALLOWANCE_IN_BASE_UNITS } from 'common/constants/bignumbers';
 
 /**
  * Hook for token approving
