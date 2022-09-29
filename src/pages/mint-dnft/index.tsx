@@ -31,7 +31,7 @@ import {
 	ITimelineMintNftState,
 } from 'modules/mint-dnft/interfaces';
 import Countdown from 'common/components/countdown';
-import { billion, million, now, second } from 'common/constants/constants';
+import { now, second } from 'common/constants/constants';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
