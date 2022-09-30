@@ -250,9 +250,8 @@ const MintDNFT: React.FC = () => {
 					</div>
 				) : (
 					<div
-						onClick={mint}
 						className={
-							'flex justify-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
+							'flex justify-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-5 py-3 w-full rounded-[40px]'
 						}
 					>
 						Mint
