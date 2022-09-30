@@ -14,6 +14,10 @@ export const useContract = <T extends BaseContract>(
 			return null;
 		}
 
+		if (!library) {
+			return  null;
+		}
+
 		return getContract<T>(abi, address, library?.getSigner());
 	}, [abi, address, library]);
 };
