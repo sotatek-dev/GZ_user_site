@@ -9,25 +9,6 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "_BNBAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "BNBWithdrawn",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
 				"internalType": "contract IERC20",
 				"name": "_BUSDToken",
 				"type": "address"
@@ -40,64 +21,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_receiver",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "BUSDWithdrawn",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "_tokenAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "BuyExactlyTokenWithBNB",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "_tokenAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "BuyExactlyTokenWithBUSD",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_candidate",
 				"type": "address"
@@ -116,7 +40,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_candidate",
 				"type": "address"
@@ -137,63 +61,11 @@
 			{
 				"indexed": false,
 				"internalType": "uint8",
-				"name": "_currentSalePhase",
-				"type": "uint8"
-			}
-		],
-		"name": "CurrentSalePhaseChanged",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint8",
 				"name": "version",
 				"type": "uint8"
 			}
 		],
 		"name": "Initialized",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_signer",
-				"type": "address"
-			}
-		],
-		"name": "NewSignerSet",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "Paused",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_signer",
-				"type": "address"
-			}
-		],
-		"name": "PoolCreated",
 		"type": "event"
 	},
 	{
@@ -231,6 +103,18 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "bool",
+				"name": "_isNoBuyLimit",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_maxBUSDUserCanSpend",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "_maxPreSaleAmount",
 				"type": "uint256"
@@ -238,17 +122,62 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "_maxAmountUserCanBuy",
+				"name": "_preSaleTokenPrice",
 				"type": "uint256"
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "_preSaleTokenPrice",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "_treasuryAddress",
+				"type": "address"
 			}
 		],
-		"name": "PreSaleConfigured",
+		"name": "NewSalePhaseDeployed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_signer",
+				"type": "address"
+			}
+		],
+		"name": "NewSignerSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Paused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_superAdmin",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_signer",
+				"type": "address"
+			}
+		],
+		"name": "PoolCreated",
 		"type": "event"
 	},
 	{
@@ -262,6 +191,19 @@
 			}
 		],
 		"name": "PreSaleTokenSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_priceFeed",
+				"type": "address"
+			}
+		],
+		"name": "PriceFeedSet",
 		"type": "event"
 	},
 	{
@@ -307,7 +249,7 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
 				"name": "_candidate",
 				"type": "address"
@@ -339,19 +281,6 @@
 			}
 		],
 		"name": "Unpaused",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "_enableWhitelist",
-				"type": "bool"
-			}
-		],
-		"name": "WhitelistToggled",
 		"type": "event"
 	},
 	{
@@ -426,51 +355,10 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
+				"internalType": "uint8",
+				"name": "_salePhase",
+				"type": "uint8"
 			},
-			{
-				"internalType": "uint256",
-				"name": "_tokenAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "buyExactlyTokenWithBNB",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_tokenAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "buyExactlyTokenWithBUSD",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
 			{
 				"internalType": "address",
 				"name": "_candidate",
@@ -489,6 +377,11 @@
 	},
 	{
 		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "_salePhase",
+				"type": "uint8"
+			},
 			{
 				"internalType": "address",
 				"name": "_candidate",
@@ -539,6 +432,57 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "_BNBAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "convertBNBToBUSD",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_BUSDAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "convertBUSDToBNB",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "currentSalePhase",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint8",
 				"name": "_salePhase",
 				"type": "uint8"
@@ -564,76 +508,46 @@
 				"type": "uint256[]"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_maxPreSaleAmount",
-				"type": "uint256"
+				"internalType": "bool",
+				"name": "_isNoBuyLimit",
+				"type": "bool"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_maxAmountUserCanBuy",
+				"name": "_maxBUSDUserCanSpend",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
 				"name": "_preSaleTokenPrice",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_maxPreSaleAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_treasuryAddress",
+				"type": "address"
 			}
 		],
-		"name": "configPreSale",
+		"name": "deployNewSalePhase",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "currentSalePhase",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "enableWhitelist",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
 				"name": "_tokenAmount",
 				"type": "uint256"
-			}
-		],
-		"name": "getBNBAmountFromToken",
-		"outputs": [
+			},
 			{
 				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_tokenAmount",
+				"name": "_tokenPriceInBUSD",
 				"type": "uint256"
 			}
 		],
@@ -645,7 +559,7 @@
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
@@ -670,6 +584,11 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint8",
+				"name": "_salePhase",
+				"type": "uint8"
+			},
+			{
 				"internalType": "address",
 				"name": "_signer",
 				"type": "address"
@@ -681,7 +600,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "_BUSDAmount",
 				"type": "uint256"
 			}
 		],
@@ -714,65 +633,6 @@
 			{
 				"internalType": "uint256",
 				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
-		],
-		"name": "getSalePhaseInfo",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "startTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "endTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "claimTime",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "claimRate",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxPreSaleAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxAmountUserCanBuy",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "preSaleTokenPrice",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalSoldAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalClaimedAmount",
 				"type": "uint256"
 			}
 		],
@@ -826,26 +686,12 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_BNBAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "getTokenAmountFromBNB",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "_BUSDAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenPriceInBUSD",
 				"type": "uint256"
 			}
 		],
@@ -857,7 +703,7 @@
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
@@ -950,6 +796,30 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_candidate",
+				"type": "address"
+			},
+			{
+				"internalType": "uint8",
+				"name": "_salePhase",
+				"type": "uint8"
+			}
+		],
+		"name": "getUserTotalSpentBUSD",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_signer",
 				"type": "address"
 			}
@@ -1013,7 +883,7 @@
 				"type": "uint8"
 			}
 		],
-		"name": "salePhaseStatistic",
+		"name": "salePhaseStatistics",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1026,18 +896,23 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
-				"name": "maxPreSaleAmount",
-				"type": "uint256"
+				"internalType": "bool",
+				"name": "isNoBuyLimit",
+				"type": "bool"
 			},
 			{
 				"internalType": "uint256",
-				"name": "maxAmountUserCanBuy",
+				"name": "maxBUSDUserCanSpend",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
 				"name": "preSaleTokenPrice",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxPreSaleAmount",
 				"type": "uint256"
 			},
 			{
@@ -1049,6 +924,11 @@
 				"internalType": "uint256",
 				"name": "totalClaimedAmount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "treasuryAddress",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -1070,12 +950,12 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
+				"internalType": "contract IERC20",
+				"name": "_preSaleToken",
+				"type": "address"
 			}
 		],
-		"name": "setCurrentSalePhase",
+		"name": "setPreSaleToken",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1083,12 +963,12 @@
 	{
 		"inputs": [
 			{
-				"internalType": "contract IERC20",
-				"name": "_preSaleToken",
+				"internalType": "address",
+				"name": "_priceFeed",
 				"type": "address"
 			}
 		],
-		"name": "setPreSaleToken",
+		"name": "setPriceFeed",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1152,16 +1032,16 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
+		"inputs": [],
+		"name": "totalSalePhase",
+		"outputs": [
 			{
-				"internalType": "bool",
-				"name": "_enableWhitelist",
-				"type": "bool"
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
 			}
 		],
-		"name": "toggleWhitelist",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -1174,6 +1054,11 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint8",
+				"name": "_salePhase",
+				"type": "uint8"
+			},
+			{
 				"internalType": "address",
 				"name": "_signer",
 				"type": "address"
@@ -1185,7 +1070,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_amount",
+				"name": "_BUSDAmount",
 				"type": "uint256"
 			},
 			{
@@ -1203,20 +1088,6 @@
 			}
 		],
 		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawBNB",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawBUSD",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

@@ -7,7 +7,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
 	convertMiliSecondTimestampToDate,
 	convertTimelineMintNft,
-	formatNumber,
+	formatBigNumber,
 	geMintPhaseType,
 	getMintPhaseLabel,
 	isApproved,
@@ -271,7 +271,7 @@ const MintDNFT: React.FC = () => {
 					<div className='flex items-center mr-10'>
 						<div className={'text-white/[.5] mr-[20px]'}>Price:</div>
 						<div>
-							{formatNumber(price)} {token}
+							{formatBigNumber(price)} {token}
 						</div>
 						{new BigNumber(priceAfter).gt(0) && (
 							<Tooltip
@@ -280,8 +280,8 @@ const MintDNFT: React.FC = () => {
 								title={
 									<>
 										<div>
-											First 24h: {formatNumber(price)} {token} then{' '}
-											{formatNumber(priceAfter)} {token}
+											First 24h: {formatBigNumber(price)} {token} then{' '}
+											{formatBigNumber(priceAfter)} {token}
 										</div>
 									</>
 								}
@@ -311,7 +311,7 @@ const MintDNFT: React.FC = () => {
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							Total NFT
 						</div>
-						<div>{formatNumber(maxSaleAmount)}</div>
+						<div>{formatBigNumber(maxSaleAmount)}</div>
 					</div>
 					<div className={'border border-white/[.07] h-full min-h-[1.25em]'} />
 					<div className='flex justify-between items-center w-[33%]'>
@@ -320,7 +320,7 @@ const MintDNFT: React.FC = () => {
 							Remaining
 						</div>
 						<div>
-							{formatNumber(new BigNumber(maxSaleAmount).minus(totalSold))}
+							{formatBigNumber(new BigNumber(maxSaleAmount).minus(totalSold))}
 						</div>
 					</div>
 					<div className={'border border-white/[.07] h-full min-h-[1.25em]'} />
@@ -329,7 +329,7 @@ const MintDNFT: React.FC = () => {
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							NFT Minted
 						</div>
-						<div>{formatNumber(totalSold)}</div>
+						<div>{formatBigNumber(totalSold)}</div>
 					</div>
 				</div>
 

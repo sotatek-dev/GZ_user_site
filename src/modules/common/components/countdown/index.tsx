@@ -9,6 +9,7 @@ interface ICountdownProps {
 	boxStyle?: string;
 	titleStyle?: string;
 	descriptionStyle?: string;
+	callBackApi?: () => void;
 }
 
 interface ITimeRemain {
@@ -32,6 +33,7 @@ const Countdown: FC<ICountdownProps> = ({
 	boxStyle,
 	titleStyle,
 	descriptionStyle,
+	callBackApi,
 }) => {
 	const [secCountDown, setSecCountDown] = useState<number>(millisecondsRemain);
 	const [timeRemain, settimeRemain] = useState<ITimeRemain>(timeRemainDefault);
@@ -56,6 +58,13 @@ const Countdown: FC<ICountdownProps> = ({
 
 		return () => clearInterval(intervalId);
 	}, []);
+
+	useEffect(() => {
+		if (secCountDown === 0 && callBackApi) {
+			callBackApi();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [secCountDown]);
 
 	return (
 		<div className={customClass}>

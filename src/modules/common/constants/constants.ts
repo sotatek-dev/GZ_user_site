@@ -45,3 +45,10 @@ export const day = 1000 * 60 * 60 * 24;
 
 export const billion = 1000000000;
 export const million = 1000000;
+
+export const HEX_ZERO = '0x00';
+export const BUSD_CURRENCY = 'BUSD';
+export const BNB_CURRENCY = 'BNB';
+export const GXZ_CURRENCY = 'GXZ';
+export const BSC_DECIMAL = 18;
+export const TYPE_SALE_ROUND = 'sale-round';

@@ -11,6 +11,11 @@ const nextConfig = {
 	// 	// declare here all your variables
 	// 	BASE_URL: process.env.BASE_URL,
 	// },
+	images: {
+		dangerouslyAllowSVG: true,
+		unoptimized: true,
+		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+	},
 };
 
 module.exports = nextConfig;
