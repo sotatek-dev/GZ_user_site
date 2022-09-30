@@ -291,7 +291,7 @@ const MintDNFT: React.FC = () => {
 						)}
 					</div>
 					<CustomRadio
-						onChange={(e: ChangeEvent<HTMLInputElement>) => {
+						onChange={(e) => {
 							const item = e.target.value;
 							const selectedToken = selectTokensList.find((i) => i == item);
 							selectedToken && setToken(selectedToken);
