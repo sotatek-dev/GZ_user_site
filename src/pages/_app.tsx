@@ -14,6 +14,10 @@ import { AuthProvider } from 'web3/contexts/authContext';
 import DefaultLayout from 'common/layouts';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getLibrary(provider: any) {
 	const library = new providers.Web3Provider(provider);
@@ -51,6 +55,7 @@ function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 			<QueryClientProvider client={queryClient}>
 				<Web3ReactProvider getLibrary={getLibrary}>
 					<Provider store={store}>
+						<ToastContainer />
 						<AuthProvider>
 							<DefaultLayout appProps={appProps}>
 								<Component {...pageProps} />

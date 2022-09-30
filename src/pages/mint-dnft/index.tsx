@@ -39,6 +39,15 @@ import {
 	checkWhitelist,
 	getMintDnftSignature,
 } from 'modules/mint-dnft/services';
+import { handleCommonError } from 'common/helpers/toast';
+import {
+	handleFetchListPhaseError,
+	handleFetchRateError,
+	handleMintError
+} from 'modules/mint-dnft/helpers/handleError';
+import { toast } from 'react-toastify';
+import MintSuccessToast from 'modules/mint-dnft/MintSuccessToast';
+import { ContractTransaction } from 'ethers';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
@@ -141,7 +150,7 @@ const MintDNFT: React.FC = () => {
 				setListPhase(list);
 			}
 		} catch (e) {
-			// handle e
+			handleFetchListPhaseError(e);
 		}
 	};
 
@@ -157,20 +166,23 @@ const MintDNFT: React.FC = () => {
 			}
 		} catch (e) {
 			setRate(1);
-			// handle e
-			// console.log(e);
+			handleFetchRateError(e);
 		}
 	};
 
 	const fetchIsWhitelisted = async () => {
-		if (runningPhase && runningPhaseId) {
-			setIsWhitelisted(
-				await checkWhitelist(
-					addressWallet,
-					ROUND_TYPE.MINT_NFT,
-					runningPhase.type
-				)
-			);
+		try {
+			if (runningPhase && runningPhaseId) {
+				setIsWhitelisted(
+					await checkWhitelist(
+						addressWallet,
+						ROUND_TYPE.MINT_NFT,
+						runningPhase.type
+					)
+				);
+			}
+		} catch (e) {
+			handleCommonError();
 		}
 	};
 
@@ -211,24 +223,29 @@ const MintDNFT: React.FC = () => {
 					token === TOKENS.BNB
 						? new BigNumber(price).times(TOKEN_DECIMAL).toString(10)
 						: new BigNumber(0).times(TOKEN_DECIMAL).toString(10);
+
+				let res: ContractTransaction | null = null;
 				if (token === TOKENS.BUSD) {
-					await dnftContract.buyUsingBUSD(
+					res = await dnftContract.buyUsingBUSD(
 						`${runningPhaseId}`,
 						addressWallet,
 						signature
 					);
 				} else if (token === TOKENS.BNB) {
-					await dnftContract.buyUsingBNB(
+					res = await dnftContract.buyUsingBNB(
 						`${runningPhaseId}`,
 						addressWallet,
 						signature,
 						{ value: amount }
 					);
 				}
+				const hash: string = res ? res.hash : '';
+				if (hash) {
+					toast.success(<MintSuccessToast txHash={hash} />)
+				}
 			}
 		} catch (e) {
-			// handle e
-			// console.log(e);
+			handleMintError(e);
 		} finally {
 			setIsLoadingMint(false);
 			reloadData();
