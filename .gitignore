@@ -36,3 +36,5 @@ yarn-error.log*
 next-env.d.ts
 
 src/modules/web3/abis/types
+
+.idea

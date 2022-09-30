@@ -17,7 +17,24 @@ module.exports = {
 			// => @media (min-width: 1280px) { ... }
 		},
 
-		extend: {},
+		extend: {
+			fontSize: {
+				h1: ['60px', '75px'],
+				h2: ['40px', '52px'],
+				h3: ['32px', '42px'],
+				h4: ['24px', '32px'],
+				h5: ['20px', '28px'],
+				h6: ['18px', '26px'],
+				h7: ['16px', '24px'],
+				h8: ['14px', '22px'],
+				h9: ['12px', '16px'],
+				h10: ['10px', '12px'],
+			},
+			backgroundImage: {
+				'blue-to-pink-102deg':
+					'linear-gradient(102.92deg, #36C1FF 6.55%, #77A3F8 47.11%, #BD81F1 71.51%, #CF79EE 98.22%);',
+			},
+		},
 		colors: {
 			transparent: 'transparent',
 			current: 'currentColor',

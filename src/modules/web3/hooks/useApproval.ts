@@ -38,7 +38,10 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		if (!tokenContract) return;
 
 		try {
-			const txn = await tokenContract.approve(spender, constants.MaxUint256);
+			const txn = await tokenContract.approve(
+				spender,
+				new BigNumber(constants.MaxUint256.toString()).toString(10)
+			);
 			await txn.wait();
 			toast.success('');
 		} catch (error) {

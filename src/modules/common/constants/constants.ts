@@ -29,19 +29,22 @@ export const CLAIMABLE = 'Claimable';
 export const END = 'End';
 export const TIME_LINE_SALE_ROUND = [UPCOMING, BUY, CLAIMABLE, END];
 
-//mint nft
-export const LIST_PHASE_MINT_NFT = [
-	{ label: 'Whitelist', value: 'WHITE_LIST' },
-	{ label: 'Presale 1', value: 'PRESALE_1' },
-	{ label: 'Presale 2', value: 'PRESALE_2' },
-	{ label: 'Public', value: 'PUBLIC' },
-];
-
-export enum LIST_STATUS_TIME_LINE {
-	DONE = 'DONE',
-	RUNNING = 'RUNNING',
-	PENDING = 'PENDING',
+export enum ROUND_TYPE {
+	MINT_NFT = 'mint-nft',
+	SALE_ROUND = 'sale-round',
 }
+
+export const now = () => {
+	return Date.now();
+};
+
+export const second = 1000;
+export const minute = 1000 * 60;
+export const hour = 1000 * 60 * 60;
+export const day = 1000 * 60 * 60 * 24;
+
+export const billion = 1000000000;
+export const million = 1000000;
 
 export const HEX_ZERO = '0x00';
 export const BUSD_CURRENCY = 'BUSD';
