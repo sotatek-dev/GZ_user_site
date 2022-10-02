@@ -2,7 +2,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
+import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
 import {
 	convertMiliSecondTimestampToDate,
@@ -26,11 +26,11 @@ import {
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
-} from 'modules/mint-dnft/constants';
+} from 'modules/mintDnft/constants';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
-} from 'modules/mint-dnft/interfaces';
+} from 'modules/mintDnft/interfaces';
 import Countdown from 'common/components/countdown';
 import { now, ROUND_TYPE, second } from 'common/constants/constants';
 import { useApproval } from 'web3/hooks';
@@ -38,7 +38,7 @@ import { AbiDnft } from 'web3/abis/types';
 import {
 	checkWhitelist,
 	getMintDnftSignature,
-} from 'modules/mint-dnft/services';
+} from 'modules/mintDnft/services';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);

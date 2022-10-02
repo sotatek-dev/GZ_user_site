@@ -14,29 +14,29 @@ const { Sider, Content } = Layout;
 const LIST_SIDER = [
 	{
 		router: ROUTES.TOKEN_PRESALE_ROUNDS,
-		icon: './icons/TokenPresaleRounds.svg',
+		icon: '/icons/TokenPresaleRounds.svg',
 		title: 'Token Presale Rounds',
 	},
 	{
 		router: ROUTES.MY_PROFILE,
-		icon: './icons/my-profile.svg',
+		icon: '/icons/my-profile.svg',
 		title: 'My Profile',
 		needLogin: true,
 	},
 	{
 		router: ROUTES.MINT_DNFT,
-		icon: './icons/mint-dnft.svg',
+		icon: '/icons/mint-dnft.svg',
 		title: 'Mint dNFT',
 	},
 
 	{
 		router: ROUTES.MERGE_NFT,
-		icon: './icons/merge-dNFT.svg',
+		icon: '/icons/merge-dNFT.svg',
 		title: 'Merge dNFT',
 	},
 	{
 		router: ROUTES.RESCUE_NFT,
-		icon: './icons/rescue-nft.svg',
+		icon: '/icons/rescue-nft.svg',
 		title: 'Rescue NFT',
 	},
 ];
@@ -53,14 +53,15 @@ const DefaultLayout = ({ children, appProps }: any) => {
 				collapsedWidth='0'
 				className='!bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'
 			>
-				<div className='flex items-center justify-center pb-[1rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
+				<div className='flex items-center justify-center py-[2rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
 					<ImageBase
-						url='./images/logo.svg'
-						type='HtmlImage'
+						url='/images/logo.svg'
+						width={100}
+						height={100}
 						style={{
 							objectFit: 'contain',
 						}}
-						className='w-[5.0625rem] h-[5.0625rem] mt-[1.25rem] '
+						className='w-[5.0625rem] h-[5.0625rem] mt-[1.25rem]'
 					/>
 				</div>
 				<Menu

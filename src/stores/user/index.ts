@@ -13,6 +13,7 @@ interface ITypeUserInfo {
 interface IUserStates {
 	userInfo: ITypeUserInfo;
 	isLogin: boolean;
+	accessToken: string;
 }
 
 export const initialState: IUserStates = {
@@ -20,6 +21,7 @@ export const initialState: IUserStates = {
 		walletAddress: '',
 	},
 	isLogin: false,
+	accessToken: '',
 };
 
 const userStore = createSlice({
@@ -38,6 +40,12 @@ const userStore = createSlice({
 				isLogin: action.payload,
 			};
 		},
+		setAccessToken: (state, action: PayloadAction<string>) => {
+			return {
+				...state,
+				accessToken: action.payload,
+			};
+		},
 	},
 });
 
@@ -47,6 +55,11 @@ export const setUserInfo = (userInfo: ITypeUserInfo) => {
 
 export const setLogin = (isLogin: boolean) => {
 	customStore && customStore.dispatch(userStore.actions.setLogin(isLogin));
+};
+
+export const setAccessToken = (accessToken: string) => {
+	customStore &&
+		customStore.dispatch(userStore.actions.setAccessToken(accessToken));
 };
 
 export { userStore };

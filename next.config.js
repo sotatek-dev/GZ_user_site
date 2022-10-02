@@ -13,6 +13,7 @@ const nextConfig = {
 	// },
 	images: {
 		dangerouslyAllowSVG: true,
+		disableStaticImages: true,
 		unoptimized: true,
 		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
 	},

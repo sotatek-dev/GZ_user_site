@@ -105,7 +105,7 @@ export default function ConnectWallet() {
 					<IconDynamic
 						image={icon}
 						className='mb-[10px] w-[40px] h-[40px]'
-						imageClass={'mix-blend-luminosity'}
+						// imageClass={'mix-blend-luminosity'}
 					/>
 					<span>{walletName}</span>
 				</div>

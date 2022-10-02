@@ -10,7 +10,7 @@ import {
 import { BSC_NETWORK } from 'web3/constants/networks';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import { checkEmailUser, IPramsLogin, login } from 'apis/login';
-import { setLogin, setUserInfo } from 'stores/user';
+import { setAccessToken, setLogin, setUserInfo } from 'stores/user';
 import { SIGN_MESSAGE } from 'web3/constants/envs';
 import { get } from 'lodash';
 
@@ -24,6 +24,7 @@ export const useConnectWallet = () => {
 	const { activate, deactivate, library } = useWeb3React();
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
+		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
 		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 		activateInjectedProvider(walletName);
@@ -116,6 +117,7 @@ export const useConnectWallet = () => {
 					};
 					setUserInfo(userInfo);
 					setLogin(true);
+					setAccessToken(token);
 					setAddressWallet(wallet_address);
 				}
 			}

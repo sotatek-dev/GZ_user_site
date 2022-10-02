@@ -3,6 +3,7 @@ import {
 	BSC_DECIMAL,
 	BUY,
 	CLAIMABLE,
+	END,
 	million,
 	now,
 	UPCOMING,
@@ -12,7 +13,7 @@ import moment from 'moment';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
-} from 'modules/mint-dnft/interfaces';
+} from 'modules/mintDnft/interfaces';
 import {
 	DECIMAL_PLACED,
 	MINT_PHASE,
@@ -20,7 +21,7 @@ import {
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
 	TOKEN_DECIMAL,
-} from 'modules/mint-dnft/constants';
+} from 'modules/mintDnft/constants';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 
@@ -40,22 +41,23 @@ export const secondsToTime = (time: number) => {
 export const convertTimeLine = (
 	startTime: number,
 	endTime: number,
-	timestampNow: number
+	timestampNow: number,
+	currentTimeLine: string
 ) => {
 	let status = UPCOMING;
-	let timeCountDow = 0;
+	let timeCountDow = -1;
 	if (startTime >= timestampNow) {
 		status = UPCOMING;
 		timeCountDow = startTime - timestampNow;
-	}
-	if (timestampNow > startTime && timestampNow <= endTime) {
+	} else if (timestampNow > startTime && timestampNow <= endTime) {
 		status = BUY;
 		timeCountDow = endTime - timestampNow;
-	} else if (timestampNow > endTime) {
+	} else if (timestampNow > endTime && currentTimeLine !== 'end') {
 		status = CLAIMABLE;
-		timeCountDow = 0;
-	} else if (timestampNow) {
-		// end
+		timeCountDow = -1;
+	} else {
+		status = END;
+		timeCountDow = -1;
 	}
 	return { status, timeCountDow };
 };

@@ -11,6 +11,7 @@ import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { EllipsisMiddle } from 'common/utils/functions';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import { useSelector } from 'react-redux';
+import Image from 'next/image';
 
 const { Header } = Layout;
 
@@ -36,8 +37,8 @@ const LayoutHeader = () => {
 			>
 				<div className='flex items-center justify-center'>
 					<IconDynamic
-						image='./icons/disconnect.svg'
-						className='w-7 h-7 mr-2'
+						image='/icons/disconnect.svg'
+						className='!w-7 !h-7 !mr-2'
 					/>
 					Disconnect
 				</div>
@@ -52,11 +53,20 @@ const LayoutHeader = () => {
 					<div className='ml-auto rounded-[40px] bg-black-russian flex justify-center items-center px-5 !h-[42px] cursor-pointer border-[2px] border-[#ffffff1a]'>
 						<div className='text-[#ffffff80]'>{currency}</div>
 						<div className='mx-[12px] text-[#ffffff80]'>|</div>
-						<IconDynamic image='./icons/wallet-color.svg' className='mr-3' />
+						<IconDynamic
+							image='/icons/wallet-color.svg'
+							className='mr-3 w-6 h-6'
+						/>
 						<div className='text-[#D47AF5] font-semibold leading-[1.5rem] mr-[0.75rem]'>
 							{EllipsisMiddle(account)}
 						</div>
-						<img src='/icons/arrow-down.svg' />
+						<Image
+							layout='intrinsic'
+							width='10px'
+							height='10px'
+							src='/icons/arrow-down.svg'
+							alt='icon'
+						/>
 					</div>
 				</Dropdown>
 			) : (
@@ -70,9 +80,9 @@ const LayoutHeader = () => {
 					}}
 				>
 					Connect wallet
-					<img
-						src='/icons/uwallet.svg'
-						className='h-[1.375rem] w-[1.375rem]'
+					<IconDynamic
+						image='/icons/uwallet.svg'
+						className='h-[1.375rem] w-[1.375rem] ml-2'
 						alt='wallet_icon'
 					/>
 				</Button>

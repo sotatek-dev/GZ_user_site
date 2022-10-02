@@ -10,10 +10,10 @@ import {
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
-} from 'modules/mint-dnft/constants';
+} from 'modules/mintDnft/constants';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
-import { IPhaseStatistic } from 'modules/mint-dnft/interfaces';
+import { IPhaseStatistic } from 'modules/mintDnft/interfaces';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
 import CustomRadio from 'common/components/radio';

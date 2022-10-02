@@ -1,7 +1,7 @@
 // /* eslint-disable no-console */
 // import { ExternalProvider } from '@ethersproject/providers';
 // import { toast } from 'react-toastify';
-// import { ETH_CHAIN_ID } from '../constants/envs';
+// import { BSC_CHAIN_ID } from '../constants/envs';
 // import { SUPPORTED_NETWORKS } from '../constants/networks';
 
 // /**
@@ -15,7 +15,7 @@
 // ): Promise<boolean> => {
 // 	const provider = externalProvider || window.ethereum;
 // 	const chainId =
-// 		(chainNetworkId && parseInt(chainNetworkId, 10)) || ETH_CHAIN_ID;
+// 		(chainNetworkId && parseInt(chainNetworkId, 10)) || BSC_CHAIN_ID;
 
 // 	if (!SUPPORTED_NETWORKS[chainId]) {
 // 		toast.error('Not support network!');

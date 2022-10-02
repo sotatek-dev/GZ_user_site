@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { CheckCircleFilled, CheckCircleOutlined } from '@ant-design/icons';
-import { ITimelineMintNftState } from 'modules/mint-dnft/interfaces';
-import { MINT_PHASE_STATUS } from 'modules/mint-dnft/constants';
+import { ITimelineMintNftState } from 'modules/mintDnft/interfaces';
+import { MINT_PHASE_STATUS } from 'modules/mintDnft/constants';
 
 interface ITimelineMintRoundProps {
 	timelineMintNft: Array<ITimelineMintNftState>;

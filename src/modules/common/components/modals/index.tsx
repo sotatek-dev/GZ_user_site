@@ -1,4 +1,5 @@
 import { Modal } from 'antd';
+import Image from 'next/image';
 
 interface ModalProps {
 	children?: React.ReactNode;
@@ -38,7 +39,17 @@ const ModalCustom = (props: ModalProps) => {
 			onCancel={onCancel}
 			footer={[footer]}
 			closable={closable}
-			closeIcon={closeIcon || <img src='./icons/close.svg' alt='close icon' />}
+			closeIcon={
+				closeIcon || (
+					<Image
+						src='/icons/close.svg'
+						width='100%'
+						height='100%'
+						layout='intrinsic'
+						alt='close icon'
+					/>
+				)
+			}
 			destroyOnClose={false}
 			maskClosable={false}
 			{...rest}

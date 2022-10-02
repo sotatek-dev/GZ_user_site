@@ -39,8 +39,10 @@ export const multiply = (a: any, b: any) => {
 
 export const convertBigNumberValueToNumber = (
 	weiBalance: any,
-	decimal: any
+	decimal: number
 ) => {
+	console.log('weiBalance', weiBalance);
+
 	const res = ethers.utils.formatUnits(weiBalance, decimal).toString();
 	return res;
 };
