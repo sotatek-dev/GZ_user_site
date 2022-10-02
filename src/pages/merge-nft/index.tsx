@@ -2,8 +2,8 @@ import Button from 'common/components/button';
 import Dropdown from 'common/components/dropdown';
 import ModalCustom from 'common/components/modals';
 import { cloneDeep } from 'lodash';
-import ListCard from 'modules/merge-dnft/ListCard';
-import ModalChooseMetarialToMerge from 'modules/merge-dnft/ModalChooseMetarialToMerge';
+import ListCard from 'modules/mergeDnft/ListCard';
+import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
 import { useState } from 'react';
 
 const fakeData = [

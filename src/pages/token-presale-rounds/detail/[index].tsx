@@ -1,4 +1,4 @@
-import { Divider, Progress, RadioChangeEvent } from 'antd';
+import { Divider, message, Progress, RadioChangeEvent } from 'antd';
 import {
 	checkUserWhitelist,
 	getDetailTokenSaleRound,
@@ -41,6 +41,7 @@ import {
 	getSalePhaseInfo,
 	getUserPurchasedAmount,
 } from 'web3/contracts/useContractTokenSale';
+import { buyTimeDefault, ITokenSaleRoundState } from '..';
 
 export const selectList = [
 	{
@@ -59,9 +60,11 @@ const TokenSaleRoundDetail = () => {
 		query: { index = '' },
 	} = router;
 
-	const [detailSaleRound, setDetailSaleRound] = useState<any>({});
+	const [detailSaleRound, setDetailSaleRound] =
+		useState<ITokenSaleRoundState>();
 	const [statusTimeLine, setStatusTimeLine] = useState<string>(UPCOMING);
-	const [timeCountDow, setTimeCountDow] = useState<number>(0);
+	const [timeCountDow, setTimeCountDow] = useState<number>(1);
+	const [tokenClaimTime, setTokenClaimTime] = useState<number>(0);
 	const [totalSoldAmount, setTotalSoldAmount] = useState<number>(0);
 	const [maxPreSaleAmount, setMaxPreSaleAmount] = useState<number>(0);
 	const [maxBUSDUserCanSpend, setMaxBUSDUserCanSpend] = useState<number>(0);
@@ -75,33 +78,40 @@ const TokenSaleRoundDetail = () => {
 
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const { isLogin } = useSelector((state) => state.user);
-	const { start_time = 0, end_time = 0 } = get(detailSaleRound, 'buy_time', {});
+	const { start_time, end_time } = get(
+		detailSaleRound,
+		'buy_time',
+		buyTimeDefault
+	);
 	const saleRoundId = get(detailSaleRound, 'sale_round');
 
+	const getDetailSaleRound = async () => {
+		const [data] = await getDetailTokenSaleRound(index as string);
+		const detailSaleRound = get(data, 'data', {});
+		const { start_time, end_time } = get(
+			detailSaleRound,
+			'buy_time',
+			buyTimeDefault
+		);
+		const timestampNow = moment().unix();
+		const { status, timeCountDow } = convertTimeLine(
+			start_time,
+			end_time,
+			timestampNow,
+			detailSaleRound?.current_status_timeline
+		);
+		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
+		setStatusTimeLine(status);
+		setTimeCountDow(timeCountDow);
+		setDetailSaleRound(detailSaleRound);
+		setPrice(exchangeRateBUSD);
+	};
+
 	useEffect(() => {
-		const getDetailSaleRound = async () => {
-			const [data] = await getDetailTokenSaleRound(index as string);
-			const detailSaleRound = get(data, 'data', {});
-			const { start_time, end_time } = get(detailSaleRound, 'buy_time', {});
-			const timestampNow = moment().unix();
-			const { status, timeCountDow } = convertTimeLine(
-				start_time,
-				end_time,
-				timestampNow
-			);
-			const exchangeRateBUSD = fromWei(
-				get(detailSaleRound, 'exchange_rate', 0)
-			);
-			setStatusTimeLine(
-				get(detailSaleRound, 'current_status_timeline') === 'end' ? END : status
-			);
-			setTimeCountDow(timeCountDow);
-			setDetailSaleRound(detailSaleRound);
-			setPrice(exchangeRateBUSD);
-		};
 		if (index && isEmpty(detailSaleRound)) {
 			getDetailSaleRound();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [index, detailSaleRound]);
 
 	useEffect(() => {
@@ -109,15 +119,18 @@ const TokenSaleRoundDetail = () => {
 			const { claim_configs } = detailSaleRound;
 			if (statusTimeLine === CLAIMABLE) {
 				const timestampNow = moment().unix();
-				claim_configs.forEach(
-					(claimConfig: { max_claim: number; start_time: number }) => {
-						const { start_time } = claimConfig;
-						if (start_time > timestampNow) {
-							setTimeCountDow(start_time - timestampNow);
-							return;
-						}
+				for (let index = 0; index < claim_configs?.length; index++) {
+					const startTimeClaim = get(claim_configs[index], 'start_time');
+					if (startTimeClaim > timestampNow) {
+						setTokenClaimTime(startTimeClaim);
+						const timeCountDown = startTimeClaim - timestampNow;
+						setTimeCountDow(timeCountDown > 0 ? timeCountDown : 0);
+						return;
 					}
-				);
+				}
+			} else if (statusTimeLine !== END) {
+				const startTimeClaim = get(claim_configs[0], 'start_time');
+				setTokenClaimTime(startTimeClaim);
 			}
 		}
 	}, [statusTimeLine, detailSaleRound]);
@@ -155,25 +168,6 @@ const TokenSaleRoundDetail = () => {
 			}
 		}
 	}, [detailSaleRound, statusTimeLine, addressWallet, index]);
-
-	// const getDetailSaleRound = async () => {
-	// 	const [data] = await getDetailTokenSaleRound(index as string);
-	// 	const detailSaleRound = get(data, 'data', {});
-	// 	const { start_time, end_time } = get(detailSaleRound, 'buy_time', {});
-	// 	const timestampNow = moment().unix();
-	// 	const { status, timeCountDow } = convertTimeLine(
-	// 		start_time,
-	// 		end_time,
-	// 		timestampNow
-	// 	);
-	// 	const priceBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
-	// 	console.log('priceBUSD', priceBUSD);
-
-	// 	setStatusTimeLine(status);
-	// 	setTimeCountDow(timeCountDow);
-	// 	setDetailSaleRound(detailSaleRound);
-	// 	setPrice(priceBUSD);
-	// };
 
 	const handleGetUserPurchasedAmount = async (saleRoundId: number) => {
 		const [youBought] = await getUserPurchasedAmount(
@@ -238,8 +232,12 @@ const TokenSaleRoundDetail = () => {
 	const handleClaimToken = async () => {
 		setOpenClaimPopup(true);
 		const [resClamin, errorClaim] = await claimPurchasedToken(saleRoundId);
-		if (resClamin || errorClaim) {
+		if (resClamin) {
+			message.success('Transaction Completed');
 			setOpenClaimPopup(false);
+		}
+		if (errorClaim) {
+			message.error('Transaction Rejected');
 		}
 	};
 
@@ -310,7 +308,7 @@ const TokenSaleRoundDetail = () => {
 					<Countdown
 						millisecondsRemain={timeCountDow}
 						title='You can buy tokens in'
-						// callBackApi={getDetailSaleRound}
+						callBackApi={getDetailSaleRound}
 					/>
 				</BoxPool>
 				<BoxPool
@@ -378,20 +376,24 @@ const TokenSaleRoundDetail = () => {
 						</div>
 						<div className='flex gap-x-2'>
 							<div className='text-dim-gray font-normal'>Token Claim Time:</div>
-							<div className='font-medium'>TBA</div>
+							<div className='font-medium'>
+								{tokenClaimTime
+									? convertTimeStampToDate(tokenClaimTime)
+									: 'TBA'}
+							</div>
 						</div>
 					</div>
 					<div className='w-[50%]'>
 						<div className='flex gap-x-2 mb-4'>
 							<div className='text-dim-gray font-normal'>Total Raise:</div>
 							<div className='font-medium'>
-								{formatNumber(maxPreSaleAmount)}
+								{formatNumber(maxBUSDUserCanSpend)}
 							</div>
 						</div>
 						<div className='flex gap-x-2'>
 							<div className='text-dim-gray font-normal'>Token Max Buy:</div>
 							<div className='font-medium'>
-								{formatNumber(maxBUSDUserCanSpend)}
+								{formatNumber(maxPreSaleAmount)}
 							</div>
 						</div>
 					</div>
@@ -407,6 +409,8 @@ const TokenSaleRoundDetail = () => {
 				currency={currency}
 				exchangeRate={price}
 				detailSaleRound={detailSaleRound}
+				maxPreSaleAmount={maxPreSaleAmount}
+				youBought={youBought}
 				handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
 			/>
 			<ModalCustom

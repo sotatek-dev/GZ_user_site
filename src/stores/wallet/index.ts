@@ -11,6 +11,9 @@ interface IWalletState {
 	addressWallet: string;
 	isConnect: boolean;
 	network: INetworkList | null;
+	balance: {
+		[key: string]: string;
+	};
 }
 
 const initialState: IWalletState = {
@@ -18,6 +21,9 @@ const initialState: IWalletState = {
 	addressWallet: '',
 	isConnect: false,
 	network: null,
+	balance: {
+		busdBalance: '0',
+	},
 };
 
 const storeWallet = createSlice({
@@ -40,6 +46,10 @@ const storeWallet = createSlice({
 			...state,
 			network: action.payload,
 		}),
+		setBalance: (state, action: PayloadAction<{ [key: string]: string }>) => ({
+			...state,
+			balance: action.payload,
+		}),
 	},
 });
 
@@ -60,6 +70,10 @@ export const setStatusConnect = (isConnect: boolean) => {
 
 export const setNetwork = (network: INetworkList | null) => {
 	customStore && customStore.dispatch(storeWallet.actions.setNetwork(network));
+};
+
+export const setBalance = (balance: { [key: string]: string }) => {
+	customStore && customStore.dispatch(storeWallet.actions.setBalance(balance));
 };
 
 export { storeWallet };

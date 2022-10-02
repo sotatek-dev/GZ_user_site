@@ -124,7 +124,7 @@ export const buyTokenWithExactlyBNB = async (
 	}
 };
 
-export const claimPurchasedToken = async (saleRoundId: number) => {
+export const claimPurchasedToken = async (saleRoundId: number | undefined) => {
 	try {
 		const contract = await genPresalePoolContractEther();
 		const res = await contract.claimPurchasedToken(saleRoundId);
