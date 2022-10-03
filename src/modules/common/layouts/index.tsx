@@ -11,7 +11,7 @@ import LayoutHeader from './Header';
 
 const { Sider, Content } = Layout;
 
-const LIST_SIDER = [
+export const LIST_SIDER = [
 	{
 		router: ROUTES.TOKEN_PRESALE_ROUNDS,
 		icon: '/icons/TokenPresaleRounds.svg',
@@ -47,11 +47,11 @@ const DefaultLayout = ({ children, appProps }: any) => {
 		return <>{children}</>;
 	}
 	return (
-		<Layout className='!bg-[#061322]'>
+		<Layout className='!bg-[#353945] desktop:!bg-background-dark min-h-[100vh]'>
 			<Sider
-				breakpoint='lg'
-				collapsedWidth='0'
-				className='!bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'
+				// breakpoint='lg'
+				// collapsedWidth='0'
+				className={'hidden desktop:block !bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'}
 			>
 				<div className='flex items-center justify-center py-[2rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
 					<ImageBase
@@ -99,7 +99,7 @@ const DefaultLayout = ({ children, appProps }: any) => {
 			</Sider>
 			<Layout>
 				<LayoutHeader />
-				<Content className='p-8 !bg-background-dark'>{children}</Content>
+				<Content className={'p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'}>{children}</Content>
 				<Footer />
 			</Layout>
 		</Layout>

@@ -6,6 +6,7 @@ import { get } from 'lodash';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { Pagination } from 'antd';
 
 export const buyTimeDefault = {
 	start_time: 0,
@@ -112,8 +113,9 @@ const TokenPresaleRound = () => {
 
 	return (
 		<div>
+			{/* desktop*/}
 			<MyTable
-				customClass='table-sale-round'
+				customClass='table-sale-round hidden desktop:block'
 				columns={columns}
 				dataSource={listTokenSaleRound}
 				onRow={(record: ITokenSaleRoundState) => {
@@ -131,6 +133,44 @@ const TokenPresaleRound = () => {
 					onChange: handleChangePage,
 				}}
 			/>
+
+			{/* mobile*/}
+			<div className={'desktop:hidden'}>
+				<div className={'flex flex-col gap-2.5'}>
+					{listTokenSaleRound.map((item: ITokenSaleRoundState, index: number) =>  {
+						const { current_status_timeline: currentStatusTimeline, buy_time, exchange_rate: exchangeRate, _id } = item;
+						const timestampNow = moment().unix();
+						const { start_time, end_time } = buy_time;
+						const { status } = convertTimeLine(
+							start_time,
+							end_time,
+							timestampNow,
+							currentStatusTimeline
+						);
+
+						return (
+							<>
+								{/*card container*/}
+								<div className={'flex flex-col bg-black-10 p-4 rounded-[4px]'} key={index} onClick={() => {
+									router.push(`/token-presale-rounds/detail/${_id}`);
+								}}>
+									<div className={'text-h6 font-bold mb-4'}>{`${formatNumber(fromWei(exchangeRate))} ${CURRENCY}`}</div>
+									<hr className={'border border-blue-20 mb-5'}/>
+									<div className={'flex justify-between items-center mb-5'}>
+										<div className={'text-h8 font-medium text-blue-20'}>Rounds</div>
+										<div className={'text-h8 font-medium text-white'}>{status}</div>
+									</div>
+									<div className={'flex justify-between items-center'}>
+										<div className={'text-h8 font-medium text-blue-20'}>Status</div>
+										<div className={'text-h8 font-medium text-white'}>{status}</div>
+									</div>
+								</div>
+							</>
+						)
+					})}
+				</div>
+				<Pagination defaultCurrent={6} pageSize={LIMIT_10} total={totalPage} onChange={handleChangePage} className={'flex wrap gap-x-2'} />
+			</div>
 		</div>
 	);
 };

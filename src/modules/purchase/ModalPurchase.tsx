@@ -155,8 +155,8 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	return (
-		<ModalCustom isShow={isShow} onCancel={onCancel} customClass='text-center'>
-			<div className='p-8'>
+		<ModalCustom isShow={isShow} onCancel={onCancel} customClass={'text-center w-full max-w-[95%] desktop:w-[520px]'}>
+			<div className={'p-4 desktop:p-8'}>
 				<div className='font-semibold text-[32px] mb-8'>Token Purchase</div>
 				{isLoading ? (
 					<Loading />
