@@ -73,17 +73,9 @@ const TokenPresaleRound = () => {
 	const columns = [
 		{
 			title: 'Rounds',
-			dataIndex: 'current_status_timeline',
-			render: (currentStatusTimeline: string, record: ITokenSaleRoundState) => {
-				const timestampNow = moment().unix();
-				const { start_time, end_time } = get(record, 'buy_time');
-				const { status } = convertTimeLine(
-					start_time,
-					end_time,
-					timestampNow,
-					currentStatusTimeline
-				);
-				return <div>{status}</div>;
+			dataIndex: 'name',
+			render: (name: string) => {
+				return <div>{name}</div>;
 			},
 		},
 		{
