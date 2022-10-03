@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import LazyLoadImageComp from 'common/components/lazyLoadImage';
 import React from 'react';
 import styles from '../style/footer.module.scss';
 export default function Footer() {
@@ -6,11 +7,16 @@ export default function Footer() {
 		<div className={styles['footer-section']}>
 			<div className={styles['footer-container']}>
 				<div className={styles['footer-1']}>
-					<img
-						src='images/logo.svg'
-						alt='logo'
-						className='w-[8.125rem] h-[8.125rem]'
-					/>
+					<div className='w-[8.125rem] h-[8.125rem]'>
+						<LazyLoadImageComp
+							placeholderSrc='images/logo.svg'
+							effect='blur'
+							width={130}
+							height={124.77}
+							src='images/logo.svg'
+							alt='logo'
+						/>
+					</div>
 					<div className={styles['footer-1_menu']}>
 						<div className={styles['footer-1_menu_text']}>
 							<div className={styles['footer-1_menu_text_list']}>
@@ -70,11 +76,11 @@ export default function Footer() {
 						<div className={styles['footer-1_menu_btn']}>
 							<button className={styles['footer-btn']}>
 								<p className={styles['footer-btn_label']}>PITCH DECK</p>
-								<img src='/icons/arrow-right.svg' />
+								<LazyLoadImageComp src='/icons/arrow-right.svg' alt='logo' />
 							</button>
 							<button className={`${styles['footer-btn']} mt-[1.125rem]`}>
 								<p className={styles['footer-btn_label']}>WHITE PAPER</p>
-								<img src='/icons/arrow-right.svg' />
+								<LazyLoadImageComp src='/icons/arrow-right.svg' alt='logo' />
 							</button>
 						</div>
 					</div>
@@ -86,25 +92,34 @@ export default function Footer() {
 					</p>
 
 					<div className='flex'>
-						<a>
-							<img
+						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
+							<LazyLoadImageComp
 								src='/icons/facebook.svg'
 								alt='facebook'
-								className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
+								width={30}
+								height={30}
+								placeholderSrc='/icons/facebook.svg'
+								effect='blur'
 							/>
 						</a>
-						<a>
-							<img
+						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
+							<LazyLoadImageComp
 								src='/icons/telegram.svg'
 								alt='telegram'
-								className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
+								width={25}
+								height={22.5}
+								placeholderSrc='/icons/telegram.svg'
+								effect='blur'
 							/>
 						</a>
-						<a>
-							<img
+						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
+							<LazyLoadImageComp
 								src='/icons/twitter.svg'
 								alt='twitter'
-								className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
+								width={27.31}
+								height={22.5}
+								placeholderSrc='/icons/twitter.svg'
+								effect='blur'
 							/>
 						</a>
 					</div>

@@ -13,7 +13,7 @@ import store from 'stores';
 import { AuthProvider } from 'web3/contexts/authContext';
 import DefaultLayout from 'common/layouts';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
+import 'react-lazy-load-image-component/src/effects/blur.css';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getLibrary(provider: any) {
 	const library = new providers.Web3Provider(provider);

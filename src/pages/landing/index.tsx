@@ -5,7 +5,6 @@ import PreFooter from 'modules/landing/components/PreFooter';
 import Roadmap from 'modules/landing/components/Roadmap';
 import Statistic from 'modules/landing/components/Statistic';
 import React from 'react';
-
 import styles from '../../modules/landing/style/landing.module.scss';
 export default function LandingPage() {
 	return (

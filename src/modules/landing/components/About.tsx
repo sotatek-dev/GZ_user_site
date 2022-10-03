@@ -1,3 +1,4 @@
+import LazyLoadImageComp from 'common/components/lazyLoadImage';
 import styles from '../style/about.module.scss';
 export default function About() {
 	return (
@@ -35,7 +36,16 @@ export default function About() {
 					</div>
 				</div>
 				<div className={styles['img-section']}>
-					<img src={'/images/about-section.svg'} className='w-[46.125rem]  ' />
+					<div className='w-[46.125rem]'>
+						<LazyLoadImageComp
+							src='/images/about-section.svg'
+							alt='logo'
+							height={604.52}
+							width={766}
+							placeholderSrc='/images/about-section.svg'
+							effect='blur'
+						/>
+					</div>
 				</div>
 			</div>
 		</div>

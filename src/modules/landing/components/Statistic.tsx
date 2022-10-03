@@ -1,4 +1,5 @@
 import { getStatistics } from 'apis/landing';
+import LazyLoadImageComp from 'common/components/lazyLoadImage';
 import { numberWithDot } from 'common/helpers/number';
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../style/statistic.module.scss';
@@ -45,32 +46,41 @@ export default function Statistic() {
 				label: 'Total Supply',
 				value: statistic.totalSupply,
 				icon: '/icons/statistic_1.svg',
+				width: 59.49,
 			},
 			{
 				label: 'Current Supply',
 				value: statistic.currentSupply,
 				icon: '/icons/statistic_2.svg',
+				width: 59.97,
 			},
 			{
 				label: 'Tokens Burned',
 				value: statistic.tokensBurned,
 				icon: '/icons/statistic_3.svg',
+				width: 43.93,
 			},
 			{
 				label: 'Total Holders',
 				value: statistic.totalHolders,
 				icon: '/icons/statistic_4.svg',
+				width: 59.98,
 			},
 		];
 	}, [statistic]);
 
 	return (
 		<div className={styles['statistic-container']}>
-			<img
-				src='/images/roadmap_0.svg'
-				className={`w-[1.9169rem] h-[4.375rem] object-contain`}
-				alt='roadmap'
-			/>
+			<div className={`w-[1.9169rem] h-[4.375rem] object-contain`}>
+				<LazyLoadImageComp
+					placeholderSrc='/images/roadmap_0.svg'
+					effect='blur'
+					width={30.67}
+					height={70}
+					src='/images/roadmap_0.svg'
+					alt='roadmap'
+				/>
+			</div>
 			<div className={styles['statistic-list']}>
 				{statisticBoxes.map((box, index) => (
 					<StatisticBox key={index} {...box} />
@@ -84,14 +94,25 @@ function StatisticBox({
 	label,
 	value,
 	icon,
+	width,
 }: {
 	label: string;
 	value: number;
 	icon: string;
+	width: number;
 }) {
 	return (
 		<div className={styles['statistic-box']}>
-			<img src={icon} className='w-[4.5rem] h-[4.5rem]' alt={icon} />
+			<div className='w-[4.5rem] h-[4.5rem]'>
+				<LazyLoadImageComp
+					placeholderSrc={icon}
+					effect='blur'
+					width={width}
+					height={60}
+					src={icon}
+					alt={icon}
+				/>
+			</div>
 			<p className={styles['statistic-box_value']}>{numberWithDot(value)}</p>
 			<p className={styles['statistic-box_label']}>{label}</p>
 		</div>

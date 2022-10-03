@@ -1,25 +1,32 @@
 import { Drawer } from 'antd';
+import LazyLoadImageComp from 'common/components/lazyLoadImage';
 import { useState } from 'react';
 import styles from '../style/header.module.scss';
 export default function Header() {
 	const [visible, setVisible] = useState(false);
-
 	function onClose() {
 		setVisible(false);
 	}
-
 	function showDrawer() {
 		setVisible(true);
 	}
-
 	return (
 		<div className={styles['header']} id='header'>
 			<div className={styles['logo-box']}>
-				<img src='images/logo.svg' className={styles['logo']} alt='logo' />
+				<div className={styles['logo']}>
+					<LazyLoadImageComp
+						src='images/logo.svg'
+						alt='logo'
+						height={86.38}
+						width={90}
+						placeholderSrc='images/logo.svg'
+						effect='blur'
+					/>
+				</div>
 			</div>
 			<div className={styles['menu-btn']}>
 				<button onClick={() => showDrawer()}>
-					<img src='/icons/header_1.svg' />
+					<LazyLoadImageComp src='/icons/header_1.svg' alt='logo' />
 				</button>
 			</div>
 			<ul id='menu' className={styles['menu']}>
@@ -55,15 +62,20 @@ export default function Header() {
 					<div className={styles['header']} id='header'>
 						{/* <PopupMenu /> */}
 						<div className={styles['logo-box']}>
-							<img
-								src='images/logo.svg'
-								className={styles['logo']}
-								alt='logo'
-							/>
+							<div className={styles['logo']}>
+								<LazyLoadImageComp
+									src='images/logo.svg'
+									alt='logo'
+									width={50}
+									height={48}
+									placeholderSrc='images/logo.svg'
+									effect='blur'
+								/>
+							</div>
 						</div>
 						<div className={styles['menu-btn']}>
 							<button onClick={() => onClose()}>
-								<img src='/icons/header_2.svg' />
+								<LazyLoadImageComp src='/icons/header_2.svg' alt='logo' />
 							</button>
 						</div>
 					</div>
