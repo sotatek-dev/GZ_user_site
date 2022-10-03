@@ -19,7 +19,7 @@ import DNFTABI from 'web3/abis/abi-dnft.json';
 import CustomRadio from 'common/components/radio';
 import { Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { geMintPhaseType } from 'common/utils/functions';
+import { formatBigNumber, geMintPhaseType } from 'common/utils/functions';
 import { now } from 'common/constants/constants';
 
 const RescueDNFT = () => {
@@ -139,29 +139,29 @@ const RescueDNFT = () => {
 	}, [runningPhaseId, runningPhase, dnftContract]);
 
 	return (
-		<div className='flex gap-x-3'>
-			<div className='w-[300px] h-[587px] rounded-[10px] flex flex-col items-center'>
+		<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
+			<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 				<NftGroup className={'w-full h-fit mt-11 mb-20'} />
 				<div
 					className={
-						'flex justify-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
+						'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
 					}
 				>
 					Rescue
 				</div>
 			</div>
 
-			<div className='w-full bg-box p-8 rounded-[10px]'>
+			<div className='w-full bg-black-10 p-8 rounded-[10px]'>
 				<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
 
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-4'} />
 
-				<div className={'flex items-center rounded-[10px] text-h8 mb-4'}>
+				<div className={'flex flex-col desktop:items-center desktop:flex-row rounded-[10px] text-h8 gap-4 mb-4'}>
 					<div className='flex items-center mr-10'>
 						<div className={'text-white/[.5] mr-[20px]'}>Price:</div>
-						<div>
-							{new BigNumber(price).toFixed(DECIMAL_PLACED)} {token}
+						<div className={'text-h6 font-bold desktop:text-h8 desktop:font-normal'}>
+							{formatBigNumber(price)} {token}
 						</div>
 						{new BigNumber(priceAfter).gt(0) && (
 							<Tooltip
@@ -196,9 +196,9 @@ const RescueDNFT = () => {
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-4'} />
 
-				<div className={'mb-1 text-h8 font-medium mb-4'}>Pool remaining</div>
-				<div className='flex items-center gap-x-6 mb-5 font-medium text-h8 h-fit'>
-					<div className='flex justify-between items-center w-[33%]'>
+				<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>Pool remaining</div>
+				<div className='flex flex-col justify-start desktop:flex-row gap-6 mb-5 font-medium text-h8 h-fit'>
+					<div className='flex justify-between items-center desktop:w-[50%]'>
 						<div className='flex items-center'>
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							Current NFTs can be rescued
@@ -210,7 +210,7 @@ const RescueDNFT = () => {
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-8'} />
 
-				<div className={'flex flex-col items-start rounded-[10px] text-h8'}>
+				<div className={'flex flex-col justify-center items-center desktop:items-start rounded-[10px] text-h8'}>
 					<div
 						className={
 							'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
@@ -219,11 +219,11 @@ const RescueDNFT = () => {
 						You are {(isConnectWallet && haveEnoughBalance) || 'not'} eligible
 						to mint this dNFT
 					</div>
-					<div className={'text-h8 mt-4'}>
-						Notice: to mint this dNFT requires 5,000 GXZ Token
-						<br />
-						User can use 1 key to rescue 1 dNFT. Rescue chances will be reset
-						after 30 days
+					<div className={'flex flex-col text-center desktop:text-start text-h8 mt-4 gap-2'}>
+						<div>Notice: to mint this dNFT requires 5,000 GXZ Token</div>
+						<div>
+							User can use 1 key to rescue 1 dNFT. Rescue chances will be reset after 30 days
+						</div>
 					</div>
 				</div>
 			</div>
