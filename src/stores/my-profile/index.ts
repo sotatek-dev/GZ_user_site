@@ -32,7 +32,14 @@ interface initialStateProps {
 	errMessage?: string;
 	loading: boolean;
 
-	dnfts?: IDNFT[];
+	dnfts?: {
+		data: IDNFT[];
+		pagination: {
+			total: number;
+			page: number;
+			limit: number;
+		};
+	};
 }
 
 const initialState: initialStateProps = {
@@ -79,7 +86,7 @@ const myProfileStore = createSlice({
 		});
 
 		builder.addCase(getMyDNFTsRD.fulfilled, (state, action) => {
-			const _myDNFTs: IDNFT[] = action.payload.map((item: any) => {
+			const _myDNFTs: IDNFT[] = action.payload.list.map((item: any) => {
 				if (!item.metadata) {
 					item.metadata = {
 						species: 'TBA',
@@ -88,7 +95,11 @@ const myProfileStore = createSlice({
 				}
 				return item;
 			});
-			state.dnfts = _myDNFTs;
+
+			state.dnfts = {
+				data: _myDNFTs,
+				pagination: action.payload.pagination,
+			};
 			state.loading = false;
 		});
 
@@ -108,7 +119,7 @@ export const getMyDNFTsRD = createAsyncThunk(
 	async (params: IParamsGetDNFTs, { rejectWithValue }) => {
 		try {
 			const res = await getMyDNFTs(params);
-			const data = get(res, 'data.data.list', []);
+			const data = get(res, 'data.data', []);
 			return data;
 		} catch (err) {
 			return rejectWithValue(err);
