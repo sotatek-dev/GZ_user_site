@@ -1,7 +1,7 @@
 import { Form, Input, message, Pagination } from 'antd';
 import { getMyProfile } from 'apis/my-profile';
 import { Form, Input, Pagination } from 'antd';
-import { getMyDNFTs, getMyProfile, updateMyProfile } from 'apis/my-profile';
+import { updateMyProfile } from 'apis/my-profile';
 import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
 // import Dropdown from 'common/components/dropdown';
@@ -16,6 +16,16 @@ import { formatConcurrency } from 'common/helpers/number';
 import { get } from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { cloneDeep, get } from 'lodash';
+import { IBuyKeyStatus, IDNFT } from 'modules/my-profile/interfaces';
+import {
+	columns,
+	statusItems,
+	statusMap,
+	typesItems,
+} from 'modules/my-profile/metadata';
+import { copyToClipboard } from 'modules/my-profile/services';
+
 import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 import ReactGa from 'react-ga';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
@@ -23,108 +33,24 @@ import { useSelector } from 'react-redux';
 import { ITypeUserInfo, setUserInfo } from 'stores/user';
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { getMyDNFTsRD, getMyProfileRD } from 'stores/my-profile';
+
+import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import {
-	ISystemSetting,
-	ITypeUserInfo,
-	setSystemSettings,
-	setUserInfo,
-} from 'stores/user';
-const columns = [
-	{
-		title: 'Species',
-		dataIndex: 'Species',
-		render: (Species: string) => {
-			return <Link href='/nft-detail'>{Species}</Link>;
-		},
-		width: '30%',
-	},
-	{
-		title: 'Rarity',
-		dataIndex: 'Rarity',
-		render: (Rarity: string) => {
-			return <Link href='/nft-detail'>{Rarity}</Link>;
-		},
-		width: '30%',
-	},
-	{
-		title: 'Claimable date',
-		dataIndex: 'Claimable_date',
-		render: (Claimable_date: string) => {
-			return <Link href='/nft-detail'>{Claimable_date}</Link>;
-		},
-		width: '30%',
-	},
-	{
-		render: () => {
-			return (
-				<Link className='flex justify-end' href='/nft-detail'>
-					<button className='text-[#D47AF5] font-semibold rounded-[40px] px-[27px] py-[7px] border-[2px] border-[#D47AF5] flex ml-auto'>
-						Claim
-					</button>
-				</Link>
-			);
-		},
-	},
-];
+	NEXT_PUBLIC_BUSD,
+	NEXT_PUBLIC_DNFT,
+	NEXT_PUBLIC_KEYNFT,
+} from 'web3/contracts/instance';
+import { useContract } from 'web3/contracts/useContract';
+import { useApprovalBusd } from 'web3/hooks';
+import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
+import KeyNFTABI from '../../modules/web3/abis/abi-keynft.json';
 
-const datafake = [
-	{
-		Species: 'Kinga',
-		Rarity: 'Common',
-		Claimable_date: '30-Apr-2022 16:00',
-	},
-	{
-		Species: 'Kinga',
-		Rarity: 'Common',
-		Claimable_date: '30-Apr-2022 16:00',
-	},
-	{
-		Species: 'Kinga',
-		Rarity: 'Common',
-		Claimable_date: '30-Apr-2022 16:00',
-	},
-];
-
-interface Status {
-	message: string;
-	icon: string;
-	boxStyle: string;
-	messageStyle: string;
-	canBuy: boolean;
-}
-
-const statusMap = {
-	unavailable: null,
-	upcoming: {
-		message: 'Key can be mint when the dNFT sale round start',
-		icon: '/icons/info-circle.svg',
-		boxStyle:
-			'flex items-center rounded-[5px] bg-[#f0272733] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]',
-		messageStyle: 'text-[#F02727]  text-[14px]',
-		canBuy: false,
-	},
-	need_nft: {
-		message: 'You are not elegible to buy this key',
-		icon: '/icons/info-circle.svg',
-		boxStyle:
-			'flex items-center rounded-[5px] bg-[#f0272733] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]',
-		messageStyle: 'text-[#F02727]  text-[14px]',
-		canBuy: false,
-	},
-	available: {
-		message: 'Great! You are eligible to buy the key',
-		icon: '/icons/check-circle.svg',
-		boxStyle:
-			'flex items-center rounded-[5px] bg-[#00d26133] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]',
-		messageStyle: 'text-[#00D261]  text-[14px]',
-		canBuy: true,
-	},
-};
+const bscscanUrl = process.env.NEXT_PUBLIC_BSCSCAN_URL || 'https://bscscan.com';
 
 const MyProfile = () => {
-	const price = 100000;
 	const [tokenCode, setTokenCode] = useState('BUSD');
 	const canBuyKey = true;
 	const router = useRouter();
@@ -142,41 +68,36 @@ const MyProfile = () => {
 
 	const { userInfo, isLogin, systemSetting } = useSelector(
 		(state) => state.user
-	);
-	// const { library: provider } = useWeb3React()
-	// const keyNFTContract = useContract(
-	// 	KeyNFTABI,
-	// 	NEXT_PUBLIC_KEYNFT
-	// );
-	// const { tryApproval, allowanceAmount, } = useApprovalBusd(NEXT_PUBLIC_BUSD, NEXT_PUBLIC_KEYNFT,);
+	const [claimableTime, setClaimableTime] = useState(0);
+	const dispatch = useDispatch<any>();
+	const { isLogin } = useSelector((state) => state.user);
+	const { userInfo, dnfts } = useSelector((state) => state.myProfile);
+	const { systemSetting } = useSelector((state) => state.systemSetting);
 
-	useEffect(() => {}, []);
+	const keyNFTContract = useContract<AbiKeynft>(KeyNFTABI, NEXT_PUBLIC_KEYNFT);
+
+	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
+	const { tryApproval, allowanceAmount } = useApprovalBusd(
+		NEXT_PUBLIC_BUSD,
+		NEXT_PUBLIC_KEYNFT
+	);
 
 	const emailRef = useRef(null);
 
 	const onFinish = () => {};
 
-	const onCopy = (data: string) => {
-		navigator.clipboard.writeText(data);
-		toast.info('Copied to clipboard', {
-			theme: 'dark',
-		});
-	};
-
-	const currentStatus = useMemo((): Status | null => {
+	const currentStatus = useMemo((): IBuyKeyStatus | null => {
 		if (!userInfo || !systemSetting) {
 			return statusMap['unavailable'];
 		}
-
 		const currentDate = dayjs().date();
-		if (currentDate > systemSetting.mintDays) {
+		if (currentDate > systemSetting.mint_days) {
 			return statusMap['upcoming'];
 		}
 
-		if (get(userInfo, 'nftHolding') < 0) {
+		if (get(userInfo, 'nft_holding') < 1) {
 			return statusMap['need_nft'];
 		}
-
 		return statusMap['available'];
 	}, [systemSetting, userInfo]);
 
@@ -230,8 +151,8 @@ const MyProfile = () => {
 		await updateMyProfile(
 			{ email },
 			async () => {
-				toast.success('Update successfully');
-				await handleGetMyProfile();
+				toast.success('Update profile successfully');
+				await dispatch(getMyProfileRD());
 				setIsCanSave(false);
 			},
 			(err) => {
@@ -240,9 +161,19 @@ const MyProfile = () => {
 		);
 	};
 
+	const handleGetClaimableTime = async () => {
+		if (dnftContract) {
+			const time = await dnftContract.claimableTime();
+			setClaimableTime(time.toNumber());
+		}
+	};
+
 	const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+		if (!userInfo) {
+			return;
+		}
 		const currentMail = get(e.target, 'value', '');
-		if (currentMail !== userInfo?.email && isValidEmail(currentMail)) {
+		if (currentMail !== userInfo.email && isValidEmail(currentMail)) {
 			setIsCanSave(true);
 		} else {
 			setIsCanSave(false);
@@ -251,10 +182,16 @@ const MyProfile = () => {
 
 	useEffect(() => {
 		if (isLogin) {
-			handleGetMyDNFT();
-			handleGetMyProfile();
+			dispatch(getMyDNFTsRD({ page: 1, limit: 10 }));
+			dispatch(getMyProfileRD());
 		}
 	}, [isLogin]);
+
+	useEffect(() => {
+		if (dnftContract) {
+			handleGetClaimableTime();
+		}
+	}, [dnftContract]);
 
 	const { inTimeBuyKey, secondsRemain } = useMemo(() => {
 		if (!systemSetting) {
@@ -264,7 +201,7 @@ const MyProfile = () => {
 			};
 		}
 		const currentDate = dayjs().date();
-		if (currentDate > systemSetting.mintDays) {
+		if (currentDate > systemSetting.mint_days) {
 			const secondsRemain = dayjs().endOf('month').diff(dayjs(), 'second');
 			return {
 				inTimeBuyKey: false,
@@ -272,7 +209,7 @@ const MyProfile = () => {
 			};
 		}
 		const secondsRemain = dayjs(
-			`${dayjs().format('YYYY-MM')}-${systemSetting.mintDays} 00:00:00`
+			`${dayjs().format('YYYY-MM')}-${systemSetting.mint_days} 00:00:00`
 		).diff(dayjs(), 'second');
 
 		return {
@@ -281,27 +218,94 @@ const MyProfile = () => {
 		};
 	}, [systemSetting]);
 
-	// const handleBuyKey = async () => {
-	// 	const signer = provider.getSigner();
-	// 	const signature = await signer.signMessage(SIGN_MESSAGE);
-	// 	console.log(signature)
+	const mutantDNFTs = useMemo(() => {
+		let canClaim = false;
+		const currentDate = dayjs().unix();
+		if (currentDate > claimableTime) {
+			canClaim = true;
+		}
 
-	// 	if (tokenCode === "BUSD") {
-	// 		if (allowanceAmount && +allowanceAmount < price) {
-	// 			await tryApproval(true).catch((err) => {
-	// 				toast.error(JSON.stringify(err));
-	// 			});
+		if (!dnfts) {
+			return [];
+		}
+		if (canClaim) {
+			return dnfts.map((item: IDNFT) => {
+				return {
+					...item,
+					Claimable_date: dayjs.unix(claimableTime).format('DD-MMM-YYYY HH:mm'),
+					canClaim: true,
+				};
+			});
+		}
 
-	// 		}
-	// 		console.log("here")
-	// 		console.log(keyNFTContract)
-	// 		await keyNFTContract?.buyUsingBUSD(
-	// 			NEXT_PUBLIC_BUSD, signature
-	// 		).then((res) => {
+		return dnfts.map((item) => {
+			const cloneItem = cloneDeep(item);
+			const metadata = cloneItem.metadata;
+			metadata.species = 'TBA';
+			metadata.rankLevel = 'TBA';
 
-	// 		})
-	// 	}
-	// }
+			return {
+				...cloneItem,
+				Claimable_date: dayjs.unix(claimableTime).format('DD-MMM-YYYY HH:mm'),
+				canClaim: false,
+			};
+		});
+	}, [dnfts, claimableTime]);
+
+	const handleBuyKey = async () => {
+		if (!keyNFTContract || !systemSetting) {
+			return;
+		}
+		if (tokenCode === 'BUSD') {
+			if (allowanceAmount && +allowanceAmount < systemSetting.key_price) {
+				await tryApproval(true)
+					.then(() => {})
+					.catch(() => {
+						toast.error('Transaction Rejected');
+					});
+			}
+
+			await keyNFTContract
+				.buyUsingBUSD()
+				.then((res) => {
+					return res.wait();
+				})
+				.then((res) => {
+					toast.success('Transaction completed', {
+						onClick: () => {
+							window.open(`${bscscanUrl}/tx/${res.transactionHash}`, '_blank');
+						},
+					});
+				})
+				.catch((err) => {
+					if (err.code === 'ACTION_REJECTED') {
+						toast.error('Transaction Rejected');
+					} else {
+						toast.error('Transaction Failed');
+					}
+				});
+		} else {
+			await keyNFTContract
+				.buyUsingBNB()
+				.then((res) => {
+					return res.wait();
+				})
+				.then((res) => {
+					toast.success('Transaction completed', {
+						onClick: () => {
+							window.open(`${bscscanUrl}/tx/${res.transactionHash}`, '_blank');
+						},
+					});
+				})
+				.catch((err) => {
+					if (err.code === 'ACTION_REJECTED') {
+						toast.error('Transaction Rejected');
+					} else {
+						toast.error('Transaction Failed');
+					}
+				});
+		}
+	};
 
 	return (
 		<>
@@ -339,8 +343,8 @@ const MyProfile = () => {
 							autoComplete='off'
 							initialValues={{
 								'email-address': userInfo.email,
-								'my-wallet-address': userInfo.walletAddress,
-								'number-of-key': userInfo.keyHoldingCount,
+								'my-wallet-address': userInfo.wallet_address,
+								'number-of-key': userInfo.key_holding_count,
 							}}
 						>
 							<Form.Item
@@ -353,7 +357,7 @@ const MyProfile = () => {
 									suffix={
 										<button
 											className='px-[10px]'
-											onClick={() => onCopy(userInfo.walletAddress)}
+											onClick={() => copyToClipboard(userInfo.wallet_address)}
 										>
 											<img src='/icons/copy.svg' alt='' />
 										</button>
@@ -424,9 +428,11 @@ const MyProfile = () => {
 							/>
 						</div>
 
-						<div className='text-[16px] text-[white] font-semibold'>
-							{formatConcurrency(price)} {tokenCode}
-						</div>
+						{systemSetting && (
+							<div className='text-[16px] text-[white] font-semibold'>
+								{formatConcurrency(systemSetting.key_price)} {tokenCode}
+							</div>
+						)}
 					</div>
 					<Countdown
 						descriptionStyle='!text-[#ffffff80] !text-[12px] !leading-4 '
@@ -440,8 +446,8 @@ const MyProfile = () => {
 					/>
 					{get(currentStatus, 'canBuy') && inTimeBuyKey && (
 						<button
-							// onClick={() => handleBuyKey()}
-							className={`w-[100%] rounded-[40px] font-semibold py-[9px] mt-[36px] btn-gradient`}
+							onClick={() => handleBuyKey()}
+							className={`w-[100%] rounded-[40px] h-fit font-semibold !py-[9px] mt-[36px] btn-gradient`}
 						>
 							Buy
 						</button>
@@ -461,9 +467,9 @@ const MyProfile = () => {
 								<Dropdown
 									customStyle='mr-[10px]'
 									label='All statuses'
-									list={[]}
+									list={statusItems}
 								/>
-								<Dropdown label='All types' list={[]} />
+								<Dropdown label='All types' list={typesItems} />
 							</div>
 
 							<Form

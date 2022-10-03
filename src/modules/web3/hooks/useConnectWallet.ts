@@ -3,11 +3,14 @@ import { checkEmailUser, IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { get } from 'lodash';
+import { useDispatch } from 'react-redux';
 import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
 } from 'stores/modal';
-import { setAccessToken, setLogin, setUserInfo } from 'stores/user';
+import { setUserInfo } from 'stores/my-profile';
+import { setSystemSettings } from 'stores/system-setting';
+import { setAccessToken, setLogin } from 'stores/user';
 import { setAddressWallet, setStatusConnect } from 'stores/wallet';
 import { ConnectorKey } from 'web3/connectors';
 import { SIGN_MESSAGE } from 'web3/constants/envs';
@@ -22,6 +25,7 @@ export const useConnectWallet = () => {
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
+	const dispatch = useDispatch<any>();
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		await disconnectWallet();
@@ -49,7 +53,8 @@ export const useConnectWallet = () => {
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
 		setLogin(false);
-		setUserInfo(undefined);
+		dispatch(setUserInfo(undefined));
+		dispatch(setSystemSettings(undefined));
 		setAddressWallet('');
 		setStepModalConnectWallet(
 			STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET

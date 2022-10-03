@@ -30,7 +30,7 @@ export default function ModalSignin() {
 					name='verify-email'
 					layout='vertical'
 					onFinish={onFinish}
-					onFinishFailed={() => { }}
+					onFinishFailed={() => {}}
 					autoComplete='off'
 					initialValues={{}}
 					className='flex justify-center flex-col'

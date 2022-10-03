@@ -7,6 +7,12 @@ import { RootState } from './types';
 import { setStoreWallet, storeWallet } from './wallet';
 import { setUserStore, userStore } from './user';
 import { modalStore, setModalStore } from './modal';
+import {
+	setSystemSettingStore,
+	systemSettingStore,
+} from 'stores/system-setting';
+import { myProfileStore } from 'stores/my-profile';
+import thunkMiddleware from 'redux-thunk';
 
 let customStore: Store | undefined;
 
@@ -25,11 +31,13 @@ const appReducer = combineReducers({
 	wallet: storeWallet.reducer,
 	user: userStore.reducer,
 	modal: modalStore.reducer,
+	systemSetting: systemSettingStore.reducer,
+	myProfile: myProfileStore.reducer,
 });
 
 const rootReducer = (state: any, action: any) => appReducer(state, action);
 
-const middleWares: any[] = [];
+const middleWares: any[] = [thunkMiddleware];
 
 const enhancer = composeWithDevTools(applyMiddleware(...middleWares));
 
@@ -43,3 +51,4 @@ setStore(store);
 setStoreWallet(store);
 setUserStore(store);
 setModalStore(store);
+setSystemSettingStore(store);

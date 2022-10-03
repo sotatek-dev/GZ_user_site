@@ -1,14 +1,8 @@
 import axiosInstance from './config';
 
-export const getMyProfile = async (
-	successCallback: (data: object) => void,
-	failCallback: (error: object) => void
-) => {
+export const getMyProfile = async () => {
 	const queryString = `profile/user`;
-	return await axiosInstance()
-		.get(queryString)
-		.then((data) => successCallback(data))
-		.catch((error) => failCallback(error));
+	return axiosInstance().get(queryString);
 };
 
 interface IParamsUpdateProfile {
@@ -29,12 +23,17 @@ export const updateMyProfile = async (
 		.catch((error) => failCallback(error));
 };
 
-export const getMyDNFTs = async (page: number) => {
+export interface IParamsGetDNFTs {
+	page: number;
+	limit: number;
+
+	sortBy?: string;
+	direction?: string;
+	query?: string;
+}
+export const getMyDNFTs = async (params: IParamsGetDNFTs) => {
 	const queryString = `dnft`;
 	return await axiosInstance().get(queryString, {
-		params: {
-			page,
-			limit: 10,
-		},
+		params,
 	});
 };
