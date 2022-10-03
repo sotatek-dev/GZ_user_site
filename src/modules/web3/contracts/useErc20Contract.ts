@@ -39,3 +39,16 @@ export const handleUserApproveERC20 = async (contractAddress: string) => {
 		return [null, error];
 	}
 };
+
+export const getERC20AmountBalance = async (
+	contractAddress: string,
+	walletAddress: string
+) => {
+	try {
+		const contract = await genERC20PaymentContract(contractAddress);
+		const response = await contract.balanceOf(walletAddress);
+		return [response, null];
+	} catch (error) {
+		return [null, error];
+	}
+};

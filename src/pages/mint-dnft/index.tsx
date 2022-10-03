@@ -2,7 +2,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import TimelineMintRound from 'modules/mint-dnft/TimelineMintRound';
+import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
 import {
 	convertMiliSecondTimestampToDate,
@@ -26,11 +26,11 @@ import {
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
-} from 'modules/mint-dnft/constants';
+} from 'modules/mintDnft/constants';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
-} from 'modules/mint-dnft/interfaces';
+} from 'modules/mintDnft/interfaces';
 import Countdown from 'common/components/countdown';
 import { now, ROUND_TYPE, second } from 'common/constants/constants';
 import { useApproval } from 'web3/hooks';
@@ -38,15 +38,15 @@ import { AbiDnft } from 'web3/abis/types';
 import {
 	checkWhitelist,
 	getMintDnftSignature,
-} from 'modules/mint-dnft/services';
+} from 'modules/mintDnft/services';
 import { handleCommonError } from 'common/helpers/toast';
 import {
 	handleFetchListPhaseError,
 	handleFetchRateError,
 	handleMintError
-} from 'modules/mint-dnft/helpers/handleError';
+} from 'modules/mintDnft/helpers/handleError';
 import { toast } from 'react-toastify';
-import MintSuccessToast from 'modules/mint-dnft/MintSuccessToast';
+import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 
 const MintDNFT: React.FC = () => {
@@ -253,14 +253,14 @@ const MintDNFT: React.FC = () => {
 	};
 
 	return (
-		<div className='flex gap-x-3'>
-			<div className='w-[300px] h-[587px] rounded-[10px] flex flex-col items-center'>
-				<NftGroup className={'w-full h-fit mt-11 mb-20'} />
+		<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
+			<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
+				<NftGroup className={'w-full h-fit mt-11 mb-6'} />
 				{isWhitelisted ? (
 					<div
 						onClick={mint}
 						className={
-							'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-full rounded-[40px] cursor-pointer'
+							'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
 						}
 					>
 						{isLoadingMint ? <Spin className={'flex'} /> : 'Mint'}
@@ -268,7 +268,7 @@ const MintDNFT: React.FC = () => {
 				) : (
 					<div
 						className={
-							'flex justify-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-5 py-3 w-full rounded-[40px]'
+							'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
 						}
 					>
 						Mint
@@ -276,17 +276,17 @@ const MintDNFT: React.FC = () => {
 				)}
 			</div>
 
-			<div className='w-full bg-box p-8 rounded-[10px]'>
+			<div className='w-full bg-black-10 p-8 rounded-[10px]'>
 				<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
 
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-4'} />
 
 				{/*<Button label={'Mint'} classCustom={'bg-green mb-4'} />*/}
-				<div className={'flex items-center rounded-[10px] text-h8 mb-4'}>
+				<div className={'flex flex-col desktop:items-center desktop:flex-row rounded-[10px] text-h8 gap-4 mb-4'}>
 					<div className='flex items-center mr-10'>
 						<div className={'text-white/[.5] mr-[20px]'}>Price:</div>
-						<div>
+						<div className={'text-h6 font-bold desktop:text-h8 desktop:font-normal'}>
 							{formatBigNumber(price)} {token}
 						</div>
 						{new BigNumber(priceAfter).gt(0) && (
@@ -320,17 +320,17 @@ const MintDNFT: React.FC = () => {
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-4'} />
 
-				<div className={'mb-1 text-h8 font-medium mb-4'}>Pool remaining</div>
-				<div className='flex justify-center items-center gap-x-6 mb-5 font-medium text-h8 h-fit'>
-					<div className='flex justify-between items-center w-[33%]'>
+				<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>Pool remaining</div>
+				<div className='flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-h8 h-fit'>
+					<div className='flex justify-between items-center desktop:w-[33%]'>
 						<div className='flex items-center'>
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							Total NFT
 						</div>
 						<div>{formatBigNumber(maxSaleAmount)}</div>
 					</div>
-					<div className={'border border-white/[.07] h-full min-h-[1.25em]'} />
-					<div className='flex justify-between items-center w-[33%]'>
+					<div className={'hidden desktop:block border border-white/[.07] h-full min-h-[1.25em]'} />
+					<div className='flex justify-between items-center desktop:w-[33%]'>
 						<div className='flex items-center'>
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							Remaining
@@ -339,8 +339,8 @@ const MintDNFT: React.FC = () => {
 							{formatBigNumber(new BigNumber(maxSaleAmount).minus(totalSold))}
 						</div>
 					</div>
-					<div className={'border border-white/[.07] h-full min-h-[1.25em]'} />
-					<div className='flex justify-between items-center w-[33%]'>
+					<div className={'hidden desktop:block border border-white/[.07] h-full min-h-[1.25em]'} />
+					<div className='flex justify-between items-center desktop:w-[33%]'>
 						<div className='flex items-center'>
 							<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 							NFT Minted
@@ -391,13 +391,13 @@ const MintDNFT: React.FC = () => {
 				{/* divider*/}
 				<hr className={'border border-white/[.07] mb-8'} />
 
-				<div className={'flex items-end'}>
+				<div className={'flex flex-col items-center desktop:flex-row desktop:items-end gap-6 desktop:gap-0'}>
 					{runningPhase &&
 					runningPhase.endTime > now() &&
 					runningPhase.startTime < now() ? (
 						<>
 							<Countdown
-								customClass={'grow'}
+								customClass={'grow flex flex-col items-center desktop:items-start'}
 								title={`Minting phase for ${getMintPhaseLabel(
 									runningPhase.id
 								)} end in`}
@@ -412,7 +412,7 @@ const MintDNFT: React.FC = () => {
 					) : upcomingPhase && upcomingPhase.startTime > now() ? (
 						<>
 							<Countdown
-								customClass={'grow'}
+								customClass={'grow flex flex-col items-center desktop:items-start'}
 								title={'You can mint dNFT in'}
 								millisecondsRemain={
 									new BigNumber(upcomingPhase.startTime)
@@ -424,19 +424,19 @@ const MintDNFT: React.FC = () => {
 						</>
 					) : publicPhase && publicPhase.endTime < now() ? (
 						<Countdown
-							customClass={'grow'}
+							customClass={'grow flex flex-col items-center desktop:items-start'}
 							title={'Presale for dNFT is ended'}
 							millisecondsRemain={0}
 						/>
 					) : (
 						<Countdown
-							customClass={'grow'}
+							customClass={'grow flex flex-col items-center desktop:items-start'}
 							title={'Presale for dNFT is ended'}
 							millisecondsRemain={0}
 						/>
 					)}
 
-					<div className={'flex flex-col items-end rounded-[10px] text-h8'}>
+					<div className={'flex flex-col items-center desktop:items-end rounded-[10px] text-h8'}>
 						<div
 							className={
 								'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'

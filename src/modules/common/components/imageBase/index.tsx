@@ -56,9 +56,9 @@ const ImageBase = (props: Props) => {
 			style={style}
 			//   onError={() => setImg(convertUrlImage(null, errorImg))}
 			//   src={img || require('../../../../public/images/no-image.jpg')}
-			src={img}
+			src={url}
 			alt='image'
-			// onLoadingComplete={onFinish}
+			onLoadingComplete={onFinish}
 		/>
 	);
 };

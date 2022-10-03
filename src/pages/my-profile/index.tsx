@@ -72,9 +72,9 @@ const MyProfile = () => {
 
 	const onFinish = () => {};
 	return (
-		<div className='flex flex-col gap-y-6'>
-			<div className='flex gap-x-6'>
-				<BoxPool customClass='w-[50%]'>
+		<div className='flex flex-col gap-2.5 desktop:gap-y-6'>
+			<div className={'flex flex-col desktop:flex-row gap-2.5 desktop:gap-x-6'}>
+				<BoxPool customClass={'desktop:w-[50%]'}>
 					<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
 						<h5 className={`text-[18px] font-semibold text-white`}>
 							My profile
@@ -138,7 +138,7 @@ const MyProfile = () => {
 						</Form.Item>
 					</Form>
 				</BoxPool>
-				<BoxPool customClass='w-[50%]'>
+				<BoxPool customClass={'desktop:w-[50%]'}>
 					<h5 className={`text-[18px] font-semibold text-white  pb-[27px] `}>
 						Buy Info
 					</h5>
@@ -189,22 +189,28 @@ const MyProfile = () => {
 			</div>
 			<div>
 				<BoxPool>
-					<h5
-						className={`text-[18px] font-semibold text-white  pb-[12px] border-[#36c1ff1a] border-b-[3px]`}
-					>
-						My dNFT
-					</h5>
+					<div className={'flex justify-between items-start mb-3'}>
+						<h5
+							className={`text-h6 font-semibold text-white`}
+						>
+							My dNFT
+						</h5>
+						<button className={'desktop:hidden text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'}>
+							Claim all
+						</button>
+					</div>
+					<hr className={'border-t border-blue-20'}/>
 					<div className='mt-6'>
 						<div className='flex gap-x-2 mb-6 justify-between'>
-							<div>
+							<div className={'flex items-center justify-between desktop:justify-start grow gap-2.5'}>
 								<Dropdown
-									customStyle='mr-[10px]'
+									customStyle={'!w-1/2 desktop:!w-[160px]'}
 									label='All statuses'
 									list={[]}
 								/>
-								<Dropdown label='All types' list={[]} />
+								<Dropdown customStyle={'!w-1/2 desktop:!w-[160px]'} label='All types' list={[]} />
 							</div>
-							<button className='text-[white] rounded-[40px] px-[27px] py-[7px] border-[2px] border-[#ffffff4d]'>
+							<button className={'hidden desktop:block text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'}>
 								Claim all
 							</button>
 						</div>

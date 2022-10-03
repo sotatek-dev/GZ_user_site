@@ -1,3 +1,5 @@
+import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
+
 export const ROUTES = {
 	TOKEN_PRESALE_ROUNDS: '/token-presale-rounds',
 	MY_PROFILE: '/my-profile',
@@ -49,6 +51,23 @@ export const million = 1000000;
 export const HEX_ZERO = '0x00';
 export const BUSD_CURRENCY = 'BUSD';
 export const BNB_CURRENCY = 'BNB';
-export const GXZ_CURRENCY = 'GXZ';
+export const GXZ_CURRENCY = 'GXC';
 export const BSC_DECIMAL = 18;
 export const TYPE_SALE_ROUND = 'sale-round';
+
+export const ERC20_ADDRESS: { [key: string]: string } = {
+	busd: NEXT_PUBLIC_BUSD,
+	eth: '0x0000000000000000000000000000000000000000',
+};
+
+export const DECIMALS = {
+	BUSD_DECIMALS: 18,
+};
+
+export const RPC_CHAIN: { [key: number]: string } = {
+	97: 'https://data-seed-prebsc-1-s1.binance.org:8545/', // bsc testnet
+	5: 'goerli', // goerli
+	3: 'ropsten', // ropsten
+	137: 'https://polygonapi.terminet.io/rpc', // polygon mainnet
+	80001: 'https://rpc-mumbai.maticvigil.com', // mumbai - polygon testnet
+};

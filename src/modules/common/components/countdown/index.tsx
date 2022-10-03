@@ -27,7 +27,7 @@ const timeRemainDefault = {
 };
 
 const Countdown: FC<ICountdownProps> = ({
-	millisecondsRemain = 1663344791 - 1663153149,
+	millisecondsRemain = -1,
 	title = 'You can buy tokens in',
 	customClass,
 	boxStyle,

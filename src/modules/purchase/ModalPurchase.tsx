@@ -1,11 +1,12 @@
-import { Form, Input, InputRef } from 'antd';
+import { Form, Input, InputRef, message } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
 import { BUSD_CURRENCY } from 'common/constants/constants';
-import { formatNumber } from 'common/utils/functions';
+import { formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
+import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
@@ -24,8 +25,10 @@ interface IModalPurchaseProps {
 	onCancel: () => void;
 	currency: string;
 	exchangeRate: number;
-	detailSaleRound: any;
+	detailSaleRound: ITokenSaleRoundState | undefined;
 	handleGetUserPurchasedAmount: (saleRoundId: number) => void;
+	maxPreSaleAmount: number;
+	youBought: number;
 }
 
 const ModalPurchase: FC<IModalPurchaseProps> = ({
@@ -33,11 +36,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	onCancel,
 	currency,
 	exchangeRate,
-	detailSaleRound,
+	detailSaleRound = {},
 	handleGetUserPurchasedAmount,
+	maxPreSaleAmount,
+	youBought,
 }) => {
 	const [form] = Form.useForm();
-	const { addressWallet } = useSelector((state) => state.wallet);
+	const { addressWallet, balance } = useSelector((state) => state.wallet);
 	const [amountGXC, setAmountGXC] = useState<number>(0);
 	const [amount, setAmount] = useState<number>(0);
 	const [isLoading, setLoading] = useState<boolean>(false);
@@ -104,9 +109,11 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				setLoading(false);
 				onCancel();
 				handleGetUserPurchasedAmount(saleRoundId);
+				message.success('Transaction Completed');
 			}
 			if (errorBuyWithBUSD) {
 				setLoading(false);
+				message.error('Transaction Rejected');
 			}
 		} else {
 			const [resBuyWithBNB, errorBuyWithBNB] = await buyTokenWithExactlyBNB(
@@ -119,16 +126,37 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				setLoading(false);
 				onCancel();
 				handleGetUserPurchasedAmount(saleRoundId);
+				message.success('Transaction Completed');
 			}
 			if (errorBuyWithBNB) {
 				setLoading(false);
+				message.error('Transaction Rejected');
 			}
 		}
 	};
 
+	const validateToken = (_: any, value: string) => {
+		const { busdBalance } = balance;
+		const buyLimit = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+		if (!value) {
+			return Promise.resolve();
+		} else if (
+			currency === BUSD_CURRENCY &&
+			Number(value) > Number(busdBalance)
+		) {
+			return Promise.reject(new Error('not enough balance'));
+		} else if (Number(value) > buyLimit) {
+			return Promise.reject(new Error('value is greater than buy limit'));
+		} else if (Number(value) + youBought > maxPreSaleAmount) {
+			return Promise.reject(new Error('users buy more tokens than max buy'));
+		} else {
+			return Promise.resolve();
+		}
+	};
+
 	return (
-		<ModalCustom isShow={isShow} onCancel={onCancel} customClass='text-center'>
-			<div className='p-8'>
+		<ModalCustom isShow={isShow} onCancel={onCancel} customClass={'text-center w-full max-w-[95%] desktop:w-[520px]'}>
+			<div className={'p-4 desktop:p-8'}>
 				<div className='font-semibold text-[32px] mb-8'>Token Purchase</div>
 				{isLoading ? (
 					<Loading />
@@ -161,6 +189,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								name='amount'
 								rules={[
 									{ required: true, message: 'This field cannot be empty.' },
+									{ validator: validateToken },
 								]}
 							>
 								<Input

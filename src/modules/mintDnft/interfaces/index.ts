@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { MINT_PHASE, MINT_PHASE_STATUS } from 'modules/mint-dnft/constants';
+import { MINT_PHASE, MINT_PHASE_STATUS } from 'modules/mintDnft/constants';
 
 export interface ITimelineMintNftState {
 	label: string | undefined;

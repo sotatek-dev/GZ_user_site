@@ -5,7 +5,7 @@ export const SUPPORTED_WALLETS = [
 	{
 		connector: Injected,
 		walletName: ConnectorKey.injected,
-		icon: './icons/metamask.svg',
+		icon: '/icons/metamask.svg',
 		isDisabled: false,
 	},
 ];

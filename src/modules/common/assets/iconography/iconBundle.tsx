@@ -1,7 +1,24 @@
-export const IconDynamic = ({ className, image, onClick }: any) => {
+import Image from 'next/image';
+
+interface IIconDynamicProps {
+	className?: string;
+	image: string;
+	onClick?: () => void;
+	alt?: string;
+}
+
+export const IconDynamic = (props: IIconDynamicProps) => {
+	const { className, image, onClick, alt } = props;
 	return (
 		<div onClick={onClick} className={`${className}`}>
-			<img src={image} alt='icon' className='w-full h-full' />
+			<Image
+				src={image}
+				alt={alt || 'icon'}
+				width='100%'
+				height='100%'
+				layout='responsive'
+				className='w-full h-full'
+			/>
 		</div>
 	);
 };

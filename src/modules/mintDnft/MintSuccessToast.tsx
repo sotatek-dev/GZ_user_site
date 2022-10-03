@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message } from 'modules/mint-dnft/constants';
+import { Message } from 'modules/mintDnft/constants';
 
 interface Props {
   txHash?: string;
@@ -7,7 +7,7 @@ interface Props {
 
 const MintSuccessToast = ({ txHash }: Props) => {
   const openTxDetail = () => {
-    window.open(`${process.env.NEXT_PUBLIC_ETH_BLOCK_EXPLORER_URL}tx/${txHash}`)
+    window.open(`${process.env.NEXT_PUBLIC_BSC_CHAIN_ID}tx/${txHash}`)
   }
 
   return (

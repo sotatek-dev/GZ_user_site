@@ -8,7 +8,7 @@ type Props = {
 	type?: ButtonType;
 	label: string;
 	htmlType?: ButtonHTMLType;
-	onClick?: any;
+	onClick?: () => void;
 	isDisabled?: boolean;
 	classCustom?: string;
 	ghost?: boolean;

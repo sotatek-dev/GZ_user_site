@@ -105,7 +105,7 @@ export default function ConnectWallet() {
 					<IconDynamic
 						image={icon}
 						className='mb-[10px] w-[40px] h-[40px]'
-						imageClass={'mix-blend-luminosity'}
+						// imageClass={'mix-blend-luminosity'}
 					/>
 					<span>{walletName}</span>
 				</div>
@@ -118,27 +118,29 @@ export default function ConnectWallet() {
 			case STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET:
 				return (
 					<div>
-						<h5 className='font-bold text-[32px]  text-lg text-white text-center pb-6'>
+						<h5 className='font-bold text-h4 desktop:text-h3 text-lg text-white text-center pb-6'>
 							Connect Wallet
 						</h5>
-						<div className='pt-6'>
-							<p className='font-bold text-sm pb-4'>1. Choose Network</p>
-							{NETWORK_LIST.map((network) => {
-								return renderNetworkBox(network);
-							})}
-						</div>
-						<div className='pt-6'>
-							<p className='font-bold text-sm pb-4'>2. Choose Wallet</p>
-							{SUPPORTED_WALLETS.map((wallet) => {
-								return renderWalletBox(wallet);
-							})}
+						<div className={'flex flex-col items-center justify-center desktop:inline-block'}>
+							<div className='pt-6'>
+								<p className='font-bold text-h7 pb-4'>1. Choose Network</p>
+								{NETWORK_LIST.map((network) => {
+									return renderNetworkBox(network);
+								})}
+							</div>
+							<div className='pt-6'>
+								<p className='font-bold text-h7 pb-4'>2. Choose Wallet</p>
+								{SUPPORTED_WALLETS.map((wallet) => {
+									return renderWalletBox(wallet);
+								})}
+							</div>
 						</div>
 					</div>
 				);
 			case STEP_MODAL_CONNECTWALLET.CONNECT_WALLET:
 				return (
 					<div>
-						<h5 className='font-bold text-lg text-white text-center border-solid border-b border-ebony pb-6'>
+						<h5 className='font-bold text-h4 desktop:text-h3 text-white text-center border-solid border-b border-ebony pb-6'>
 							Connect Wallet
 						</h5>
 						<div>
