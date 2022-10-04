@@ -299,9 +299,9 @@ const TokenSaleRoundDetail = () => {
 	};
 
 	return (
-		<div className='flex flex-col gap-y-8'>
-			<div className='flex gap-x-8 justify-between'>
-				<BoxPool title='Pool Timeline' customClass='w-[50%] bg-gray-50'>
+		<div className='flex flex-col gap-2.5 desktop:gap-8'>
+			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
+				<BoxPool title='Pool Timeline' customClass='desktop:w-[50%] bg-gray-50'>
 					<div className='py-6'>
 						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
 					</div>
@@ -313,7 +313,7 @@ const TokenSaleRoundDetail = () => {
 				</BoxPool>
 				<BoxPool
 					title='Buy Info'
-					customClass='w-[50%] flex flex-col bg-gray-50'
+					customClass='desktop:w-[50%] flex flex-col bg-gray-50'
 				>
 					<div className='pt-6 flex'>
 						<div className='flex justify-between w-full'>
@@ -364,9 +364,9 @@ const TokenSaleRoundDetail = () => {
 				</BoxPool>
 			</div>
 			<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
-				<div className='py-9 flex gap-x-6 text-sm'>
-					<div className='w-[50%]'>
-						<div className='flex gap-x-2 mb-4'>
+				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
+					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+						<div className='flex gap-x-2'>
 							<div className='text-dim-gray font-normal'>Token Buy Time:</div>
 							<div className='font-medium'>
 								{start_time && end_time
@@ -383,8 +383,8 @@ const TokenSaleRoundDetail = () => {
 							</div>
 						</div>
 					</div>
-					<div className='w-[50%]'>
-						<div className='flex gap-x-2 mb-4'>
+					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+						<div className='flex gap-x-2'>
 							<div className='text-dim-gray font-normal'>Total Raise:</div>
 							<div className='font-medium'>
 								{formatNumber(maxBUSDUserCanSpend)}

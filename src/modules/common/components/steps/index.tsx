@@ -19,7 +19,7 @@ const Stepper: FC<IStepperProps> = ({ steps, activeStep }) => {
 	}, [activeStep, steps]);
 	return (
 		<div className='steps-custom'>
-			<Steps current={current} labelPlacement='vertical'>
+			<Steps current={current} direction={'horizontal'} responsive={false} labelPlacement='vertical'>
 				{steps.map((step: string, index: number) => {
 					return <Step key={index} title={step} />;
 				})}
