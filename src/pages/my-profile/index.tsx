@@ -1,7 +1,7 @@
 import { Form, Input, Pagination } from 'antd';
 import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
-import Dropdown from 'common/components/dropdown';
+// import Dropdown from 'common/components/dropdown';
 import HelmetCommon from 'common/components/helmet';
 import CustomRadio from 'common/components/radio';
 import MyTable from 'common/components/table';
@@ -217,7 +217,7 @@ const MyProfile = () => {
 										'flex items-center justify-between desktop:justify-start grow gap-2.5'
 									}
 								>
-									<Dropdown
+									{/* <Dropdown
 										customStyle={'!w-1/2 desktop:!w-[160px]'}
 										label='All statuses'
 										list={[]}
@@ -226,7 +226,7 @@ const MyProfile = () => {
 										customStyle={'!w-1/2 desktop:!w-[160px]'}
 										label='All types'
 										list={[]}
-									/>
+									/> */}
 								</div>
 								<button
 									className={

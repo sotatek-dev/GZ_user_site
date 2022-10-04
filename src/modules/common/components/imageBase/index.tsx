@@ -1,20 +1,20 @@
+import { convertUrlImage } from 'common/utils/image';
 import Image, { ImageProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
 // import { convertUrlImage } from 'utils/image';
 
 interface Props extends Omit<ImageProps, 'src'> {
 	url: string;
-	errorImg?: 'NoData' | 'Default' | 'Avatar' | 'Banner';
+	errorImg?: 'NoDNFT';
 	type?: 'HtmlImage' | 'NextImage';
 	style?: object;
 	onFinish?: () => void;
 }
 const ImageBase = (props: Props) => {
-	const { url, type, style = {} } = props;
+	const { url, errorImg, type, style = {} } = props;
 	const [img, setImg] = useState<string>('');
 
 	const newProps = { ...props };
-	delete newProps.errorImg;
 	/**
 	 * Handle url props change
 	 */
@@ -28,9 +28,8 @@ const ImageBase = (props: Props) => {
 	};
 
 	const getImageURL = () => {
-		// const imgUrl = convertUrlImage(url, errorImg);
-		// setImg(imgUrl);
-		setImg(url);
+		const imgUrl = convertUrlImage(url, errorImg);
+		setImg(imgUrl);
 	};
 
 	/**
@@ -54,9 +53,8 @@ const ImageBase = (props: Props) => {
 		<Image
 			{...newProps}
 			style={style}
-			//   onError={() => setImg(convertUrlImage(null, errorImg))}
-			//   src={img || require('../../../../public/images/no-image.jpg')}
-			src={url}
+			onError={() => setImg(convertUrlImage(null, errorImg))}
+			src={img || '/images/galatic-zone.png'}
 			alt='image'
 			onLoadingComplete={onFinish}
 		/>

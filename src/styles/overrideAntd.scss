@@ -286,6 +286,25 @@
 	}
 }
 
+.checkbox-custom {
+	.ant-checkbox-inner {
+		background-color: transparent !important;
+		border: 2px solid #ffffff !important;
+		width: 20px;
+		height: 20px;
+		outline: none;
+	}
+
+	.ant-checkbox-checked:hover,
+	.ant-checkbox-wrapper:hover .ant-checkbox:hover {
+		background-color: unset !important;
+		border: unset;
+		width: 20px;
+		height: 20px;
+		outline: none;
+	}
+}
+
 .dropdown-button,
 .dropdown-button:hover,
 .dropdown-button:active,
