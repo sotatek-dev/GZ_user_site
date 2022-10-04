@@ -20,6 +20,7 @@ import {
 	MINT_PHASE_ID,
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
+	TOKEN_DECIMAL,
 } from 'modules/mintDnft/constants';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
@@ -144,7 +145,10 @@ export const isApproved = (allowance?: BigNumber.Value): boolean => {
 	return (
 		!!allowance &&
 		new BigNumber(allowance).gt(
-			new BigNumber(constants.MaxUint256.toString()).idiv(2).dp(0)
+			new BigNumber(constants.MaxUint256.toString())
+				.div(TOKEN_DECIMAL)
+				.idiv(2)
+				.dp(0)
 		)
 	);
 };
