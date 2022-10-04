@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import HelmetCommon from 'common/components/helmet';
-
+import ReactGa from 'react-ga';
 export const buyTimeDefault = {
 	start_time: 0,
 	end_time: 0,
@@ -107,11 +107,15 @@ const TokenPresaleRound = () => {
 			},
 		},
 	];
-
 	const handleChangePage = (page: number) => {
 		setPerPage(page);
 	};
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon

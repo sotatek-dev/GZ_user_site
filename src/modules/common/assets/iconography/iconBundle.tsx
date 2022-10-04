@@ -18,6 +18,7 @@ export const IconDynamic = (props: IIconDynamicProps) => {
 				height='100%'
 				layout='responsive'
 				className='w-full h-full'
+				objectFit='contain'
 			/>
 		</div>
 	);

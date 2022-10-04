@@ -47,6 +47,7 @@ const ModalCustom = (props: ModalProps) => {
 						height='100%'
 						layout='intrinsic'
 						alt='close icon'
+						objectFit='contain'
 					/>
 				)
 			}

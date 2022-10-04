@@ -237,6 +237,7 @@ const LayoutHeader = () => {
 								height='10px'
 								src='/icons/arrow-down.svg'
 								alt='icon'
+								objectFit='contain'
 							/>
 						</div>
 					</Dropdown>

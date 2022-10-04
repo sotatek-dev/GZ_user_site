@@ -6,6 +6,12 @@ const nextConfig = {
 	sassOptions: {
 		includePaths: [path.join(__dirname, 'styles')],
 	},
+	swcMinify: true,
+	compiler: {
+		removeConsole: {
+			exclude: ['error'],
+		},
+	},
 	cssModules: true,
 	images: {
 		dangerouslyAllowSVG: true,
