@@ -81,6 +81,10 @@ const MintDNFT: React.FC = () => {
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
+	console.log(
+		'NEXT_PUBLIC_DNFT_ADDRESS: ',
+		process.env.NEXT_PUBLIC_DNFT_ADDRESS || '-'
+	);
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const {
 		priceInBUSD: priceInBUSD = 0,
