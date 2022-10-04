@@ -2,7 +2,7 @@
 // import { updateMyProfile } from 'apis/my-profile';
 // import BoxPool from 'common/components/boxPool';
 // import Countdown from 'common/components/countdown';
-// // import Dropdown from 'common/components/dropdown';
+// import Dropdown from 'common/components/dropdown';
 // import HelmetCommon from 'common/components/helmet';
 // import CustomRadio from 'common/components/radio';
 // import MyTable from 'common/components/table';
@@ -20,7 +20,14 @@
 // } from 'modules/my-profile/metadata';
 // import { copyToClipboard } from 'modules/my-profile/services';
 
-// import { useEffect } from "react";
+import HelmetCommon from 'common/components/helmet';
+import { LIMIT_10, ROUTES } from 'common/constants/constants';
+import BuyInfo from 'modules/my-profile/components/BuyInfo';
+import MyDNFT from 'modules/my-profile/components/MyDNFT';
+import PersonalInfo from 'modules/my-profile/components/PersonalInfo';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from 'stores';
+import { getMyDNFTsRD, getMyProfileRD } from 'stores/my-profile';
 
 // import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 // import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
@@ -545,11 +552,7 @@
 // 							</button>
 // 						</div>
 // <<<<<<< HEAD
-// 						<hr className={'border-t border-blue-20/[0.1]'} />
-// =======
-// <<<<<<< HEAD
 // 						<hr className={'border-t border-blue-20'} />
-// >>>>>>> b4e010f (feat: add pagination)
 // 						<div className='mt-6'>
 // 							<div className='flex gap-x-2 mb-6 justify-between'>
 // 								<div
@@ -557,7 +560,7 @@
 // 										'flex items-center justify-between desktop:justify-start grow gap-2.5'
 // 									}
 // 								>
-// 									{/* <Dropdown
+// 									<Dropdown
 // 										customStyle={'!w-1/2 desktop:!w-[160px]'}
 // 										label='All statuses'
 // 										list={[]}
@@ -566,7 +569,7 @@
 // 										customStyle={'!w-1/2 desktop:!w-[160px]'}
 // 										label='All types'
 // 										list={[]}
-// 									/> */}
+// 									/>
 // 								</div>
 // 								<button
 // 									className={
@@ -576,60 +579,7 @@
 // 									Claim all
 // 								</button>
 // 							</div>
-// 							<MyTable
-// 								columns={columns}
-// 								dataSource={datafake}
-// 								className={'hidden desktop:inline-block w-full'}
-// 							/>
-// 							<div className={'desktop:hidden'}>
-// 								{datafake.map((value, item) => {
-// 									return (
-// 										<>
-// 											<div className={'flex flex-col gap-6 mb-6'} key={item}>
-// 												<hr className={'border-t border-white/[0.07]'} />
-// 												<Link className='flex justify-end' href='/nft-detail'>
-// 													<button className='text-[#D47AF5] font-semibold rounded-[40px] px-[27px] py-[7px] border-[2px] border-[#D47AF5] flex ml-auto'>
-// 														Claim
-// 													</button>
-// 												</Link>
-// 												<div className={'flex justify-between items-center'}>
-// 													<div className={'text-h8 text-blue-20 font-medium'}>
-// 														Species
-// 													</div>
-// 													<Link
-// 														className={'text-h8 text-white font-bold'}
-// 														href='/nft-detail'
-// 													>
-// 														{value.Species}
-// 													</Link>
-// 												</div>
-// 												<div className={'flex justify-between items-center'}>
-// 													<div className={'text-h8 text-blue-20 font-medium'}>
-// 														Rarity
-// 													</div>
-// 													<Link
-// 														className={'text-h8 text-white font-bold'}
-// 														href='/nft-detail'
-// 													>
-// 														{value.Rarity}
-// 													</Link>
-// 												</div>
-// 												<div className={'flex justify-between items-center'}>
-// 													<div className={'text-h8 text-blue-20 font-medium'}>
-// 														Claimable data
-// 													</div>
-// 													<Link
-// 														className={'text-h8 text-white font-bold'}
-// 														href='/nft-detail'
-// 													>
-// 														{value.Claimable_date}
-// 													</Link>
-// 												</div>
-// 											</div>
-// 										</>
-// 									);
-// 								})}
-// 							</div>
+// 							<MyTable columns={columns} dataSource={datafake} />
 // 							<div className='mt-[30px] w-[100%] flex justify-end'>
 // 								<Pagination
 // 									defaultCurrent={1}
@@ -667,5 +617,30 @@
 // export default MyProfile;
 
 export default function MyProfile() {
-	return <div></div>;
+	const { isLogin } = useAppSelector((state) => state.user);
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		if (isLogin) {
+			dispatch(getMyDNFTsRD({ page: 1, limit: LIMIT_10 }));
+			dispatch(getMyProfileRD());
+		}
+	}, [isLogin, dispatch]);
+
+	return (
+		<>
+			<HelmetCommon
+				title='My Profile'
+				description='Description my profile ...'
+				href={ROUTES.MY_PROFILE}
+			/>
+			<div className='flex flex-col gap-2.5 desktop:gap-y-6'>
+				<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-x-6'>
+					<PersonalInfo />
+					<BuyInfo />
+				</div>
+				<MyDNFT />
+			</div>
+		</>
+	);
 }

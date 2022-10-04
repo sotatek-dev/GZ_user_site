@@ -13,6 +13,7 @@ import {
 } from 'stores/system-setting';
 import { myProfileStore } from 'stores/my-profile';
 import thunkMiddleware from 'redux-thunk';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 let customStore: Store | undefined;
 
@@ -44,6 +45,13 @@ const enhancer = composeWithDevTools(applyMiddleware(...middleWares));
 export const store = createStore(rootReducer, enhancer);
 
 export const persistor = persistStore(store);
+
+export type AppState = ReturnType<typeof store.getState>;
+
+export type AppDispatch = typeof store.dispatch;
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch: () => AppDispatch = useDispatch;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export default store;
 

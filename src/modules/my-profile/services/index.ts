@@ -1,3 +1,4 @@
+import axiosInstance from 'apis/config';
 import { toast } from 'react-toastify';
 
 export function copyToClipboard(text: string) {
@@ -6,3 +7,11 @@ export function copyToClipboard(text: string) {
 		theme: 'dark',
 	});
 }
+
+export const getSignature = async () => {
+	const queryString = `token-status`;
+	return await axiosInstance()
+		.get(queryString)
+		.then((res) => [res.data, null])
+		.catch((error) => [null, error]);
+};
