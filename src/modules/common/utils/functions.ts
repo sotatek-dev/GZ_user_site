@@ -63,14 +63,14 @@ export const convertTimeLine = (
 };
 
 export const convertTimeStampToDate = (date: number, formatDate?: string) => {
-	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
+	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
 };
 
 export const convertMiliSecondTimestampToDate = (
 	date: number,
 	formatDate?: string
 ) => {
-	return moment(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
+	return moment(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
 };
 
 export const geMintPhaseType = (id: MINT_PHASE_ID): MINT_PHASE | void => {

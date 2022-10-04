@@ -209,7 +209,7 @@ const MyProfile = () => {
 								Claim all
 							</button>
 						</div>
-						<hr className={'border-t border-blue-20'} />
+						<hr className={'border-t border-blue-20/[0.1]'} />
 						<div className='mt-6'>
 							<div className='flex gap-x-2 mb-6 justify-between'>
 								<div
@@ -236,7 +236,60 @@ const MyProfile = () => {
 									Claim all
 								</button>
 							</div>
-							<MyTable columns={columns} dataSource={datafake} />
+							<MyTable
+								columns={columns}
+								dataSource={datafake}
+								className={'hidden desktop:inline-block w-full'}
+							/>
+							<div className={'desktop:hidden'}>
+								{datafake.map((value, item) => {
+									return (
+										<>
+											<div className={'flex flex-col gap-6 mb-6'} key={item}>
+												<hr className={'border-t border-white/[0.07]'} />
+												<Link className='flex justify-end' href='/nft-detail'>
+													<button className='text-[#D47AF5] font-semibold rounded-[40px] px-[27px] py-[7px] border-[2px] border-[#D47AF5] flex ml-auto'>
+														Claim
+													</button>
+												</Link>
+												<div className={'flex justify-between items-center'}>
+													<div className={'text-h8 text-blue-20 font-medium'}>
+														Species
+													</div>
+													<Link
+														className={'text-h8 text-white font-bold'}
+														href='/nft-detail'
+													>
+														{value.Species}
+													</Link>
+												</div>
+												<div className={'flex justify-between items-center'}>
+													<div className={'text-h8 text-blue-20 font-medium'}>
+														Rarity
+													</div>
+													<Link
+														className={'text-h8 text-white font-bold'}
+														href='/nft-detail'
+													>
+														{value.Rarity}
+													</Link>
+												</div>
+												<div className={'flex justify-between items-center'}>
+													<div className={'text-h8 text-blue-20 font-medium'}>
+														Claimable data
+													</div>
+													<Link
+														className={'text-h8 text-white font-bold'}
+														href='/nft-detail'
+													>
+														{value.Claimable_date}
+													</Link>
+												</div>
+											</div>
+										</>
+									);
+								})}
+							</div>
 							<div className='mt-[30px] w-[100%] flex justify-end'>
 								<Pagination
 									defaultCurrent={1}
