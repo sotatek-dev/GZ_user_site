@@ -62,7 +62,7 @@ const NFTDetail = () => {
 							</div>
 						</div>
 					) : (
-						<div className='flex flex-row justify-between gap-x-[50px]  w-[100%]'>
+						<div className='flex flex-col desktop:flex-row justify-between gap-x-[50px]  w-[100%]'>
 							<div className='flex flex-col gap-y-[20px] flex-grow'>
 								<CustomDropdown label='Armor' list={[]} />
 								<CustomDropdown label='Shoes' list={[]} />
