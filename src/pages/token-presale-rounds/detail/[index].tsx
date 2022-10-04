@@ -6,6 +6,7 @@ import {
 import BoxPool from 'common/components/boxPool';
 import Button from 'common/components/button';
 import Countdown from 'common/components/countdown';
+import HelmetCommon from 'common/components/helmet';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
 import CustomRadio from 'common/components/radio';
@@ -18,6 +19,7 @@ import {
 	END,
 	GXZ_CURRENCY,
 	HEX_ZERO,
+	ROUTES,
 	TIME_LINE_SALE_ROUND,
 	TYPE_SALE_ROUND,
 	UPCOMING,
@@ -244,6 +246,11 @@ const TokenSaleRoundDetail = () => {
 	const renderPriceBuyInfoUpComing = () => {
 		return (
 			<>
+				<HelmetCommon
+					title='Token presale rounds detail'
+					description='Description token presale rounds detail...'
+					href={ROUTES.TOKEN_PRESALE_ROUNDS_DETAIL}
+				/>
 				<div>
 					<div className='flex gap-x-2'>
 						Price
@@ -299,128 +306,143 @@ const TokenSaleRoundDetail = () => {
 	};
 
 	return (
-		<div className='flex flex-col gap-2.5 desktop:gap-8'>
-			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
-				<BoxPool title='Pool Timeline' customClass='desktop:w-[50%] bg-gray-50'>
-					<div className='py-6'>
-						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
-					</div>
-					<Countdown
-						millisecondsRemain={timeCountDow}
-						title='You can buy tokens in'
-						callBackApi={getDetailSaleRound}
-					/>
-				</BoxPool>
-				<BoxPool
-					title='Buy Info'
-					customClass='desktop:w-[50%] flex flex-col bg-gray-50'
-				>
-					<div className='pt-6 flex'>
-						<div className='flex justify-between w-full'>
-							{statusTimeLine === UPCOMING || statusTimeLine === BUY
-								? renderPriceBuyInfoUpComing()
-								: renderPriceBuyInfoClaimableAndEnd()}
-							{statusTimeLine === BUY && isLogin && isWhitelist && (
-								<Button
-									onClick={() => setOpenTokenPurchase(true)}
-									label='Buy'
-									classCustom='buy-token'
-								/>
-							)}
-							{statusTimeLine === CLAIMABLE && isLogin && isWhitelist && (
-								<Button
-									onClick={handleClaimToken}
-									label='claim'
-									classCustom='buy-token'
-								/>
-							)}
-						</div>
-					</div>
-					<div className='mt-auto'>
-						<div className='text-sm text font-normal'>Buy Progress:</div>
-						<Progress
-							strokeColor={{
-								'0%': '#9E90F3',
-								'100%': '#9E90F3',
-							}}
-							percent={
-								maxPreSaleAmount > 0
-									? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
-									: 0
-							}
-							showInfo={false}
-						/>
-						<div className='flex justify-between'>
-							<div>{`${
-								maxPreSaleAmount > 0
-									? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
-									: 0
-							}%`}</div>
-							<div>{`${formatNumber(
-								totalSoldAmount
-							)}/${maxPreSaleAmount}`}</div>
-						</div>
-					</div>
-				</BoxPool>
-			</div>
-			<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
-				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
-					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-						<div className='flex gap-x-2'>
-							<div className='text-dim-gray font-normal'>Token Buy Time:</div>
-							<div className='font-medium'>
-								{start_time && end_time
-									? renderTokenBuyTime(start_time, end_time)
-									: 'TBA'}
-							</div>
-						</div>
-						<div className='flex gap-x-2'>
-							<div className='text-dim-gray font-normal'>Token Claim Time:</div>
-							<div className='font-medium'>
-								{tokenClaimTime
-									? convertTimeStampToDate(tokenClaimTime)
-									: 'TBA'}
-							</div>
-						</div>
-					</div>
-					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-						<div className='flex gap-x-2'>
-							<div className='text-dim-gray font-normal'>Total Raise:</div>
-							<div className='font-medium'>
-								{formatNumber(maxBUSDUserCanSpend)}
-							</div>
-						</div>
-						<div className='flex gap-x-2'>
-							<div className='text-dim-gray font-normal'>Token Max Buy:</div>
-							<div className='font-medium'>
-								{formatNumber(maxPreSaleAmount)}
-							</div>
-						</div>
-					</div>
-				</div>
-				<Divider className='bg-black-velvet mt-0' />
-				<div className='text-sm text-dim-gray font-medium'>
-					Round Information:
-				</div>
-			</BoxPool>
-			<ModalPurchase
-				isShow={isOpenTokenPurchase}
-				onCancel={() => setOpenTokenPurchase(false)}
-				currency={currency}
-				exchangeRate={price}
-				detailSaleRound={detailSaleRound}
-				maxPreSaleAmount={maxPreSaleAmount}
-				youBought={youBought}
-				handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
+		<>
+			<HelmetCommon
+				title='Token Presale Rounds Detail'
+				description='Description token presale rounds details...'
+				href={ROUTES.TOKEN_PRESALE_ROUNDS_DETAIL}
 			/>
-			<ModalCustom
-				isShow={isOpenClaimPopup}
-				onCancel={() => setOpenClaimPopup(false)}
-				customClass='text-center'
-			>
-				<Loading />
-			</ModalCustom>
-		</div>
+			<div className='flex flex-col gap-2.5 desktop:gap-8'>
+				<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
+					<BoxPool
+						title='Pool Timeline'
+						customClass='desktop:w-[50%] bg-gray-50'
+					>
+						<div className='py-6'>
+							<Stepper
+								steps={TIME_LINE_SALE_ROUND}
+								activeStep={statusTimeLine}
+							/>
+						</div>
+						<Countdown
+							millisecondsRemain={timeCountDow}
+							title='You can buy tokens in'
+							callBackApi={getDetailSaleRound}
+						/>
+					</BoxPool>
+					<BoxPool
+						title='Buy Info'
+						customClass='desktop:w-[50%] flex flex-col bg-gray-50'
+					>
+						<div className='pt-6 flex'>
+							<div className='flex justify-between w-full'>
+								{statusTimeLine === UPCOMING || statusTimeLine === BUY
+									? renderPriceBuyInfoUpComing()
+									: renderPriceBuyInfoClaimableAndEnd()}
+								{statusTimeLine === BUY && isLogin && isWhitelist && (
+									<Button
+										onClick={() => setOpenTokenPurchase(true)}
+										label='Buy'
+										classCustom='buy-token'
+									/>
+								)}
+								{statusTimeLine === CLAIMABLE && isLogin && isWhitelist && (
+									<Button
+										onClick={handleClaimToken}
+										label='claim'
+										classCustom='buy-token'
+									/>
+								)}
+							</div>
+						</div>
+						<div className='mt-auto'>
+							<div className='text-sm text font-normal'>Buy Progress:</div>
+							<Progress
+								strokeColor={{
+									'0%': '#9E90F3',
+									'100%': '#9E90F3',
+								}}
+								percent={
+									maxPreSaleAmount > 0
+										? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
+										: 0
+								}
+								showInfo={false}
+							/>
+							<div className='flex justify-between'>
+								<div>{`${
+									maxPreSaleAmount > 0
+										? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
+										: 0
+								}%`}</div>
+								<div>{`${formatNumber(
+									totalSoldAmount
+								)}/${maxPreSaleAmount}`}</div>
+							</div>
+						</div>
+					</BoxPool>
+				</div>
+				<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
+					<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
+						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+							<div className='flex gap-x-2'>
+								<div className='text-dim-gray font-normal'>Token Buy Time:</div>
+								<div className='font-medium'>
+									{start_time && end_time
+										? renderTokenBuyTime(start_time, end_time)
+										: 'TBA'}
+								</div>
+							</div>
+							<div className='flex gap-x-2'>
+								<div className='text-dim-gray font-normal'>
+									Token Claim Time:
+								</div>
+								<div className='font-medium'>
+									{tokenClaimTime
+										? convertTimeStampToDate(tokenClaimTime)
+										: 'TBA'}
+								</div>
+							</div>
+						</div>
+						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+							<div className='flex gap-x-2'>
+								<div className='text-dim-gray font-normal'>Total Raise:</div>
+								<div className='font-medium'>
+									{formatNumber(maxBUSDUserCanSpend)}
+								</div>
+							</div>
+							<div className='flex gap-x-2'>
+								<div className='text-dim-gray font-normal'>Token Max Buy:</div>
+								<div className='font-medium'>
+									{formatNumber(maxPreSaleAmount)}
+								</div>
+							</div>
+						</div>
+					</div>
+					<Divider className='bg-black-velvet mt-0' />
+					<div className='text-sm text-dim-gray font-medium'>
+						Round Information:
+					</div>
+				</BoxPool>
+				<ModalPurchase
+					isShow={isOpenTokenPurchase}
+					onCancel={() => setOpenTokenPurchase(false)}
+					currency={currency}
+					exchangeRate={price}
+					detailSaleRound={detailSaleRound}
+					maxPreSaleAmount={maxPreSaleAmount}
+					youBought={youBought}
+					handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
+				/>
+				<ModalCustom
+					isShow={isOpenClaimPopup}
+					onCancel={() => setOpenClaimPopup(false)}
+					customClass='text-center'
+				>
+					<Loading />
+				</ModalCustom>
+			</div>
+		</>
 	);
 };
 
