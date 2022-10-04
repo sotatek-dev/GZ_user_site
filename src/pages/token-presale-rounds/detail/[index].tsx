@@ -303,7 +303,7 @@ const TokenSaleRoundDetail = () => {
 			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
 				<BoxPool title='Pool Timeline' customClass='desktop:w-[50%] bg-gray-50'>
 					<div className='py-6'>
-						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
+						{/*<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />*/}
 					</div>
 					<Countdown
 						millisecondsRemain={timeCountDow}

@@ -169,7 +169,7 @@ const TokenPresaleRound = () => {
 						)
 					})}
 				</div>
-				<Pagination defaultCurrent={6} pageSize={LIMIT_10} total={totalPage} onChange={handleChangePage} className={'flex wrap gap-x-2'} />
+				<Pagination size={'small'} defaultCurrent={6} pageSize={LIMIT_10} total={totalPage} onChange={handleChangePage} className={'flex wrap gap-x-2'} />
 			</div>
 		</div>
 	);
