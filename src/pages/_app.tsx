@@ -12,6 +12,7 @@ import DefaultLayout from 'common/layouts';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import HeadCommon from 'common/components/head';
 import { HelmetProvider } from 'react-helmet-async';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getLibrary(provider: any) {
 	const library = new providers.Web3Provider(provider);
