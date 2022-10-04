@@ -38,13 +38,11 @@ import {
 	checkWhitelist,
 	getMintDnftSignature,
 } from 'modules/mintDnft/services';
-import { handleCommonError } from 'common/helpers/toast';
 import {
 	handleFetchListPhaseError,
 	handleFetchRateError,
 	handleMintError,
 } from 'modules/mintDnft/helpers/handleError';
-import { toast } from 'react-toastify';
 import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
