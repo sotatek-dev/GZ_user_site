@@ -1,0 +1,9 @@
+https://galactix-zone-staging.netlify.app/
+https://galactix-zone-staging.netlify.app/landing
+https://galactix-zone-staging.netlify.app/merge-nft
+https://galactix-zone-staging.netlify.app/mint-dnft
+https://galactix-zone-staging.netlify.app/my-profile
+https://galactix-zone-staging.netlify.app/nft-detail
+https://galactix-zone-staging.netlify.app/rescue-nft
+https://galactix-zone-staging.netlify.app/token-presale-rounds
+https://galactix-zone-staging.netlify.app/token-presale-rounds/detail

@@ -22,7 +22,7 @@ const LayoutHeader = () => {
 	const { account, active } = useActiveWeb3React();
 	const [currency, setCurrency] = useState();
 	const { disconnectWallet } = useConnectWallet();
-	const [openMobileNav, setOpenMobileNav] = useState<boolean>(true);
+	const [openMobileNav, setOpenMobileNav] = useState<boolean>(false);
 
 	const isLogin = useSelector((state) => state.user.isLogin);
 	// const addressWallet = useSelector(state => state.wallet.addressWallet);

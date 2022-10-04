@@ -1,10 +1,13 @@
+import LazyLoadImageComp from 'common/components/lazyLoadImage';
 import React from 'react';
 import styles from '../style/roadmap.module.scss';
 
 interface Timeline {
 	imgSrc: string;
-	imgStyle: any;
+	imgStyle?: any;
 	title: string;
+	width: number;
+	height: number;
 	descriptions: string[];
 	position: 'left' | 'right';
 }
@@ -13,9 +16,9 @@ export default function Roadmap() {
 	const timelines: Timeline[] = [
 		{
 			imgSrc: '/images/roadmap_1.svg',
+			width: 560,
+			height: 448,
 			imgStyle: {
-				width: '35.5406rem',
-				height: '28.2156rem',
 				marginLeft: '3rem',
 			},
 			title: 'Q3 2022',
@@ -30,9 +33,9 @@ export default function Roadmap() {
 		},
 		{
 			imgSrc: '/images/roadmap_2.svg',
+			width: 384,
+			height: 432,
 			imgStyle: {
-				width: '23.8256rem',
-				height: '27.25rem',
 				marginRight: '7.6875rem',
 			},
 			title: 'Q4 2022',
@@ -51,9 +54,9 @@ export default function Roadmap() {
 		},
 		{
 			imgSrc: '/images/roadmap_3.svg',
+			width: 544,
+			height: 496,
 			imgStyle: {
-				width: '34.25rem',
-				height: '31.2081rem',
 				marginLeft: '6.5rem',
 			},
 			title: 'Q1 2023',
@@ -74,9 +77,9 @@ export default function Roadmap() {
 		},
 		{
 			imgSrc: '/images/roadmap_4.svg',
+			width: 320,
+			height: 384,
 			imgStyle: {
-				width: '19.5963rem',
-				height: '23.7294rem',
 				marginRight: '6.8125rem',
 			},
 			title: 'Q2 2023',
@@ -93,10 +96,8 @@ export default function Roadmap() {
 		},
 		{
 			imgSrc: '/images/roadmap_5.svg',
-			imgStyle: {
-				width: '44.8125rem',
-				height: '27.625rem',
-			},
+			width: 720,
+			height: 448,
 			title: 'Q3 2023',
 			descriptions: [
 				'Game UAT (continue)',
@@ -113,9 +114,9 @@ export default function Roadmap() {
 		},
 		{
 			imgSrc: '/images/roadmap_6.svg',
+			width: 432,
+			height: 400,
 			imgStyle: {
-				width: '27.3781rem',
-				height: '25.125rem',
 				marginRight: '6rem',
 			},
 			title: 'Q4 2023',
@@ -131,13 +132,13 @@ export default function Roadmap() {
 	];
 
 	return (
-		<div className={styles['roadmap-section']} id='roadmap'>
+		<section className={styles['roadmap-section']} id='roadmap'>
 			<div className='flex justify-center mb-[1.25rem]'>
-				<p
+				<h1
 					className={`text-[3.125rem] font-semibold  ${styles['gradient-text']}`}
 				>
 					Roadmap
-				</p>
+				</h1>
 			</div>
 
 			<div className={styles['timeline-container']}>
@@ -145,12 +146,13 @@ export default function Roadmap() {
 					<TimelineSection key={index} timeline={timeline} />
 				))}
 			</div>
-		</div>
+		</section>
 	);
 }
 
 function TimelineSection({ timeline }: { timeline: Timeline }) {
-	const { imgSrc, title, descriptions, position, imgStyle } = timeline;
+	const { imgSrc, title, descriptions, position, imgStyle, width, height } =
+		timeline;
 	const flex = position === 'left' ? 'flex-row ' : 'flex-row-reverse ';
 	const boxClass = `timeline-box-${position}`;
 	const imgClass = `timeline-img-${position}`;
@@ -159,7 +161,7 @@ function TimelineSection({ timeline }: { timeline: Timeline }) {
 	return (
 		<div className={`${flex}  ${styles['timeline-child-container']}`}>
 			<div className={`${styles['timeline-box']} ${styles[boxClass]}`}>
-				<p className={styles['timeline-title']}>{title}</p>
+				<h1 className={styles['timeline-title']}>{title}</h1>
 				<div
 					className={`${styles[timelinePointClass]} ${styles['timeline-point']}`}
 				/>
@@ -172,7 +174,16 @@ function TimelineSection({ timeline }: { timeline: Timeline }) {
 				</ul>
 			</div>
 			<div className={`${styles['timeline-img']} ${styles[imgClass]}`}>
-				<img src={imgSrc} style={imgStyle} />
+				<div style={imgStyle}>
+					<LazyLoadImageComp
+						src={imgSrc}
+						alt='logo'
+						height={height}
+						width={width}
+						placeholderSrc={imgSrc}
+						effect='blur'
+					/>
+				</div>
 			</div>
 		</div>
 	);
