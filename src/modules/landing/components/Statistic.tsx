@@ -70,7 +70,7 @@ export default function Statistic() {
 	}, [statistic]);
 
 	return (
-		<div className={styles['statistic-container']}>
+		<section className={styles['statistic-container']}>
 			<div className={`w-[1.9169rem] h-[4.375rem] object-contain`}>
 				<LazyLoadImageComp
 					placeholderSrc='/images/roadmap_0.svg'
@@ -86,7 +86,7 @@ export default function Statistic() {
 					<StatisticBox key={index} {...box} />
 				))}
 			</div>
-		</div>
+		</section>
 	);
 }
 
@@ -113,8 +113,8 @@ function StatisticBox({
 					alt={icon}
 				/>
 			</div>
-			<p className={styles['statistic-box_value']}>{numberWithDot(value)}</p>
-			<p className={styles['statistic-box_label']}>{label}</p>
+			<h1 className={styles['statistic-box_value']}>{numberWithDot(value)}</h1>
+			<h2 className={styles['statistic-box_label']}>{label}</h2>
 		</div>
 	);
 }

@@ -132,13 +132,13 @@ export default function Roadmap() {
 	];
 
 	return (
-		<div className={styles['roadmap-section']} id='roadmap'>
+		<section className={styles['roadmap-section']} id='roadmap'>
 			<div className='flex justify-center mb-[1.25rem]'>
-				<p
+				<h1
 					className={`text-[3.125rem] font-semibold  ${styles['gradient-text']}`}
 				>
 					Roadmap
-				</p>
+				</h1>
 			</div>
 
 			<div className={styles['timeline-container']}>
@@ -146,7 +146,7 @@ export default function Roadmap() {
 					<TimelineSection key={index} timeline={timeline} />
 				))}
 			</div>
-		</div>
+		</section>
 	);
 }
 
@@ -161,7 +161,7 @@ function TimelineSection({ timeline }: { timeline: Timeline }) {
 	return (
 		<div className={`${flex}  ${styles['timeline-child-container']}`}>
 			<div className={`${styles['timeline-box']} ${styles[boxClass]}`}>
-				<p className={styles['timeline-title']}>{title}</p>
+				<h1 className={styles['timeline-title']}>{title}</h1>
 				<div
 					className={`${styles[timelinePointClass]} ${styles['timeline-point']}`}
 				/>

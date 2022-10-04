@@ -11,7 +11,7 @@ export default function Header() {
 		setVisible(true);
 	}
 	return (
-		<div className={styles['header']} id='header'>
+		<header className={styles['header']} id='header'>
 			<div className={styles['logo-box']}>
 				<div className={styles['logo']}>
 					<LazyLoadImageComp
@@ -42,7 +42,7 @@ export default function Header() {
 				<li className={styles['menu-item']}>
 					<a href='#'>GXZ Token</a>
 				</li>
-				<button className={`${styles['laucher-btn']}`}>Launch App</button>
+				<button className={styles['laucher-btn']}>Launch App</button>
 			</ul>
 			<Drawer
 				className={styles['drawer']}
@@ -119,6 +119,6 @@ export default function Header() {
 					</ul>
 				</div>
 			</Drawer>
-		</div>
+		</header>
 	);
 }

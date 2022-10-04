@@ -1,10 +1,71 @@
 /* eslint-disable @next/next/no-img-element */
 import LazyLoadImageComp from 'common/components/lazyLoadImage';
+import Link from 'next/link';
 import React from 'react';
 import styles from '../style/footer.module.scss';
+type ListIntroduceProps = {
+	id: number;
+	content: {
+		id: number;
+		title: string;
+		href: string;
+	}[];
+};
 export default function Footer() {
+	const listIntroduce: ListIntroduceProps[] = [
+		{
+			id: 1,
+			content: [
+				{
+					id: 1,
+					title: 'About',
+					href: '#about',
+				},
+				{
+					id: 2,
+					title: 'Introduction',
+					href: '#introduction',
+				},
+				{
+					id: 3,
+					title: 'Token',
+					href: '#token',
+				},
+				{
+					id: 4,
+					title: 'Team',
+					href: '#team',
+				},
+			],
+		},
+		{
+			id: 2,
+			content: [
+				{
+					id: 1,
+					title: 'Contact',
+					href: '#contact',
+				},
+				{
+					id: 2,
+					title: 'Roadmap',
+					href: '#roadmap',
+				},
+				{
+					id: 3,
+					title: 'FAQ',
+					href: '#faq',
+				},
+				{
+					id: 4,
+					title: 'Terms of service',
+					href: '#terms-of-service',
+				},
+			],
+		},
+	];
 	return (
-		<div className={styles['footer-section']}>
+		<footer className={styles['footer-section']}>
 			<div className={styles['footer-container']}>
 				<div className={styles['footer-1']}>
 					<div className='w-[8.125rem] h-[8.125rem]'>
@@ -19,67 +80,38 @@ export default function Footer() {
 					</div>
 					<div className={styles['footer-1_menu']}>
 						<div className={styles['footer-1_menu_text']}>
-							<div className={styles['footer-1_menu_text_list']}>
-								<a
-									href='#about'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									About
-								</a>
-								<a
-									href='#'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									Introduction
-								</a>
-								<a
-									href='#'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									Token
-								</a>
-								<a
-									href='#'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									Team
-								</a>
-							</div>
-
-							<div className={styles['footer-1_menu_text_list']}>
-								<a
-									href='#'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									Contact
-								</a>
-								<a
-									href='#roadmap'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									Roadmap
-								</a>
-								<a
-									href='#'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									FAQ
-								</a>
-								<a
-									href='#'
-									className='text-white font-semibold opacity-70 font-[14px]'
-								>
-									Terms of service
-								</a>
-							</div>
+							{listIntroduce?.length > 0 &&
+								listIntroduce.map((values) => {
+									return (
+										<div
+											key={values.id}
+											className={styles['footer-1_menu_text_list']}
+										>
+											{values?.content?.length > 0 &&
+												values.content.map((valuesHref) => {
+													return (
+														<Link
+															href={valuesHref.href}
+															key={valuesHref.id}
+															passHref
+														>
+															<a className='text-white font-semibold opacity-70 font-[14px]'>
+																{valuesHref.title}
+															</a>
+														</Link>
+													);
+												})}
+										</div>
+									);
+								})}
 						</div>
 						<div className={styles['footer-1_menu_btn']}>
 							<button className={styles['footer-btn']}>
-								<p className={styles['footer-btn_label']}>PITCH DECK</p>
+								<h1 className={styles['footer-btn_label']}>PITCH DECK</h1>
 								<LazyLoadImageComp src='/icons/arrow-right.svg' alt='logo' />
 							</button>
 							<button className={`${styles['footer-btn']} mt-[1.125rem]`}>
-								<p className={styles['footer-btn_label']}>WHITE PAPER</p>
+								<h1 className={styles['footer-btn_label']}>WHITE PAPER</h1>
 								<LazyLoadImageComp src='/icons/arrow-right.svg' alt='logo' />
 							</button>
 						</div>
@@ -87,9 +119,9 @@ export default function Footer() {
 				</div>
 
 				<div className={styles['footer-2']}>
-					<p className='opacity-50 text-white text-[0.875rem]'>
+					<h1 className='opacity-50 text-white text-[0.875rem]'>
 						©2022 Galactix Zone. All rights reserved
-					</p>
+					</h1>
 
 					<div className='flex'>
 						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
@@ -125,6 +157,6 @@ export default function Footer() {
 					</div>
 				</div>
 			</div>
-		</div>
+		</footer>
 	);
 }

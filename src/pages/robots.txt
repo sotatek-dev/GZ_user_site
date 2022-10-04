@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /landing
+Allow: /merge-nft
+Allow: /mint-dnft
+Allow: /my-profile
+Allow: /nft-detail
+Allow: /rescue-nft
+Disallow: /token-presale-rounds/
+Allow: /token-presale-rounds/detail
+
+User-agent: Googlebot
+Disallow: /*
+Allow: /token-presale-rounds/*
+Disallow: /*.pdf$
+Disallow: /*.gif$
+Disallow: /*.xls$
+
+Sitemap: https://galactix-zone-staging.netlify.app/sitemap_index.xml
