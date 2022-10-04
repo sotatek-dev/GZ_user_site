@@ -264,7 +264,7 @@ const MintDNFT: React.FC = () => {
 				<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
 
 				{/* divider*/}
-				<hr className={'border border-white/[.07] mb-4'} />
+				<hr className={'border-t border-white/[.07] mb-4'} />
 
 				{/*<Button label={'Mint'} classCustom={'bg-green mb-4'} />*/}
 				<div className={'flex flex-col desktop:items-center desktop:flex-row rounded-[10px] text-h8 gap-4 mb-4'}>
@@ -302,7 +302,7 @@ const MintDNFT: React.FC = () => {
 				</div>
 
 				{/* divider*/}
-				<hr className={'border border-white/[.07] mb-4'} />
+				<hr className={'border-t border-white/[.07] mb-4'} />
 
 				<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>Pool remaining</div>
 				<div className='flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-h8 h-fit'>
@@ -334,46 +334,9 @@ const MintDNFT: React.FC = () => {
 				</div>
 
 				{/* divider*/}
-				<hr className={'border border-white/[.07] mb-8'} />
+				<hr className={'border-t border-white/[.07] mb-4'} />
 
-				<div className='flex flex-col text-sm mb-8	'>
-					<TimelineMintRound timelineMintNft={timelineMintNft} />
-					{/* divider*/}
-					<hr className={'border border-green mx-3 my-8'} />
-					<div className='flex justify-between w-full'>
-						{timelineMintNft.map(
-							(phaseInfo: ITimelineMintNftState, index: number) => {
-								const { endMintTime, startMintTime } = phaseInfo;
-								return (
-									<div
-										className={
-											'flex flex-col justify-center items-center w-[20%] text-h10'
-										}
-										key={index}
-									>
-										<div className='mb-4'>
-											Start from:{' '}
-											{convertMiliSecondTimestampToDate(
-												startMintTime,
-												'hh:mm - MM/DD/YYYY'
-											)}
-										</div>
-										<div>
-											End in:{' '}
-											{convertMiliSecondTimestampToDate(
-												endMintTime,
-												'hh:mm - MM/DD/YYYY'
-											)}
-										</div>
-									</div>
-								);
-							}
-						)}
-					</div>
-				</div>
-
-				{/* divider*/}
-				<hr className={'border border-white/[.07] mb-8'} />
+				<TimelineMintRound timelineMintNft={timelineMintNft} />
 
 				<div className={'flex flex-col items-center desktop:flex-row desktop:items-end gap-6 desktop:gap-0'}>
 					{runningPhase &&
