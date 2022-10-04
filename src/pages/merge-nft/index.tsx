@@ -119,78 +119,78 @@ const MergeNft = () => {
 				description='Description merge nft...'
 				href={ROUTES.MERGE_NFT}
 			/>
-		<div className='flex flex-col'>
-			<div className='flex mb-8 items-end'>
-				<div>Select the first NFT to merge: </div>
-				<Checkbox
-					className='checkbox-custom text-white text-base font-normal ml-auto'
-					onChange={handleSelectAll}
-					checked={isSelectAll}
-				>
-					Select All
-				</Checkbox>
-				<div className='flex gap-x-2 ml-auto'>
-					<Dropdown
-						customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
-						label={rarity}
-						title='Rarity'
-						list={SPECIES_DNFT}
-						onClick={handleChangeRarity}
-					/>
-					<Dropdown
-						customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
-						label={species}
-						title='Species'
-						list={RARITY_DNFT}
-						onClick={handleChangeSpecies}
+			<div className='flex flex-col'>
+				<div className='flex mb-8 items-end'>
+					<div>Select the first NFT to merge: </div>
+					<Checkbox
+						className='checkbox-custom text-white text-base font-normal ml-auto'
+						onChange={handleSelectAll}
+						checked={isSelectAll}
+					>
+						Select All
+					</Checkbox>
+					<div className='flex gap-x-2 ml-auto'>
+						<Dropdown
+							customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
+							label={rarity}
+							title='Rarity'
+							list={SPECIES_DNFT}
+							onClick={handleChangeRarity}
+						/>
+						<Dropdown
+							customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
+							label={species}
+							title='Species'
+							list={RARITY_DNFT}
+							onClick={handleChangeSpecies}
+						/>
+					</div>
+					<Button
+						onClick={handleShowModal}
+						classCustom='buy-token rounded-[50px] !min-w-20 mt-6 ml-8'
+						label='Choose'
 					/>
 				</div>
-				<Button
-					onClick={handleShowModal}
-					classCustom='buy-token rounded-[50px] !min-w-20 mt-6 ml-8'
-					label='Choose'
+				<ListCard
+					list={listDNFT}
+					SelectNft={SelectNft}
+					pagination={{
+						defaultCurrent: 1,
+						pageSize: LIMIT_12,
+						total: totalDNFT,
+						onChange: handleChangePage,
+					}}
 				/>
-			</div>
-			<ListCard
-				list={listDNFT}
-				SelectNft={SelectNft}
-				pagination={{
-					defaultCurrent: 1,
-					pageSize: LIMIT_12,
-					total: totalDNFT,
-					onChange: handleChangePage,
-				}}
-			/>
 
-			<ModalCustom
-				title='Choose material to merge'
-				customClass='!w-auto !max-w-[1200px]'
-				isShow={isShowModalChooseMetarialToMerge}
-				onCancel={() => setShowModalChooseMetarialToMerge(false)}
-			>
-				<div className='relative w-[600px] h-[600px]'>
-					<Image
-						className='absolute inset-0 w-full h-full z-10'
-						layout='fill'
-						src='/images/Black.png'
-						width='100%'
-						height='100%'
-						alt='dnft'
-					/>
-					<Image
-						className='absolute inset-0 w-full h-full z-20'
-						layout='fill'
-						src='/images/Jacket-01.png'
-						width='100%'
-						height='100%'
-						alt='dnft'
-					/>
-				</div>
-				{/* <ModalChooseMetarialToMerge
+				<ModalCustom
+					title='Choose material to merge'
+					customClass='!w-auto !max-w-[1200px]'
+					isShow={isShowModalChooseMetarialToMerge}
+					onCancel={() => setShowModalChooseMetarialToMerge(false)}
+				>
+					<div className='relative w-[600px] h-[600px]'>
+						<Image
+							className='absolute inset-0 w-full h-full z-10'
+							layout='fill'
+							src='/images/Black.png'
+							width='100%'
+							height='100%'
+							alt='dnft'
+						/>
+						<Image
+							className='absolute inset-0 w-full h-full z-20'
+							layout='fill'
+							src='/images/Jacket-01.png'
+							width='100%'
+							height='100%'
+							alt='dnft'
+						/>
+					</div>
+					{/* <ModalChooseMetarialToMerge
 					onCancel={() => setShowModalChooseMetarialToMerge(false)}
 				/> */}
-			</ModalCustom>
-		</div>
+				</ModalCustom>
+			</div>
 		</>
 	);
 };
