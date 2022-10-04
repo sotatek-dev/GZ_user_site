@@ -28,15 +28,16 @@ import {
 	convertHexToNumber,
 	convertTimeLine,
 	convertTimeStampToDate,
+	formatBignumberToNumber,
 	formatNumber,
 	fromWei,
 } from 'common/utils/functions';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, last } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
 import moment from 'moment';
 import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	claimPurchasedToken,
@@ -66,11 +67,11 @@ const TokenSaleRoundDetail = () => {
 	const [detailSaleRound, setDetailSaleRound] =
 		useState<ITokenSaleRoundState>();
 	const [statusTimeLine, setStatusTimeLine] = useState<string>(UPCOMING);
-	const [timeCountDow, setTimeCountDow] = useState<number>(1);
+	const [timeCountDow, setTimeCountDow] = useState<number>(-1);
 	const [tokenClaimTime, setTokenClaimTime] = useState<number>(0);
 	const [totalSoldAmount, setTotalSoldAmount] = useState<number>(0);
 	const [maxPreSaleAmount, setMaxPreSaleAmount] = useState<number>(0);
-	const [maxBUSDUserCanSpend, setMaxBUSDUserCanSpend] = useState<number>(0);
+	// const [maxBUSDUserCanSpend, setMaxBUSDUserCanSpend] = useState<number>(0);
 	const [currency, setCurrency] = useState<string>(BUSD_CURRENCY);
 	const [price, setPrice] = useState<number>(0);
 	const [youBought, setYouBought] = useState<number>(0);
@@ -88,7 +89,7 @@ const TokenSaleRoundDetail = () => {
 	);
 	const saleRoundId = get(detailSaleRound, 'sale_round');
 
-	const getDetailSaleRound = async () => {
+	const getDetailSaleRound = useCallback(async () => {
 		const [data] = await getDetailTokenSaleRound(index as string);
 		const detailSaleRound = get(data, 'data', {});
 		const { start_time, end_time } = get(
@@ -97,18 +98,17 @@ const TokenSaleRoundDetail = () => {
 			buyTimeDefault
 		);
 		const timestampNow = moment().unix();
-		const { status, timeCountDow } = convertTimeLine(
-			start_time,
-			end_time,
+		const { status } = convertTimeLine(
+			Number(start_time),
+			Number(end_time),
 			timestampNow,
 			detailSaleRound?.current_status_timeline
 		);
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
 		setStatusTimeLine(status);
-		setTimeCountDow(timeCountDow);
 		setDetailSaleRound(detailSaleRound);
 		setPrice(exchangeRateBUSD);
-	};
+	}, [index]);
 
 	useEffect(() => {
 		if (index && isEmpty(detailSaleRound)) {
@@ -119,24 +119,50 @@ const TokenSaleRoundDetail = () => {
 
 	useEffect(() => {
 		if (!isEmpty(detailSaleRound)) {
+			console.log(';run', statusTimeLine);
+
+			const timestampNow = moment().unix();
 			const { claim_configs } = detailSaleRound;
-			if (statusTimeLine === CLAIMABLE) {
-				const timestampNow = moment().unix();
+			const startTimeClaim = get(claim_configs[0], 'start_time');
+			setTokenClaimTime(startTimeClaim);
+			if (statusTimeLine === UPCOMING) {
+				const startTimeUpComing = get(
+					detailSaleRound,
+					'buy_time.start_time',
+					-1
+				);
+				const timeCountDow = startTimeUpComing - timestampNow;
+				setTimeCountDow(timeCountDow);
+				return;
+			} else if (statusTimeLine === BUY) {
+				if (detailSaleRound?.current_status_timeline === 'claimable_upcoming') {
+					const timeCountDow = startTimeClaim - timestampNow;
+					setTimeCountDow(timeCountDow);
+				} else {
+					const startTimeBUY = get(detailSaleRound, 'buy_time.end_time', -1);
+					const timeCountDow = startTimeBUY - timestampNow;
+					setTimeCountDow(timeCountDow);
+				}
+				return;
+			} else if (CLAIMABLE) {
+				const { claim_configs } = detailSaleRound;
 				for (let index = 0; index < claim_configs?.length; index++) {
 					const startTimeClaim = get(claim_configs[index], 'start_time');
 					if (startTimeClaim > timestampNow) {
-						setTokenClaimTime(startTimeClaim);
 						const timeCountDown = startTimeClaim - timestampNow;
-						setTimeCountDow(timeCountDown > 0 ? timeCountDown : 0);
+						setTokenClaimTime(startTimeClaim);
+						setTimeCountDow(timeCountDown > 0 ? timeCountDown : -1);
 						return;
 					}
 				}
-			} else if (statusTimeLine !== END) {
-				const startTimeClaim = get(claim_configs[0], 'start_time');
+			} else {
+				const { claim_configs } = detailSaleRound;
+				const startTimeClaim = get(last(claim_configs), 'start_time');
+				setTimeCountDow(-1);
 				setTokenClaimTime(startTimeClaim);
 			}
 		}
-	}, [statusTimeLine, detailSaleRound]);
+	}, [statusTimeLine, detailSaleRound, getDetailSaleRound]);
 
 	useEffect(() => {
 		if (!isEmpty(detailSaleRound)) {
@@ -206,12 +232,12 @@ const TokenSaleRoundDetail = () => {
 		const maxPreSaleAmount = convertHexToNumber(
 			get(resSalePhaseInfo, 'maxPreSaleAmount._hex', HEX_ZERO)
 		);
-		const maxBUSDUserCanSpend = convertHexToNumber(
-			get(resSalePhaseInfo, 'maxBUSDUserCanSpend._hex', HEX_ZERO)
-		);
+		// const maxBUSDUserCanSpend = convertHexToNumber(
+		// 	get(resSalePhaseInfo, 'maxBUSDUserCanSpend._hex', HEX_ZERO)
+		// );
 		setTotalSoldAmount(fromWei(totalSoldAmount));
 		setMaxPreSaleAmount(fromWei(maxPreSaleAmount));
-		setMaxBUSDUserCanSpend(fromWei(maxBUSDUserCanSpend));
+		// setMaxBUSDUserCanSpend(fromWei(maxBUSDUserCanSpend));
 	};
 
 	const renderTokenBuyTime = (startTime: number, endTime: number) => {
@@ -312,143 +338,137 @@ const TokenSaleRoundDetail = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
-		<>
-			<HelmetCommon
-				title='Token Presale Rounds Detail'
-				description='Description token presale rounds details...'
-				href={ROUTES.TOKEN_PRESALE_ROUNDS_DETAIL}
-			/>
-			<div className='flex flex-col gap-2.5 desktop:gap-8'>
-				<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
-					<BoxPool
-						title='Pool Timeline'
-						customClass='desktop:w-[50%] bg-gray-50'
-					>
-						<div className='py-6'>
-							<Stepper
-								steps={TIME_LINE_SALE_ROUND}
-								activeStep={statusTimeLine}
-							/>
-						</div>
-						<Countdown
-							millisecondsRemain={timeCountDow}
-							title='You can buy tokens in'
-							callBackApi={getDetailSaleRound}
-						/>
-					</BoxPool>
-					<BoxPool
-						title='Buy Info'
-						customClass='desktop:w-[50%] flex flex-col bg-gray-50'
-					>
-						<div className='pt-6 flex'>
-							<div className='flex justify-between w-full'>
-								{statusTimeLine === UPCOMING || statusTimeLine === BUY
-									? renderPriceBuyInfoUpComing()
-									: renderPriceBuyInfoClaimableAndEnd()}
-								{statusTimeLine === BUY && isLogin && isWhitelist && (
-									<Button
-										onClick={() => setOpenTokenPurchase(true)}
-										label='Buy'
-										classCustom='buy-token'
-									/>
-								)}
-								{statusTimeLine === CLAIMABLE && isLogin && isWhitelist && (
-									<Button
-										onClick={handleClaimToken}
-										label='claim'
-										classCustom='buy-token'
-									/>
-								)}
-							</div>
-						</div>
-						<div className='mt-auto'>
-							<div className='text-sm text font-normal'>Buy Progress:</div>
-							<Progress
-								strokeColor={{
-									'0%': '#9E90F3',
-									'100%': '#9E90F3',
-								}}
-								percent={
-									maxPreSaleAmount > 0
-										? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
-										: 0
-								}
-								showInfo={false}
-							/>
-							<div className='flex justify-between'>
-								<div>{`${
-									maxPreSaleAmount > 0
-										? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
-										: 0
-								}%`}</div>
-								<div>{`${formatNumber(
-									totalSoldAmount
-								)}/${maxPreSaleAmount}`}</div>
-							</div>
-						</div>
-					</BoxPool>
-				</div>
-				<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
-					<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
-						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-							<div className='flex gap-x-2'>
-								<div className='text-dim-gray font-normal'>Token Buy Time:</div>
-								<div className='font-medium'>
-									{start_time && end_time
-										? renderTokenBuyTime(start_time, end_time)
-										: 'TBA'}
-								</div>
-							</div>
-							<div className='flex gap-x-2'>
-								<div className='text-dim-gray font-normal'>
-									Token Claim Time:
-								</div>
-								<div className='font-medium'>
-									{tokenClaimTime
-										? convertTimeStampToDate(tokenClaimTime)
-										: 'TBA'}
-								</div>
-							</div>
-						</div>
-						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-							<div className='flex gap-x-2'>
-								<div className='text-dim-gray font-normal'>Total Raise:</div>
-								<div className='font-medium'>
-									{formatNumber(maxBUSDUserCanSpend)}
-								</div>
-							</div>
-							<div className='flex gap-x-2'>
-								<div className='text-dim-gray font-normal'>Token Max Buy:</div>
-								<div className='font-medium'>
-									{formatNumber(maxPreSaleAmount)}
-								</div>
-							</div>
+		<div className='flex flex-col gap-2.5 desktop:gap-8'>
+			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
+				<BoxPool title='Pool Timeline' customClass='w-[50%] bg-gray-50'>
+					<div className='py-6'>
+						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
+					</div>
+					<Countdown
+						millisecondsRemain={timeCountDow}
+						title='You can buy tokens in'
+						callBackApi={getDetailSaleRound}
+					/>
+				</BoxPool>
+				<BoxPool
+					title='Buy Info'
+					customClass='desktop:w-[50%] flex flex-col bg-gray-50'
+				>
+					<div className='pt-6 flex'>
+						<div className='flex justify-between w-full'>
+							{statusTimeLine === UPCOMING || statusTimeLine === BUY
+								? renderPriceBuyInfoUpComing()
+								: renderPriceBuyInfoClaimableAndEnd()}
+							{statusTimeLine === BUY && isLogin && isWhitelist && (
+								<Button
+									onClick={() => setOpenTokenPurchase(true)}
+									label='Buy'
+									classCustom='buy-token'
+								/>
+							)}
+							{statusTimeLine === CLAIMABLE && isLogin && isWhitelist && (
+								<Button
+									onClick={handleClaimToken}
+									label='claim'
+									classCustom='buy-token'
+								/>
+							)}
 						</div>
 					</div>
-					<Divider className='bg-black-velvet mt-0' />
-					<div className='text-sm text-dim-gray font-medium'>
-						Round Information:
+					<div className='mt-auto'>
+						<div className='text-sm text font-normal'>Buy Progress:</div>
+						<Progress
+							strokeColor={{
+								'0%': '#9E90F3',
+								'100%': '#9E90F3',
+							}}
+							percent={
+								maxPreSaleAmount > 0
+									? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
+									: 0
+							}
+							showInfo={false}
+						/>
+						<div className='flex justify-between'>
+							<div>{`${
+								maxPreSaleAmount > 0
+									? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
+									: 0
+							}%`}</div>
+							<div>{`${formatNumber(
+								totalSoldAmount
+							)}/${maxPreSaleAmount}`}</div>
+						</div>
 					</div>
 				</BoxPool>
-				<ModalPurchase
-					isShow={isOpenTokenPurchase}
-					onCancel={() => setOpenTokenPurchase(false)}
-					currency={currency}
-					exchangeRate={price}
-					detailSaleRound={detailSaleRound}
-					maxPreSaleAmount={maxPreSaleAmount}
-					youBought={youBought}
-					handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
-				/>
-				<ModalCustom
-					isShow={isOpenClaimPopup}
-					onCancel={() => setOpenClaimPopup(false)}
-					customClass='text-center'
-				>
-					<Loading />
-				</ModalCustom>
 			</div>
-		</>
+			<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
+				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
+					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+						<div className='flex gap-x-2 mb-4'>
+							<div className='text-dim-gray font-normal'>Token Buy Time:</div>
+							<div className='font-medium'>
+								{start_time && end_time
+									? renderTokenBuyTime(start_time, end_time)
+									: 'TBA'}
+							</div>
+						</div>
+						<div className='flex gap-x-2'>
+							<div className='text-dim-gray font-normal'>Token Claim Time:</div>
+							<div className='font-medium'>
+								{tokenClaimTime
+									? convertTimeStampToDate(tokenClaimTime)
+									: 'TBA'}
+							</div>
+						</div>
+					</div>
+					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+						<div className='flex gap-x-2 mb-4'>
+							<div className='text-dim-gray font-normal'>Total Raise:</div>
+							<div className='font-medium'>
+								{formatNumber(
+									fromWei(get(detailSaleRound, 'token_info.total_sold_coin', 0))
+								)}{' '}
+								{GXZ_CURRENCY}
+							</div>
+						</div>
+						<div className='flex gap-x-2'>
+							<div className='text-dim-gray font-normal'>Buy Limit:</div>
+							<div className='font-medium'>
+								{formatBignumberToNumber(
+									get(detailSaleRound, 'details.buy_limit', 0)
+								)}{' '}
+								{BUSD_CURRENCY}
+							</div>
+						</div>
+					</div>
+				</div>
+				<Divider className='bg-black-velvet mt-0' />
+				<div className='flex gap-x-2'>
+					<div className='text-dim-gray font-normal'>Round Information:</div>
+					<div className='font-medium'>
+						{get(detailSaleRound, 'description', '')}
+					</div>
+				</div>
+			</BoxPool>
+			<ModalPurchase
+				isShow={isOpenTokenPurchase}
+				onCancel={() => setOpenTokenPurchase(false)}
+				currency={currency}
+				exchangeRate={price}
+				detailSaleRound={detailSaleRound}
+				maxPreSaleAmount={maxPreSaleAmount}
+				youBought={youBought}
+				handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
+			/>
+			<ModalCustom
+				isShow={isOpenClaimPopup}
+				onCancel={() => setOpenClaimPopup(false)}
+				customClass='text-center'
+			>
+				<Loading />
+			</ModalCustom>
+		</div>
 	);
 };
 

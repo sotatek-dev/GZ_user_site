@@ -45,32 +45,34 @@ export const convertTimeLine = (
 	currentTimeLine: string
 ) => {
 	let status = UPCOMING;
-	let timeCountDow = -1;
 	if (startTime >= timestampNow) {
 		status = UPCOMING;
-		timeCountDow = startTime - timestampNow;
-	} else if (timestampNow > startTime && timestampNow <= endTime) {
+	} else if (
+		(timestampNow > startTime && timestampNow <= endTime) ||
+		currentTimeLine === 'claimable_upcoming'
+	) {
 		status = BUY;
-		timeCountDow = endTime - timestampNow;
-	} else if (timestampNow > endTime && currentTimeLine !== 'end') {
+	} else if (
+		timestampNow > endTime &&
+		currentTimeLine !== 'claimable_upcoming' &&
+		currentTimeLine !== 'end'
+	) {
 		status = CLAIMABLE;
-		timeCountDow = -1;
 	} else {
 		status = END;
-		timeCountDow = -1;
 	}
-	return { status, timeCountDow };
+	return { status };
 };
 
 export const convertTimeStampToDate = (date: number, formatDate?: string) => {
-	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
+	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
 };
 
 export const convertMiliSecondTimestampToDate = (
 	date: number,
 	formatDate?: string
 ) => {
-	return moment(date).format(formatDate ? formatDate : 'MM-DD-YYYY hh:mm');
+	return moment(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
 };
 
 export const geMintPhaseType = (id: MINT_PHASE_ID): MINT_PHASE | void => {
@@ -162,7 +164,7 @@ export const toWei = (value: number | string, decimal = BSC_DECIMAL) => {
 	return new BigNumber(value).multipliedBy(Math.pow(10, decimal)).toString();
 };
 
-export const fromWei = (value: string | number) => {
+export const fromWei = (value: string | number | BigNumber) => {
 	const result = new BigNumber(value)
 		.div(new BigNumber(10).exponentiatedBy(BSC_DECIMAL))
 		.toString(); // divide by token decimal
@@ -237,3 +239,16 @@ export function formatNumber(value: string | number): string {
 
 	return formatted.join(',') + suffix;
 }
+
+export const formatBignumberToNumber = (bignumber: BigNumber) => {
+	const number = fromWei(bignumber);
+	return formatNumber(number);
+};
+
+// export const convertObjectToListDropdown = (data: {[key: string]: string | number}) =>{
+// 	const result = [];
+// 	for(const property in data){
+// 		result.push({label: data[property]});
+// 	}
+// 	return result
+//  }

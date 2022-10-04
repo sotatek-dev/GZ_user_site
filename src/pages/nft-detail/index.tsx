@@ -65,7 +65,7 @@ const NFTDetail = () => {
 
 					<div className={styles['nft-detail_point']}>
 						{!tab ? (
-							<div className='flex flex-row justify-between gap-x-[50px]  w-[100%]'>
+							<div className='flex flex-col desktop:flex-row justify-between gap-0 desktop:gap-x-[50px]  w-[100%]'>
 								<div className='flex flex-col gap-y-[20px] flex-grow'>
 									<PropertyInput placeholder='00000' label='Strength' />
 									<PropertyInput placeholder='00000' label='Speed' />
@@ -78,7 +78,7 @@ const NFTDetail = () => {
 								</div>
 							</div>
 						) : (
-							<div className='flex flex-row justify-between gap-x-[50px]  w-[100%]'>
+							<div className='flex flex-col desktop:flex-row justify-between gap-x-[50px]  w-[100%]'>
 								<div className='flex flex-col gap-y-[20px] flex-grow'>
 									<CustomDropdown label='Armor' list={[]} />
 									<CustomDropdown label='Shoes' list={[]} />

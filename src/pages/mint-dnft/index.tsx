@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Spin, Tooltip } from 'antd';
+import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
 import {
-	convertMiliSecondTimestampToDate,
 	convertTimelineMintNft,
 	formatBigNumber,
 	geMintPhaseType,
@@ -40,6 +39,13 @@ import {
 	checkWhitelist,
 	getMintDnftSignature,
 } from 'modules/mintDnft/services';
+import {
+	handleFetchListPhaseError,
+	handleFetchRateError,
+	handleMintError,
+} from 'modules/mintDnft/helpers/handleError';
+import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
+import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
 
@@ -145,7 +151,7 @@ const MintDNFT: React.FC = () => {
 				setListPhase(list);
 			}
 		} catch (e) {
-			// handle e
+			handleFetchListPhaseError(e);
 		}
 	};
 
@@ -161,8 +167,7 @@ const MintDNFT: React.FC = () => {
 			}
 		} catch (e) {
 			setRate(1);
-			// handle e
-			// console.log(e);
+			handleFetchRateError(e);
 		}
 	};
 
@@ -215,24 +220,29 @@ const MintDNFT: React.FC = () => {
 					token === TOKENS.BNB
 						? new BigNumber(price).times(TOKEN_DECIMAL).toString(10)
 						: new BigNumber(0).times(TOKEN_DECIMAL).toString(10);
+
+				let res: ContractTransaction | null = null;
 				if (token === TOKENS.BUSD) {
-					await dnftContract.buyUsingBUSD(
+					res = await dnftContract.buyUsingBUSD(
 						`${runningPhaseId}`,
 						addressWallet,
 						signature
 					);
 				} else if (token === TOKENS.BNB) {
-					await dnftContract.buyUsingBNB(
+					res = await dnftContract.buyUsingBNB(
 						`${runningPhaseId}`,
 						addressWallet,
 						signature,
 						{ value: amount }
 					);
 				}
+				const hash: string = res ? res.hash : '';
+				if (hash) {
+					message.success(<MintSuccessToast txHash={hash} />);
+				}
 			}
 		} catch (e) {
-			// handle e
-			// console.log(e);
+			handleMintError(e);
 		} finally {
 			setIsLoadingMint(false);
 			reloadData();
@@ -254,7 +264,7 @@ const MintDNFT: React.FC = () => {
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
 				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-6'} />
-					{isWhitelisted ? (
+					{isWhitelisted && isConnectWallet ? (
 						<div
 							onClick={mint}
 							className={
@@ -265,9 +275,8 @@ const MintDNFT: React.FC = () => {
 						</div>
 					) : (
 						<div
-							onClick={mint}
 							className={
-								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
+								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px]'
 							}
 						>
 							Mint
@@ -279,7 +288,7 @@ const MintDNFT: React.FC = () => {
 					<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					{/*<Button label={'Mint'} classCustom={'bg-green mb-4'} />*/}
 					<div
@@ -325,7 +334,7 @@ const MintDNFT: React.FC = () => {
 					</div>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
@@ -367,46 +376,9 @@ const MintDNFT: React.FC = () => {
 					</div>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-8'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
-					<div className='flex flex-col text-sm mb-8	'>
-						<TimelineMintRound timelineMintNft={timelineMintNft} />
-						{/* divider*/}
-						<hr className={'border border-green mx-3 my-8'} />
-						<div className='flex justify-between w-full'>
-							{timelineMintNft.map(
-								(phaseInfo: ITimelineMintNftState, index: number) => {
-									const { endMintTime, startMintTime } = phaseInfo;
-									return (
-										<div
-											className={
-												'flex flex-col justify-center items-center w-[20%] text-h10'
-											}
-											key={index}
-										>
-											<div className='mb-4'>
-												Start from:{' '}
-												{convertMiliSecondTimestampToDate(
-													startMintTime,
-													'hh:mm - MM/DD/YYYY'
-												)}
-											</div>
-											<div>
-												End in:{' '}
-												{convertMiliSecondTimestampToDate(
-													endMintTime,
-													'hh:mm - MM/DD/YYYY'
-												)}
-											</div>
-										</div>
-									);
-								}
-							)}
-						</div>
-					</div>
-
-					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-8'} />
+					<TimelineMintRound timelineMintNft={timelineMintNft} />
 
 					<div
 						className={

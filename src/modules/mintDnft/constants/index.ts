@@ -43,3 +43,7 @@ export const listPhaseId = [
 	MINT_PHASE_ID.PRESALE_2,
 	MINT_PHASE_ID.PUBLIC,
 ];
+
+export enum Message {
+	MINT_SUCCESS = 'You can collect your dNFT 7 days after the end of Public Sale',
+}

@@ -205,6 +205,7 @@ const TokenPresaleRound = () => {
 						)}
 					</div>
 					<Pagination
+						size={'small'}
 						defaultCurrent={6}
 						pageSize={LIMIT_10}
 						total={totalPage}

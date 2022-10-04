@@ -59,14 +59,14 @@
 }
 
 .nft-detail {
-	@apply mt-[35px] flex flex-row w-[100%];
+	@apply mt-[35px] flex flex-col desktop:flex-row items-center w-full gap-12;
 
 	&_img {
-		@apply w-[345px] h-[410px] relative mr-[50px];
+		@apply w-[345px] h-[410px] relative;
 	}
 
 	&_point {
-		@apply flex flex-grow;
+		@apply flex flex-grow w-full;
 	}
 }
 .nft-material {

@@ -2,9 +2,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
-import { toast } from 'react-toastify';
 import { useErc20Contract } from '../contracts/useErc20Contract';
 import { useActiveWeb3React } from './useActiveWeb3React';
+import { message } from 'antd';
 
 /**
  * Hook for token approving
@@ -43,7 +43,7 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 				new BigNumber(constants.MaxUint256.toString()).toString(10)
 			);
 			await txn.wait();
-			toast.success('');
+			message.success('');
 		} catch (error) {
 			if (rethrowErr) {
 				throw error;

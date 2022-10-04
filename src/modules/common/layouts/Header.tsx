@@ -22,7 +22,7 @@ const LayoutHeader = () => {
 	const { account, active } = useActiveWeb3React();
 	const [currency, setCurrency] = useState();
 	const { disconnectWallet } = useConnectWallet();
-	const [openMobileNav, setOpenMobileNav] = useState<boolean>(true);
+	const [openMobileNav, setOpenMobileNav] = useState<boolean>(false);
 
 	const isLogin = useSelector((state) => state.user.isLogin);
 	// const addressWallet = useSelector(state => state.wallet.addressWallet);
@@ -69,7 +69,7 @@ const LayoutHeader = () => {
 				/>
 			</Button>
 		</>
-	)
+	);
 
 	const connectWalletTopNav = (
 		<>
@@ -84,12 +84,10 @@ const LayoutHeader = () => {
 					</div>
 				</>
 			) : (
-				<>
-					{connectWalletButton}
-				</>
+				<>{connectWalletButton}</>
 			)}
 		</>
-	)
+	);
 
 	const connectWalletLeftNavMobile = (
 		<>
@@ -122,20 +120,22 @@ const LayoutHeader = () => {
 						</div>
 					</div>
 				) : (
-					<>
-						{connectWalletButton}
-					</>
+					<>{connectWalletButton}</>
 				)}
 			</div>
 		</>
-	)
+	);
 
 	return (
 		<Header className='relative site-layout-sub-header-background !bg-background-dark w-full flex p-4 desktop:p-6 !h-fit'>
 			{/* mobile nav*/}
-			<div className={`${openMobileNav ? 'block' : 'hidden'} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-10 leading-5`}>
+			<div
+				className={`${
+					openMobileNav ? 'block' : 'hidden'
+				} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-10 leading-5`}
+			>
 				{/* spacer*/}
-				<div className={'w-14'}/>
+				<div className={'w-14'} />
 				<div className={'flex flex-col w-full bg-black-10'}>
 					<div className='flex items-center justify-start py-4 px-8 w-full'>
 						<div className={'grow'}>
@@ -148,9 +148,13 @@ const LayoutHeader = () => {
 								}}
 							/>
 						</div>
-						<IconDynamic image={'/icons/close-nav-mobile.svg'} className={'w-8 h-8 cursor-pointer'} onClick={() => {
-							setOpenMobileNav(false);
-						}} />
+						<IconDynamic
+							image={'/icons/close-nav-mobile.svg'}
+							className={'w-8 h-8 cursor-pointer'}
+							onClick={() => {
+								setOpenMobileNav(false);
+							}}
+						/>
 					</div>
 					<Menu
 						theme='dark'
@@ -204,9 +208,13 @@ const LayoutHeader = () => {
 					/>
 				</div>
 				{connectWalletTopNav}
-				<IconDynamic image={'/icons/burger.svg'} className={'w-8 h-8 cursor-pointer'} onClick={() => {
-					setOpenMobileNav(true);
-				}} />
+				<IconDynamic
+					image={'/icons/burger.svg'}
+					className={'w-8 h-8 cursor-pointer'}
+					onClick={() => {
+						setOpenMobileNav(true);
+					}}
+				/>
 			</div>
 
 			{/* desktop header*/}
@@ -233,9 +241,7 @@ const LayoutHeader = () => {
 						</div>
 					</Dropdown>
 				) : (
-					<div className={'w-fit'}>
-						{connectWalletButton}
-					</div>
+					<div className={'w-fit'}>{connectWalletButton}</div>
 				)}
 			</div>
 			<ConnectWallet />
