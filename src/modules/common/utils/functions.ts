@@ -20,7 +20,6 @@ import {
 	MINT_PHASE_ID,
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
-	TOKEN_DECIMAL,
 } from 'modules/mintDnft/constants';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
