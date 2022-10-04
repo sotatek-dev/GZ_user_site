@@ -256,14 +256,14 @@ const MintDNFT: React.FC = () => {
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
 				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-6'} />
-					{isWhitelisted && isConnectWallet ? (
+					{isWhitelisted && isConnectWallet && !isLoadingMint ? (
 						<div
 							onClick={mint}
 							className={
 								'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
 							}
 						>
-							{isLoadingMint ? <Spin className={'flex'} /> : 'Mint'}
+							Mint
 						</div>
 					) : (
 						<div
@@ -271,7 +271,7 @@ const MintDNFT: React.FC = () => {
 								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px]'
 							}
 						>
-							Mint
+							{isLoadingMint ? <Spin className={'flex'} /> : 'Mint'}
 						</div>
 					)}
 				</div>
