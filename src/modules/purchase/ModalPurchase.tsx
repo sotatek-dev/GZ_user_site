@@ -138,15 +138,24 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const validateToken = (_: any, value: string) => {
 		const { busdBalance } = balance;
 		const buyLimit = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+
 		if (!value) {
 			return Promise.resolve();
 		} else if (
 			currency === BUSD_CURRENCY &&
 			Number(value) > Number(busdBalance)
 		) {
-			return Promise.reject(new Error('not enough balance'));
-		} else if (Number(value) > buyLimit) {
-			return Promise.reject(new Error('value is greater than buy limit'));
+			return Promise.reject(new Error('Insufficient amount!'));
+		} else if (
+			currency === BUSD_CURRENCY &&
+			buyLimit !== 0 &&
+			Number(value) > buyLimit - youBought
+		) {
+			return Promise.reject(
+				new Error(
+					`User can only purchase maximum ${formatNumber(buyLimit)} BUSD`
+				)
+			);
 		} else if (Number(value) + youBought > maxPreSaleAmount) {
 			return Promise.reject(new Error('users buy more tokens than max buy'));
 		} else {
@@ -188,7 +197,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								label=''
 								name='amount'
 								rules={[
-									{ required: true, message: 'This field cannot be empty.' },
+									{ required: true, message: 'This field is required' },
 									{ validator: validateToken },
 								]}
 							>
