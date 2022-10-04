@@ -34,6 +34,7 @@ import {
 import { get, isEmpty } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
 import moment from 'moment';
+import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -304,7 +305,12 @@ const TokenSaleRoundDetail = () => {
 			</>
 		);
 	};
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon

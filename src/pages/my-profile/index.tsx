@@ -6,10 +6,12 @@ import HelmetCommon from 'common/components/helmet';
 import CustomRadio from 'common/components/radio';
 import MyTable from 'common/components/table';
 import { ROUTES } from 'common/constants/constants';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { selectList } from 'pages/token-presale-rounds/detail/[index]';
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import ReactGa from 'react-ga';
 const columns = [
 	{
 		title: 'Species',
@@ -69,10 +71,15 @@ const datafake = [
 const MyProfile = () => {
 	const price = 1000;
 	const [tokenCode, setTokenCode] = useState('BUSD');
-
 	const canBuyKey = true;
-
 	const onFinish = () => {};
+	const router = useRouter();
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon
@@ -111,7 +118,12 @@ const MyProfile = () => {
 								<Input
 									suffix={
 										<button className='px-[10px]'>
-											<img src='/icons/copy.svg' alt='' />
+											<Image
+												width={24}
+												height={24}
+												src='/icons/copy.svg'
+												alt='AddressMyProfile'
+											/>
 										</button>
 									}
 									placeholder='My wallet address'
@@ -154,14 +166,28 @@ const MyProfile = () => {
 						</h5>
 						{canBuyKey ? (
 							<div className='flex items-center rounded-[5px] bg-[#00d26133] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]'>
-								<img src='/icons/check-circle.svg' className='mr-[10px]' />
-								<p className='text-[#00D261]  text-[14px]'>
+								<div className='mr-[10px]'>
+									<Image
+										width={24}
+										height={24}
+										src='/icons/check-circle.svg'
+										alt='BuyMyProfile'
+									/>
+								</div>
+								<p className='text-[#00D261] mb-[2.5px] text-[14px]'>
 									Great, You are eligible to buy this key
 								</p>
 							</div>
 						) : (
 							<div className='flex items-center rounded-[5px] bg-[#f0272733] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]'>
-								<img src='/icons/info-circle.svg' className='mr-[10px]' />
+								<div className='mr-[10px]'>
+									<Image
+										width={24}
+										height={24}
+										src='/icons/info-circle.svg'
+										alt='BuyMyProfile'
+									/>
+								</div>
 								<p className='text-[#F02727]  text-[14px]'>
 									You are not elegible to buy this key
 								</p>

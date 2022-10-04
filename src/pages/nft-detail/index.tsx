@@ -2,15 +2,23 @@ import { Input } from 'antd';
 import CustomDropdown from 'common/components/dropdown/custom-dropdown';
 import { map, range } from 'lodash';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './nft-detail.module.scss';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { ROUTES } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
-
+import { useRouter } from 'next/router';
+import ReactGa from 'react-ga';
 const NFTDetail = () => {
 	const [tab, setTab] = useState(false);
 	const materialItems = range(0, 10);
+	const router = useRouter();
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon

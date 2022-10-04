@@ -6,8 +6,9 @@ import { ROUTES } from 'common/constants/constants';
 import { cloneDeep } from 'lodash';
 import ListCard from 'modules/mergeDnft/ListCard';
 import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
-import { useState } from 'react';
-
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import ReactGa from 'react-ga';
 const fakeData = [
 	{ checked: false },
 	{ checked: false },
@@ -23,7 +24,7 @@ const MergeNft = () => {
 	const [listNft, setListNft] = useState(fakeData);
 	const [isShowModalChooseMetarialToMerge, setShowModalChooseMetarialToMerge] =
 		useState<boolean>(false);
-
+	const router = useRouter();
 	const SelectNft = (
 		event: React.MouseEvent<HTMLElement>,
 		indexSelected: number
@@ -42,7 +43,12 @@ const MergeNft = () => {
 	const handleShowModal = () => {
 		setShowModalChooseMetarialToMerge(true);
 	};
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon

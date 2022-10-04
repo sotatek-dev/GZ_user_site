@@ -12,6 +12,7 @@ import {
 	getMintPhaseLabel,
 	isApproved,
 } from 'common/utils/functions';
+import ReactGa from 'react-ga';
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
@@ -40,12 +41,14 @@ import {
 	getMintDnftSignature,
 } from 'modules/mintDnft/services';
 import HelmetCommon from 'common/components/helmet';
+import { useRouter } from 'next/router';
 
 const MintDNFT: React.FC = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
 	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
 		0
 	);
+	const router = useRouter();
 	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
 		return (
 			item.id === runningPhaseId &&
@@ -235,7 +238,12 @@ const MintDNFT: React.FC = () => {
 			reloadData();
 		}
 	};
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon
