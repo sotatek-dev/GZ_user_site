@@ -27,6 +27,7 @@ export enum STATUS_STEP {
 }
 
 export const LIMIT_10 = 10 as number;
+export const LIMIT_12 = 12 as number;
 export const CURRENCY = 'BUSD';
 export const UPCOMING = 'Upcoming';
 export const BUY = 'Buy';
@@ -57,6 +58,25 @@ export const BNB_CURRENCY = 'BNB';
 export const GXZ_CURRENCY = 'GXC';
 export const BSC_DECIMAL = 18;
 export const TYPE_SALE_ROUND = 'sale-round';
+export enum STATUS_LIST_DNFT {
+	NORMAL = 'normal',
+}
+
+export const SPECIES_DNFT: Array<{ [key: string]: string }> = [
+	{ key: 'Adelio', label: 'Adelio' },
+	{ key: 'Kinga', label: 'Kinga' },
+	{ key: 'Empa', label: 'Empa' },
+];
+
+export const RARITY_DNFT: Array<{ [key: string]: string }> = [
+	{ key: 'Common', label: 'Common' },
+	{ key: 'Rare', label: 'Rare' },
+	{ key: 'UltraRare', label: 'Ultra Rare' },
+	{ key: 'Legendary', label: 'Legendary' },
+	{ key: 'UltraLegendary', label: 'Ultra Legendary' },
+	{ key: 'APEX', label: 'Apex' },
+	{ key: 'MAX', label: 'Max' },
+];
 
 export const ERC20_ADDRESS: { [key: string]: string } = {
 	busd: NEXT_PUBLIC_BUSD,

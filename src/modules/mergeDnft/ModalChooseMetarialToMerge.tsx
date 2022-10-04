@@ -1,14 +1,7 @@
 import Button from 'common/components/button';
-import { cloneDeep } from 'lodash';
-import { FC, useState } from 'react';
-import ListCard from './ListCard';
-
-const fakeData = [
-	{ checked: false },
-	{ checked: false },
-	{ checked: false },
-	{ checked: false },
-];
+// import { cloneDeep } from 'lodash';
+import { FC } from 'react';
+// import ListCard from './ListCard';
 
 interface IModalChooseMetarialToMergeProps {
 	onCancel: () => void;
@@ -17,21 +10,7 @@ interface IModalChooseMetarialToMergeProps {
 const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 	onCancel,
 }) => {
-	const [listNft, setListNft] = useState(fakeData);
-	const SelectNft = (
-		event: React.MouseEvent<HTMLElement>,
-		indexSelected: number
-	) => {
-		event.stopPropagation();
-		const ListNftClone = cloneDeep(listNft);
-		const NewListNft = ListNftClone.map((nft: any, index: number) => {
-			if (indexSelected === index) {
-				return { ...nft, checked: !nft.checked };
-			}
-			return { ...nft };
-		});
-		setListNft(NewListNft);
-	};
+	// const [listNft, setListNft] = useState(fakeData);
 
 	return (
 		<div>
@@ -39,7 +18,7 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 				<div>Merged NFT rarity:</div>
 				<div className='text-red-10 ml-2'>Rare</div>
 			</div>
-			<ListCard list={listNft} SelectNft={SelectNft} />
+			{/* <ListCard list={listNft} SelectNft={SelectNft} /> */}
 			<div className='flex gap-x-32 justify-center mt-10'>
 				<Button
 					onClick={onCancel}

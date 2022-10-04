@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import HomePage from 'components/templates/homepage';
+// import HomePage from 'components/templates/homepage';
+import TokenPresaleRound from './token-presale-rounds';
 
 const Home: NextPage = () => {
 	return (
@@ -9,7 +10,8 @@ const Home: NextPage = () => {
 				<title>Galactix Zone</title>
 				<link rel='icon' href='/favicon.png' />
 			</Head>
-			<HomePage />
+			{/* <HomePage /> */}
+			<TokenPresaleRound />
 		</div>
 	);
 };

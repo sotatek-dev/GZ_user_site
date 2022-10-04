@@ -51,7 +51,9 @@ const DefaultLayout = ({ children, appProps }: any) => {
 			<Sider
 				// breakpoint='lg'
 				// collapsedWidth='0'
-				className={'hidden desktop:block !bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'}
+				className={
+					'hidden desktop:block !bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'
+				}
 			>
 				<div className='flex items-center justify-center py-[2rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
 					<ImageBase
@@ -99,7 +101,11 @@ const DefaultLayout = ({ children, appProps }: any) => {
 			</Sider>
 			<Layout>
 				<LayoutHeader />
-				<Content className={'p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'}>{children}</Content>
+				<Content
+					className={'p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'}
+				>
+					{children}
+				</Content>
 				<Footer />
 			</Layout>
 		</Layout>

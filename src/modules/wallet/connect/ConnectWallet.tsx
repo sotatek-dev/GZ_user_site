@@ -121,7 +121,11 @@ export default function ConnectWallet() {
 						<h5 className='font-bold text-h4 desktop:text-h3 text-lg text-white text-center pb-6'>
 							Connect Wallet
 						</h5>
-						<div className={'flex flex-col items-center justify-center desktop:inline-block'}>
+						<div
+							className={
+								'flex flex-col items-center justify-center desktop:inline-block'
+							}
+						>
 							<div className='pt-6'>
 								<p className='font-bold text-h7 pb-4'>1. Choose Network</p>
 								{NETWORK_LIST.map((network) => {

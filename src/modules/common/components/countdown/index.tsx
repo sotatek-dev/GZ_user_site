@@ -39,11 +39,13 @@ const Countdown: FC<ICountdownProps> = ({
 	const [timeRemain, settimeRemain] = useState<ITimeRemain>(timeRemainDefault);
 
 	useEffect(() => {
-		setSecCountDown(millisecondsRemain);
+		if (millisecondsRemain > 0) {
+			setSecCountDown(millisecondsRemain);
+		}
 	}, [millisecondsRemain]);
 
 	useEffect(() => {
-		const timeRemain = secondsToTime(secCountDown);
+		const timeRemain = secondsToTime(secCountDown > 0 ? secCountDown : 0);
 		settimeRemain(timeRemain);
 	}, [secCountDown]);
 
