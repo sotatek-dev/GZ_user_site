@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Spin, Tooltip } from 'antd';
+import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
@@ -42,7 +42,7 @@ import { handleCommonError } from 'common/helpers/toast';
 import {
 	handleFetchListPhaseError,
 	handleFetchRateError,
-	handleMintError
+	handleMintError,
 } from 'modules/mintDnft/helpers/handleError';
 import { toast } from 'react-toastify';
 import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
@@ -237,7 +237,7 @@ const MintDNFT: React.FC = () => {
 				}
 				const hash: string = res ? res.hash : '';
 				if (hash) {
-					toast.success(<MintSuccessToast txHash={hash} />)
+					message.success(<MintSuccessToast txHash={hash} />);
 				}
 			}
 		} catch (e) {
@@ -258,7 +258,7 @@ const MintDNFT: React.FC = () => {
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
 				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-6'} />
-					{isWhitelisted ? (
+					{isWhitelisted && isConnectWallet ? (
 						<div
 							onClick={mint}
 							className={
@@ -270,7 +270,7 @@ const MintDNFT: React.FC = () => {
 					) : (
 						<div
 							className={
-								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
+								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px]'
 							}
 						>
 							Mint
