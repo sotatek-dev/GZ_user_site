@@ -10,7 +10,7 @@ import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import Image from 'next/image';
 import type { Rule } from 'antd/lib/form';
 import { isValidEmail } from 'common/helpers/email';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function PersonalInfo() {
 	const form = Form.useForm()[0];
@@ -18,6 +18,14 @@ export default function PersonalInfo() {
 	const { userInfo } = useAppSelector((state) => state.myProfile);
 	const keynftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
 	const [canSave, setCanSave] = useState(false);
+
+	const { isLogin } = useAppSelector((state) => state.user);
+
+	useEffect(() => {
+		if (isLogin) {
+			dispatch(getMyProfileRD(keynftContract));
+		}
+	}, [isLogin, dispatch, keynftContract]);
 
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
