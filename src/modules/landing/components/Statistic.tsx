@@ -1,8 +1,9 @@
 import { getStatistics } from 'apis/landing';
-import LazyLoadImageComp from 'common/components/lazyLoadImage';
 import { numberWithDot } from 'common/helpers/number';
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../style/statistic.module.scss';
+import Image from 'next/image';
+import LazyLoadCommon from 'common/components/lazyLoad';
 
 interface IStatistic {
 	totalSupply: number;
@@ -72,14 +73,14 @@ export default function Statistic() {
 	return (
 		<section className={styles['statistic-container']}>
 			<div className={`w-[1.9169rem] h-[4.375rem] object-contain`}>
-				<LazyLoadImageComp
-					placeholderSrc='/images/roadmap_0.svg'
-					effect='blur'
-					width={30.67}
-					height={70}
-					src='/images/roadmap_0.svg'
-					alt='roadmap'
-				/>
+				<LazyLoadCommon>
+					<Image
+						width={30.67}
+						height={70}
+						src='/images/roadmap_0.svg'
+						alt='roadmap'
+					/>
+				</LazyLoadCommon>
 			</div>
 			<div className={styles['statistic-list']}>
 				{statisticBoxes.map((box, index) => (
@@ -102,19 +103,23 @@ function StatisticBox({
 	width: number;
 }) {
 	return (
-		<div id='whitepaper' className={styles['statistic-box']}>
+		<div
+			itemScope
+			itemType='http://schema.org/Organization'
+			id='whitepaper'
+			className={styles['statistic-box']}
+		>
 			<div className='w-[4.5rem] h-[4.5rem]'>
-				<LazyLoadImageComp
-					placeholderSrc={icon}
-					effect='blur'
-					width={width}
-					height={60}
-					src={icon}
-					alt={icon}
-				/>
+				<LazyLoadCommon>
+					<Image width={width} height={60} src={icon} alt={icon} />
+				</LazyLoadCommon>
 			</div>
-			<h1 className={styles['statistic-box_value']}>{numberWithDot(value)}</h1>
-			<h2 className={styles['statistic-box_label']}>{label}</h2>
+			<h1 itemProp='value' className={styles['statistic-box_value']}>
+				{numberWithDot(value)}
+			</h1>
+			<h2 itemProp='label' className={styles['statistic-box_label']}>
+				{label}
+			</h2>
 		</div>
 	);
 }

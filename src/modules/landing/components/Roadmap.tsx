@@ -1,4 +1,5 @@
-import LazyLoadImageComp from 'common/components/lazyLoadImage';
+import LazyLoadCommon from 'common/components/lazyLoad';
+import Image from 'next/image';
 import React from 'react';
 import styles from '../style/roadmap.module.scss';
 
@@ -160,12 +161,20 @@ function TimelineSection({ timeline }: { timeline: Timeline }) {
 	const timelinePointClass = `timeline-point-${position}`;
 	return (
 		<div className={`${flex}  ${styles['timeline-child-container']}`}>
-			<div className={`${styles['timeline-box']} ${styles[boxClass]}`}>
-				<h1 className={styles['timeline-title']}>{title}</h1>
+			<div
+				itemScope
+				itemType='http://schema.org/Organization'
+				className={`${styles['timeline-box']} ${styles[boxClass]}`}
+			>
+				<h1 itemProp='title' className={styles['timeline-title']}>
+					{title}
+				</h1>
 				<div
+					itemProp='point'
 					className={`${styles[timelinePointClass]} ${styles['timeline-point']}`}
 				/>
 				<ul
+					itemProp='description'
 					className={`${styles['timeline-list']} ${styles[listTimelineClass]} `}
 				>
 					{descriptions.map((description, index) => (
@@ -175,14 +184,9 @@ function TimelineSection({ timeline }: { timeline: Timeline }) {
 			</div>
 			<div className={`${styles['timeline-img']} ${styles[imgClass]}`}>
 				<div style={imgStyle}>
-					<LazyLoadImageComp
-						src={imgSrc}
-						alt='logo'
-						height={height}
-						width={width}
-						placeholderSrc={imgSrc}
-						effect='blur'
-					/>
+					<LazyLoadCommon>
+						<Image height={height} width={width} src={imgSrc} alt='logo' />
+					</LazyLoadCommon>
 				</div>
 			</div>
 		</div>

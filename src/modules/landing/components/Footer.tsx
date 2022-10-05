@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import LazyLoadImageComp from 'common/components/lazyLoadImage';
+import LazyLoadCommon from 'common/components/lazyLoad';
 import { ROUTES } from 'common/constants/constants';
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import styles from '../style/footer.module.scss';
@@ -72,14 +73,14 @@ export default function Footer() {
 					<div className='w-[8.125rem] h-[8.125rem]'>
 						<Link href={ROUTES.LANDING} passHref>
 							<a>
-								<LazyLoadImageComp
-									placeholderSrc='images/logo.svg'
-									effect='blur'
-									width={130}
-									height={124.77}
-									src='images/logo.svg'
-									alt='logo'
-								/>
+								<LazyLoadCommon>
+									<Image
+										width={130}
+										height={124.77}
+										src='/images/logo.svg'
+										alt='logo'
+									/>
+								</LazyLoadCommon>
 							</a>
 						</Link>
 					</div>
@@ -111,14 +112,35 @@ export default function Footer() {
 									);
 								})}
 						</div>
-						<div className={styles['footer-1_menu_btn']}>
-							<button className={styles['footer-btn']}>
+						<div
+							itemScope
+							itemType='http://schema.org/Organization'
+							className={styles['footer-1_menu_btn']}
+						>
+							<button itemProp='pitch-deck' className={styles['footer-btn']}>
 								<h1 className={styles['footer-btn_label']}>PITCH DECK</h1>
-								<LazyLoadImageComp src='/icons/arrow-right.svg' alt='logo' />
+								<LazyLoadCommon>
+									<Image
+										width={10}
+										height={10}
+										src='/icons/arrow-right.svg'
+										alt='logo'
+									/>
+								</LazyLoadCommon>
 							</button>
-							<button className={`${styles['footer-btn']} mt-[1.125rem]`}>
+							<button
+								itemProp='white-paper'
+								className={`${styles['footer-btn']} mt-[1.125rem]`}
+							>
 								<h1 className={styles['footer-btn_label']}>WHITE PAPER</h1>
-								<LazyLoadImageComp src='/icons/arrow-right.svg' alt='logo' />
+								<LazyLoadCommon>
+									<Image
+										width={10}
+										height={10}
+										src='/icons/arrow-right.svg'
+										alt='logo'
+									/>
+								</LazyLoadCommon>
 							</button>
 						</div>
 					</div>
@@ -129,36 +151,49 @@ export default function Footer() {
 						©2022 Galactix Zone. All rights reserved
 					</h1>
 
-					<div className='flex'>
-						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
-							<LazyLoadImageComp
-								src='/icons/facebook.svg'
-								alt='facebook'
-								width={30}
-								height={30}
-								placeholderSrc='/icons/facebook.svg'
-								effect='blur'
-							/>
+					<div
+						itemScope
+						itemType='http://schema.org/Organization'
+						className='flex'
+					>
+						<a
+							itemProp='facebook'
+							className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
+						>
+							<LazyLoadCommon>
+								<Image
+									src='/icons/facebook.svg'
+									alt='facebook'
+									width={30}
+									height={30}
+								/>
+							</LazyLoadCommon>
 						</a>
-						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
-							<LazyLoadImageComp
-								src='/icons/telegram.svg'
-								alt='telegram'
-								width={25}
-								height={22.5}
-								placeholderSrc='/icons/telegram.svg'
-								effect='blur'
-							/>
+						<a
+							itemProp='telegram'
+							className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
+						>
+							<LazyLoadCommon>
+								<Image
+									src='/icons/telegram.svg'
+									alt='telegram'
+									width={25}
+									height={22.5}
+								/>
+							</LazyLoadCommon>
 						</a>
-						<a className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'>
-							<LazyLoadImageComp
-								src='/icons/twitter.svg'
-								alt='twitter'
-								width={27.31}
-								height={22.5}
-								placeholderSrc='/icons/twitter.svg'
-								effect='blur'
-							/>
+						<a
+							itemProp='twitter'
+							className='w-[1.5625rem] h-[1.5625rem] ml-[1.8125rem]'
+						>
+							<LazyLoadCommon>
+								<Image
+									src='/icons/twitter.svg'
+									alt='twitter'
+									width={27.31}
+									height={22.5}
+								/>
+							</LazyLoadCommon>
 						</a>
 					</div>
 				</div>

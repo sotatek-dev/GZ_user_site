@@ -1,7 +1,6 @@
 import HelmetCommon from 'common/components/helmet';
 import { ROUTES } from 'common/constants/constants';
 import React, { useEffect } from 'react';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from '../../modules/landing/style/landing.module.scss';
 import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
