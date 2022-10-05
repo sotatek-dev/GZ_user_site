@@ -145,7 +145,7 @@ export const useConnectWallet = () => {
 };
 
 function setStorageWallet(connector: ConnectorKey) {
-	StorageUtils.setItem(STORAGE_KEYS.WALLET_CONNECTED, connector);
+	StorageUtils.setSectionStorageItem(STORAGE_KEYS.WALLET_CONNECTED, connector);
 }
 
 function setStorageNetwork(networkConnected: any) {
@@ -153,6 +153,6 @@ function setStorageNetwork(networkConnected: any) {
 }
 
 export function removeStorageWallet() {
-	window.localStorage.removeItem(STORAGE_KEYS.WALLET_CONNECTED);
-	window.localStorage.removeItem(STORAGE_KEYS.NETWORK);
+	StorageUtils.removeSectionStorageItem(STORAGE_KEYS.WALLET_CONNECTED);
+	StorageUtils.removeItem(STORAGE_KEYS.NETWORK);
 }
