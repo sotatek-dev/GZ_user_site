@@ -1,11 +1,9 @@
+import { message } from 'antd';
 import axiosInstance from 'apis/config';
-import { toast } from 'react-toastify';
 
 export function copyToClipboard(text: string) {
 	navigator.clipboard.writeText(text);
-	toast.info('Copied to clipboard', {
-		theme: 'dark',
-	});
+	message.info('Copied to clipboard');
 }
 
 export const getSignature = async () => {

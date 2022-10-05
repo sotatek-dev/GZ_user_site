@@ -1,6 +1,5 @@
 import 'antd/dist/antd.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import 'react-toastify/dist/ReactToastify.css';
 import 'styles/globals.scss';
 import 'styles/index.scss';
 

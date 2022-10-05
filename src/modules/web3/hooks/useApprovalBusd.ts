@@ -1,8 +1,9 @@
+import { message } from 'antd';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import { useBusdContract } from 'web3/contracts/useBusdContract';
 
 import { useActiveWeb3React } from './useActiveWeb3React';
@@ -41,7 +42,7 @@ export const useApprovalBusd = (tokenAddress: string, spender: string) => {
 		try {
 			const txn = await tokenContract.approve(spender, constants.MaxUint256);
 			await txn.wait();
-			toast.success('');
+			message.success('');
 		} catch (error) {
 			if (rethrowErr) {
 				throw error;
