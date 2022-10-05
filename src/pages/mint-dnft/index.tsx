@@ -215,8 +215,8 @@ const MintDNFT: React.FC = () => {
 				}
 				const amount =
 					token === TOKENS.BNB
-						? new BigNumber(price).times(TOKEN_DECIMAL).toString(10)
-						: new BigNumber(0).times(TOKEN_DECIMAL).toString(10);
+						? new BigNumber(price).times(TOKEN_DECIMAL).dp(0).toString(10)
+						: new BigNumber(0).times(TOKEN_DECIMAL).dp(0).toString(10);
 
 				let res: ContractTransaction | null = null;
 				if (token === TOKENS.BUSD) {
