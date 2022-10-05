@@ -1,12 +1,11 @@
 import { Form, Input, message } from 'antd';
-import { useForm } from 'antd/es/form/Form';
 import { updateMyProfile } from 'apis/my-profile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/my-profile';
 
 export default function PersonalInfo() {
-	const form = useForm()[0];
+	const form = Form.useForm()[0];
 	const dispatch = useAppDispatch();
 	const { userInfo } = useAppSelector((state) => state.myProfile);
 
