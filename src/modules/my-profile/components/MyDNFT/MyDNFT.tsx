@@ -1,14 +1,178 @@
-import { Pagination } from 'antd';
+import { message, Pagination } from 'antd';
 import BoxPool from 'common/components/boxPool';
+import Dropdown from 'common/components/dropdown';
 import MyTable from 'common/components/table';
+import {
+	LIMIT_10,
+	RARITY_DNFT,
+	SPECIES_DNFT,
+} from 'common/constants/constants';
+import dayjs from 'dayjs';
+import { cloneDeep, get } from 'lodash';
+import { DNFTStatusMap } from 'modules/my-profile/components/MyDNFT/MyDNFT.constant';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from 'stores';
+import { getMyClaimableDNFTsCountRD, getMyDNFTsRD } from 'stores/my-profile';
+import { AbiDnft } from 'web3/abis/types';
+import {
+	NEXT_PUBLIC_BUSD,
+	NEXT_PUBLIC_DNFT,
+	NEXT_PUBLIC_KEYNFT,
+} from 'web3/contracts/instance';
+import { useContract } from 'web3/contracts/useContract';
+import { useApprovalBusd } from 'web3/hooks';
+import DNFTABI from '../../../web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
+	const { dnfts, dntf_claimable_count } = useSelector(
+		(state) => state.myProfile
+	);
+	const { isLogin } = useAppSelector((state) => state.user);
+	const [type, setType] = useState<string>('');
+	const [status, setStatus] = useState<string>('');
+	const [page, setPage] = useState<number>(1);
+	const dispatch = useAppDispatch();
+	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
+	const [claimableTime, setClaimableTime] = useState(0);
+	const { tryApproval, allowanceAmount } = useApprovalBusd(
+		NEXT_PUBLIC_BUSD,
+		NEXT_PUBLIC_KEYNFT
+	);
+	const router = useRouter();
+
+	useEffect(() => {
+		if (isLogin) {
+			handleGetDNFTs();
+		}
+	}, [isLogin, type, status, page]);
+
+	useEffect(() => {
+		if (dnftContract) {
+			handleGetClaimableTime();
+		}
+	}, [dnftContract]);
+
+	const mutantDNFTs = useMemo(() => {
+		let canClaimTime = false;
+		const currentDate = dayjs().unix();
+		if (currentDate > claimableTime) {
+			canClaimTime = true;
+		}
+
+		if (!dnfts) {
+			return [];
+		}
+
+		return dnfts.data.map((item) => {
+			const cloneItem = cloneDeep(item);
+			const canClaim = canClaimTime && cloneItem.status === 'claimable';
+
+			if (canClaim) {
+				cloneItem.species = 'TBA';
+				cloneItem.rank_level = 'TBA';
+			}
+
+			return {
+				...cloneItem,
+				claimable_date: dayjs.unix(claimableTime).format('DD-MMM-YYYY HH:mm'),
+				canClaim,
+				onClick: () => {
+					if (cloneItem.status === 'claimable') {
+						handleClaim();
+					} else if (cloneItem.status === 'wait-to-merge') {
+						handleUnmerge();
+					}
+				},
+			};
+		});
+	}, [dnfts, claimableTime]);
+
+	const handleUnmerge = async () => {
+		if (!allowanceAmount) {
+			await tryApproval(true).catch(() => {
+				message.error('Transaction Rejected');
+			});
+		}
+		// await dnftContract?.unmerge();
+		// message.success('Unmerge successfully');
+		handleGetDNFTs();
+	};
+
+	const handleGetClaimableTime = async () => {
+		if (dnftContract) {
+			const time = await dnftContract.claimableTime();
+			setClaimableTime(time.toNumber());
+		}
+	};
+
+	const handleClaim = async () => {
+		if (dnftContract) {
+			await dnftContract
+				.claimPurchasedToken(1)
+				.then((res) => {
+					return res.wait();
+				})
+				.then(() => {
+					message.success('Transaction Completed');
+					handleGetDNFTs();
+				})
+				.catch((err) => {
+					if (err.code === 'ACTION_REJECTED') {
+						message.error('Transaction Rejected');
+					} else {
+						message.error('Network Error!');
+					}
+				});
+		}
+	};
+
+	const handleClaimAll = async (amount: number) => {
+		if (dnftContract) {
+			await dnftContract
+				.claimPurchasedToken(amount)
+				.then((res) => {
+					return res.wait();
+				})
+				.then(() => {
+					message.success('Transaction Completed');
+					handleGetDNFTs();
+				})
+				.catch((err) => {
+					if (err.code === 'ACTION_REJECTED') {
+						message.error('Transaction Rejected');
+					} else {
+						message.error('Network Error!');
+					}
+				});
+		}
+	};
+
+	const handleGetDNFTs = () => {
+		dispatch(
+			getMyDNFTsRD({ page, limit: LIMIT_10, species: type, rarities: status })
+		);
+	};
+
+	useEffect(() => {
+		if (dnfts && dnfts.pagination.total) {
+			handleGetClaimableNFTsCount(dnfts.pagination.total);
+		}
+	}, [dnfts?.pagination.total]);
+
+	const handleGetClaimableNFTsCount = async (total: number) => {
+		dispatch(getMyClaimableDNFTsCountRD(total));
+	};
+
 	return (
 		<BoxPool>
 			<div className={'flex justify-between items-start mb-3'}>
 				<h5 className={`text-h6 font-semibold text-white`}>My dNFT</h5>
 				<button
+					disabled={!dntf_claimable_count}
+					onClick={() => handleClaimAll(dntf_claimable_count)}
 					className={
 						'desktop:hidden text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
 					}
@@ -24,18 +188,28 @@ export default function MyDNFT() {
 							'flex items-center justify-between desktop:justify-start grow gap-2.5'
 						}
 					>
-						{/* <Dropdown
-          customStyle={'!w-1/2 desktop:!w-[160px]'}
-          label='All statuses'
-          list={[]}
-        />
-        <Dropdown
-          customStyle={'!w-1/2 desktop:!w-[160px]'}
-          label='All types'
-          list={[]}
-        /> */}
+						<Dropdown
+							onClick={(value) => {
+								setStatus(value.key);
+							}}
+							customStyle={'!w-1/2 desktop:!w-[160px]'}
+							list={RARITY_DNFT}
+							title='All statuses'
+							label={status}
+						/>
+						<Dropdown
+							onClick={(value) => {
+								setType(value.key);
+							}}
+							customStyle={'!w-1/2 desktop:!w-[160px]'}
+							label={type}
+							list={SPECIES_DNFT}
+							title='All types'
+						/>
 					</div>
 					<button
+						disabled={!dntf_claimable_count}
+						onClick={() => handleClaimAll(dntf_claimable_count)}
 						className={
 							'hidden desktop:block text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
 						}
@@ -43,125 +217,126 @@ export default function MyDNFT() {
 						Claim all
 					</button>
 				</div>
+
 				<MyTable
+					onRow={(record) => {
+						return {
+							onClick: () => {
+								router.push(`/dnft-detail/${record._id}`);
+							},
+						};
+					}}
 					columns={columns}
-					dataSource={datafake}
+					dataSource={mutantDNFTs}
 					className={'hidden desktop:inline-block w-full'}
 				/>
 				<div className={'desktop:hidden'}>
-					{datafake.map((value, item) => {
+					{mutantDNFTs.map((value, item) => {
+						const statusMap = get(DNFTStatusMap, value.status);
 						return (
-							<>
+							<Link href={`/dnft-detail/${value._id}`} key={value._id}>
 								<div className={'flex flex-col gap-6 mb-6'} key={item}>
 									<hr className={'border-t border-white/[0.07]'} />
-									<Link className='flex justify-end' href='/nft-detail'>
-										<button className='text-[#D47AF5] font-semibold rounded-[40px] px-[27px] py-[7px] border-[2px] border-[#D47AF5] flex ml-auto'>
-											Claim
-										</button>
-									</Link>
+									<button
+										disabled={get(statusMap, 'disabled')}
+										onClick={(e) => {
+											e.stopPropagation();
+											value.onClick();
+										}}
+										className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
+									>
+										{get(statusMap, `title`)}
+									</button>
+
 									<div className={'flex justify-between items-center'}>
 										<div className={'text-h8 text-blue-20 font-medium'}>
 											Species
 										</div>
-										<Link
-											className={'text-h8 text-white font-bold'}
-											href='/nft-detail'
-										>
-											{value.Species}
-										</Link>
+										<div className={'text-h8 text-white font-bold'}>
+											{value.species}
+										</div>
 									</div>
 									<div className={'flex justify-between items-center'}>
 										<div className={'text-h8 text-blue-20 font-medium'}>
 											Rarity
 										</div>
-										<Link
-											className={'text-h8 text-white font-bold'}
-											href='/nft-detail'
-										>
-											{value.Rarity}
-										</Link>
+										<div className={'text-h8 text-white font-bold'}>
+											{value.rank_level}
+										</div>
 									</div>
 									<div className={'flex justify-between items-center'}>
 										<div className={'text-h8 text-blue-20 font-medium'}>
 											Claimable data
 										</div>
-										<Link
-											className={'text-h8 text-white font-bold'}
-											href='/nft-detail'
-										>
-											{value.Claimable_date}
-										</Link>
+										<div className={'text-h8 text-white font-bold'}>
+											{value.claimable_date}
+										</div>
 									</div>
 								</div>
-							</>
+							</Link>
 						);
 					})}
 				</div>
 				<div className='mt-[30px] w-[100%] flex justify-end'>
-					<Pagination
-						defaultCurrent={1}
-						total={200}
-						showLessItems
-						showSizeChanger={false}
-						className='flex items-center'
-					/>
+					{dnfts && (
+						<Pagination
+							defaultCurrent={1}
+							pageSize={LIMIT_10}
+							current={dnfts.pagination.page}
+							total={dnfts.pagination.total}
+							onChange={(page) => {
+								setPage(page);
+							}}
+							showLessItems
+							showSizeChanger={false}
+							className='flex items-center'
+						/>
+					)}
 				</div>
 			</div>
 		</BoxPool>
 	);
 }
 
-const datafake = [
-	{
-		Species: 'Kinga',
-		Rarity: 'Common',
-		Claimable_date: '30-Apr-2022 16:00',
-	},
-	{
-		Species: 'Kinga',
-		Rarity: 'Common',
-		Claimable_date: '30-Apr-2022 16:00',
-	},
-	{
-		Species: 'Kinga',
-		Rarity: 'Common',
-		Claimable_date: '30-Apr-2022 16:00',
-	},
-];
-
 const columns = [
 	{
 		title: 'Species',
-		dataIndex: 'Species',
+		dataIndex: 'species',
 		render: (Species: string) => {
-			return <Link href='/nft-detail'>{Species}</Link>;
+			return <div>{Species}</div>;
 		},
 		width: '30%',
 	},
 	{
 		title: 'Rarity',
-		dataIndex: 'Rarity',
+		dataIndex: 'rank_level',
 		render: (Rarity: string) => {
-			return <Link href='/nft-detail'>{Rarity}</Link>;
+			return <div>{Rarity}</div>;
 		},
 		width: '30%',
 	},
 	{
 		title: 'Claimable date',
-		dataIndex: 'Claimable_date',
+		dataIndex: 'claimable_date',
 		render: (Claimable_date: string) => {
-			return <Link href='/nft-detail'>{Claimable_date}</Link>;
+			return <div>{Claimable_date}</div>;
 		},
 		width: '30%',
 	},
 	{
-		render: () => {
+		render: (record: any) => {
+			const statusMap = get(DNFTStatusMap, record.status);
 			return (
-				<Link className='flex justify-end' href='/nft-detail'>
-					<button className='text-[#D47AF5] font-semibold rounded-[40px] px-[27px] py-[7px] border-[2px] border-[#D47AF5] flex ml-auto'>
-						Claim
-					</button>
-				</Link>
+				<button
+					disabled={get(statusMap, 'disabled')}
+					onClick={(e) => {
+						e.stopPropagation();
+						record.onClick();
+					}}
+					className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
+				>
+					{get(statusMap, `title`)}
+				</button>
 			);
 		},
 	},

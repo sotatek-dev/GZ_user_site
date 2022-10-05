@@ -40,10 +40,12 @@ interface initialStateProps {
 			limit: number;
 		};
 	};
+	dntf_claimable_count: number;
 }
 
 const initialState: initialStateProps = {
 	loading: false,
+	dntf_claimable_count: 0,
 };
 
 const myProfileStore = createSlice({
@@ -86,18 +88,8 @@ const myProfileStore = createSlice({
 		});
 
 		builder.addCase(getMyDNFTsRD.fulfilled, (state, action) => {
-			const _myDNFTs: IDNFT[] = action.payload.list.map((item: any) => {
-				if (!item.metadata) {
-					item.metadata = {
-						species: 'TBA',
-						rankLevel: 'TBA',
-					};
-				}
-				return item;
-			});
-
 			state.dnfts = {
-				data: _myDNFTs,
+				data: action.payload.list,
 				pagination: action.payload.pagination,
 			};
 			state.loading = false;
@@ -111,6 +103,10 @@ const myProfileStore = createSlice({
 		builder.addCase(getMyDNFTsRD.pending, (state) => {
 			state.loading = true;
 		});
+
+		builder.addCase(getMyClaimableDNFTsCountRD.fulfilled, (state, action) => {
+			state.dntf_claimable_count = action.payload;
+		});
 	},
 });
 
@@ -121,6 +117,23 @@ export const getMyDNFTsRD = createAsyncThunk(
 			const res = await getMyDNFTs(params);
 			const data = get(res, 'data.data', []);
 			return data;
+		} catch (err) {
+			return rejectWithValue(err);
+		}
+	}
+);
+
+export const getMyClaimableDNFTsCountRD = createAsyncThunk(
+	'profile/getMyClaimableDNFTsCountRD',
+	async (limit: number, { rejectWithValue }) => {
+		try {
+			const res = await getMyDNFTs({
+				limit,
+				status: 'wait-to-claim',
+				page: 1,
+			});
+			const data = get(res, 'data.data.list', []);
+			return get(data, 'length');
 		} catch (err) {
 			return rejectWithValue(err);
 		}

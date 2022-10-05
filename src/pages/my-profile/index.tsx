@@ -21,13 +21,13 @@
 // import { copyToClipboard } from 'modules/my-profile/services';
 
 import HelmetCommon from 'common/components/helmet';
-import { LIMIT_10, ROUTES } from 'common/constants/constants';
+import { ROUTES } from 'common/constants/constants';
 import BuyInfo from 'modules/my-profile/components/BuyInfo';
 import MyDNFT from 'modules/my-profile/components/MyDNFT';
 import PersonalInfo from 'modules/my-profile/components/PersonalInfo';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { getMyDNFTsRD, getMyProfileRD } from 'stores/my-profile';
+import { getMyProfileRD } from 'stores/my-profile';
 
 // import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 // import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
@@ -622,7 +622,6 @@ export default function MyProfile() {
 
 	useEffect(() => {
 		if (isLogin) {
-			dispatch(getMyDNFTsRD({ page: 1, limit: LIMIT_10 }));
 			dispatch(getMyProfileRD());
 		}
 	}, [isLogin, dispatch]);

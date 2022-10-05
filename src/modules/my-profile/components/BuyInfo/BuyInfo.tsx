@@ -106,7 +106,7 @@ export default function BuyInfo() {
 				boxStyle='!bg-[#8080801a] !text-[white]'
 				titleStyle='!font-normal !text-[#ffffff80]'
 				customClass='mt-[20px] '
-				title={inTimeBuyKey ? 'You can buy key in' : 'You can buy key in'}
+				title={inTimeBuyKey ? 'You can not buy key in' : 'You can buy key in'}
 				millisecondsRemain={secondsRemain}
 			/>
 

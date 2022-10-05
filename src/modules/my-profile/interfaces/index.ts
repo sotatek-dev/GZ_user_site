@@ -2,11 +2,14 @@ export interface IDNFT {
 	_id: string;
 	wallet_address: string;
 	status: string;
+	metadata: IDNFTMetadata;
 	type: string;
 	token_id: string;
+	species: string;
+	rank_level: string;
+	deleted_at: number;
 	random_at: string[];
 	email_notice_sent: boolean;
-	metadata: IDNFTMetadata;
 }
 export interface IProperty {
 	value: string;

@@ -1,11 +1,11 @@
 import { DownOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Menu, Dropdown as AntDropdown, Button } from 'antd';
-
+import { Button, Dropdown as AntDropdown, Menu } from 'antd';
+export type Item = { [key: string]: string | number };
 type Props = {
 	size?: string;
 	type?: string;
-	list: Array<{ [key: string]: string | number }>;
+	list: Array<Item>;
 	label: string;
 	customStyle?: string;
 	title?: string;
@@ -17,7 +17,7 @@ const Dropdown = (props: Props) => {
 
 	const menu = (
 		<Menu onClick={onClick}>
-			{list.map((item: { [key: string]: string | number }) => (
+			{list.map((item: Item) => (
 				<Menu.Item key={item.key}>{item.label}</Menu.Item>
 			))}
 		</Menu>
@@ -26,11 +26,7 @@ const Dropdown = (props: Props) => {
 	return (
 		<AntDropdown className={customStyle} overlay={menu} trigger={['click']}>
 			<Button className='dropdown-button flex justify-between	items-center'>
-				{label
-					? list.find(
-							(item: { [key: string]: string | number }) => item.key === label
-					  )?.label
-					: title}{' '}
+				{label ? list.find((item: Item) => item.key === label)?.label : title}{' '}
 				<DownOutlined />
 			</Button>
 		</AntDropdown>

@@ -1,3 +1,4 @@
+import { removeEmpty } from 'common/helpers/object';
 import axiosInstance from './config';
 
 export const getMyProfile = async () => {
@@ -30,10 +31,14 @@ export interface IParamsGetDNFTs {
 	sortBy?: string;
 	direction?: string;
 	query?: string;
+	rarities?: string;
+	species?: string;
+	status?: string;
 }
 export const getMyDNFTs = async (params: IParamsGetDNFTs) => {
 	const queryString = `dnft`;
+	const validParams = removeEmpty(params);
 	return await axiosInstance().get(queryString, {
-		params,
+		params: validParams,
 	});
 };
