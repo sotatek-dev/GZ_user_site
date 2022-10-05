@@ -38,7 +38,7 @@ const ImageBase = (props: Props) => {
 
 	if (type === 'HtmlImage') {
 		return (
-			<img
+			<Image
 				{...newProps}
 				style={style}
 				alt='image'

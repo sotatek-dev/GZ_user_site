@@ -102,7 +102,7 @@ function StatisticBox({
 	width: number;
 }) {
 	return (
-		<div className={styles['statistic-box']}>
+		<div id='whitepaper' className={styles['statistic-box']}>
 			<div className='w-[4.5rem] h-[4.5rem]'>
 				<LazyLoadImageComp
 					placeholderSrc={icon}

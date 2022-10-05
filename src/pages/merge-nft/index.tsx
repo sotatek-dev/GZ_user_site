@@ -13,11 +13,13 @@ import {
 	STATUS_LIST_DNFT,
 } from 'common/constants/constants';
 import type { MenuProps } from 'antd';
+import ReactGa from 'react-ga';
 import { cloneDeep, get } from 'lodash';
 import ListCard from 'modules/mergeDnft/ListCard';
 // import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 export interface IDFNT {
 	created_at: Date;
@@ -34,6 +36,7 @@ export interface IDFNT {
 }
 
 const MergeNft = () => {
+	const router = useRouter();
 	const [page, setPage] = useState<number>(1);
 	const [isSelectAll, setSelectAll] = useState<boolean>(false);
 	const [totalDNFT, setTotalDNFT] = useState<number>(0);
@@ -111,7 +114,12 @@ const MergeNft = () => {
 	const handleChangeSpecies: MenuProps['onClick'] = ({ key }) => {
 		setSpecies(key);
 	};
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon
@@ -176,6 +184,7 @@ const MergeNft = () => {
 							width='100%'
 							height='100%'
 							alt='dnft'
+							objectFit='contain'
 						/>
 						<Image
 							className='absolute inset-0 w-full h-full z-20'
@@ -184,6 +193,7 @@ const MergeNft = () => {
 							width='100%'
 							height='100%'
 							alt='dnft'
+							objectFit='contain'
 						/>
 					</div>
 					{/* <ModalChooseMetarialToMerge

@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '../style/pre-footer.module.scss';
 export default function PreFooter() {
 	return (
-		<section className={styles['pre-footer-section']}>
+		<section id='gxz-token' className={styles['pre-footer-section']}>
 			<div className={styles['pre-footer-section_box']}>
 				<h2 className={styles['pre-footer-section_box_content']}>
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
