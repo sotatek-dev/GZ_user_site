@@ -28,3 +28,13 @@ export const updateMyProfile = async (
 		.then((data) => successCallback(data))
 		.catch((error) => failCallback(error));
 };
+
+export const getMyDNFTs = async (page: number) => {
+	const queryString = `dnft`;
+	return await axiosInstance().get(queryString, {
+		params: {
+			page,
+			limit: 10,
+		},
+	});
+};

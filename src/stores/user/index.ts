@@ -16,6 +16,10 @@ export interface ITypeUserInfo {
 	nftHolding: number;
 }
 
+export interface ISystemSetting {
+	mintDays: number;
+}
+
 interface initialStateProps {
 	userInfo?: ITypeUserInfo;
 	isLogin: boolean;
