@@ -6,20 +6,12 @@ export const setUserStore = (store: Store) => {
 	customStore = store;
 };
 
-interface ITypeUserInfo {
-	walletAddress: string;
-}
-
-interface IUserStates {
-	userInfo: ITypeUserInfo;
+interface initialStateProps {
 	isLogin: boolean;
 	accessToken: string;
 }
 
-export const initialState: IUserStates = {
-	userInfo: {
-		walletAddress: '',
-	},
+const initialState: initialStateProps = {
 	isLogin: false,
 	accessToken: '',
 };
@@ -28,12 +20,6 @@ const userStore = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
-		setUserInfo: (state, action: PayloadAction<ITypeUserInfo>) => {
-			return {
-				...state,
-				userInfo: action.payload,
-			};
-		},
 		setLogin: (state, action: PayloadAction<boolean>) => {
 			return {
 				...state,
@@ -48,10 +34,6 @@ const userStore = createSlice({
 		},
 	},
 });
-
-export const setUserInfo = (userInfo: ITypeUserInfo) => {
-	customStore && customStore.dispatch(userStore.actions.setUserInfo(userInfo));
-};
 
 export const setLogin = (isLogin: boolean) => {
 	customStore && customStore.dispatch(userStore.actions.setLogin(isLogin));

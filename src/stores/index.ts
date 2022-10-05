@@ -7,6 +7,13 @@ import { RootState } from './types';
 import { setStoreWallet, storeWallet } from './wallet';
 import { setUserStore, userStore } from './user';
 import { modalStore, setModalStore } from './modal';
+import {
+	setSystemSettingStore,
+	systemSettingStore,
+} from 'stores/system-setting';
+import { myProfileStore } from 'stores/my-profile';
+import thunkMiddleware from 'redux-thunk';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 let customStore: Store | undefined;
 
@@ -25,11 +32,13 @@ const appReducer = combineReducers({
 	wallet: storeWallet.reducer,
 	user: userStore.reducer,
 	modal: modalStore.reducer,
+	systemSetting: systemSettingStore.reducer,
+	myProfile: myProfileStore.reducer,
 });
 
 const rootReducer = (state: any, action: any) => appReducer(state, action);
 
-const middleWares: any[] = [];
+const middleWares: any[] = [thunkMiddleware];
 
 const enhancer = composeWithDevTools(applyMiddleware(...middleWares));
 
@@ -37,9 +46,17 @@ export const store = createStore(rootReducer, enhancer);
 
 export const persistor = persistStore(store);
 
+export type AppState = ReturnType<typeof store.getState>;
+
+export type AppDispatch = typeof store.dispatch;
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch: () => AppDispatch = useDispatch;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
 export default store;
 
 setStore(store);
 setStoreWallet(store);
 setUserStore(store);
 setModalStore(store);
+setSystemSettingStore(store);
