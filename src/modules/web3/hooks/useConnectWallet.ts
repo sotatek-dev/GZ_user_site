@@ -135,7 +135,7 @@ export const useConnectWallet = () => {
 
 	async function checkLogin(addressWallet: string) {
 		const [dataCheckUser] = await checkEmailUser(addressWallet);
-		if (dataCheckUser.is_user_exist) {
+		if (dataCheckUser?.is_user_exist) {
 			// check user đăng nhập lần đầu
 			setStatusConnect(true);
 		} else {

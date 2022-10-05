@@ -1,5 +1,3 @@
-import { Checkbox } from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import Button from 'common/components/button';
 import Dropdown from 'common/components/dropdown';
@@ -14,17 +12,21 @@ import {
 } from 'common/constants/constants';
 import type { MenuProps } from 'antd';
 import ReactGa from 'react-ga';
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep, get, isEmpty } from 'lodash';
 import ListCard from 'modules/mergeDnft/ListCard';
-// import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
+// import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 
 export interface IDFNT {
 	created_at: Date;
 	email_notice_sent: boolean;
+	metadata?: any;
 	random_at: Array<string>;
+	rank_level: string;
+	species: string;
 	status: string;
 	token_id: string;
 	type: string;
@@ -32,17 +34,33 @@ export interface IDFNT {
 	wallet_address: string;
 	_id: string;
 	isChecked: boolean;
-	metadata?: any;
+}
+
+interface IPagination {
+	limit: number;
+	page: number;
+	page_count: number;
+	total: number;
+}
+
+export interface IDNFTToMerge {
+	list: Array<IDFNT> | undefined;
+	pagination: IPagination;
 }
 
 const MergeNft = () => {
 	const router = useRouter();
 	const [page, setPage] = useState<number>(1);
-	const [isSelectAll, setSelectAll] = useState<boolean>(false);
+	// const [isSelectAll, setSelectAll] = useState<boolean>(false);
 	const [totalDNFT, setTotalDNFT] = useState<number>(0);
+	const [dNFTSelected, setDNFTSelected] = useState<IDFNT>();
 	const [listDNFT, setListDNFT] = useState<Array<IDFNT>>([]);
+	const [listDNFTToMerge, setListDNFTToMerge] = useState<IDNFTToMerge>();
 	const [rarity, setRarity] = useState<string>('');
 	const [species, setSpecies] = useState<string>('');
+
+	const { isLogin } = useSelector((state) => state.user);
+
 	const [isShowModalChooseMetarialToMerge, setShowModalChooseMetarialToMerge] =
 		useState<boolean>(false);
 
@@ -54,9 +72,35 @@ const MergeNft = () => {
 		} as IParamsListDFNT;
 		if (rarity) params.rarities = rarity;
 		if (species) params.species = species;
+		if (isLogin) {
+			handleGetListDFNT(params);
+		} else {
+			setListDNFT([]);
+		}
+	}, [rarity, species, page, isLogin]);
 
-		handleGetListDFNT(params);
-	}, [rarity, species, page]);
+	const SelectNft = useCallback(
+		(event: React.MouseEvent<HTMLElement>, indexSelected: number) => {
+			event.stopPropagation();
+			const ListNftClone = cloneDeep(listDNFT);
+			const NewListDNFT = ListNftClone.map((DFNT: IDFNT, index: number) => {
+				if (indexSelected === index) {
+					return { ...DFNT, isChecked: !DFNT.isChecked };
+				}
+				return { ...DFNT, isChecked: false };
+			});
+			setListDNFT(NewListDNFT);
+		},
+		[listDNFT]
+	);
+
+	useEffect(() => {
+		const listDNFTClone = cloneDeep(listDNFT);
+		const dNFTSelected = listDNFTClone.find(
+			(DNFT: IDFNT) => DNFT.isChecked === true
+		);
+		setDNFTSelected(dNFTSelected);
+	}, [SelectNft, listDNFT]);
 
 	const handleAddCheckBoxListDNFT = (listDNFT: Array<IDFNT>) => {
 		return listDNFT.map((DNFT: IDFNT) => {
@@ -73,35 +117,35 @@ const MergeNft = () => {
 		setListDNFT(resultListDNFT);
 	};
 
-	const SelectNft = (
-		event: React.MouseEvent<HTMLElement>,
-		indexSelected: number
-	) => {
-		event.stopPropagation();
-		const ListNftClone = cloneDeep(listDNFT);
-		const NewListDNFT = ListNftClone.map((DFNT: IDFNT, index: number) => {
-			if (indexSelected === index) {
-				return { ...DFNT, isChecked: !DFNT.isChecked };
-			}
-			return { ...DFNT };
-		});
-		setListDNFT(NewListDNFT);
+	const handleShowModal = async () => {
+		if (isEmpty(dNFTSelected)) return;
+		const { rank_level, species } = dNFTSelected as IDFNT;
+		const params = {
+			limit: LIMIT_12,
+			page: page,
+			status: STATUS_LIST_DNFT.NORMAL,
+			rarities: rank_level,
+			species: species,
+		} as IParamsListDFNT;
+
+		const [dataListDNFT] = await getListDFNT(params);
+		if (dataListDNFT) {
+			const listDNFT = get(dataListDNFT, 'data', {});
+			setListDNFTToMerge(listDNFT);
+			setShowModalChooseMetarialToMerge(true);
+		}
 	};
 
-	const handleShowModal = () => {
-		setShowModalChooseMetarialToMerge(true);
-	};
-
-	const handleSelectAll = (event: CheckboxChangeEvent) => {
-		const { checked } = event.target;
-		setSelectAll(checked);
-		const ListNftClone = cloneDeep(listDNFT);
-		const NewListDNFT = ListNftClone.map((DFNT: IDFNT) => {
-			return { ...DFNT, isChecked: checked };
-		});
-		setListDNFT(NewListDNFT);
-		// setShowModalChooseMetarialToMerge(true);
-	};
+	// const handleSelectAll = (event: CheckboxChangeEvent) => {
+	// 	const { checked } = event.target;
+	// 	setSelectAll(checked);
+	// 	const ListNftClone = cloneDeep(listDNFT);
+	// 	const NewListDNFT = ListNftClone.map((DFNT: IDFNT) => {
+	// 		return { ...DFNT, isChecked: checked };
+	// 	});
+	// 	setListDNFT(NewListDNFT);
+	// 	// setShowModalChooseMetarialToMerge(true);
+	// };
 
 	const handleChangePage = (page: number) => {
 		setPage(page);
@@ -131,13 +175,13 @@ const MergeNft = () => {
 				<div className='flex mb-8 items-end justify-between	'>
 					<div>Select the first NFT to merge</div>
 					<div className='flex items-end'>
-						<Checkbox
+						{/* <Checkbox
 							className='checkbox-custom text-white text-base font-normal ml-auto'
 							onChange={handleSelectAll}
 							checked={isSelectAll}
 						>
 							Select All
-						</Checkbox>
+						</Checkbox> */}
 						<div className='flex gap-x-2 ml-auto'>
 							<Dropdown
 								customStyle='!w-[160px] !h-[36px] !rounded-[5px] mr-4 ml-8'
@@ -158,6 +202,7 @@ const MergeNft = () => {
 							onClick={handleShowModal}
 							classCustom='buy-token rounded-[50px] !min-w-20 mt-6 ml-8'
 							label='Choose'
+							// isDisabled={isEmpty(dNFTSelected)}
 						/>
 					</div>
 				</div>
@@ -178,7 +223,7 @@ const MergeNft = () => {
 					isShow={isShowModalChooseMetarialToMerge}
 					onCancel={() => setShowModalChooseMetarialToMerge(false)}
 				>
-					<div className='relative w-[600px] h-[600px]'>
+					{/* <div className='relative w-[600px] h-[600px]'>
 						<Image
 							className='absolute inset-0 w-full h-full z-10'
 							layout='fill'
@@ -197,10 +242,12 @@ const MergeNft = () => {
 							alt='dnft'
 							objectFit='contain'
 						/>
-					</div>
-					{/* <ModalChooseMetarialToMerge
-					onCancel={() => setShowModalChooseMetarialToMerge(false)}
-				/> */}
+					</div> */}
+					<ModalChooseMetarialToMerge
+						onCancel={() => setShowModalChooseMetarialToMerge(false)}
+						listDNFTToMerge={listDNFTToMerge}
+						dNFTSelected={dNFTSelected}
+					/>
 				</ModalCustom>
 			</div>
 		</>

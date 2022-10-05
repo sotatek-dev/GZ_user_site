@@ -15,8 +15,7 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 	return (
 		<div
 			onClick={(event) => SelectNft(event, index)}
-			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative cursor-pointer ${
-				isChecked && 'bg-[#5c62e1]'
+			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative cursor-pointer
 			}`}
 		>
 			<Checkbox

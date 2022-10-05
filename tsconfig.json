@@ -5,7 +5,8 @@
 			"components/*": ["./components/*"],
 			"common/*": ["./modules/common/*"],
 			"web3/*": ["./modules/web3/*"],
-			"wallet/*": ["./modules/wallet/*"]
+			"wallet/*": ["./modules/wallet/*"],
+			"apis/*": ["./apis/*"]
 		},
 		"target": "es5",
 		"lib": ["dom", "dom.iterable", "esnext"],
