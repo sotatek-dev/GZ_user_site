@@ -3,18 +3,28 @@ import { updateMyProfile } from 'apis/my-profile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/my-profile';
+import { AbiKeynft } from 'web3/abis/types';
+import { useContract } from 'web3/contracts/useContract';
+import KeyNftAbi from 'web3/abis/abi-keynft.json';
+import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
+import Image from 'next/image';
+import type { Rule } from 'antd/lib/form';
+import { isValidEmail } from 'common/helpers/email';
+import { useState } from 'react';
 
 export default function PersonalInfo() {
 	const form = Form.useForm()[0];
 	const dispatch = useAppDispatch();
 	const { userInfo } = useAppSelector((state) => state.myProfile);
+	const keynftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
+	const [canSave, setCanSave] = useState(false);
 
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
 			{ email },
 			async () => {
 				message.success('Update profile successfully');
-				dispatch(getMyProfileRD());
+				dispatch(getMyProfileRD(keynftContract));
 			},
 			(err) => {
 				message.error(JSON.stringify(err));
@@ -30,49 +40,70 @@ export default function PersonalInfo() {
 		return null;
 	}
 
+	const onFieldChanged = () => {
+		if (
+			form.isFieldsTouched(['email']) &&
+			!form.getFieldsError(['email']).filter(({ errors }) => errors.length)
+				.length
+		) {
+			setCanSave(true);
+			return;
+		}
+		setCanSave(false);
+	};
+
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>
-			<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
-				<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
-
-				<button
-					onClick={() => {
-						form.submit();
-					}}
-					className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
-				>
-					Save
-				</button>
-			</div>
-
 			<Form
 				name='verify-email'
-				className='mt-[22px]'
 				layout='vertical'
 				onFinish={onFinish}
 				autoComplete='off'
 				initialValues={userInfo}
 				form={form}
+				onFieldsChange={onFieldChanged}
 			>
-				<Form.Item label='My wallet address:' name='wallet_address' rules={[]}>
+				<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
+					<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
+					<Form.Item shouldUpdate className='submit'>
+						<button
+							type='submit'
+							onClick={() => {
+								form.submit();
+							}}
+							className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
+							disabled={!canSave}
+						>
+							Save
+						</button>
+					</Form.Item>
+				</div>
+				<Form.Item
+					label='My wallet address:'
+					name='wallet_address'
+					rules={[]}
+					className='mt-[22px]'
+				>
 					<Input
 						suffix={
 							<button className='px-[10px]'>
-								<img src='/icons/copy.svg' alt='' />
+								<Image src='/icons/copy.svg' width='20' height='20' alt='' />
 							</button>
 						}
 						placeholder='My wallet address'
 						className='custom-input-wrapper'
+						disabled
 					/>
 				</Form.Item>
 				<Form.Item
 					label='Email address:'
 					name='email'
-					rules={
-						[
-							// { required: true, message: 'This field cannot be empty.' },
-						]
-					}
+					rules={[
+						requiredValidate(),
+						{
+							validator: emailValidator,
+						},
+					]}
 				>
 					<Input placeholder='Email address' className='custom-input-wrapper' />
 				</Form.Item>
@@ -85,9 +116,27 @@ export default function PersonalInfo() {
 						]
 					}
 				>
-					<Input placeholder='Number of key' className='custom-input-wrapper' />
+					<Input
+						placeholder='Number of key'
+						className='custom-input-wrapper'
+						disabled
+					/>
 				</Form.Item>
 			</Form>
 		</BoxPool>
 	);
 }
+
+const emailValidator = (_: unknown, value: string) => {
+	if (value && !isValidEmail(value)) {
+		return Promise.reject(
+			new Error('Please enter a correct email, example "abc@mail.com"')
+		);
+	}
+	return Promise.resolve();
+};
+
+export const requiredValidate = (): Rule => ({
+	required: true,
+	message: 'This field cannot be empty.',
+});

@@ -1,33 +1,30 @@
+import { useMemo, useState } from 'react';
+import { get } from 'lodash';
 import dayjs from 'dayjs';
-import { useSelector } from 'react-redux';
+import Image from 'next/image';
 import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
 import CustomRadio from 'common/components/radio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
-import { useMemo, useState } from 'react';
 import { formatConcurrency } from 'common/helpers/number';
 import Token2BuyRadio from '../Token2BuyRadio';
-import { get } from 'lodash';
-import { useBuyDKeyNFT } from './BuyKey.services';
-import { getSignature } from 'modules/my-profile/services';
+import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
+import { useAppSelector } from 'stores';
+import Button from '../Button';
 
 export default function BuyInfo() {
-	const { userInfo } = useSelector(
-		(state: { myProfile: { userInfo: unknown } }) => state.myProfile
+	const { userInfo } = useAppSelector((state) => state.myProfile);
+	const { systemSetting, busd2Bnb } = useAppSelector(
+		(state) => state.systemSetting
 	);
-	const { systemSetting } = useSelector(
-		(state: {
-			systemSetting: {
-				systemSetting: { mint_days: number; key_price: number };
-			};
-		}) => state.systemSetting
-	);
-	const [tokenCode, setTokenCode] = useState('BUSD');
-	useBuyDKeyNFT();
+	const { buyDKeyNFT, isBuyDNFT } = useBuyDKeyNFT();
+	const [tokenCode, setTokenCode] = useState(Token2Buy.BUSD);
 
-	const handleBuyKey = async () => {
-		const signature = await getSignature();
-		console.log({ signature });
+	const handleBuyKey = () => {
+		buyDKeyNFT({
+			keyPrice: systemSetting?.key_price,
+			token2Buy: tokenCode,
+		});
 	};
 
 	const buyState = () => {
@@ -40,7 +37,7 @@ export default function BuyInfo() {
 			return buyStatusConfigs[BuyStatus.Upcomming];
 		}
 
-		if (get(userInfo, 'nft_holding') < 1) {
+		if (get(userInfo, 'nft_holding') < 0) {
 			return buyStatusConfigs[BuyStatus.NFTRequired];
 		}
 		return buyStatusConfigs[BuyStatus.Available];
@@ -73,6 +70,20 @@ export default function BuyInfo() {
 		};
 	}, [systemSetting]);
 
+	const getPrice = () => {
+		if (tokenCode === Token2Buy.BUSD) {
+			return systemSetting?.key_price;
+		}
+
+		return (
+			busd2Bnb &&
+			systemSetting &&
+			busd2Bnb.times(systemSetting.key_price).toNumber()
+		);
+	};
+
+	const price = getPrice();
+
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>
 			<h5 className='text-[18px] font-semibold text-white  pb-[27px]'>
@@ -80,7 +91,7 @@ export default function BuyInfo() {
 			</h5>
 			{buyKeyState && (
 				<div className={buyKeyState.boxStyle}>
-					<img src={buyKeyState.icon} className='mr-[10px]' />
+					<Image src={buyKeyState.icon} width='20' height='20' alt='' />
 					<p className={buyKeyState.messageStyle}>{buyKeyState.message}</p>
 				</div>
 			)}
@@ -95,9 +106,9 @@ export default function BuyInfo() {
 					/>
 				</div>
 
-				{systemSetting && (
+				{price && (
 					<div className='text-[16px] text-[white] font-semibold'>
-						{formatConcurrency(systemSetting.key_price)} {tokenCode}
+						{formatConcurrency(price)} {tokenCode}
 					</div>
 				)}
 			</div>
@@ -106,17 +117,14 @@ export default function BuyInfo() {
 				boxStyle='!bg-[#8080801a] !text-[white]'
 				titleStyle='!font-normal !text-[#ffffff80]'
 				customClass='mt-[20px] '
-				title={inTimeBuyKey ? 'You can not buy key in' : 'You can buy key in'}
+				title={inTimeBuyKey ? 'You can buy key in' : 'You can not buy key in'}
 				millisecondsRemain={secondsRemain}
 			/>
 
 			{get(buyKeyState, 'canBuy') && inTimeBuyKey && (
-				<button
-					onClick={handleBuyKey}
-					className={`w-[100%] rounded-[40px] h-fit font-semibold !py-[9px] mt-[36px] btn-gradient`}
-				>
+				<Button loading={isBuyDNFT} onClick={handleBuyKey} className={``}>
 					Buy
-				</button>
+				</Button>
 			)}
 		</BoxPool>
 	);

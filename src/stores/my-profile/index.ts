@@ -7,7 +7,9 @@ import {
 import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/my-profile';
 import { get } from 'lodash';
 import { IDNFT } from 'modules/my-profile/interfaces';
-import { setSystemSettings } from 'stores/system-setting';
+import { getBnb2BusdRate } from 'modules/my-profile/services';
+import { setSystemSettings, setBusd2BnbRate } from 'stores/system-setting';
+import { AbiKeynft } from 'web3/abis/types';
 
 let customStore: Store | undefined;
 
@@ -142,11 +144,18 @@ export const getMyClaimableDNFTsCountRD = createAsyncThunk(
 
 export const getMyProfileRD = createAsyncThunk(
 	'profile/getMyProfile',
-	async (_, { rejectWithValue, dispatch }) => {
+	async (keyNftContract: AbiKeynft | null, { rejectWithValue, dispatch }) => {
 		try {
-			const response = await getMyProfile();
-			const data = get(response, 'data.data', {});
+			const [profile, rate] = await Promise.all([
+				getMyProfile(),
+				getBnb2BusdRate(keyNftContract),
+			]);
+			// eslint-disable-next-line no-debugger
+			console.log({ profile, rate });
+
+			const data = get(profile, 'data.data', {});
 			dispatch(setSystemSettings(data.system_setting));
+			dispatch(setBusd2BnbRate(rate ?? undefined));
 			return data;
 		} catch (error: any) {
 			return rejectWithValue(error);

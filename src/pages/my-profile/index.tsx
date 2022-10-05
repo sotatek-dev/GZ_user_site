@@ -25,9 +25,6 @@ import { ROUTES } from 'common/constants/constants';
 import BuyInfo from 'modules/my-profile/components/BuyInfo';
 import MyDNFT from 'modules/my-profile/components/MyDNFT';
 import PersonalInfo from 'modules/my-profile/components/PersonalInfo';
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from 'stores';
-import { getMyProfileRD } from 'stores/my-profile';
 
 // import { selectList } from 'pages/token-presale-rounds/detail/[index]';
 // import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
@@ -617,15 +614,6 @@ import { getMyProfileRD } from 'stores/my-profile';
 // export default MyProfile;
 
 export default function MyProfile() {
-	const { isLogin } = useAppSelector((state) => state.user);
-	const dispatch = useAppDispatch();
-
-	useEffect(() => {
-		if (isLogin) {
-			dispatch(getMyProfileRD());
-		}
-	}, [isLogin, dispatch]);
-
 	return (
 		<>
 			<HelmetCommon

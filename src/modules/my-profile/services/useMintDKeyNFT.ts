@@ -3,17 +3,26 @@ import { useContract } from 'web3/contracts/useContract';
 import KeyNFTABI from 'web3/abis/abi-keynft.json';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
-import { Token2Buy } from './BuyInfo.constants';
+import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
+import { useAppSelector } from 'stores';
 
-export const useBuyDKeyNFT = () => {
+export const useMintDKeyNFT = () => {
 	const { account } = useActiveWeb3React();
 	const keyNFTContract = useContract<AbiKeynft>(KeyNFTABI, NEXT_PUBLIC_KEYNFT);
 	const { tryApproval, allowanceAmount } = useApprovalBusd(
 		NEXT_PUBLIC_BUSD,
 		NEXT_PUBLIC_KEYNFT
 	);
+	const { systemSetting, busd2Bnb } = useAppSelector(
+		(state) => state.systemSetting
+	);
 
-	const buyDKeyNFT = async ({
+	const bnbPrice =
+		busd2Bnb &&
+		systemSetting &&
+		busd2Bnb.times(systemSetting.key_price).times(1e18).toString();
+
+	const mintDKeyNFT = async ({
 		keyPrice,
 		token2Buy,
 		signature,
@@ -34,7 +43,7 @@ export const useBuyDKeyNFT = () => {
 			tx = await bnbBuy(signature);
 		}
 
-		if (!tx) return;
+		return tx;
 
 		// window.open(`${bscscanUrl}/tx/${tx.transactionHash}`, '_blank');
 	};
@@ -47,9 +56,11 @@ export const useBuyDKeyNFT = () => {
 
 	const bnbBuy = async (signature: string) => {
 		if (!keyNFTContract || !account) return;
-		const tx = await keyNFTContract.buyUsingBNB(account, signature);
+		const tx = await keyNFTContract.buyUsingBNB(account, signature, {
+			value: bnbPrice,
+		});
 		return await tx.wait();
 	};
 
-	return { buyDKeyNFT };
+	return { mintDKeyNFT };
 };

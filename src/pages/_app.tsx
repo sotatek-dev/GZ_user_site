@@ -14,6 +14,7 @@ import store from 'stores';
 import { AuthProvider } from 'web3/contexts/authContext';
 import HeadCommon from 'common/components/head';
 import { HelmetProvider } from 'react-helmet-async';
+import BigNumber from 'bignumber.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
@@ -23,6 +24,12 @@ function getLibrary(provider: any) {
 	return library;
 }
 const queryClient = new QueryClient();
+
+BigNumber.config({
+	ROUNDING_MODE: BigNumber.ROUND_DOWN,
+	EXPONENTIAL_AT: [-50, 50],
+});
+
 function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 	return (
 		<>

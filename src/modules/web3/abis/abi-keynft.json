@@ -357,14 +357,20 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{ "internalType": "address", "name": "_buyer", "type": "address" },
+			{ "internalType": "bytes", "name": "_signature", "type": "bytes" }
+		],
 		"name": "buyUsingBNB",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{ "internalType": "address", "name": "_buyer", "type": "address" },
+			{ "internalType": "bytes", "name": "_signature", "type": "bytes" }
+		],
 		"name": "buyUsingBUSD",
 		"outputs": [],
 		"stateMutability": "nonpayable",
