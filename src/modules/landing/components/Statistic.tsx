@@ -113,7 +113,7 @@ function StatisticBox({
 					alt={icon}
 				/>
 			</div>
-			<h1 className={styles['statistic-box_value']}>{numberWithDot(value)}</h1>
+			<h1 className={styles['statistic-box_value']}>{value}</h1>
 			<h2 className={styles['statistic-box_label']}>{label}</h2>
 			<img src={icon} className='w-[4.5rem] h-[4.5rem]' alt={icon} />
 			<p className={styles['statistic-box_value']}>
