@@ -128,36 +128,38 @@ const MergeNft = () => {
 				href={ROUTES.MERGE_NFT}
 			/>
 			<div className='flex flex-col'>
-				<div className='flex mb-8 items-end'>
-					<div>Select the first NFT to merge: </div>
-					<Checkbox
-						className='checkbox-custom text-white text-base font-normal ml-auto'
-						onChange={handleSelectAll}
-						checked={isSelectAll}
-					>
-						Select All
-					</Checkbox>
-					<div className='flex gap-x-2 ml-auto'>
-						<Dropdown
-							customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
-							label={rarity}
-							title='Rarity'
-							list={SPECIES_DNFT}
-							onClick={handleChangeRarity}
-						/>
-						<Dropdown
-							customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
-							label={species}
-							title='Species'
-							list={RARITY_DNFT}
-							onClick={handleChangeSpecies}
+				<div className='flex mb-8 items-end justify-between	'>
+					<div>Select the first NFT to merge</div>
+					<div className='flex items-end'>
+						<Checkbox
+							className='checkbox-custom text-white text-base font-normal ml-auto'
+							onChange={handleSelectAll}
+							checked={isSelectAll}
+						>
+							Select All
+						</Checkbox>
+						<div className='flex gap-x-2 ml-auto'>
+							<Dropdown
+								customStyle='!w-[160px] !h-[36px] !rounded-[5px] mr-4 ml-8'
+								label={rarity}
+								title='Rarity'
+								list={SPECIES_DNFT}
+								onClick={handleChangeRarity}
+							/>
+							<Dropdown
+								customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
+								label={species}
+								title='Species'
+								list={RARITY_DNFT}
+								onClick={handleChangeSpecies}
+							/>
+						</div>
+						<Button
+							onClick={handleShowModal}
+							classCustom='buy-token rounded-[50px] !min-w-20 mt-6 ml-8'
+							label='Choose'
 						/>
 					</div>
-					<Button
-						onClick={handleShowModal}
-						classCustom='buy-token rounded-[50px] !min-w-20 mt-6 ml-8'
-						label='Choose'
-					/>
 				</div>
 				<ListCard
 					list={listDNFT}

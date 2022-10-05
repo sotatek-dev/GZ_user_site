@@ -19,7 +19,7 @@ export interface ITokenSaleRoundState {
 		start_time: number;
 		end_time: number;
 	};
-	claim_configs: Array<object>;
+	claim_configs: Array<{ [key: string]: string | number }>;
 	created_at: Date;
 	current_status_timeline: string;
 	description: string;
@@ -97,11 +97,13 @@ const TokenPresaleRound = () => {
 					'buy_time',
 					buyTimeDefault
 				);
+				const { claim_configs } = record;
 				const { status } = convertTimeLine(
-					start_time,
-					end_time,
+					Number(start_time),
+					Number(end_time),
 					timestampNow,
-					currentStatusTimeline
+					currentStatusTimeline,
+					claim_configs
 				);
 				return <div>{status}</div>;
 			},
@@ -155,14 +157,16 @@ const TokenPresaleRound = () => {
 									buy_time,
 									exchange_rate: exchangeRate,
 									_id,
+									claim_configs,
 								} = item;
 								const timestampNow = moment().unix();
 								const { start_time, end_time } = buy_time;
 								const { status } = convertTimeLine(
-									start_time,
-									end_time,
+									Number(start_time),
+									Number(end_time),
 									timestampNow,
-									currentStatusTimeline
+									currentStatusTimeline,
+									claim_configs
 								);
 
 								return (

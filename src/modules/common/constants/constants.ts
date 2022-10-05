@@ -62,6 +62,16 @@ export enum STATUS_LIST_DNFT {
 	NORMAL = 'normal',
 }
 
+export enum SALE_ROUND_CURRENT_STATUS {
+	UPCOMING = 'upcoming',
+	BUY = 'buy',
+	CLAIMABLE = 'claimable',
+	CLAIMABLE_UPCOMING = 'claimable_upcoming',
+	INACTIVE = 'inactive',
+	END = 'end',
+	UNKNOWN = 'unknown',
+}
+
 export const SPECIES_DNFT: Array<{ [key: string]: string }> = [
 	{ key: 'Adelio', label: 'Adelio' },
 	{ key: 'Kinga', label: 'Kinga' },
