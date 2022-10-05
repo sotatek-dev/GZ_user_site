@@ -165,7 +165,7 @@ const RescueDNFT = () => {
 				</div>
 
 				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
-					<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
+					<h1 className='text-h3 font-semibold mb-4'>Mint dNFT</h1>
 
 					{/* divider*/}
 					<hr className={'border border-white/[.07] mb-4'} />
@@ -217,15 +217,15 @@ const RescueDNFT = () => {
 					{/* divider*/}
 					<hr className={'border border-white/[.07] mb-4'} />
 
-					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
+					<h1 className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
-					</div>
+					</h1>
 					<div className='flex flex-col justify-start desktop:flex-row gap-6 mb-5 font-medium text-h8 h-fit'>
 						<div className='flex justify-between items-center desktop:w-[50%]'>
-							<div className='flex items-center'>
+							<h2 className='flex items-center'>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Current NFTs can be rescued
-							</div>
+							</h2>
 							<div>{new BigNumber(600).toFixed(DECIMAL_PLACED)}</div>
 						</div>
 					</div>
@@ -251,11 +251,11 @@ const RescueDNFT = () => {
 								'flex flex-col text-center desktop:text-start text-h8 mt-4 gap-2'
 							}
 						>
-							<div>Notice: to mint this dNFT requires 5,000 GXZ Token</div>
-							<div>
+							<h2>Notice: to mint this dNFT requires 5,000 GXZ Token</h2>
+							<h2>
 								User can use 1 key to rescue 1 dNFT. Rescue chances will be
 								reset after 30 days
-							</div>
+							</h2>
 						</div>
 					</div>
 				</div>

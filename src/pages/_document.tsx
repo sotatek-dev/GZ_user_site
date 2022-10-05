@@ -13,7 +13,13 @@ export default class AppDocument extends Document {
 	render() {
 		return (
 			<Html lang='en'>
-				<Head></Head>
+				<Head>
+					<link rel='icon' type='image/x-icon' href='/favicon.ico' />
+					<link
+						rel='canonicalize'
+						href='https://galactix-zone-staging.netlify.app/'
+					/>
+				</Head>
 				<body>
 					<Main />
 					<NextScript />

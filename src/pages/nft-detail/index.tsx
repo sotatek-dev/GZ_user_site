@@ -101,7 +101,7 @@ const NFTDetail = () => {
 					</div>
 				</div>
 				<div className={styles['nft-material']}>
-					<div className={styles['nft-material_title']}>Material</div>
+					<h1 className={styles['nft-material_title']}>Material</h1>
 					<ScrollContainer
 						className={styles['nft-material_carousel']}
 						horizontal

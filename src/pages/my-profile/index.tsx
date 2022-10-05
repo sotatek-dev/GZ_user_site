@@ -93,9 +93,9 @@ const MyProfile = () => {
 				>
 					<BoxPool customClass={'desktop:w-[50%]'}>
 						<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
-							<h5 className={`text-[18px] font-semibold text-white`}>
+							<h1 className={`text-[18px] font-semibold text-white`}>
 								My profile
-							</h5>
+							</h1>
 
 							<button className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px]'>
 								Save
@@ -162,9 +162,9 @@ const MyProfile = () => {
 						</Form>
 					</BoxPool>
 					<BoxPool customClass={'desktop:w-[50%]'}>
-						<h5 className={`text-[18px] font-semibold text-white  pb-[27px] `}>
+						<h1 className={`text-[18px] font-semibold text-white  pb-[27px] `}>
 							Buy Info
-						</h5>
+						</h1>
 						{canBuyKey ? (
 							<div className='flex items-center rounded-[5px] bg-[#00d26133] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]'>
 								<div className='mr-[10px]'>
@@ -176,9 +176,9 @@ const MyProfile = () => {
 										objectFit='contain'
 									/>
 								</div>
-								<p className='text-[#00D261] mb-[2.5px] text-[14px]'>
+								<h2 className='text-[#00D261] mb-[2.5px] text-[14px]'>
 									Great, You are eligible to buy this key
-								</p>
+								</h2>
 							</div>
 						) : (
 							<div className='flex items-center rounded-[5px] bg-[#f0272733] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]'>
@@ -229,7 +229,7 @@ const MyProfile = () => {
 				<div>
 					<BoxPool>
 						<div className={'flex justify-between items-start mb-3'}>
-							<h5 className={`text-h6 font-semibold text-white`}>My dNFT</h5>
+							<h1 className={`text-h6 font-semibold text-white`}>My dNFT</h1>
 							<button
 								className={
 									'desktop:hidden text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
