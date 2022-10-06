@@ -1,0 +1,46 @@
+<IfModule mod_rewrite.c>
+DirectoryIndex disabled
+RewriteEngine On
+RewriteBase /
+RewriteRule ^$ https://galactix-zone-staging.netlify.app/ [P,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ https://galactix-zone-staging.netlify.app/$1 [P,L]
+RewriteCond %{HTTP_HOST} ^www\.galactix-zone-staging\.netlify.app$
+RewriteRule ^/?$ "http\:\/\/galactix-zone-staging\.netlify.app\/" [R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.*)$ $1.html
+# landing
+RewriteCond %{REQUEST_URI} .*landing*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.landing\]\])
+RewriteRule (.*) /landing/[[...landing]].html?p=$1 [L]
+# merge-nft
+RewriteCond %{REQUEST_URI} .*merge-nft*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.merge-nft\]\])
+RewriteRule (.*) /merge-nft/[[...merge-nft]].html?p=$1 [L]
+# mint-dnft
+RewriteCond %{REQUEST_URI} .*mint-dnft*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.mint-dnft\]\])
+RewriteRule (.*) /mint-dnft/[[...mint-dnft]].html?p=$1 [L]
+# my-profile
+RewriteCond %{REQUEST_URI} .*my-profile*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.my-profile\]\])
+RewriteRule (.*) /my-profile/[[...my-profile]].html?p=$1 [L]
+# nft-detail
+RewriteCond %{REQUEST_URI} .*nft-detail*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.nft-detail\]\])
+RewriteRule (.*) /nft-detail/[[...nft-detail]].html?p=$1 [L]
+# rescue-nft
+RewriteCond %{REQUEST_URI} .*rescue-nft*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.rescue-nft\]\])
+RewriteRule (.*) /rescue-nft/[[...rescue-nft]].html?p=$1 [L]
+# token-presale-rounds
+RewriteCond %{REQUEST_URI} .*token-presale-rounds*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.token-presale-rounds\]\])
+RewriteRule (.*) /token-presale-rounds/[[...token-presale-rounds]].html?p=$1 [L]
+# token-presale-rounds-detail
+RewriteCond %{REQUEST_URI} .*token-presale-rounds-detail*.
+RewriteCond %{REQUEST_URI} !(\[\[\.\.\.token-presale-rounds-detail\]\])
+RewriteRule (.*) /token-presale-rounds-detail/[[...token-presale-rounds-detail]].html?p=$1 [L]
+</IfModule>

@@ -8,9 +8,9 @@ import {
 	SPECIES_DNFT,
 } from 'common/constants/constants';
 import dayjs from 'dayjs';
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep, get, includes } from 'lodash';
 import { DNFTStatusMap } from 'modules/my-profile/components/MyDNFT/MyDNFT.constant';
-import Link from 'next/link';
+import myProfileConstants from 'modules/my-profile/constant';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -68,7 +68,9 @@ export default function MyDNFT() {
 
 		return dnfts.data.map((item) => {
 			const cloneItem = cloneDeep(item);
-			const canClaim = canClaimTime && cloneItem.status === 'claimable';
+			const canClaim =
+				!canClaimTime &&
+				['claimable', 'wait-to-claim'].includes(cloneItem.status);
 
 			if (canClaim) {
 				cloneItem.species = 'TBA';
@@ -78,7 +80,6 @@ export default function MyDNFT() {
 			return {
 				...cloneItem,
 				claimable_date: dayjs.unix(claimableTime).format('DD-MMM-YYYY HH:mm'),
-				canClaim,
 				onClick: () => {
 					if (cloneItem.status === 'claimable') {
 						handleClaim();
@@ -93,7 +94,7 @@ export default function MyDNFT() {
 	const handleUnmerge = async () => {
 		if (!allowanceAmount) {
 			await tryApproval(true).catch(() => {
-				message.error('Transaction Rejected');
+				message.error(myProfileConstants.TRANSACTION_REJECTED);
 			});
 		}
 		// await dnftContract?.unmerge();
@@ -116,14 +117,14 @@ export default function MyDNFT() {
 					return res.wait();
 				})
 				.then(() => {
-					message.success('Transaction Completed');
+					message.success(myProfileConstants.TRANSACTION_COMPLETED);
 					handleGetDNFTs();
 				})
 				.catch((err) => {
 					if (err.code === 'ACTION_REJECTED') {
-						message.error('Transaction Rejected');
+						message.error(myProfileConstants.TRANSACTION_REJECTED);
 					} else {
-						message.error('Network Error!');
+						message.error(myProfileConstants.NETWORK_ERROR);
 					}
 				});
 		}
@@ -137,14 +138,14 @@ export default function MyDNFT() {
 					return res.wait();
 				})
 				.then(() => {
-					message.success('Transaction Completed');
+					message.success(myProfileConstants.TRANSACTION_COMPLETED);
 					handleGetDNFTs();
 				})
 				.catch((err) => {
 					if (err.code === 'ACTION_REJECTED') {
-						message.error('Transaction Rejected');
+						message.error(myProfileConstants.TRANSACTION_REJECTED);
 					} else {
-						message.error('Network Error!');
+						message.error(myProfileConstants.NETWORK_ERROR);
 					}
 				});
 		}
@@ -222,7 +223,9 @@ export default function MyDNFT() {
 					onRow={(record) => {
 						return {
 							onClick: () => {
-								router.push(`/dnft-detail/${record._id}`);
+								if (includes(['normal', 'wait-to-merge'], record.status)) {
+									router.push(`/dnft-detail/${record.token_id}`);
+								}
 							},
 						};
 					}}
@@ -234,46 +237,52 @@ export default function MyDNFT() {
 					{mutantDNFTs.map((value, item) => {
 						const statusMap = get(DNFTStatusMap, value.status);
 						return (
-							<Link href={`/dnft-detail/${value._id}`} key={value._id}>
-								<div className={'flex flex-col gap-6 mb-6'} key={item}>
-									<hr className={'border-t border-white/[0.07]'} />
-									<button
-										disabled={get(statusMap, 'disabled')}
-										onClick={(e) => {
-											e.stopPropagation();
-											value.onClick();
-										}}
-										className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
-									>
-										{get(statusMap, `title`)}
-									</button>
+							<div
+								className={'flex flex-col gap-6 mb-6'}
+								key={item}
+								onClick={() => {
+									if (includes(['normal', 'wait-to-merge'], value.status)) {
+										router.push(`/dnft-detail/${value.token_id}`);
+									}
+								}}
+							>
+								<hr className={'border-t border-white/[0.07]'} />
+								<button
+									disabled={get(statusMap, 'disabled')}
+									onClick={(e) => {
+										e.stopPropagation();
+										value.onClick();
+									}}
+									className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
+								>
+									{get(statusMap, `title`)}
+								</button>
 
-									<div className={'flex justify-between items-center'}>
-										<div className={'text-h8 text-blue-20 font-medium'}>
-											Species
-										</div>
-										<div className={'text-h8 text-white font-bold'}>
-											{value.species}
-										</div>
+								<div className={'flex justify-between items-center'}>
+									<div className={'text-h8 text-blue-20 font-medium'}>
+										Species
 									</div>
-									<div className={'flex justify-between items-center'}>
-										<div className={'text-h8 text-blue-20 font-medium'}>
-											Rarity
-										</div>
-										<div className={'text-h8 text-white font-bold'}>
-											{value.rank_level}
-										</div>
-									</div>
-									<div className={'flex justify-between items-center'}>
-										<div className={'text-h8 text-blue-20 font-medium'}>
-											Claimable data
-										</div>
-										<div className={'text-h8 text-white font-bold'}>
-											{value.claimable_date}
-										</div>
+									<div className={'text-h8 text-white font-bold'}>
+										{value.species}
 									</div>
 								</div>
-							</Link>
+								<div className={'flex justify-between items-center'}>
+									<div className={'text-h8 text-blue-20 font-medium'}>
+										Rarity
+									</div>
+									<div className={'text-h8 text-white font-bold'}>
+										{value.rank_level}
+									</div>
+								</div>
+								<div className={'flex justify-between items-center'}>
+									<div className={'text-h8 text-blue-20 font-medium'}>
+										Claimable data
+									</div>
+									<div className={'text-h8 text-white font-bold'}>
+										{value.claimable_date}
+									</div>
+								</div>
+							</div>
 						);
 					})}
 				</div>

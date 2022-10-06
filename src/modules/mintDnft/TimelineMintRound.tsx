@@ -11,6 +11,8 @@ interface ITimelineMintRoundProps {
 const TimelineMintRound: FC<ITimelineMintRoundProps> = ({
 	timelineMintNft,
 }) => {
+	const dateFormat = 'HH:mm - MM/DD/YYYY';
+
 	const renderIcon = (status: string) => {
 		if (status === MINT_PHASE_STATUS.DONE) {
 			return (
@@ -73,14 +75,14 @@ const TimelineMintRound: FC<ITimelineMintRoundProps> = ({
 											Start from:{' '}
 											{convertMiliSecondTimestampToDate(
 												startMintTime,
-												'hh:mm - MM/DD/YYYY'
+												dateFormat
 											)}
 										</div>
 										<div>
 											End in:{' '}
 											{convertMiliSecondTimestampToDate(
 												endMintTime,
-												'hh:mm - MM/DD/YYYY'
+												dateFormat
 											)}
 										</div>
 									</div>
@@ -129,14 +131,14 @@ const TimelineMintRound: FC<ITimelineMintRoundProps> = ({
 												Start from:{' '}
 												{convertMiliSecondTimestampToDate(
 													startMintTime,
-													'HH:mm - MM/DD/YYYY'
+													dateFormat
 												)}
 											</div>
 											<div>
 												End in:{' '}
 												{convertMiliSecondTimestampToDate(
 													endMintTime,
-													'HH:mm - MM/DD/YYYY'
+													dateFormat
 												)}
 											</div>
 										</div>

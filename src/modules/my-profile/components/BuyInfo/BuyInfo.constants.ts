@@ -1,3 +1,5 @@
+import myProfileConstants from 'modules/my-profile/constant';
+
 export enum BuyStatus {
 	Unavailable,
 	Upcomming,
@@ -18,7 +20,7 @@ export const buyStatusConfigs: {
 } = {
 	[BuyStatus.Unavailable]: null,
 	[BuyStatus.Upcomming]: {
-		message: 'Key can be mint when the dNFT sale round start',
+		message: myProfileConstants.BUYINFO_MESSAGE_UPCOMMING,
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[5px] bg-[#f0272733] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]',
@@ -26,7 +28,7 @@ export const buyStatusConfigs: {
 		canBuy: false,
 	},
 	[BuyStatus.NFTRequired]: {
-		message: 'You are not elegible to buy this key',
+		message: myProfileConstants.BUYINFO_MESSAGE_NFT_REQUIRED,
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[0.3125rem] bg-[#f0272733] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
@@ -34,7 +36,7 @@ export const buyStatusConfigs: {
 		canBuy: false,
 	},
 	[BuyStatus.Available]: {
-		message: 'Great! You are eligible to buy the key',
+		message: myProfileConstants.BUYINFO_MESSAGE_AVAILABLE,
 		icon: '/icons/check-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[0.3125rem] bg-[#00d26133] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',

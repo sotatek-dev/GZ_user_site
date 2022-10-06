@@ -13,6 +13,7 @@ const nextConfig = {
 		// disableStaticImages: true,
 		// unoptimized: true,
 		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+		domains: ['172.16.1.217'],
 	},
 };
 

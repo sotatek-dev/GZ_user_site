@@ -9,7 +9,7 @@ export const ROUTES = {
 	MERGE_NFT: '/merge-nft',
 	RESCUE_NFT: '/rescue-nft',
 	LANDING: '/landing',
-	NFT_DETAIL: '/nft-detail',
+	NFT_DETAIL: '/dnft-detail',
 };
 
 export enum STEP_MODAL_CONNECTWALLET {

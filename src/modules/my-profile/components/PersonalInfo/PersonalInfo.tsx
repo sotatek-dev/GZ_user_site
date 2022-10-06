@@ -11,6 +11,7 @@ import Image from 'next/image';
 import type { Rule } from 'antd/lib/form';
 import { isValidEmail } from 'common/helpers/email';
 import { useEffect, useState } from 'react';
+import myProfileConstants from 'modules/my-profile/constant';
 
 export default function PersonalInfo() {
 	const form = Form.useForm()[0];
@@ -137,14 +138,12 @@ export default function PersonalInfo() {
 
 const emailValidator = (_: unknown, value: string) => {
 	if (value && !isValidEmail(value)) {
-		return Promise.reject(
-			new Error('Please enter a correct email, example "abc@mail.com"')
-		);
+		return Promise.reject(new Error(myProfileConstants.INVALID_EMAIL));
 	}
 	return Promise.resolve();
 };
 
 export const requiredValidate = (): Rule => ({
 	required: true,
-	message: 'This field cannot be empty.',
+	message: myProfileConstants.EMPTY_FIELD,
 });
