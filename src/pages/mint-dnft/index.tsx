@@ -273,7 +273,7 @@ const MintDNFT: React.FC = () => {
 						{ value: amount }
 					);
 				}
-				res?.wait();
+				await res?.wait();
 				const hash: string = res ? res.hash : '';
 				if (hash) {
 					message.success(<MintSuccessToast txHash={hash} />);
@@ -307,8 +307,6 @@ const MintDNFT: React.FC = () => {
 		ReactGa.pageview(router?.pathname || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	console.log('isWhitelisted', isWhitelisted);
 
 	return (
 		<>
