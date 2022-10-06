@@ -1,6 +1,7 @@
 import { Input } from 'antd';
 import CustomDropdown from 'common/components/dropdown/custom-dropdown';
 import HelmetCommon from 'common/components/helmet';
+import Loading from 'common/components/loading';
 import { ROUTES } from 'common/constants/constants';
 import { get, map, toString } from 'lodash';
 import Image from 'next/image';
@@ -51,7 +52,7 @@ const NFTDetail = () => {
 			/>
 
 			{dnftDetail.loading || !dnftDetail.dnftDetail ? (
-				<div>Loading...</div>
+				<Loading />
 			) : (
 				<div>
 					<label className={styles['switch']}>
