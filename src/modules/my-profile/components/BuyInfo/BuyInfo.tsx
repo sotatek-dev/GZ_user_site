@@ -6,7 +6,7 @@ import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
 import CustomRadio from 'common/components/radio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
-import { formatConcurrency } from 'common/helpers/number';
+import { formatCurrency } from 'common/helpers/number';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppSelector } from 'stores';
@@ -109,7 +109,7 @@ export default function BuyInfo() {
 
 				{price && (
 					<div className='text-[16px] text-[white] font-semibold'>
-						{formatConcurrency(price)} {tokenCode}
+						{formatCurrency(price)} {tokenCode}
 					</div>
 				)}
 			</div>
