@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { toString } from 'lodash';
 
 const BILLION = 1000000000;
@@ -7,15 +8,18 @@ export function numberWithSymbol(num: number, symbol: string) {
 }
 
 export function formatCurrency(num: number): string {
-	const [convert, number] = toString(num).split('.');
+	const [convert] = toString(num).split('.');
 	if (Math.floor(+convert / BILLION) > 0) {
 		return `${Math.floor(+convert / BILLION)}B`;
 	}
 	if (Math.floor(+convert / MILLION) > 0) {
 		return `${Math.floor(+convert / MILLION)}M`;
 	}
-	if (+number) {
-		return `${numberWithSymbol(+convert, ',')}.${number}`;
-	}
-	return numberWithSymbol(+convert, ',');
+
+	return formatBigNumber(num, 4);
+}
+
+export function formatBigNumber(value: BigNumber.Value, decimals = 2) {
+	BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_DOWN });
+	return new BigNumber(value).decimalPlaces(decimals).toFormat();
 }
