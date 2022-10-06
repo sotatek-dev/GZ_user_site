@@ -289,10 +289,12 @@ const MintDNFT: React.FC = () => {
 
 	const getMessage = () => {
 		if (isConnectWallet && haveEnoughGXZBalance) {
-			if (isRoyalty()) {
+			if (haveEnoughBalance()) {
+				return "You don't have enough BNB/BUSD";
+			} else if (isRoyalty()) {
 				return 'You are eligible to mint this dNFT';
 			} else {
-				return "You don't have enough BUSD for royalty if";
+				return "You don't have enough BUSD for royalty";
 			}
 		} else {
 			return 'You are not eligible to mint this dNFT';
