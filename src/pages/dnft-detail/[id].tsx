@@ -1,19 +1,18 @@
 import { Input } from 'antd';
 import CustomDropdown from 'common/components/dropdown/custom-dropdown';
-import { get, map, range, toString } from 'lodash';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import styles from './nft-detail.module.scss';
-import ScrollContainer from 'react-indiana-drag-scroll';
-import { ROUTES } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
+import { ROUTES } from 'common/constants/constants';
+import { get, map, toString } from 'lodash';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import ReactGa from 'react-ga';
+import ScrollContainer from 'react-indiana-drag-scroll';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getDNFTDetailRD } from 'stores/dnft/dnft-detail';
+import styles from './nft-detail.module.scss';
 const NFTDetail = () => {
 	const [tab, setTab] = useState(false);
-	const materialItems = range(0, 10);
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const dnftDetail = useAppSelector((state) => state.dnftDetail);
@@ -186,7 +185,7 @@ const NFTDetail = () => {
 											disabled
 											label='Nature Power #1'
 											list={[]}
-											value={getProperty('naturePower1')}
+											value={getProperty('naturePower')}
 										/>
 										<CustomDropdown
 											disabled
@@ -240,26 +239,31 @@ const NFTDetail = () => {
 					</div>
 					<div className={styles['nft-material']}>
 						<div className={styles['nft-material_title']}>Material</div>
-						<ScrollContainer
-							className={styles['nft-material_carousel']}
-							horizontal
-						>
-							{map(materialItems, (item, index) => (
-								<div
-									className={styles['nft-material_carousel_item']}
-									key={index}
-								>
-									<Image
-										src='/images/ntf-example.svg'
-										alt=''
-										width='100%'
-										height='100%'
-										layout='fill'
-										objectFit='contain'
-									/>
-								</div>
-							))}
-						</ScrollContainer>
+						{dnftDetail && (
+							<ScrollContainer
+								className={styles['nft-material_carousel']}
+								horizontal
+							>
+								{map(dnftDetail.relatedDNFTs, (item, index) => (
+									<div
+										className={styles['nft-material_carousel_item']}
+										key={index}
+										onClick={() => {
+											router.replace(`/dnft-detail/${item.token_id}`);
+										}}
+									>
+										<Image
+											src={get(item, 'metadata.image')}
+											alt=''
+											width='100%'
+											height='100%'
+											layout='fill'
+											objectFit='contain'
+										/>
+									</div>
+								))}
+							</ScrollContainer>
+						)}
 					</div>
 				</div>
 			)}

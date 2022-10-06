@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getDNFTDetail } from 'apis/dnft';
-import { get } from 'lodash';
+import { getMyDNFTs } from 'apis/my-profile';
+import { filter, get } from 'lodash';
 import { IDNFT } from 'modules/my-profile/interfaces';
 
 interface initialStateProps {
 	dnftDetail?: IDNFT;
 	loading: boolean;
 	errMessage?: string;
+	relatedDNFTs?: IDNFT[];
 }
 
 const initialState: initialStateProps = {
@@ -19,7 +21,8 @@ const dnftDetailStore = createSlice({
 	reducers: {},
 	extraReducers(builder) {
 		builder.addCase(getDNFTDetailRD.fulfilled, (state, action) => {
-			state.dnftDetail = action.payload;
+			state.dnftDetail = action.payload.nftDetail;
+			state.relatedDNFTs = action.payload.relatedDNFTs;
 			state.loading = false;
 		});
 
@@ -40,7 +43,22 @@ export const getDNFTDetailRD = createAsyncThunk(
 		try {
 			const res = await getDNFTDetail(tokenId);
 			const data = get(res, 'data.data', []);
-			return data;
+			const resRelateDNFTs = await getMyDNFTs({
+				limit: 10,
+				page: 1,
+				species: data.species,
+				rarities: data.rank_level,
+			});
+
+			const relatedDNFTs = filter(
+				get(resRelateDNFTs, 'data.data.list', []),
+				(item) => item.token_id !== tokenId
+			);
+
+			return {
+				relatedDNFTs,
+				nftDetail: data,
+			};
 		} catch (err) {
 			return rejectWithValue(err);
 		}
