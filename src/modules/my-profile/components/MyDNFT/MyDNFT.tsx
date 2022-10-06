@@ -10,6 +10,7 @@ import {
 import dayjs from 'dayjs';
 import { cloneDeep, get } from 'lodash';
 import { DNFTStatusMap } from 'modules/my-profile/components/MyDNFT/MyDNFT.constant';
+import myProfileConstants from 'modules/my-profile/constant';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -93,7 +94,7 @@ export default function MyDNFT() {
 	const handleUnmerge = async () => {
 		if (!allowanceAmount) {
 			await tryApproval(true).catch(() => {
-				message.error('Transaction Rejected');
+				message.error(myProfileConstants.TRANSACTION_REJECTED);
 			});
 		}
 		// await dnftContract?.unmerge();
@@ -116,14 +117,14 @@ export default function MyDNFT() {
 					return res.wait();
 				})
 				.then(() => {
-					message.success('Transaction Completed');
+					message.success(myProfileConstants.TRANSACTION_COMPLETED);
 					handleGetDNFTs();
 				})
 				.catch((err) => {
 					if (err.code === 'ACTION_REJECTED') {
-						message.error('Transaction Rejected');
+						message.error(myProfileConstants.TRANSACTION_REJECTED);
 					} else {
-						message.error('Network Error!');
+						message.error(myProfileConstants.NETWORK_ERROR);
 					}
 				});
 		}
@@ -137,14 +138,14 @@ export default function MyDNFT() {
 					return res.wait();
 				})
 				.then(() => {
-					message.success('Transaction Completed');
+					message.success(myProfileConstants.TRANSACTION_COMPLETED);
 					handleGetDNFTs();
 				})
 				.catch((err) => {
 					if (err.code === 'ACTION_REJECTED') {
-						message.error('Transaction Rejected');
+						message.error(myProfileConstants.TRANSACTION_REJECTED);
 					} else {
-						message.error('Network Error!');
+						message.error(myProfileConstants.NETWORK_ERROR);
 					}
 				});
 		}

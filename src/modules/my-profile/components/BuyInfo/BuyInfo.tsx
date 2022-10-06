@@ -11,6 +11,7 @@ import Token2BuyRadio from '../Token2BuyRadio';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppSelector } from 'stores';
 import Button from '../Button';
+import myProfileConstants from 'modules/my-profile/constant';
 
 export default function BuyInfo() {
 	const { userInfo } = useAppSelector((state) => state.myProfile);
@@ -117,7 +118,11 @@ export default function BuyInfo() {
 				boxStyle='!bg-[#8080801a] !text-[white]'
 				titleStyle='!font-normal !text-[#ffffff80]'
 				customClass='mt-[20px] '
-				title={inTimeBuyKey ? 'You can buy key in' : 'You can not buy key in'}
+				title={
+					inTimeBuyKey
+						? myProfileConstants.COUNTDOWN_INTIME
+						: myProfileConstants.COUNTDOWN_OUTTIME
+				}
 				millisecondsRemain={secondsRemain}
 			/>
 
