@@ -23,7 +23,7 @@ import {
 	NEXT_PUBLIC_KEYNFT,
 } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useApprovalBusd } from 'web3/hooks';
+import { useApprovalBusd } from 'web3/hooks/useApprovalBusd';
 import DNFTABI from '../../../web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
