@@ -62,7 +62,7 @@ const MintDNFT: React.FC = () => {
 		);
 	});
 	const upcomingPhase = listPhase.find((item) => {
-		return item.id === runningPhaseId + 1 && item.startTime > now();
+		return item.id === runningPhaseId && item.startTime > now();
 	});
 	const publicPhase = listPhase.find((item: IPhaseStatistic) => {
 		return item.type === MINT_PHASE.PUBLIC;
@@ -307,6 +307,9 @@ const MintDNFT: React.FC = () => {
 		ReactGa.pageview(router?.pathname || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	console.log('isWhitelisted', isWhitelisted);
+
 	return (
 		<>
 			<HelmetCommon
@@ -364,7 +367,7 @@ const MintDNFT: React.FC = () => {
 							</div>
 							{new BigNumber(priceAfter).gt(0) && (
 								<Tooltip
-									className={'ml-2'}
+									className={'ml-2 text-blue-20'}
 									placement={'bottom'}
 									title={
 										<>
