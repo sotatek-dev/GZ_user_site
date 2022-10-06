@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import HelmetCommon from 'common/components/helmet';
-
+import ReactGa from 'react-ga';
 export const buyTimeDefault = {
 	start_time: 0,
 	end_time: 0,
@@ -19,7 +19,7 @@ export interface ITokenSaleRoundState {
 		start_time: number;
 		end_time: number;
 	};
-	claim_configs: Array<object>;
+	claim_configs: Array<{ [key: string]: string | number }>;
 	created_at: Date;
 	current_status_timeline: string;
 	description: string;
@@ -97,21 +97,27 @@ const TokenPresaleRound = () => {
 					'buy_time',
 					buyTimeDefault
 				);
+				const { claim_configs } = record;
 				const { status } = convertTimeLine(
-					start_time,
-					end_time,
+					Number(start_time),
+					Number(end_time),
 					timestampNow,
-					currentStatusTimeline
+					currentStatusTimeline,
+					claim_configs
 				);
 				return <div>{status}</div>;
 			},
 		},
 	];
-
 	const handleChangePage = (page: number) => {
 		setPerPage(page);
 	};
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon
@@ -151,14 +157,16 @@ const TokenPresaleRound = () => {
 									buy_time,
 									exchange_rate: exchangeRate,
 									_id,
+									claim_configs,
 								} = item;
 								const timestampNow = moment().unix();
 								const { start_time, end_time } = buy_time;
 								const { status } = convertTimeLine(
-									start_time,
-									end_time,
+									Number(start_time),
+									Number(end_time),
 									timestampNow,
-									currentStatusTimeline
+									currentStatusTimeline,
+									claim_configs
 								);
 
 								return (

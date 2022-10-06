@@ -1,0 +1,21 @@
+.btn-gradient {
+	background: linear-gradient(
+		102.92deg,
+		#36c1ff 6.55%,
+		#77a3f8 47.11%,
+		#bd81f1 71.51%,
+		#cf79ee 98.22%
+	);
+
+	&:hover,
+	&:active,
+	&:focus {
+		background: linear-gradient(
+			102.92deg,
+			#36c1ff 6.55%,
+			#77a3f8 47.11%,
+			#bd81f1 71.51%,
+			#cf79ee 98.22%
+		);
+	}
+}

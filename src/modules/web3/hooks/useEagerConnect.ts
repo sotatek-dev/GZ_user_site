@@ -13,7 +13,9 @@ export function useEagerConnect() {
 	const [tried, setTried] = useState(false);
 
 	useEffect(() => {
-		const walletSelected = StorageUtils.getItem(STORAGE_KEYS.WALLET_CONNECTED);
+		const walletSelected = StorageUtils.getSectionStorageItem(
+			STORAGE_KEYS.WALLET_CONNECTED
+		);
 		const { ethereum } = window;
 		if (!walletSelected) return;
 		if (!active && walletSelected === ConnectorKey.injected) {
@@ -32,10 +34,8 @@ export function useEagerConnect() {
 					}
 				}
 			});
-
 			return;
 		}
-
 		setTried(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active]);

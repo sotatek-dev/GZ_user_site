@@ -10,6 +10,7 @@ import HelmetCommon from 'common/components/helmet';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
 import CustomRadio from 'common/components/radio';
+import ReactGa from 'react-ga';
 import Stepper from 'common/components/steps';
 import {
 	BNB_CURRENCY,
@@ -32,7 +33,7 @@ import {
 	formatNumber,
 	fromWei,
 } from 'common/utils/functions';
-import { get, isEmpty, last } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -63,14 +64,14 @@ const TokenSaleRoundDetail = () => {
 		query: { index = '' },
 	} = router;
 
-	const [detailSaleRound, setDetailSaleRound] =
-		useState<ITokenSaleRoundState>();
+	const [detailSaleRound, setDetailSaleRound] = useState<
+		ITokenSaleRoundState | undefined
+	>();
 	const [statusTimeLine, setStatusTimeLine] = useState<string>(UPCOMING);
 	const [timeCountDow, setTimeCountDow] = useState<number>(-1);
 	const [tokenClaimTime, setTokenClaimTime] = useState<number>(0);
 	const [totalSoldAmount, setTotalSoldAmount] = useState<number>(0);
 	const [maxPreSaleAmount, setMaxPreSaleAmount] = useState<number>(0);
-	// const [maxBUSDUserCanSpend, setMaxBUSDUserCanSpend] = useState<number>(0);
 	const [currency, setCurrency] = useState<string>(BUSD_CURRENCY);
 	const [price, setPrice] = useState<number>(0);
 	const [youBought, setYouBought] = useState<number>(0);
@@ -78,7 +79,7 @@ const TokenSaleRoundDetail = () => {
 	const [isOpenTokenPurchase, setOpenTokenPurchase] = useState<boolean>(false);
 	const [isOpenClaimPopup, setOpenClaimPopup] = useState<boolean>(false);
 	const [isWhitelist, setWhitelist] = useState<boolean>(false);
-
+	const buyLimit = get(detailSaleRound, 'details.buy_limit');
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const { isLogin } = useSelector((state) => state.user);
 	const { start_time, end_time } = get(
@@ -86,27 +87,39 @@ const TokenSaleRoundDetail = () => {
 		'buy_time',
 		buyTimeDefault
 	);
+	const isCurrentSaleRound = get(
+		detailSaleRound,
+		'is_current_sale_round',
+		false
+	);
 	const saleRoundId = get(detailSaleRound, 'sale_round');
+
+	const isShowButtonBuy =
+		statusTimeLine === BUY &&
+		isLogin &&
+		isWhitelist &&
+		isCurrentSaleRound &&
+		detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
 	const getDetailSaleRound = useCallback(async () => {
 		const [data] = await getDetailTokenSaleRound(index as string);
 		const detailSaleRound = get(data, 'data', {});
-		const { start_time, end_time } = get(
-			detailSaleRound,
-			'buy_time',
-			buyTimeDefault
-		);
+		const { claim_configs, current_status_timeline } = detailSaleRound;
+		const { start_time, end_time } = get(detailSaleRound, 'buy_time');
 		const timestampNow = moment().unix();
-		const { status } = convertTimeLine(
+		const { status, timeCountDown, startTimeClaim } = convertTimeLine(
 			Number(start_time),
 			Number(end_time),
 			timestampNow,
-			detailSaleRound?.current_status_timeline
+			current_status_timeline,
+			claim_configs
 		);
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
 		setStatusTimeLine(status);
 		setDetailSaleRound(detailSaleRound);
 		setPrice(exchangeRateBUSD);
+		setTokenClaimTime(startTimeClaim);
+		setTimeCountDow(timeCountDown);
 	}, [index]);
 
 	useEffect(() => {
@@ -117,51 +130,11 @@ const TokenSaleRoundDetail = () => {
 	}, [index, detailSaleRound]);
 
 	useEffect(() => {
-		if (!isEmpty(detailSaleRound)) {
-			console.log(';run', statusTimeLine);
-
-			const timestampNow = moment().unix();
-			const { claim_configs } = detailSaleRound;
-			const startTimeClaim = get(claim_configs[0], 'start_time');
-			setTokenClaimTime(startTimeClaim);
-			if (statusTimeLine === UPCOMING) {
-				const startTimeUpComing = get(
-					detailSaleRound,
-					'buy_time.start_time',
-					-1
-				);
-				const timeCountDow = startTimeUpComing - timestampNow;
-				setTimeCountDow(timeCountDow);
-				return;
-			} else if (statusTimeLine === BUY) {
-				if (detailSaleRound?.current_status_timeline === 'claimable_upcoming') {
-					const timeCountDow = startTimeClaim - timestampNow;
-					setTimeCountDow(timeCountDow);
-				} else {
-					const startTimeBUY = get(detailSaleRound, 'buy_time.end_time', -1);
-					const timeCountDow = startTimeBUY - timestampNow;
-					setTimeCountDow(timeCountDow);
-				}
-				return;
-			} else if (CLAIMABLE) {
-				const { claim_configs } = detailSaleRound;
-				for (let index = 0; index < claim_configs?.length; index++) {
-					const startTimeClaim = get(claim_configs[index], 'start_time');
-					if (startTimeClaim > timestampNow) {
-						const timeCountDown = startTimeClaim - timestampNow;
-						setTokenClaimTime(startTimeClaim);
-						setTimeCountDow(timeCountDown > 0 ? timeCountDown : -1);
-						return;
-					}
-				}
-			} else {
-				const { claim_configs } = detailSaleRound;
-				const startTimeClaim = get(last(claim_configs), 'start_time');
-				setTimeCountDow(-1);
-				setTokenClaimTime(startTimeClaim);
-			}
-		}
-	}, [statusTimeLine, detailSaleRound, getDetailSaleRound]);
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		if (!isEmpty(detailSaleRound)) {
@@ -231,12 +204,8 @@ const TokenSaleRoundDetail = () => {
 		const maxPreSaleAmount = convertHexToNumber(
 			get(resSalePhaseInfo, 'maxPreSaleAmount._hex', HEX_ZERO)
 		);
-		// const maxBUSDUserCanSpend = convertHexToNumber(
-		// 	get(resSalePhaseInfo, 'maxBUSDUserCanSpend._hex', HEX_ZERO)
-		// );
 		setTotalSoldAmount(fromWei(totalSoldAmount));
 		setMaxPreSaleAmount(fromWei(maxPreSaleAmount));
-		// setMaxBUSDUserCanSpend(fromWei(maxBUSDUserCanSpend));
 	};
 
 	const renderTokenBuyTime = (startTime: number, endTime: number) => {
@@ -265,6 +234,7 @@ const TokenSaleRoundDetail = () => {
 			setOpenClaimPopup(false);
 		}
 		if (errorClaim) {
+			setOpenClaimPopup(false);
 			message.error('Transaction Rejected');
 		}
 	};
@@ -304,7 +274,7 @@ const TokenSaleRoundDetail = () => {
 		);
 	};
 
-	const renderPriceBuyInfoClaimableAndEnd = () => {
+	const renderPriceBuyInfoClaimable = () => {
 		return (
 			<>
 				{youBought > 0 && (
@@ -331,6 +301,19 @@ const TokenSaleRoundDetail = () => {
 		);
 	};
 
+	const renderPriceBuyInfoEnd = () => {
+		return (
+			<div className='border-x-[1px] border-gray-30 px-8'>
+				<div className='text-sm font-normal text-gray-40 mb-2 '>
+					You can claim
+				</div>
+				<div className='text-base font-semibold'>{`${formatNumber(
+					youCanClaimAmount
+				)} ${GXZ_CURRENCY}`}</div>
+			</div>
+		);
+	};
+
 	return (
 		<div className='flex flex-col gap-2.5 desktop:gap-8'>
 			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
@@ -350,10 +333,11 @@ const TokenSaleRoundDetail = () => {
 				>
 					<div className='pt-6 flex'>
 						<div className='flex justify-between w-full'>
-							{statusTimeLine === UPCOMING || statusTimeLine === BUY
-								? renderPriceBuyInfoUpComing()
-								: renderPriceBuyInfoClaimableAndEnd()}
-							{statusTimeLine === BUY && isLogin && isWhitelist && (
+							{statusTimeLine === UPCOMING ||
+								(statusTimeLine === BUY && renderPriceBuyInfoUpComing())}
+							{statusTimeLine === CLAIMABLE && renderPriceBuyInfoClaimable()}
+							{statusTimeLine === END && renderPriceBuyInfoEnd()}
+							{isShowButtonBuy && (
 								<Button
 									onClick={() => setOpenTokenPurchase(true)}
 									label='Buy'
@@ -408,12 +392,16 @@ const TokenSaleRoundDetail = () => {
 							</div>
 						</div>
 						<div className='flex gap-x-2'>
-							<div className='text-dim-gray font-normal'>Token Claim Time:</div>
-							<div className='font-medium'>
-								{tokenClaimTime
-									? convertTimeStampToDate(tokenClaimTime)
-									: 'TBA'}
-							</div>
+							{tokenClaimTime > 0 && (
+								<>
+									<div className='text-dim-gray font-normal'>
+										Token Claim Time:
+									</div>
+									<div className='font-medium'>
+										{convertTimeStampToDate(tokenClaimTime)}
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
@@ -429,20 +417,23 @@ const TokenSaleRoundDetail = () => {
 						<div className='flex gap-x-2'>
 							<div className='text-dim-gray font-normal'>Buy Limit:</div>
 							<div className='font-medium'>
-								{formatBignumberToNumber(
-									get(detailSaleRound, 'details.buy_limit', 0)
-								)}{' '}
-								{BUSD_CURRENCY}
+								{buyLimit > 0
+									? `${formatBignumberToNumber(buyLimit)} ${BUSD_CURRENCY}`
+									: 'No Limit'}
 							</div>
 						</div>
 					</div>
 				</div>
 				<Divider className='bg-black-velvet mt-0' />
 				<div className='flex gap-x-2'>
-					<div className='text-dim-gray font-normal'>Round Information:</div>
-					<div className='font-medium'>
-						{get(detailSaleRound, 'description', '')}
-					</div>
+					{detailSaleRound?.description && (
+						<>
+							<div className='text-dim-gray font-normal whitespace-pre'>
+								Round Information:
+							</div>
+							<div className='font-medium'>{detailSaleRound?.description}</div>
+						</>
+					)}
 				</div>
 			</BoxPool>
 			<ModalPurchase
@@ -460,6 +451,7 @@ const TokenSaleRoundDetail = () => {
 				onCancel={() => setOpenClaimPopup(false)}
 				customClass='text-center'
 			>
+				<div className='font-semibold text-[32px] mb-8'>Claiming Token</div>
 				<Loading />
 			</ModalCustom>
 		</div>

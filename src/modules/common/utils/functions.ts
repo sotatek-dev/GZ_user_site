@@ -6,9 +6,10 @@ import {
 	END,
 	million,
 	now,
+	SALE_ROUND_CURRENT_STATUS,
 	UPCOMING,
 } from 'common/constants/constants';
-import { toNumber } from 'lodash';
+import { get, toNumber } from 'lodash';
 import moment from 'moment';
 import {
 	IPhaseStatistic,
@@ -42,26 +43,38 @@ export const convertTimeLine = (
 	startTime: number,
 	endTime: number,
 	timestampNow: number,
-	currentTimeLine: string
+	currentTimeLine: string,
+	claimConfigs: Array<{ [key: string]: string | number }>
 ) => {
 	let status = UPCOMING;
-	if (startTime >= timestampNow) {
-		status = UPCOMING;
-	} else if (
-		(timestampNow > startTime && timestampNow <= endTime) ||
-		currentTimeLine === 'claimable_upcoming'
-	) {
+	let timeCountDown = -1;
+	let startTimeClaim = get(claimConfigs[0], 'start_time', 0) as number; // mặc định khi chưa đến phase claim sẽ lấy thời gian claim đầu tiên
+	if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.UPCOMING) {
+		timeCountDown = startTime - timestampNow;
+	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.BUY) {
+		timeCountDown = endTime - timestampNow;
 		status = BUY;
-	} else if (
-		timestampNow > endTime &&
-		currentTimeLine !== 'claimable_upcoming' &&
-		currentTimeLine !== 'end'
-	) {
+	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING) {
+		status = BUY;
+		timeCountDown = startTimeClaim - timestampNow;
+	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
 		status = CLAIMABLE;
-	} else {
+		for (let index = 0; index < claimConfigs?.length; index++) {
+			startTimeClaim = get(claimConfigs[index], 'start_time') as number;
+			if (startTimeClaim > timestampNow) {
+				timeCountDown = startTimeClaim - timestampNow;
+			} else {
+				startTimeClaim = 0;
+			}
+		}
+	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.END) {
 		status = END;
+		startTimeClaim = 0;
+	} else {
+		status = '';
+		startTimeClaim = 0;
 	}
-	return { status };
+	return { status, timeCountDown, startTimeClaim };
 };
 
 export const convertTimeStampToDate = (date: number, formatDate?: string) => {

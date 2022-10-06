@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import LazyLoadImageComp from 'common/components/lazyLoadImage';
+import { ROUTES } from 'common/constants/constants';
 import Link from 'next/link';
 import React from 'react';
 import styles from '../style/footer.module.scss';
@@ -69,14 +70,18 @@ export default function Footer() {
 			<div className={styles['footer-container']}>
 				<div className={styles['footer-1']}>
 					<div className='w-[8.125rem] h-[8.125rem]'>
-						<LazyLoadImageComp
-							placeholderSrc='images/logo.svg'
-							effect='blur'
-							width={130}
-							height={124.77}
-							src='images/logo.svg'
-							alt='logo'
-						/>
+						<Link href={ROUTES.LANDING} passHref>
+							<a>
+								<LazyLoadImageComp
+									placeholderSrc='images/logo.svg'
+									effect='blur'
+									width={130}
+									height={124.77}
+									src='images/logo.svg'
+									alt='logo'
+								/>
+							</a>
+						</Link>
 					</div>
 					<div className={styles['footer-1_menu']}>
 						<div className={styles['footer-1_menu_text']}>
@@ -94,6 +99,7 @@ export default function Footer() {
 															href={valuesHref.href}
 															key={valuesHref.id}
 															passHref
+															prefetch={false}
 														>
 															<a className='text-white font-semibold opacity-70 font-[14px]'>
 																{valuesHref.title}

@@ -22,13 +22,14 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { formatBigNumber, geMintPhaseType } from 'common/utils/functions';
 import { now, ROUTES } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
-
+import ReactGa from 'react-ga';
+import { useRouter } from 'next/router';
 const RescueDNFT = () => {
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
 	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
 		0
 	);
-
+	const router = useRouter();
 	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
 		return (
 			item.id === runningPhaseId &&
@@ -138,7 +139,12 @@ const RescueDNFT = () => {
 			fetchRate();
 		}
 	}, [runningPhaseId, runningPhase, dnftContract]);
-
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon

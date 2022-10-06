@@ -1,6 +1,6 @@
 import { getStatistics } from 'apis/landing';
 import LazyLoadImageComp from 'common/components/lazyLoadImage';
-import { numberWithDot } from 'common/helpers/number';
+import { numberWithSymbol } from 'common/helpers/number';
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../style/statistic.module.scss';
 
@@ -102,7 +102,7 @@ function StatisticBox({
 	width: number;
 }) {
 	return (
-		<div className={styles['statistic-box']}>
+		<div id='whitepaper' className={styles['statistic-box']}>
 			<div className='w-[4.5rem] h-[4.5rem]'>
 				<LazyLoadImageComp
 					placeholderSrc={icon}
@@ -113,8 +113,13 @@ function StatisticBox({
 					alt={icon}
 				/>
 			</div>
-			<h1 className={styles['statistic-box_value']}>{numberWithDot(value)}</h1>
+			<h1 className={styles['statistic-box_value']}>{value}</h1>
 			<h2 className={styles['statistic-box_label']}>{label}</h2>
+			<img src={icon} className='w-[4.5rem] h-[4.5rem]' alt={icon} />
+			<p className={styles['statistic-box_value']}>
+				{numberWithSymbol(value, '.')}
+			</p>
+			<p className={styles['statistic-box_label']}>{label}</p>
 		</div>
 	);
 }

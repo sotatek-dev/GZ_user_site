@@ -53,9 +53,17 @@ const StorageUtils = {
 		sessionStorage.removeItem(key);
 	},
 
+	setSectionStorageItem: (key: string, value: string) => {
+		window.sessionStorage.setItem(key, value);
+	},
+
 	getSectionStorageItem: (key: string) => {
 		const result = sessionStorage.getItem(key);
 		return result || '';
+	},
+
+	removeSectionStorageItem: (key: string) => {
+		window.sessionStorage.removeItem(key);
 	},
 
 	// cookie

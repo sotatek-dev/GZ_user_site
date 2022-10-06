@@ -71,6 +71,25 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const [amountGXC] = await getTokenAmountFromBUSD(value, exchangeRate);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
+		if (amountGXC > maxPreSaleAmount - youBought) {
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [
+						`The round only have ${
+							maxPreSaleAmount - youBought
+						} Galactix tokens left to be purchased`,
+					],
+				},
+			]);
+		} else {
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [],
+				},
+			]);
+		}
 	};
 
 	const onFinish = () => {
@@ -156,8 +175,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					`User can only purchase maximum ${formatNumber(buyLimit)} BUSD`
 				)
 			);
-		} else if (Number(value) + youBought > maxPreSaleAmount) {
-			return Promise.reject(new Error('users buy more tokens than max buy'));
 		} else {
 			return Promise.resolve();
 		}

@@ -1,18 +1,21 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import { ConnectorKey } from 'web3/connectors';
-import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
-import { setAddressWallet, setStatusConnect } from 'stores/wallet';
+import { checkEmailUser, IPramsLogin, login } from 'apis/login';
+import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
+import { get } from 'lodash';
+import { useDispatch } from 'react-redux';
 import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
 } from 'stores/modal';
-import { BSC_NETWORK } from 'web3/constants/networks';
-import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
-import { checkEmailUser, IPramsLogin, login } from 'apis/login';
-import { setAccessToken, setLogin, setUserInfo } from 'stores/user';
+import { setUserInfo } from 'stores/my-profile';
+import { setSystemSettings } from 'stores/system-setting';
+import { setAccessToken, setLogin } from 'stores/user';
+import { setAddressWallet, setStatusConnect } from 'stores/wallet';
+import { ConnectorKey } from 'web3/connectors';
 import { SIGN_MESSAGE } from 'web3/constants/envs';
-import { get } from 'lodash';
+import { BSC_NETWORK } from 'web3/constants/networks';
+import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -22,6 +25,7 @@ export const useConnectWallet = () => {
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
+	const dispatch = useDispatch<any>();
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		await disconnectWallet();
@@ -49,6 +53,8 @@ export const useConnectWallet = () => {
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
 		setLogin(false);
+		dispatch(setUserInfo(undefined));
+		dispatch(setSystemSettings(undefined));
 		setAddressWallet('');
 		setStepModalConnectWallet(
 			STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
@@ -112,10 +118,6 @@ export const useConnectWallet = () => {
 					sessionStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
 					sessionStorage.setItem(STORAGE_KEYS.EXPIRE_IN, expire_in);
 					sessionStorage.setItem(STORAGE_KEYS.ACCOUNT, wallet_address);
-					const userInfo = {
-						walletAddress: wallet_address,
-					};
-					setUserInfo(userInfo);
 					setLogin(true);
 					setAccessToken(token);
 					setAddressWallet(wallet_address);
@@ -145,7 +147,7 @@ export const useConnectWallet = () => {
 };
 
 function setStorageWallet(connector: ConnectorKey) {
-	StorageUtils.setItem(STORAGE_KEYS.WALLET_CONNECTED, connector);
+	StorageUtils.setSectionStorageItem(STORAGE_KEYS.WALLET_CONNECTED, connector);
 }
 
 function setStorageNetwork(networkConnected: any) {
@@ -153,6 +155,6 @@ function setStorageNetwork(networkConnected: any) {
 }
 
 export function removeStorageWallet() {
-	window.localStorage.removeItem(STORAGE_KEYS.WALLET_CONNECTED);
-	window.localStorage.removeItem(STORAGE_KEYS.NETWORK);
+	StorageUtils.removeSectionStorageItem(STORAGE_KEYS.WALLET_CONNECTED);
+	StorageUtils.removeItem(STORAGE_KEYS.NETWORK);
 }

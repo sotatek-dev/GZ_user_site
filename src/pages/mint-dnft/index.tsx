@@ -14,6 +14,7 @@ import {
 import NftGroup from 'assets/svg-components/nftGroup';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
+import ReactGa from 'react-ga';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
@@ -45,8 +46,10 @@ import {
 import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
+import { useRouter } from 'next/router';
 
 const MintDNFT: React.FC = () => {
+	const router = useRouter();
 	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
 	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
 		0
@@ -296,6 +299,12 @@ const MintDNFT: React.FC = () => {
 		}
 	};
 
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon

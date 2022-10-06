@@ -6,9 +6,11 @@ import KeyNFTABI from '../abis/abi-keynft.json';
 import PreSalePoolABI from '../abis/abi-presalepool.json';
 import ERC20ABI from '../abis/erc20.json';
 
+import BUSDABI from '../abis/abi-busd.json';
 import { getContractInstanceEther } from './ether';
 
 export const NEXT_PUBLIC_BUSD = process.env.NEXT_PUBLIC_BUSD_ADDRESS!;
+
 export const NEXT_PUBLIC_DNFT = process.env.NEXT_PUBLIC_DNFT_ADDRESS!;
 export const NEXT_PUBLIC_KEYNFT = process.env.NEXT_PUBLIC_KEYNFT_ADDRESS!;
 export const NEXT_PUBLIC_PRESALE_POOL =
@@ -32,4 +34,7 @@ export const genPresalePoolContractEther = () => {
 
 export const genERC20PaymentContract = (contractAddress: string) => {
 	return getContractInstanceEther(ERC20ABI, contractAddress);
+};
+export const genBUSDContractEther = () => {
+	return getContractInstanceEther(BUSDABI, NEXT_PUBLIC_BUSD);
 };

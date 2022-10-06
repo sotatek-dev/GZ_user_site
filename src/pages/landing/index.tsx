@@ -1,15 +1,35 @@
 import HelmetCommon from 'common/components/helmet';
 import { ROUTES } from 'common/constants/constants';
-import About from 'modules/landing/components/About';
-import Footer from 'modules/landing/components/Footer';
-import Header from 'modules/landing/components/Header';
-import PreFooter from 'modules/landing/components/PreFooter';
-import Roadmap from 'modules/landing/components/Roadmap';
-import Statistic from 'modules/landing/components/Statistic';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from '../../modules/landing/style/landing.module.scss';
+import ReactGa from 'react-ga';
+import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+const Header = dynamic(
+	() => import('./../../modules/landing/components/Header/index')
+);
+const Footer = dynamic(
+	() => import('./../../modules/landing/components/Footer')
+);
+const PreFooter = dynamic(
+	() => import('./../../modules/landing/components/PreFooter')
+);
+const About = dynamic(() => import('./../../modules/landing/components/About'));
+const Roadmap = dynamic(
+	() => import('./../../modules/landing/components/Roadmap')
+);
+const Statistic = dynamic(
+	() => import('./../../modules/landing/components/Statistic')
+);
 export default function LandingPage() {
+	const router = useRouter();
+	useEffect(() => {
+		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
+		// to report page view Google Analytics
+		ReactGa.pageview(router?.pathname || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<>
 			<HelmetCommon
