@@ -72,7 +72,7 @@ export default function PersonalInfo() {
 				onFieldsChange={onFieldChanged}
 			>
 				<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
-					<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
+					<h1 className={`text-[18px] font-semibold text-white`}>My profile</h1>
 					<Form.Item shouldUpdate className='submit'>
 						<button
 							type='submit'

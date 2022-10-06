@@ -129,7 +129,7 @@ const MergeNft = () => {
 			/>
 			<div className='flex flex-col'>
 				<div className='flex mb-8 items-end justify-between	'>
-					<div>Select the first NFT to merge</div>
+					<h1>Select the first NFT to merge</h1>
 					<div className='flex items-end'>
 						<Checkbox
 							className='checkbox-custom text-white text-base font-normal ml-auto'

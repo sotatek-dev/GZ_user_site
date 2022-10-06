@@ -1,5 +1,6 @@
 import { Drawer } from 'antd';
-import LazyLoadImageComp from 'common/components/lazyLoadImage';
+import LazyLoadCommon from 'common/components/lazyLoad';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './../../../style/header.module.scss';
 const MenuComponent = ({
@@ -29,25 +30,37 @@ const MenuComponent = ({
 					{/* <PopupMenu /> */}
 					<div className={styles['logo-box']}>
 						<div className={styles['logo']}>
-							<LazyLoadImageComp
-								src='images/logo.svg'
-								alt='logo'
-								width={50}
-								height={48}
-								placeholderSrc='images/logo.svg'
-								effect='blur'
-							/>
+							<LazyLoadCommon>
+								<Image
+									src='/images/logo.svg'
+									alt='logo'
+									width={50}
+									height={48}
+								/>
+							</LazyLoadCommon>
 						</div>
 					</div>
 					<div className={styles['menu-btn']}>
 						<button onClick={() => onClose()}>
-							<LazyLoadImageComp src='/icons/header_2.svg' alt='logo' />
+							<LazyLoadCommon>
+								<Image
+									src='/icons/header_2.svg'
+									alt='logo'
+									height={30}
+									width={30}
+								/>
+							</LazyLoadCommon>
 						</button>
 					</div>
 				</div>
 
-				<ul className={styles['popup-menu_menu']}>
+				<ul
+					itemScope
+					itemType='http://schema.org/Organization'
+					className={styles['popup-menu_menu']}
+				>
 					<li
+						itemProp='about'
 						onClick={() => {
 							onClose();
 						}}
@@ -58,6 +71,7 @@ const MenuComponent = ({
 						</Link>
 					</li>
 					<li
+						itemProp='whitepaper'
 						onClick={() => {
 							onClose();
 						}}
@@ -68,6 +82,7 @@ const MenuComponent = ({
 						</Link>
 					</li>
 					<li
+						itemProp='roadmap'
 						onClick={() => {
 							onClose();
 						}}
@@ -78,6 +93,7 @@ const MenuComponent = ({
 						</Link>
 					</li>
 					<li
+						itemProp='gxz-token'
 						onClick={() => {
 							onClose();
 						}}
@@ -87,7 +103,9 @@ const MenuComponent = ({
 							<a>GXZ Token</a>
 						</Link>
 					</li>
-					<button className={`${styles['laucher-btn']}`}>Launch App</button>
+					<button itemProp='launch-app' className={`${styles['laucher-btn']}`}>
+						Launch App
+					</button>
 				</ul>
 			</div>
 		</Drawer>

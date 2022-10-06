@@ -86,9 +86,9 @@ export default function BuyInfo() {
 
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>
-			<h5 className='text-[18px] font-semibold text-white  pb-[27px]'>
+			<h1 className='text-[18px] font-semibold text-white  pb-[27px]'>
 				Buy Info
-			</h5>
+			</h1>
 			{buyKeyState && (
 				<div className={buyKeyState.boxStyle}>
 					<Image src={buyKeyState.icon} width='20' height='20' alt='' />

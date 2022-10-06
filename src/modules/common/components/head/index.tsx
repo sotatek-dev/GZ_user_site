@@ -98,7 +98,11 @@ const HeadCommon = ({ title }: { title: string }) => {
 			<meta property='og:contenttype' content='article_listing' />
 			<meta property='og:contentnid' content='214' />
 			<meta name='theme-color' content='#000' />
-			<link rel='icon' href='/favicon.ico' />
+			<link rel='icon' type='image/x-icon' href='/favicon.ico' />
+			<link
+				rel='canonicalize'
+				href='https://galactix-zone-staging.netlify.app/'
+			/>
 		</Head>
 	);
 };

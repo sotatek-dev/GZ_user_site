@@ -285,7 +285,7 @@ const MintDNFT: React.FC = () => {
 				</div>
 
 				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
-					<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
+					<h1 className='text-h3 font-semibold mb-4'>Mint dNFT</h1>
 
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />
@@ -336,15 +336,15 @@ const MintDNFT: React.FC = () => {
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />
 
-					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
+					<h1 className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
-					</div>
+					</h1>
 					<div className='flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-h8 h-fit'>
 						<div className='flex justify-between items-center desktop:w-[33%]'>
-							<div className='flex items-center'>
+							<h2 className='flex items-center'>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Total NFT
-							</div>
+							</h2>
 							<div>{formatBigNumber(maxSaleAmount)}</div>
 						</div>
 						<div
@@ -353,10 +353,10 @@ const MintDNFT: React.FC = () => {
 							}
 						/>
 						<div className='flex justify-between items-center desktop:w-[33%]'>
-							<div className='flex items-center'>
+							<h2 className='flex items-center'>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Remaining
-							</div>
+							</h2>
 							<div>
 								{formatBigNumber(new BigNumber(maxSaleAmount).minus(totalSold))}
 							</div>
@@ -367,10 +367,10 @@ const MintDNFT: React.FC = () => {
 							}
 						/>
 						<div className='flex justify-between items-center desktop:w-[33%]'>
-							<div className='flex items-center'>
+							<h2 className='flex items-center'>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								NFT Minted
-							</div>
+							</h2>
 							<div>{formatBigNumber(totalSold)}</div>
 						</div>
 					</div>
@@ -450,9 +450,9 @@ const MintDNFT: React.FC = () => {
 								You are {(isConnectWallet && haveEnoughBalance) || 'not'}{' '}
 								eligible to mint this dNFT
 							</div>
-							<div className={'text-h8 mt-4'}>
+							<h1 className={'text-h8 mt-4'}>
 								Notice: to mint this dNFT requires {minBalanceForMint} GXZ Token
-							</div>
+							</h1>
 						</div>
 					</div>
 				</div>
