@@ -19,7 +19,6 @@ import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
 	listPhaseId,
-	minBalanceForMint,
 	MINT_PHASE,
 	MINT_PHASE_ID,
 	selectTokensList,
@@ -103,10 +102,12 @@ const MintDNFT: React.FC = () => {
 			: new BigNumber(priceAfter24Hours).div(rate);
 	const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false);
 	const [isLoadingMint, setIsLoadingMint] = useState<boolean>(false);
+	const [minimumGXZBalanceRequired, setMinimumGXZBalanceRequired] =
+		useState<BigNumber.Value>(0);
 
 	// mint validation
 	const isConnectWallet = !!addressWallet;
-	const haveEnoughGXZBalance = gxzBalance.gte(minBalanceForMint);
+	const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
 	const haveEnoughBalance = () => {
 		if (token === TOKENS.BNB) {
 			return nativeBalance.gte(price);
@@ -205,14 +206,25 @@ const MintDNFT: React.FC = () => {
 		}
 	};
 
+	const fetchMinimumGXZBalanceRequired = async () => {
+		if (dnftContract) {
+			const minRequired = await dnftContract.minimumGalactixTokenRequire();
+			setMinimumGXZBalanceRequired(
+				new BigNumber(minRequired._hex).div(TOKEN_DECIMAL)
+			);
+		}
+	};
+
 	const reloadData = async () => {
 		handleGetListPhaseMintNft();
 		fetchRate();
 		fetchIsWhitelisted();
+		fetchMinimumGXZBalanceRequired();
 	};
 
 	useEffect(() => {
 		handleGetListPhaseMintNft();
+		fetchMinimumGXZBalanceRequired();
 	}, [dnftContract]);
 
 	useEffect(() => {
@@ -484,7 +496,8 @@ const MintDNFT: React.FC = () => {
 								{getMessage()}
 							</div>
 							<div className={'text-h8 mt-4'}>
-								Notice: to mint this dNFT requires {minBalanceForMint} GXZ Token
+								Notice: to mint this dNFT requires{' '}
+								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
 							</div>
 						</div>
 					</div>
