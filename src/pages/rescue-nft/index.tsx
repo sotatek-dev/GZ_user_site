@@ -42,7 +42,7 @@ const RescueDNFT = () => {
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
-	const balance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
+	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const {
 		priceInBUSD: priceInBUSD = 0,
@@ -60,7 +60,7 @@ const RescueDNFT = () => {
 			: new BigNumber(priceAfter24Hours).div(rate);
 
 	const isConnectWallet = !!addressWallet;
-	const haveEnoughBalance = balance.gte(minBalanceForMint);
+	const haveEnoughGXZBalance = gxzBalance.gte(minBalanceForMint);
 
 	useEffect(() => {
 		const handleGetListPhaseMintNft = async () => {
@@ -237,8 +237,8 @@ const RescueDNFT = () => {
 								'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
 							}
 						>
-							You are {(isConnectWallet && haveEnoughBalance) || 'not'} eligible
-							to mint this dNFT
+							You are {(isConnectWallet && haveEnoughGXZBalance) || 'not'}{' '}
+							eligible to mint this dNFT
 						</div>
 						<div
 							className={
