@@ -15,4 +15,8 @@ export const DNFTStatusMap = {
 		title: 'Claim',
 		disabled: true,
 	},
+	'wait-to-confirm': {
+		title: 'Merging',
+		disabled: true,
+	},
 };

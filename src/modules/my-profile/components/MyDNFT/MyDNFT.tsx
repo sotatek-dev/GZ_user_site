@@ -69,7 +69,7 @@ export default function MyDNFT() {
 		return dnfts.data.map((item) => {
 			const cloneItem = cloneDeep(item);
 			const canClaim =
-				!canClaimTime &&
+				!canClaimTime ||
 				['claimable', 'wait-to-claim'].includes(cloneItem.status);
 
 			if (canClaim) {
@@ -224,7 +224,7 @@ export default function MyDNFT() {
 						return {
 							onClick: () => {
 								if (includes(['normal', 'wait-to-merge'], record.status)) {
-									router.push(`/dnft-detail/${record.token_id}`);
+									router.push(`/dnft-detail/${record._id}`);
 								}
 							},
 						};
@@ -242,7 +242,7 @@ export default function MyDNFT() {
 								key={item}
 								onClick={() => {
 									if (includes(['normal', 'wait-to-merge'], value.status)) {
-										router.push(`/dnft-detail/${value.token_id}`);
+										router.push(`/dnft-detail/${value._id}`);
 									}
 								}}
 							>
