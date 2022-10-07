@@ -82,7 +82,10 @@ const NFTDetail = () => {
 					<div className={styles['nft-detail']}>
 						<div className={styles['nft-detail_img']}>
 							<Image
-								src={dnftDetail.dnftDetail.metadata.image}
+								src={
+									dnftDetail.dnftDetail.metadata.image ||
+									'/images/ntf-example.svg'
+								}
 								alt=''
 								width='100%'
 								height='100%'
@@ -250,11 +253,13 @@ const NFTDetail = () => {
 										className={styles['nft-material_carousel_item']}
 										key={index}
 										onClick={() => {
-											router.replace(`/dnft-detail/${item.token_id}`);
+											router.replace(`/dnft-detail/${item._id}`);
 										}}
 									>
 										<Image
-											src={get(item, 'metadata.image')}
+											src={
+												get(item, 'metadata.image') || '/images/ntf-example.svg'
+											}
 											alt=''
 											width='100%'
 											height='100%'
