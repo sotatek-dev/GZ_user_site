@@ -39,9 +39,9 @@ const dnftDetailStore = createSlice({
 
 export const getDNFTDetailRD = createAsyncThunk(
 	'profile/getDNFTDetailRD',
-	async (tokenId: string, { rejectWithValue }) => {
+	async (_id: string, { rejectWithValue }) => {
 		try {
-			const res = await getDNFTDetail(tokenId);
+			const res = await getDNFTDetail(_id);
 			const data = get(res, 'data.data', []);
 			const resRelateDNFTs = await getMyDNFTs({
 				limit: 10,
@@ -52,7 +52,7 @@ export const getDNFTDetailRD = createAsyncThunk(
 
 			const relatedDNFTs = filter(
 				get(resRelateDNFTs, 'data.data.list', []),
-				(item) => item.token_id !== tokenId
+				(item) => item._id !== _id
 			);
 
 			return {
