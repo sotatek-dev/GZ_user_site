@@ -36,7 +36,7 @@ export interface IDNFTMetadata {
 	rankLevel: string;
 	properties: IProperties;
 	attribute: IAttributes;
-	imageUrl: string;
+	image: string;
 }
 
 export interface IBuyKeyStatus {

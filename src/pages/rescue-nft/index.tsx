@@ -43,7 +43,7 @@ const RescueDNFT = () => {
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
-	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_TOKEN || '');
+	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const {
 		priceInBUSD: priceInBUSD = 0,

@@ -49,6 +49,7 @@ module.exports = {
 			current: 'currentColor',
 			'background-dark': '#061322',
 			white: '#FFFFFF',
+			'white-smooth': '#F9F9F9',
 			ebony: '#2C313D',
 			'ebony-20': '#272E39',
 			'blue-zodiac': '#424959',

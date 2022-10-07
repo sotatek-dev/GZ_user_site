@@ -14,6 +14,7 @@ import {
 import { myProfileStore } from 'stores/my-profile';
 import thunkMiddleware from 'redux-thunk';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { dnftDetailStore } from 'stores/dnft/dnft-detail';
 
 let customStore: Store | undefined;
 
@@ -34,6 +35,7 @@ const appReducer = combineReducers({
 	modal: modalStore.reducer,
 	systemSetting: systemSettingStore.reducer,
 	myProfile: myProfileStore.reducer,
+	dnftDetail: dnftDetailStore.reducer,
 });
 
 const rootReducer = (state: any, action: any) => appReducer(state, action);

@@ -308,8 +308,9 @@
 .dropdown-button,
 .dropdown-button:hover,
 .dropdown-button:active,
+.dropdown-button:disabled,
 .dropdown-button:focus {
-	background: none;
+	background: transparent;
 	border: 2px solid #515151;
 	box-sizing: border-box;
 	border-radius: 3px;

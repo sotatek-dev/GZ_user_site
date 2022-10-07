@@ -1,9 +1,5 @@
 [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
+	{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
 	{
 		"anonymous": false,
 		"inputs": [
@@ -283,19 +279,12 @@
 		"name": "Unpaused",
 		"type": "event"
 	},
-	{
-		"stateMutability": "nonpayable",
-		"type": "fallback"
-	},
+	{ "stateMutability": "nonpayable", "type": "fallback" },
 	{
 		"inputs": [],
 		"name": "BUSDToken",
 		"outputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "",
-				"type": "address"
-			}
+			{ "internalType": "contract IERC20", "name": "", "type": "address" }
 		],
 		"stateMutability": "view",
 		"type": "function"
@@ -303,49 +292,27 @@
 	{
 		"inputs": [],
 		"name": "MULTIPLIER",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "ONE_HUNDRED_PERCENT",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "TAX",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_subAdmin",
-				"type": "address"
-			}
+			{ "internalType": "address", "name": "_subAdmin", "type": "address" }
 		],
 		"name": "addSubAdmin",
 		"outputs": [],
@@ -354,21 +321,9 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" },
+			{ "internalType": "address", "name": "_candidate", "type": "address" },
+			{ "internalType": "bytes", "name": "_signature", "type": "bytes" }
 		],
 		"name": "buyTokenWithExactlyBNB",
 		"outputs": [],
@@ -377,26 +332,10 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" },
+			{ "internalType": "address", "name": "_candidate", "type": "address" },
+			{ "internalType": "uint256", "name": "_BUSDAmount", "type": "uint256" },
+			{ "internalType": "bytes", "name": "_signature", "type": "bytes" }
 		],
 		"name": "buyTokenWithExactlyBUSD",
 		"outputs": [],
@@ -405,11 +344,7 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_newSuperAdmin",
-				"type": "address"
-			}
+			{ "internalType": "address", "name": "_newSuperAdmin", "type": "address" }
 		],
 		"name": "changeSuperAdmin",
 		"outputs": [],
@@ -418,11 +353,7 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" }
 		],
 		"name": "claimPurchasedToken",
 		"outputs": [],
@@ -431,72 +362,34 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_BNBAmount",
-				"type": "uint256"
-			}
+			{ "internalType": "uint256", "name": "_BNBAmount", "type": "uint256" }
 		],
 		"name": "convertBNBToBUSD",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			}
+			{ "internalType": "uint256", "name": "_BUSDAmount", "type": "uint256" }
 		],
 		"name": "convertBUSDToBNB",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "currentSalePhase",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
+		"outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_startTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_endTime",
-				"type": "uint256"
-			},
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" },
+			{ "internalType": "uint256", "name": "_startTime", "type": "uint256" },
+			{ "internalType": "uint256", "name": "_endTime", "type": "uint256" },
 			{
 				"internalType": "uint256[]",
 				"name": "_claimTime",
@@ -507,11 +400,7 @@
 				"name": "_claimRate",
 				"type": "uint256[]"
 			},
-			{
-				"internalType": "bool",
-				"name": "_isNoBuyLimit",
-				"type": "bool"
-			},
+			{ "internalType": "bool", "name": "_isNoBuyLimit", "type": "bool" },
 			{
 				"internalType": "uint256",
 				"name": "_maxBUSDUserCanSpend",
@@ -540,11 +429,7 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_tokenAmount",
-				"type": "uint256"
-			},
+			{ "internalType": "uint256", "name": "_tokenAmount", "type": "uint256" },
 			{
 				"internalType": "uint256",
 				"name": "_tokenPriceInBUSD",
@@ -552,143 +437,44 @@
 			}
 		],
 		"name": "getBUSDAmountFromToken",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "_messageHash",
-				"type": "bytes32"
-			}
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" }
 		],
-		"name": "getEthSignedMessageHash",
+		"name": "getClaimInfo",
 		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address",
-				"name": "_signer",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "getMessageHash",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
-		],
-		"name": "getRemainingClaimableAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
+			{ "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+			{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }
 		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "_messageHash",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
+			{ "internalType": "address", "name": "_candidate", "type": "address" },
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" }
 		],
-		"name": "getSignerAddress",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "pure",
+		"name": "getRemainingClaimableAmount",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			}
+			{ "internalType": "uint256", "name": "_BUSDAmount", "type": "uint256" }
 		],
 		"name": "getTaxAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			},
+			{ "internalType": "uint256", "name": "_BUSDAmount", "type": "uint256" },
 			{
 				"internalType": "uint256",
 				"name": "_tokenPriceInBUSD",
@@ -696,133 +482,43 @@
 			}
 		],
 		"name": "getTokenAmountFromBUSD",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
-		],
-		"name": "getTotalClaimedAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
-		],
-		"name": "getTotalSoldAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
+			{ "internalType": "address", "name": "_candidate", "type": "address" },
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" }
 		],
 		"name": "getUserClaimedAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
+			{ "internalType": "address", "name": "_candidate", "type": "address" },
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" }
 		],
 		"name": "getUserPurchasedAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			}
+			{ "internalType": "address", "name": "_candidate", "type": "address" },
+			{ "internalType": "uint8", "name": "_salePhase", "type": "uint8" }
 		],
 		"name": "getUserTotalSpentBUSD",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_signer",
-				"type": "address"
-			}
+			{ "internalType": "address", "name": "_signer", "type": "address" }
 		],
 		"name": "initialize",
 		"outputs": [],
@@ -839,13 +535,7 @@
 	{
 		"inputs": [],
 		"name": "paused",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -853,22 +543,14 @@
 		"inputs": [],
 		"name": "preSaleToken",
 		"outputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "",
-				"type": "address"
-			}
+			{ "internalType": "contract IERC20", "name": "", "type": "address" }
 		],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_subAdmin",
-				"type": "address"
-			}
+			{ "internalType": "address", "name": "_subAdmin", "type": "address" }
 		],
 		"name": "removeSubAdmin",
 		"outputs": [],
@@ -876,30 +558,12 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
+		"inputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
 		"name": "salePhaseStatistics",
 		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "startTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "endTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "isNoBuyLimit",
-				"type": "bool"
-			},
+			{ "internalType": "uint256", "name": "startTime", "type": "uint256" },
+			{ "internalType": "uint256", "name": "endTime", "type": "uint256" },
+			{ "internalType": "bool", "name": "isNoBuyLimit", "type": "bool" },
 			{
 				"internalType": "uint256",
 				"name": "maxBUSDUserCanSpend",
@@ -962,11 +626,7 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_priceFeed",
-				"type": "address"
-			}
+			{ "internalType": "address", "name": "_priceFeed", "type": "address" }
 		],
 		"name": "setPriceFeed",
 		"outputs": [],
@@ -975,11 +635,7 @@
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_signer",
-				"type": "address"
-			}
+			{ "internalType": "address", "name": "_signer", "type": "address" }
 		],
 		"name": "setSigner",
 		"outputs": [],
@@ -989,58 +645,28 @@
 	{
 		"inputs": [],
 		"name": "signer",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"outputs": [{ "internalType": "address", "name": "", "type": "address" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"inputs": [{ "internalType": "address", "name": "", "type": "address" }],
 		"name": "subAdmins",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "superAdmin",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
+		"outputs": [{ "internalType": "address", "name": "", "type": "address" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
 		"name": "totalSalePhase",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
+		"outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
 		"stateMutability": "view",
 		"type": "function"
 	},
@@ -1051,47 +677,5 @@
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_salePhase",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address",
-				"name": "_signer",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_candidate",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_BUSDAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "verifySignature",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"stateMutability": "payable",
-		"type": "receive"
-	}
+	{ "stateMutability": "payable", "type": "receive" }
 ]
