@@ -47,6 +47,7 @@ import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
+import { showError } from 'common/helpers/toast';
 
 const MintDNFT: React.FC = () => {
 	const router = useRouter();
@@ -93,6 +94,7 @@ const MintDNFT: React.FC = () => {
 		priceAfter24Hours: priceAfter24Hours = 0,
 		maxSaleAmount: maxSaleAmount = 0,
 		totalSold: totalSold = 0,
+		maxAmountUserCanBuy,
 	} = runningPhase || {};
 	// BUSD / BNB
 	const [rate, setRate] = useState<BigNumber.Value>(1);
@@ -247,7 +249,22 @@ const MintDNFT: React.FC = () => {
 	const mint = async () => {
 		try {
 			setIsLoadingMint(true);
-			if (dnftContract && runningPhase && runningPhaseId) {
+			if (
+				dnftContract &&
+				runningPhase &&
+				runningPhaseId &&
+				maxAmountUserCanBuy
+			) {
+				// check reach limit
+				const boughtAmount = await dnftContract.getUserBuyAmount(
+					2,
+					'0x27Bb8c1E0B0a85E7Afc1fCd397E15c90A53C1B4A'
+				);
+				if (new BigNumber(boughtAmount._hex).gte(maxAmountUserCanBuy)) {
+					showError('You have reach the limitation of minting');
+					return;
+				}
+
 				// set up signature
 				const signature = await getMintDnftSignature();
 				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
