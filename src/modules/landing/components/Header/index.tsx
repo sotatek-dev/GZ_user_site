@@ -26,6 +26,7 @@ export default function Header() {
 									alt='logo'
 									height={86.38}
 									width={90}
+									objectFit='contain'
 								/>
 							</LazyLoadCommon>
 						</a>
@@ -40,6 +41,7 @@ export default function Header() {
 							height={30}
 							src='/icons/header_1.svg'
 							alt='logo'
+							objectFit='contain'
 						/>
 					</LazyLoadCommon>
 				</button>

@@ -185,7 +185,13 @@ function TimelineSection({ timeline }: { timeline: Timeline }) {
 			<div className={`${styles['timeline-img']} ${styles[imgClass]}`}>
 				<div style={imgStyle}>
 					<LazyLoadCommon>
-						<Image height={height} width={width} src={imgSrc} alt='logo' />
+						<Image
+							height={height}
+							width={width}
+							objectFit='contain'
+							src={imgSrc}
+							alt='logo'
+						/>
 					</LazyLoadCommon>
 				</div>
 			</div>

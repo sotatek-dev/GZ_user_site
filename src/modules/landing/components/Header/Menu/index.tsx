@@ -36,6 +36,7 @@ const MenuComponent = ({
 									alt='logo'
 									width={50}
 									height={48}
+									objectFit='contain'
 								/>
 							</LazyLoadCommon>
 						</div>
@@ -48,6 +49,7 @@ const MenuComponent = ({
 									alt='logo'
 									height={30}
 									width={30}
+									objectFit='contain'
 								/>
 							</LazyLoadCommon>
 						</button>

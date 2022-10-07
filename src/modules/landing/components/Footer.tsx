@@ -79,6 +79,7 @@ export default function Footer() {
 										height={124.77}
 										src='/images/logo.svg'
 										alt='logo'
+										objectFit='contain'
 									/>
 								</LazyLoadCommon>
 							</a>
@@ -125,6 +126,7 @@ export default function Footer() {
 										height={10}
 										src='/icons/arrow-right.svg'
 										alt='logo'
+										objectFit='contain'
 									/>
 								</LazyLoadCommon>
 							</button>
@@ -139,6 +141,7 @@ export default function Footer() {
 										height={10}
 										src='/icons/arrow-right.svg'
 										alt='logo'
+										objectFit='contain'
 									/>
 								</LazyLoadCommon>
 							</button>
@@ -166,6 +169,7 @@ export default function Footer() {
 									alt='facebook'
 									width={30}
 									height={30}
+									objectFit='contain'
 								/>
 							</LazyLoadCommon>
 						</a>
@@ -179,6 +183,7 @@ export default function Footer() {
 									alt='telegram'
 									width={25}
 									height={22.5}
+									objectFit='contain'
 								/>
 							</LazyLoadCommon>
 						</a>
@@ -192,6 +197,7 @@ export default function Footer() {
 									alt='twitter'
 									width={27.31}
 									height={22.5}
+									objectFit='contain'
 								/>
 							</LazyLoadCommon>
 						</a>

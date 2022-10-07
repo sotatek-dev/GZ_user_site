@@ -52,6 +52,7 @@ export default function About() {
 								alt='logo'
 								height={604.52}
 								width={766}
+								objectFit='contain'
 							/>
 						</LazyLoadCommon>
 					</div>

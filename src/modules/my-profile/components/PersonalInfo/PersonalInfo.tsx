@@ -96,7 +96,13 @@ export default function PersonalInfo() {
 					<Input
 						suffix={
 							<button className='px-[10px]'>
-								<Image src='/icons/copy.svg' width='20' height='20' alt='' />
+								<Image
+									src='/icons/copy.svg'
+									width='20'
+									height='20'
+									alt='logo'
+									objectFit='contain'
+								/>
 							</button>
 						}
 						placeholder='My wallet address'

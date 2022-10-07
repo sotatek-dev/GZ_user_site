@@ -92,7 +92,13 @@ export default function BuyInfo() {
 			</h1>
 			{buyKeyState && (
 				<div className={buyKeyState.boxStyle}>
-					<Image src={buyKeyState.icon} width='20' height='20' alt='' />
+					<Image
+						src={buyKeyState.icon}
+						width='20'
+						objectFit='contain'
+						height='20'
+						alt='logo'
+					/>
 					<p className={buyKeyState.messageStyle}>{buyKeyState.message}</p>
 				</div>
 			)}

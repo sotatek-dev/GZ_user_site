@@ -79,6 +79,7 @@ export default function Statistic() {
 						height={70}
 						src='/images/roadmap_0.svg'
 						alt='roadmap'
+						objectFit='contain'
 					/>
 				</LazyLoadCommon>
 			</div>
@@ -111,7 +112,13 @@ function StatisticBox({
 		>
 			<div className='w-[4.5rem] h-[4.5rem]'>
 				<LazyLoadCommon>
-					<Image width={width} height={60} src={icon} alt={icon} />
+					<Image
+						width={width}
+						objectFit='contain'
+						height={60}
+						src={icon}
+						alt={icon}
+					/>
 				</LazyLoadCommon>
 			</div>
 			<p className={styles['statistic-box_value']}>
