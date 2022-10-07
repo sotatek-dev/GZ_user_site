@@ -257,8 +257,8 @@ const MintDNFT: React.FC = () => {
 			) {
 				// check reach limit
 				const boughtAmount = await dnftContract.getUserBuyAmount(
-					2,
-					'0x27Bb8c1E0B0a85E7Afc1fCd397E15c90A53C1B4A'
+					runningPhaseId,
+					addressWallet
 				);
 				if (new BigNumber(boughtAmount._hex).gte(maxAmountUserCanBuy)) {
 					showError('You have reach the limitation of minting');
