@@ -189,7 +189,7 @@ const RescueDNFT = () => {
 	const rescue = async () => {};
 
 	const getMessage = () => {
-		if (isConnectWallet && haveEnoughGXZBalance) {
+		if (isConnectWallet) {
 			if (!haveEnoughBalance()) {
 				return "You don't have enough BNB/BUSD";
 			} else if (!isRoyalty()) {
