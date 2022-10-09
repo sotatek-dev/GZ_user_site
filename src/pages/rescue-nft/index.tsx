@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import {
-	DECIMAL_PLACED,
 	minBalanceForMint,
 	selectTokensList,
 	TOKEN_DECIMAL,
@@ -22,6 +21,7 @@ import { useRouter } from 'next/router';
 import { AbiDnft } from 'web3/abis/types';
 import { handleFetchRateError } from 'modules/mintDnft/helpers/handleError';
 import { handleCommonError } from 'common/helpers/toast';
+import { useApproval, useNativeBalance } from 'web3/hooks';
 
 const RescueDNFT = () => {
 	const router = useRouter();
@@ -30,17 +30,78 @@ const RescueDNFT = () => {
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
+	const nativeBalance = useNativeBalance();
+	// GXZ balance
 	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
+	// BUSD balance
+	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
+	// busd approve
+	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
+		useApproval(
+			process.env.NEXT_PUBLIC_BUSD_ADDRESS || '',
+			process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+		);
 	const { addressWallet } = useSelector((state) => state.wallet);
-	// BUSD / BNB
 	const [priceInBUSD, setPriceInBUSD] = useState<BigNumber.Value>(0);
+	const [launchPriceInBUSD, setLaunchPriceInBUSD] =
+		useState<BigNumber.Value>(0);
 	const [rate, setRate] = useState<BigNumber.Value>(1);
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
+	const launchPrice =
+		token === TOKENS.BUSD
+			? launchPriceInBUSD
+			: new BigNumber(launchPriceInBUSD).div(rate);
 	const [poolRemaining, setPoolRemaining] = useState<BigNumber.Value>(0);
+	const [minimumGXZBalanceRequired, setMinimumGXZBalanceRequired] =
+		useState<BigNumber.Value>(0);
 
 	const isConnectWallet = !!addressWallet;
-	const haveEnoughGXZBalance = gxzBalance.gte(minBalanceForMint);
+	const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
+
+	const haveEnoughBalance = () => {
+		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
+
+		if (new BigNumber(price).gt(0)) {
+			if (token === TOKENS.BNB) {
+				return nativeBalance.gte(price);
+			} else if (token === TOKENS.BUSD) {
+				return busdBalance.gte(price);
+			}
+		} else if (new BigNumber(price).eq(0)) {
+			if (token === TOKENS.BNB) {
+				return nativeBalance.gte(launchPrice);
+			} else if (token === TOKENS.BUSD) {
+				return busdBalance.gte(launchPrice);
+			}
+		}
+
+		return false;
+	};
+	const isRoyalty = () => {
+		// Is not royalty when:
+		//   - If the price for rescue is not free AND
+		//      + User has lesser than 12% value of total price in BUSD when user pay in BNB OR
+		//      + User has lesser than 112% value of total price in BUSD when user pay in BUSD
+		//   - If the rescue is free AND
+		//      + User has lesser than 12% value of launch price in BUSD.
+
+		// priceInBUSD in BigNumber
+		const p = new BigNumber(priceInBUSD);
+		// launchPriceInBUSD in BigNumber
+		const lp = new BigNumber(launchPriceInBUSD);
+
+		if (new BigNumber(price).gt(0)) {
+			if (token === TOKENS.BNB) {
+				return busdBalance.gte(p.times(0.12));
+			} else if (token === TOKENS.BUSD) {
+				return busdBalance.gte(p.times(1.12));
+			}
+		} else if (new BigNumber(price).eq(0)) {
+			return busdBalance.gte(lp.times(0.12));
+		}
+		return false;
+	};
 
 	const fetchPrice = async () => {
 		try {
@@ -98,6 +159,32 @@ const RescueDNFT = () => {
 	useEffect(() => {
 		fetchPoolRemaining();
 	}, [dnftContract]);
+
+	const fetchMinimumGXZBalanceRequired = async () => {
+		if (dnftContract) {
+			const minRequired = await dnftContract.minimumGalactixTokenRequire();
+			setMinimumGXZBalanceRequired(
+				new BigNumber(minRequired._hex).div(TOKEN_DECIMAL)
+			);
+		}
+	};
+	useEffect(() => {
+		fetchMinimumGXZBalanceRequired();
+	}, [dnftContract]);
+
+	const getMessage = () => {
+		if (isConnectWallet && haveEnoughGXZBalance) {
+			if (!haveEnoughBalance()) {
+				return "You don't have enough BNB/BUSD";
+			} else if (!isRoyalty()) {
+				return "You don't have enough BUSD for royalty";
+			} else {
+				return 'You are eligible to mint this dNFT';
+			}
+		} else {
+			return 'You are not eligible to mint this dNFT';
+		}
+	};
 
 	useEffect(() => {
 		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
@@ -204,15 +291,17 @@ const RescueDNFT = () => {
 								'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
 							}
 						>
-							You are {(isConnectWallet && haveEnoughGXZBalance) || 'not'}{' '}
-							eligible to mint this dNFT
+							{getMessage()}
 						</div>
 						<div
 							className={
 								'flex flex-col text-center desktop:text-start text-h8 mt-4 gap-2'
 							}
 						>
-							<div>Notice: to mint this dNFT requires 5,000 GXZ Token</div>
+							<div>
+								Notice: to mint this dNFT requires{' '}
+								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
+							</div>
 							<div>
 								User can use 1 key to rescue 1 dNFT. Rescue chances will be
 								reset after 30 days
