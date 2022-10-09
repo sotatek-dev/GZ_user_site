@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import {
-	minBalanceForMint,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
@@ -22,6 +21,7 @@ import { AbiDnft } from 'web3/abis/types';
 import { handleFetchRateError } from 'modules/mintDnft/helpers/handleError';
 import { handleCommonError } from 'common/helpers/toast';
 import { useApproval, useNativeBalance } from 'web3/hooks';
+import { Spin } from 'antd';
 
 const RescueDNFT = () => {
 	const router = useRouter();
@@ -32,7 +32,7 @@ const RescueDNFT = () => {
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
 	// GXZ balance
-	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
+	// const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
 	// BUSD balance
 	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
 	// busd approve
@@ -53,11 +53,12 @@ const RescueDNFT = () => {
 			? launchPriceInBUSD
 			: new BigNumber(launchPriceInBUSD).div(rate);
 	const [poolRemaining, setPoolRemaining] = useState<BigNumber.Value>(0);
-	const [minimumGXZBalanceRequired, setMinimumGXZBalanceRequired] =
-		useState<BigNumber.Value>(0);
+	// const [minimumGXZBalanceRequired, setMinimumGXZBalanceRequired] =
+	useState<BigNumber.Value>(0);
+	const [isLoadingRescue, setIsLoadingRescue] = useState<boolean>(false);
 
 	const isConnectWallet = !!addressWallet;
-	const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
+	// const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
@@ -108,7 +109,19 @@ const RescueDNFT = () => {
 			if (dnftContract) {
 				// get price
 				const res = await dnftContract.rescuePrice();
-				setPriceInBUSD(new BigNumber(res._hex));
+				setPriceInBUSD(new BigNumber(res._hex).div(TOKEN_DECIMAL));
+			}
+		} catch (e) {
+			handleCommonError(e);
+		}
+	};
+
+	const fetchLaunchPrice = async () => {
+		try {
+			if (dnftContract) {
+				// get price
+				const res = await dnftContract.launchPrice();
+				setLaunchPriceInBUSD(new BigNumber(res._hex).div(TOKEN_DECIMAL));
 			}
 		} catch (e) {
 			handleCommonError(e);
@@ -117,6 +130,7 @@ const RescueDNFT = () => {
 
 	useEffect(() => {
 		fetchPrice();
+		fetchLaunchPrice();
 	}, [dnftContract]);
 
 	const fetchRate = async () => {
@@ -160,17 +174,19 @@ const RescueDNFT = () => {
 		fetchPoolRemaining();
 	}, [dnftContract]);
 
-	const fetchMinimumGXZBalanceRequired = async () => {
-		if (dnftContract) {
-			const minRequired = await dnftContract.minimumGalactixTokenRequire();
-			setMinimumGXZBalanceRequired(
-				new BigNumber(minRequired._hex).div(TOKEN_DECIMAL)
-			);
-		}
-	};
-	useEffect(() => {
-		fetchMinimumGXZBalanceRequired();
-	}, [dnftContract]);
+	// const fetchMinimumGXZBalanceRequired = async () => {
+	// 	if (dnftContract) {
+	// 		const minRequired = await dnftContract.minimumGalactixTokenRequire();
+	// 		setMinimumGXZBalanceRequired(
+	// 			new BigNumber(minRequired._hex).div(TOKEN_DECIMAL)
+	// 		);
+	// 	}
+	// };
+	// useEffect(() => {
+	// 	fetchMinimumGXZBalanceRequired();
+	// }, [dnftContract]);
+
+	const rescue = async () => {};
 
 	const getMessage = () => {
 		if (isConnectWallet && haveEnoughGXZBalance) {
@@ -203,13 +219,27 @@ const RescueDNFT = () => {
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
 				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
-					<div
-						className={
-							'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
-						}
-					>
-						Rescue
-					</div>
+					{isConnectWallet &&
+					!isLoadingRescue &&
+					haveEnoughBalance() &&
+					isRoyalty() ? (
+						<div
+							onClick={rescue}
+							className={
+								'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
+							}
+						>
+							Rescue
+						</div>
+					) : (
+						<div
+							className={
+								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px]'
+							}
+						>
+							{isLoadingRescue ? <Spin className={'flex'} /> : 'Rescue'}
+						</div>
+					)}
 				</div>
 
 				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
@@ -298,10 +328,10 @@ const RescueDNFT = () => {
 								'flex flex-col text-center desktop:text-start text-h8 mt-4 gap-2'
 							}
 						>
-							<div>
-								Notice: to mint this dNFT requires{' '}
-								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
-							</div>
+							{/*<div>*/}
+							{/*	Notice: to mint this dNFT requires{' '}*/}
+							{/*	{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token*/}
+							{/*</div>*/}
 							<div>
 								User can use 1 key to rescue 1 dNFT. Rescue chances will be
 								reset after 30 days
