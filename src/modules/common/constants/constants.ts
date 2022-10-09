@@ -6,7 +6,8 @@ export const ROUTES = {
 	MY_PROFILE: '/my-profile',
 	MINT_DNFT: '/mint-dnft',
 	MINT_KEY: '/mint-key',
-	MERGE_NFT: '/merge-nft',
+	LIST_DNFT: '/list-dnft',
+	LIST_DNFT_DETAIL: '/list-dnft/',
 	RESCUE_NFT: '/rescue-nft',
 	LANDING: '/landing',
 	NFT_DETAIL: '/dnft-detail',
@@ -26,6 +27,7 @@ export enum STATUS_STEP {
 	FINISH = 'finish',
 }
 
+export const LIMIT_8 = 8 as number;
 export const LIMIT_10 = 10 as number;
 export const LIMIT_12 = 12 as number;
 export const CURRENCY = 'BUSD';
@@ -60,6 +62,7 @@ export const BSC_DECIMAL = 18;
 export const TYPE_SALE_ROUND = 'sale-round';
 export enum STATUS_LIST_DNFT {
 	NORMAL = 'normal',
+	UNLOCK = 'unlocked',
 }
 
 export enum SALE_ROUND_CURRENT_STATUS {
@@ -73,12 +76,14 @@ export enum SALE_ROUND_CURRENT_STATUS {
 }
 
 export const SPECIES_DNFT: Array<{ [key: string]: string }> = [
+	{ key: '', label: 'Rarity' },
 	{ key: 'Adelio', label: 'Adelio' },
 	{ key: 'Kinga', label: 'Kinga' },
 	{ key: 'Empa', label: 'Empa' },
 ];
 
 export const RARITY_DNFT: Array<{ [key: string]: string }> = [
+	{ key: '', label: 'Species' },
 	{ key: 'Common', label: 'Common' },
 	{ key: 'Rare', label: 'Rare' },
 	{ key: 'UltraRare', label: 'Ultra Rare' },
@@ -103,4 +108,8 @@ export const RPC_CHAIN: { [key: number]: string } = {
 	3: 'ropsten', // ropsten
 	137: 'https://polygonapi.terminet.io/rpc', // polygon mainnet
 	80001: 'https://rpc-mumbai.maticvigil.com', // mumbai - polygon testnet
+};
+
+export const STATUS_CODE = {
+	SUCCESS: 200,
 };
