@@ -4,147 +4,108 @@ import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import {
 	DECIMAL_PLACED,
-	listPhaseId,
 	minBalanceForMint,
-	MINT_PHASE_ID,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mintDnft/constants';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
-import { IPhaseStatistic } from 'modules/mintDnft/interfaces';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
 import CustomRadio from 'common/components/radio';
-import { Tooltip } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { formatBigNumber, geMintPhaseType } from 'common/utils/functions';
-import { now, ROUTES } from 'common/constants/constants';
+import { formatBigNumber } from 'common/utils/functions';
+import { ROUTES } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
 import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
-const RescueDNFT = () => {
-	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
-	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
-		0
-	);
-	const router = useRouter();
-	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
-		return (
-			item.id === runningPhaseId &&
-			item.startTime < now() &&
-			item.endTime > now()
-		);
-	});
+import { AbiDnft } from 'web3/abis/types';
+import { handleFetchRateError } from 'modules/mintDnft/helpers/handleError';
+import { handleCommonError } from 'common/helpers/toast';
 
-	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
-	const dnftContract = useContract(
+const RescueDNFT = () => {
+	const router = useRouter();
+	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
+	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
 	const { addressWallet } = useSelector((state) => state.wallet);
-	const {
-		priceInBUSD: priceInBUSD = 0,
-		priceAfter24Hours: priceAfter24Hours = 0,
-		// maxSaleAmount: maxSaleAmount = 0,
-		// totalSold: totalSold = 0,
-	} = runningPhase || {};
 	// BUSD / BNB
+	const [priceInBUSD, setPriceInBUSD] = useState<BigNumber.Value>(0);
 	const [rate, setRate] = useState<BigNumber.Value>(1);
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
-	const priceAfter =
-		token === TOKENS.BUSD
-			? priceAfter24Hours
-			: new BigNumber(priceAfter24Hours).div(rate);
+	const [poolRemaining, setPoolRemaining] = useState<BigNumber.Value>(0);
 
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughGXZBalance = gxzBalance.gte(minBalanceForMint);
 
-	useEffect(() => {
-		const handleGetListPhaseMintNft = async () => {
-			try {
-				if (dnftContract) {
-					// @ts-ignore
-					const runningPhaseId = await dnftContract?.currentSalePhase();
-
-					const list = await Promise.all(
-						listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
-							// @ts-ignore
-							const res = await dnftContract?.salePhaseStatistics(salephaseid);
-							const {
-								endTime,
-								maxAmountUserCanBuy,
-								maxSaleAmount,
-								priceAfter24Hours,
-								priceInBUSD,
-								startTime,
-								totalSold,
-							} = res;
-							const phase: IPhaseStatistic = {
-								id: salephaseid,
-								type: geMintPhaseType(salephaseid) || '',
-								startTime: new BigNumber(startTime._hex).toNumber(),
-								endTime: new BigNumber(endTime._hex).toNumber(),
-								priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								priceInBUSD: new BigNumber(priceInBUSD._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								maxSaleAmount: new BigNumber(maxSaleAmount._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								totalSold: new BigNumber(totalSold._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-							};
-							return phase;
-						})
-					);
-					setRunningPhaseId(runningPhaseId);
-					setListPhase(list);
-				}
-			} catch (e) {
-				// handle e
+	const fetchPrice = async () => {
+		try {
+			if (dnftContract) {
+				// get price
+				const res = await dnftContract.rescuePrice();
+				setPriceInBUSD(new BigNumber(res._hex));
 			}
-		};
+		} catch (e) {
+			handleCommonError(e);
+		}
+	};
 
-		handleGetListPhaseMintNft();
+	useEffect(() => {
+		fetchPrice();
 	}, [dnftContract]);
 
-	useEffect(() => {
-		const fetchRate = async () => {
-			try {
+	const fetchRate = async () => {
+		try {
+			if (dnftContract) {
 				// get rate
-				// @ts-ignore
-				const res = await dnftContract?.convertBNBToBUSD(
+				const res = await dnftContract.convertBNBToBUSD(
 					TOKEN_DECIMAL.toString(10)
 				);
 				const rate = new BigNumber(res._hex).toString(10);
 				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
-			} catch (e) {
-				setRate(1);
-				// handle e
-				// console.log(e);
 			}
-		};
-
-		if (dnftContract) {
-			fetchRate();
+		} catch (e) {
+			setRate(1);
+			handleFetchRateError(e);
 		}
-	}, [runningPhaseId, runningPhase, dnftContract]);
+	};
+
+	useEffect(() => {
+		fetchRate();
+	}, [dnftContract]);
+
+	const fetchPoolRemaining = async () => {
+		try {
+			if (dnftContract) {
+				const unSoldTokenOfAllPhase =
+					await dnftContract.getUnSoldTokenOfAllPhase();
+				const totalRescued = await dnftContract.totalRescued();
+
+				const theRest = new BigNumber(unSoldTokenOfAllPhase._hex).minus(
+					totalRescued._hex
+				);
+				setPoolRemaining(theRest);
+			}
+		} catch (e) {
+			handleCommonError(e);
+		}
+	};
+
+	useEffect(() => {
+		fetchPoolRemaining();
+	}, [dnftContract]);
+
 	useEffect(() => {
 		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
 		// to report page view Google Analytics
 		ReactGa.pageview(router?.pathname || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
 	return (
 		<>
 			<HelmetCommon
@@ -165,10 +126,10 @@ const RescueDNFT = () => {
 				</div>
 
 				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
-					<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
+					<h6 className='text-h3 font-semibold mb-4'>Rescue</h6>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div
 						className={
@@ -184,24 +145,24 @@ const RescueDNFT = () => {
 							>
 								{formatBigNumber(price)} {token}
 							</div>
-							{new BigNumber(priceAfter).gt(0) && (
-								<Tooltip
-									className={'ml-2'}
-									placement={'bottom'}
-									title={
-										<>
-											<div>
-												First 24h:{' '}
-												{new BigNumber(price).toFixed(DECIMAL_PLACED)} {token}{' '}
-												then {new BigNumber(priceAfter).toFixed(DECIMAL_PLACED)}{' '}
-												{token}
-											</div>
-										</>
-									}
-								>
-									<ExclamationCircleOutlined />
-								</Tooltip>
-							)}
+							{/*{new BigNumber(priceAfter).gt(0) && (*/}
+							{/*	<Tooltip*/}
+							{/*		className={'ml-2'}*/}
+							{/*		placement={'bottom'}*/}
+							{/*		title={*/}
+							{/*			<>*/}
+							{/*				<div>*/}
+							{/*					First 24h:{' '}*/}
+							{/*					{new BigNumber(price).toFixed(DECIMAL_PLACED)} {token}{' '}*/}
+							{/*					then {new BigNumber(priceAfter).toFixed(DECIMAL_PLACED)}{' '}*/}
+							{/*					{token}*/}
+							{/*				</div>*/}
+							{/*			</>*/}
+							{/*		}*/}
+							{/*	>*/}
+							{/*		<ExclamationCircleOutlined />*/}
+							{/*	</Tooltip>*/}
+							{/*)}*/}
 						</div>
 						<CustomRadio
 							onChange={(e) => {
@@ -215,7 +176,7 @@ const RescueDNFT = () => {
 					</div>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
@@ -226,12 +187,12 @@ const RescueDNFT = () => {
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Current NFTs can be rescued
 							</div>
-							<div>{new BigNumber(600).toFixed(DECIMAL_PLACED)}</div>
+							<div>{formatBigNumber(poolRemaining)}</div>
 						</div>
 					</div>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-8'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div
 						className={
