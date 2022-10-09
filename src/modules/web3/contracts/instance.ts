@@ -19,6 +19,7 @@ export const NEXT_PUBLIC_PRESALE_POOL =
 // export const genMainContractEther = () => {
 //   return getContractInstanceEther(DNFTABI, NEXT_PUBLIC_BUSD);
 // };
+console.log('DNFTABI', NEXT_PUBLIC_DNFT);
 
 export const genDNFTContractEther = () => {
 	return getContractInstanceEther(DNFTABI, NEXT_PUBLIC_DNFT);

@@ -14,6 +14,9 @@ const nextConfig = {
 	// },
 	cssModules: true,
 	images: {
+		domains: [
+			'api.galactix.sotatek.works',
+		  ],
 		dangerouslyAllowSVG: true,
 		// disableStaticImages: true,
 		// unoptimized: true,
