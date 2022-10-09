@@ -14,11 +14,11 @@ import {
 	IParamsMergeRuleDFNT,
 	mergeRuleDFNT,
 } from 'apis/mergeDnft';
-import CustomDropdown from 'common/components/dropdown/custom-dropdown';
 import { ROUTES, STATUS_CODE } from 'common/constants/constants';
 import { PROPERTY } from 'common/constants/mergeDNFT';
 import Button from 'common/components/button';
 import { permanentMerge, temporaryMerge } from 'web3/contracts/useContractDNFT';
+import DropdownMegeDnft from 'common/components/dropdown/DropdownMegeDnft';
 
 interface IInitImage {
 	assetBase: string;
@@ -335,7 +335,7 @@ const MergeDNFT = () => {
 						const { propertyName, values, value } = property;
 						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
 						return (
-							<CustomDropdown
+							<DropdownMegeDnft
 								list={values}
 								label={propertyName}
 								key={index}
