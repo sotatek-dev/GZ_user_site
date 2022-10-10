@@ -5,73 +5,58 @@ import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
 import {
-	convertTimelineMintNft,
 	formatBigNumber,
-	geMintPhaseType,
 	getMintPhaseLabel,
 	isApproved,
 } from 'common/utils/functions';
 import NftGroup from 'assets/svg-components/nftGroup';
-import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
 import ReactGa from 'react-ga';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
-	listPhaseId,
-	MINT_PHASE,
-	MINT_PHASE_ID,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mintDnft/constants';
-import {
-	IPhaseStatistic,
-	ITimelineMintNftState,
-} from 'modules/mintDnft/interfaces';
 import Countdown from 'common/components/countdown';
-import { now, ROUND_TYPE, ROUTES, second } from 'common/constants/constants';
+import { now, ROUTES, second } from 'common/constants/constants';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft } from 'web3/abis/types';
-import {
-	checkWhitelist,
-	getMintDnftSignature,
-} from 'modules/mintDnft/services';
-import {
-	handleFetchListPhaseError,
-	handleFetchRateError,
-	handleMintError,
-} from 'modules/mintDnft/helpers/handleError';
+import { getMintDnftSignature } from 'modules/mintDnft/services';
+import { handleMintError } from 'modules/mintDnft/helpers/handleError';
 import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
 import { showError } from 'common/helpers/toast';
+import {
+	fetchIsWhitelisted,
+	fetchListPhase,
+	fetchMinimumGXZBalanceRequired,
+	fetchRate,
+} from 'modules/mintDnft/helpers/fetch';
+import { useAppDispatch, useAppSelector } from 'stores';
+import { setIsLoadingMint } from 'stores/mint-dnft';
+import getMessage from 'modules/mintDnft/helpers/getMessage';
 
 const MintDNFT: React.FC = () => {
+	const dispatch = useAppDispatch();
 	const router = useRouter();
-	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
-	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
-		0
-	);
-	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
-		return (
-			item.id === runningPhaseId &&
-			item.startTime < now() &&
-			item.endTime > now()
-		);
-	});
-	const upcomingPhase = listPhase.find((item) => {
-		return item.id === runningPhaseId && item.startTime > now();
-	});
-	const publicPhase = listPhase.find((item: IPhaseStatistic) => {
-		return item.type === MINT_PHASE.PUBLIC;
-	});
+	const {
+		// listPhase,
+		runningPhaseId,
+		runningPhase,
+		upcomingPhase,
+		publicPhase,
+		timelineMintNft,
+		isWhitelisted,
+		rate,
+		minimumGXZBalanceRequired,
+		isLoadingMint,
+	} = useAppSelector((state) => state.mintDnft);
 
-	const [timelineMintNft, setTimelineMintNft] = useState<
-		Array<ITimelineMintNftState>
-	>([]);
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
 	// GXZ balance
@@ -88,7 +73,7 @@ const MintDNFT: React.FC = () => {
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
-	const { addressWallet } = useSelector((state) => state.wallet);
+	const { addressWallet } = useAppSelector((state) => state.wallet);
 	const {
 		priceInBUSD: priceInBUSD = 0,
 		priceAfter24Hours: priceAfter24Hours = 0,
@@ -96,8 +81,6 @@ const MintDNFT: React.FC = () => {
 		totalSold: totalSold = 0,
 		maxAmountUserCanBuy,
 	} = runningPhase || {};
-	// BUSD / BNB
-	const [rate, setRate] = useState<BigNumber.Value>(1);
 	// price of selected token
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
@@ -105,10 +88,6 @@ const MintDNFT: React.FC = () => {
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
-	const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false);
-	const [isLoadingMint, setIsLoadingMint] = useState<boolean>(false);
-	const [minimumGXZBalanceRequired, setMinimumGXZBalanceRequired] =
-		useState<BigNumber.Value>(0);
 
 	// mint validation
 	const isConnectWallet = !!addressWallet;
@@ -137,118 +116,33 @@ const MintDNFT: React.FC = () => {
 		return false;
 	};
 
-	const handleGetListPhaseMintNft = async () => {
-		try {
-			if (dnftContract) {
-				const runningPhaseId = await dnftContract.currentSalePhase();
-
-				const list = await Promise.all(
-					listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
-						// @ts-ignore
-						const res = await dnftContract.salePhaseStatistics(salephaseid);
-						const {
-							endTime,
-							maxAmountUserCanBuy,
-							maxSaleAmount,
-							priceAfter24Hours,
-							priceInBUSD,
-							startTime,
-							totalSold,
-						} = res;
-						const phase: IPhaseStatistic = {
-							id: salephaseid,
-							type: geMintPhaseType(salephaseid) || '',
-							startTime: new BigNumber(startTime._hex).times(1000).toNumber(),
-							endTime: new BigNumber(endTime._hex).times(1000).toNumber(),
-							priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
-								.div(TOKEN_DECIMAL)
-								.toString(10),
-							priceInBUSD: new BigNumber(priceInBUSD._hex)
-								.div(TOKEN_DECIMAL)
-								.toString(10),
-							maxAmountUserCanBuy: new BigNumber(
-								maxAmountUserCanBuy._hex
-							).toString(10),
-							maxSaleAmount: new BigNumber(maxSaleAmount._hex).toString(10),
-							totalSold: new BigNumber(totalSold._hex).toString(10),
-						};
-						return phase;
-					})
-				);
-				setRunningPhaseId(runningPhaseId);
-				setListPhase(list);
-			}
-		} catch (e) {
-			handleFetchListPhaseError(e);
-		}
-	};
-
-	const fetchRate = async () => {
-		try {
-			if (dnftContract) {
-				// get rate
-				const res = await dnftContract.convertBNBToBUSD(
-					TOKEN_DECIMAL.toString(10)
-				);
-				const rate = new BigNumber(res._hex).toString(10);
-				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
-			}
-		} catch (e) {
-			setRate(1);
-			handleFetchRateError(e);
-		}
-	};
-
-	const fetchIsWhitelisted = async () => {
-		if (runningPhase && runningPhaseId && addressWallet) {
-			setIsWhitelisted(
-				await checkWhitelist(
-					addressWallet,
-					ROUND_TYPE.MINT_NFT,
-					runningPhase.type
-				)
-			);
-		}
-	};
-
-	const fetchMinimumGXZBalanceRequired = async () => {
-		if (dnftContract) {
-			const minRequired = await dnftContract.minimumGalactixTokenRequire();
-			setMinimumGXZBalanceRequired(
-				new BigNumber(minRequired._hex).div(TOKEN_DECIMAL)
-			);
-		}
-	};
-
 	const reloadData = async () => {
-		handleGetListPhaseMintNft();
-		fetchRate();
-		fetchIsWhitelisted();
-		fetchMinimumGXZBalanceRequired();
+		dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchRate({ dnftContract }));
+		dispatch(
+			fetchIsWhitelisted({ runningPhase, walletAddress: addressWallet })
+		);
+		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
 	};
 
 	useEffect(() => {
-		handleGetListPhaseMintNft();
-		fetchMinimumGXZBalanceRequired();
+		dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
 	}, [dnftContract]);
 
 	useEffect(() => {
-		fetchRate();
+		dispatch(fetchRate({ dnftContract }));
 	}, [runningPhaseId, runningPhase, dnftContract]);
 
 	useEffect(() => {
-		fetchIsWhitelisted();
+		dispatch(
+			fetchIsWhitelisted({ runningPhase, walletAddress: addressWallet })
+		);
 	}, [runningPhaseId, runningPhase, addressWallet]);
-
-	useEffect(() => {
-		if (listPhase.length) {
-			setTimelineMintNft(convertTimelineMintNft(listPhase));
-		}
-	}, [listPhase]);
 
 	const mint = async () => {
 		try {
-			setIsLoadingMint(true);
+			dispatch(setIsLoadingMint(true));
 			if (
 				dnftContract &&
 				runningPhase &&
@@ -299,22 +193,8 @@ const MintDNFT: React.FC = () => {
 		} catch (e) {
 			handleMintError(e);
 		} finally {
-			setIsLoadingMint(false);
+			dispatch(setIsLoadingMint(false));
 			reloadData();
-		}
-	};
-
-	const getMessage = () => {
-		if (isConnectWallet && haveEnoughGXZBalance) {
-			if (!haveEnoughBalance()) {
-				return "You don't have enough BNB/BUSD";
-			} else if (!isRoyalty()) {
-				return "You don't have enough BUSD for royalty";
-			} else {
-				return 'You are eligible to mint this dNFT';
-			}
-		} else {
-			return 'You are not eligible to mint this dNFT';
 		}
 	};
 
@@ -523,7 +403,12 @@ const MintDNFT: React.FC = () => {
 									'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
 								}
 							>
-								{getMessage()}
+								{getMessage(
+									isConnectWallet,
+									haveEnoughGXZBalance,
+									haveEnoughBalance(),
+									isRoyalty()
+								)}
 							</div>
 							<div className={'text-h8 mt-4'}>
 								Notice: to mint this dNFT requires{' '}
