@@ -167,7 +167,7 @@ const RescueDNFT = () => {
 			handleCommonError();
 		} finally {
 			reloadData();
-			dispatch(setIsLoadingRescue(true));
+			dispatch(setIsLoadingRescue(false));
 		}
 	};
 
