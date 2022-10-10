@@ -9,10 +9,12 @@ import {
 	fetchListPhase,
 	fetchMinimumGXZBalanceRequired,
 	fetchRate,
+	fetchUserBoughtAmount,
 } from 'modules/mintDnft/helpers/fetch';
 import { now } from 'common/constants/constants';
 import { convertTimelineMintNft } from 'common/utils/functions';
 import BigNumber from 'bignumber.js';
+import { handleCallMethodError } from 'common/helpers/handleError';
 
 interface InitialState {
 	listPhase: Array<IPhaseStatistic>;
@@ -22,6 +24,7 @@ interface InitialState {
 	publicPhase?: IPhaseStatistic;
 	timelineMintNft: Array<ITimelineMintNftState>;
 
+	userBoughtAmount: BigNumber.Value;
 	rate: BigNumber.Value;
 	isWhitelisted: boolean;
 	minimumGXZBalanceRequired: BigNumber.Value;
@@ -34,6 +37,7 @@ const initialState: InitialState = {
 	runningPhaseId: 0,
 	timelineMintNft: [],
 
+	userBoughtAmount: new BigNumber(0),
 	rate: new BigNumber(1),
 	isWhitelisted: false,
 	minimumGXZBalanceRequired: new BigNumber(0),
@@ -49,7 +53,7 @@ const mintDnftSlice = createSlice({
 			state.isLoadingMint = action.payload;
 		},
 	},
-	extraReducers(builder) {
+	extraReducers: (builder) => {
 		builder.addCase(fetchListPhase.fulfilled, (state, action) => {
 			const { runningPhaseId, listPhase } = action.payload;
 			state.listPhase = listPhase;
@@ -76,29 +80,38 @@ const mintDnftSlice = createSlice({
 			}
 		});
 		// builder.addCase(fetchListPhase.pending, (state, action) => {});
-		builder.addCase(fetchListPhase.rejected, (state) => {
+		builder.addCase(fetchListPhase.rejected, (state, action) => {
 			state.listPhase = initialState.listPhase;
 			state.runningPhaseId = initialState.runningPhaseId;
 			state.timelineMintNft = initialState.timelineMintNft;
 			state.rate = initialState.rate;
 			state.isWhitelisted = initialState.isWhitelisted;
-			// e = action.payload
+
+			handleCallMethodError(action.payload);
+		});
+
+		builder.addCase(fetchUserBoughtAmount.fulfilled, (state, action) => {
+			state.userBoughtAmount = action.payload;
+		});
+		builder.addCase(fetchUserBoughtAmount.rejected, (state, action) => {
+			state.userBoughtAmount = initialState.userBoughtAmount;
+			handleCallMethodError(action.payload);
 		});
 
 		builder.addCase(fetchRate.fulfilled, (state, action) => {
 			state.rate = action.payload;
 		});
-		builder.addCase(fetchRate.rejected, (state) => {
+		builder.addCase(fetchRate.rejected, (state, action) => {
 			state.rate = initialState.rate;
-			// e = action.payload
+			handleCallMethodError(action.payload);
 		});
 
 		builder.addCase(fetchIsWhitelisted.fulfilled, (state, action) => {
 			state.isWhitelisted = action.payload;
 		});
-		builder.addCase(fetchIsWhitelisted.rejected, (state) => {
+		builder.addCase(fetchIsWhitelisted.rejected, (state, action) => {
 			state.isWhitelisted = initialState.isWhitelisted;
-			// e = action.payload
+			handleCallMethodError(action.payload);
 		});
 
 		builder.addCase(
@@ -107,10 +120,13 @@ const mintDnftSlice = createSlice({
 				state.minimumGXZBalanceRequired = action.payload;
 			}
 		);
-		builder.addCase(fetchMinimumGXZBalanceRequired.rejected, (state) => {
-			state.minimumGXZBalanceRequired = initialState.rate;
-			// e = action.payload
-		});
+		builder.addCase(
+			fetchMinimumGXZBalanceRequired.rejected,
+			(state, action) => {
+				state.minimumGXZBalanceRequired = initialState.rate;
+				handleCallMethodError(action.payload);
+			}
+		);
 	},
 });
 

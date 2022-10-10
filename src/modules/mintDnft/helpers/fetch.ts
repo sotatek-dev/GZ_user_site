@@ -15,7 +15,7 @@ interface ParamsFetchListPhase {
 	dnftContract?: AbiDnft | null;
 }
 export const fetchListPhase = createAsyncThunk(
-	'fetchListPhase',
+	'mintDnft/fetchListPhase',
 	async (params: ParamsFetchListPhase, { rejectWithValue }) => {
 		const { dnftContract } = params;
 
@@ -76,7 +76,7 @@ interface FetchRateParams {
 	dnftContract?: AbiDnft | null;
 }
 export const fetchRate = createAsyncThunk(
-	'fetchRate',
+	'mintDnft/fetchRate',
 	async (params: FetchRateParams, { rejectWithValue }) => {
 		const { dnftContract } = params;
 
@@ -101,7 +101,7 @@ interface FetchIsWhitelistedParams {
 	walletAddress: string;
 }
 export const fetchIsWhitelisted = createAsyncThunk(
-	'fetchIsWhitelisted',
+	'mintDnft/fetchIsWhitelisted',
 	async (params: FetchIsWhitelistedParams, { rejectWithValue }) => {
 		const { runningPhase, walletAddress } = params;
 
@@ -127,7 +127,7 @@ interface FetchMinimumGXZBalanceRequiredParams {
 	dnftContract?: AbiDnft | null;
 }
 export const fetchMinimumGXZBalanceRequired = createAsyncThunk(
-	'fetchMinimumGXZBalanceRequired',
+	'mintDnft/fetchMinimumGXZBalanceRequired',
 	async (params: FetchMinimumGXZBalanceRequiredParams, { rejectWithValue }) => {
 		const { dnftContract } = params;
 
@@ -135,6 +135,32 @@ export const fetchMinimumGXZBalanceRequired = createAsyncThunk(
 			if (dnftContract) {
 				const minRequired = await dnftContract.minimumGalactixTokenRequire();
 				return new BigNumber(minRequired._hex).div(TOKEN_DECIMAL);
+			}
+			return new BigNumber(0);
+		} catch (e) {
+			return rejectWithValue(e);
+		}
+	}
+);
+
+interface FetchUserBoughtAmountParams {
+	dnftContract?: AbiDnft | null;
+	runningPhaseId: MINT_PHASE_ID | number;
+	walletAddress: string;
+}
+export const fetchUserBoughtAmount = createAsyncThunk(
+	'mintDnft/fetchUserBoughtAmount',
+	async (params: FetchUserBoughtAmountParams, { rejectWithValue }) => {
+		const { dnftContract, runningPhaseId, walletAddress } = params;
+
+		try {
+			if (dnftContract && runningPhaseId && walletAddress) {
+				const boughtAmount = await dnftContract.getUserBuyAmount(
+					runningPhaseId,
+					walletAddress
+				);
+
+				return new BigNumber(boughtAmount._hex);
 			}
 			return new BigNumber(0);
 		} catch (e) {

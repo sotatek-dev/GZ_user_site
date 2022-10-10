@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
+import TimelineMintRound from 'modules/mintDnft/components/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
 import {
 	formatBigNumber,
@@ -16,6 +15,7 @@ import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
+	Message,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
@@ -25,8 +25,8 @@ import { now, ROUTES, second } from 'common/constants/constants';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft } from 'web3/abis/types';
 import { getMintDnftSignature } from 'modules/mintDnft/services';
-import { handleMintError } from 'modules/mintDnft/helpers/handleError';
-import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
+import { handleWriteMethodError } from 'common/helpers/handleError';
+import MintSuccessToast from 'modules/mintDnft/components/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
@@ -39,7 +39,7 @@ import {
 } from 'modules/mintDnft/helpers/fetch';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { setIsLoadingMint } from 'stores/mint-dnft';
-import getMessage from 'modules/mintDnft/helpers/getMessage';
+import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
 
 const MintDNFT: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -52,6 +52,7 @@ const MintDNFT: React.FC = () => {
 		publicPhase,
 		timelineMintNft,
 		isWhitelisted,
+		userBoughtAmount,
 		rate,
 		minimumGXZBalanceRequired,
 		isLoadingMint,
@@ -150,19 +151,15 @@ const MintDNFT: React.FC = () => {
 				maxAmountUserCanBuy
 			) {
 				// check reach limit
-				const boughtAmount = await dnftContract.getUserBuyAmount(
-					runningPhaseId,
-					addressWallet
-				);
-				if (new BigNumber(boughtAmount._hex).gte(maxAmountUserCanBuy)) {
-					showError('You have reach the limitation of minting');
+				if (new BigNumber(userBoughtAmount).gte(maxAmountUserCanBuy)) {
+					showError(Message.REACH_LIMIT);
 					return;
 				}
 
 				// set up signature
 				const signature = await getMintDnftSignature();
 				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
-					await tryApproveBusd(false);
+					await tryApproveBusd(true);
 				}
 				const amount =
 					token === TOKENS.BNB
@@ -191,7 +188,7 @@ const MintDNFT: React.FC = () => {
 				}
 			}
 		} catch (e) {
-			handleMintError(e);
+			handleWriteMethodError(e);
 		} finally {
 			dispatch(setIsLoadingMint(false));
 			reloadData();
@@ -204,6 +201,46 @@ const MintDNFT: React.FC = () => {
 		ReactGa.pageview(router?.pathname || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const getMessage = () => {
+		const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
+		const isMinted = new BigNumber(userBoughtAmount).gt(0);
+
+		if (isConnectWallet) {
+			if (!haveEnoughBalance()) {
+				if (token === TOKENS.BNB) {
+					return <>{Message.NOT_HAVE_ENOUGH_BNB_BALANCE}</>;
+				} else if (token === TOKENS.BUSD) {
+					return <>{Message.NOT_HAVE_ENOUGH_BUSD_BALANCE}</>;
+				}
+			} else if (!isRoyalty()) {
+				return <>{Message.NOT_ROYALTY}</>;
+			} else {
+				if (isPublicSaleEndAfter7Days) {
+					if (isMinted) {
+						return (
+							<>
+								{Message.ELIGIBLE_TO_CLAIM}. Click{' '}
+								<span
+									className={'underline cursor-pointer'}
+									onClick={() => {
+										router.push(ROUTES.MY_PROFILE);
+									}}
+								>
+									here
+								</span>{' '}
+								to claim
+							</>
+						);
+					}
+					return <></>;
+				}
+				return <>{Message.ELIGIBLE_TO_MINT}</>;
+			}
+		} else {
+			return <>{Message.NOT_ELIGIBLE_TO_MINT}</>;
+		}
+	};
 
 	return (
 		<>
@@ -403,12 +440,7 @@ const MintDNFT: React.FC = () => {
 									'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
 								}
 							>
-								{getMessage(
-									isConnectWallet,
-									haveEnoughGXZBalance,
-									haveEnoughBalance(),
-									isRoyalty()
-								)}
+								{getMessage()}
 							</div>
 							<div className={'text-h8 mt-4'}>
 								Notice: to mint this dNFT requires{' '}
