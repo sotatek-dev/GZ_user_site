@@ -15,7 +15,11 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { getMyClaimableDNFTsCountRD, getMyDNFTsRD } from 'stores/my-profile';
+import {
+	getMyClaimableDNFTsCountRD,
+	getMyDNFTsRD,
+	setDNFTsCount,
+} from 'stores/my-profile';
 import { AbiDnft } from 'web3/abis/types';
 import {
 	NEXT_PUBLIC_BUSD,
@@ -23,11 +27,11 @@ import {
 	NEXT_PUBLIC_KEYNFT,
 } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useApprovalBusd } from 'web3/hooks';
+import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
 import DNFTABI from '../../../web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
-	const { dnfts, dntf_claimable_count } = useSelector(
+	const { dnfts, dnft_claimable_count } = useSelector(
 		(state) => state.myProfile
 	);
 	const { isLogin } = useAppSelector((state) => state.user);
@@ -37,6 +41,7 @@ export default function MyDNFT() {
 	const dispatch = useAppDispatch();
 	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
 	const [claimableTime, setClaimableTime] = useState(0);
+	const { account } = useActiveWeb3React();
 	const { tryApproval, allowanceAmount } = useApprovalBusd(
 		NEXT_PUBLIC_BUSD,
 		NEXT_PUBLIC_KEYNFT
@@ -50,10 +55,9 @@ export default function MyDNFT() {
 	}, [isLogin, type, status, page]);
 
 	useEffect(() => {
-		if (dnftContract) {
-			handleGetClaimableTime();
-		}
-	}, [dnftContract]);
+		handleGetClaimableTime();
+		handleGetBalanceOf();
+	}, [dnftContract, account]);
 
 	const mutantDNFTs = useMemo(() => {
 		let canClaimTime = false;
@@ -106,6 +110,13 @@ export default function MyDNFT() {
 		if (dnftContract) {
 			const time = await dnftContract.claimableTime();
 			setClaimableTime(time.toNumber());
+		}
+	};
+
+	const handleGetBalanceOf = async () => {
+		if (dnftContract && account) {
+			const balance = await dnftContract.balanceOf(account);
+			dispatch(setDNFTsCount(balance.toNumber()));
 		}
 	};
 
@@ -188,8 +199,8 @@ export default function MyDNFT() {
 			<div className={'flex justify-between items-start mb-3'}>
 				<h5 className={`text-h6 font-semibold text-white`}>My dNFT</h5>
 				<button
-					disabled={!dntf_claimable_count}
-					onClick={() => handleClaimAll(dntf_claimable_count)}
+					disabled={!dnft_claimable_count}
+					onClick={() => handleClaimAll(dnft_claimable_count)}
 					className={
 						'desktop:hidden text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
 					}
@@ -225,8 +236,8 @@ export default function MyDNFT() {
 						/>
 					</div>
 					<button
-						disabled={!dntf_claimable_count}
-						onClick={() => handleClaimAll(dntf_claimable_count)}
+						disabled={!dnft_claimable_count}
+						onClick={() => handleClaimAll(dnft_claimable_count)}
 						className={
 							'hidden desktop:block text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
 						}
