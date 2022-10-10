@@ -339,6 +339,7 @@ const MintDNFT: React.FC = () => {
 					isConnectWallet &&
 					!isLoadingMint &&
 					haveEnoughBalance() &&
+					haveEnoughGXZBalance &&
 					isRoyalty() ? (
 						<div
 							onClick={mint}
