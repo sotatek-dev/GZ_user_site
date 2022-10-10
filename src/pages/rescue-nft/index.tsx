@@ -18,7 +18,6 @@ import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { handleCommonError } from 'common/helpers/toast';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { message, Spin } from 'antd';
-import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { fetchRate } from 'modules/mintDnft/helpers/fetch';
 import {
@@ -29,6 +28,7 @@ import {
 } from 'modules/rescueDnft/helpers/fetch';
 import { setIsLoadingRescue } from 'stores/rescue-dnft';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
+import RescueSuccessToast from 'modules/rescueDnft/components/RescueSuccessToast';
 
 const RescueDNFT = () => {
 	const router = useRouter();
@@ -159,7 +159,7 @@ const RescueDNFT = () => {
 					await res.wait();
 					const hash: string = res ? res.hash : '';
 					if (hash) {
-						message.success(<MintSuccessToast txHash={hash} />);
+						message.success(<RescueSuccessToast txHash={hash} />);
 					}
 				}
 			}

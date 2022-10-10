@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import TimelineMintRound from 'modules/mintDnft/TimelineMintRound';
+import TimelineMintRound from 'modules/mintDnft/components/TimelineMintRound';
 import React, { useEffect, useState } from 'react';
 import {
 	formatBigNumber,
@@ -26,7 +26,7 @@ import { useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft } from 'web3/abis/types';
 import { getMintDnftSignature } from 'modules/mintDnft/services';
 import { handleMintError } from 'modules/mintDnft/helpers/handleError';
-import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
+import MintSuccessToast from 'modules/mintDnft/components/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
