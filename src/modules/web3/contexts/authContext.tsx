@@ -14,8 +14,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const { disconnectWallet } = useConnectWallet();
 	const { updateBalance } = useUpdateBalance();
 	const { isLogin, accessToken } = useSelector((state) => state.user);
-	const { balance } = useSelector((state) => state.wallet);
-	console.log('balcne', balance);
 
 	useEffect(() => {
 		const accountConnected = StorageUtils.getSectionStorageItem(

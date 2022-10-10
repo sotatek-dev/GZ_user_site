@@ -42,12 +42,14 @@ interface initialStateProps {
 			limit: number;
 		};
 	};
-	dntf_claimable_count: number;
+	dnft_claimable_count: number;
+	dnft_holding_count: number;
 }
 
 const initialState: initialStateProps = {
 	loading: false,
-	dntf_claimable_count: 0,
+	dnft_claimable_count: 0,
+	dnft_holding_count: 0,
 };
 
 const myProfileStore = createSlice({
@@ -71,6 +73,12 @@ const myProfileStore = createSlice({
 			return {
 				...state,
 				loading: action.payload,
+			};
+		},
+		setDNFTsCount: (state, action: PayloadAction<number>) => {
+			return {
+				...state,
+				dnft_holding_count: action.payload,
 			};
 		},
 	},
@@ -107,7 +115,7 @@ const myProfileStore = createSlice({
 		});
 
 		builder.addCase(getMyClaimableDNFTsCountRD.fulfilled, (state, action) => {
-			state.dntf_claimable_count = action.payload;
+			state.dnft_claimable_count = action.payload;
 		});
 	},
 });
@@ -163,7 +171,7 @@ export const getMyProfileRD = createAsyncThunk(
 	}
 );
 
-export const { setUserInfo, setErrMessage, setLoading } =
+export const { setUserInfo, setErrMessage, setLoading, setDNFTsCount } =
 	myProfileStore.actions;
 
 export const setUserInfoRD = (userInfo?: ITypeUserInfo) => {
