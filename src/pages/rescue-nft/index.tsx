@@ -3,148 +3,269 @@ import React, { useEffect, useState } from 'react';
 import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import {
-	DECIMAL_PLACED,
-	listPhaseId,
-	minBalanceForMint,
-	MINT_PHASE_ID,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mintDnft/constants';
 import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
-import { IPhaseStatistic } from 'modules/mintDnft/interfaces';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
+import DKEYNFTABI from 'web3/abis/abi-keynft.json';
 import CustomRadio from 'common/components/radio';
-import { Tooltip } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { formatBigNumber, geMintPhaseType } from 'common/utils/functions';
-import { now, ROUTES } from 'common/constants/constants';
+import { formatBigNumber, isApproved } from 'common/utils/functions';
+import { now, ROUTES, second } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
 import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
-const RescueDNFT = () => {
-	const [listPhase, setListPhase] = useState<Array<IPhaseStatistic>>([]);
-	const [runningPhaseId, setRunningPhaseId] = useState<MINT_PHASE_ID | number>(
-		0
-	);
-	const router = useRouter();
-	const runningPhase = listPhase.find((item: IPhaseStatistic) => {
-		return (
-			item.id === runningPhaseId &&
-			item.startTime < now() &&
-			item.endTime > now()
-		);
-	});
+import { AbiDnft, AbiKeynft } from 'web3/abis/types';
+import { handleFetchRateError } from 'modules/mintDnft/helpers/handleError';
+import { handleCommonError } from 'common/helpers/toast';
+import { useApproval, useNativeBalance } from 'web3/hooks';
+import { message, Spin } from 'antd';
+import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 
-	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
-	const dnftContract = useContract(
+const RescueDNFT = () => {
+	const router = useRouter();
+	// list of key which can be used
+	const [listKey, setListKey] = useState<Array<string>>([]);
+	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
-	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
+	const keyNftContract = useContract<AbiKeynft>(
+		DKEYNFTABI,
+		process.env.NEXT_PUBLIC_KEYNFT_ADDRESS || ''
+	);
+	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
+	const nativeBalance = useNativeBalance();
+	// GXZ balance
+	// const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
+	// BUSD balance
+	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
+	// busd approve
+	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
+		useApproval(
+			process.env.NEXT_PUBLIC_BUSD_ADDRESS || '',
+			process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+		);
 	const { addressWallet } = useSelector((state) => state.wallet);
-	const {
-		priceInBUSD: priceInBUSD = 0,
-		priceAfter24Hours: priceAfter24Hours = 0,
-		// maxSaleAmount: maxSaleAmount = 0,
-		// totalSold: totalSold = 0,
-	} = runningPhase || {};
-	// BUSD / BNB
+	const [priceInBUSD, setPriceInBUSD] = useState<BigNumber.Value>(0);
+	const [launchPriceInBUSD, setLaunchPriceInBUSD] =
+		useState<BigNumber.Value>(0);
 	const [rate, setRate] = useState<BigNumber.Value>(1);
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
-	const priceAfter =
+	const launchPrice =
 		token === TOKENS.BUSD
-			? priceAfter24Hours
-			: new BigNumber(priceAfter24Hours).div(rate);
+			? launchPriceInBUSD
+			: new BigNumber(launchPriceInBUSD).div(rate);
+	const [poolRemaining, setPoolRemaining] = useState<BigNumber.Value>(0);
+	// const [minimumGXZBalanceRequired, setMinimumGXZBalanceRequired] =
+	useState<BigNumber.Value>(0);
+	const [isLoadingRescue, setIsLoadingRescue] = useState<boolean>(false);
 
 	const isConnectWallet = !!addressWallet;
-	const haveEnoughGXZBalance = gxzBalance.gte(minBalanceForMint);
+	// const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
+	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
+	const haveEnoughKey = listKey.length > 0;
+
+	const haveEnoughBalance = () => {
+		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
+
+		if (new BigNumber(price).gt(0)) {
+			if (token === TOKENS.BNB) {
+				return nativeBalance.gte(price);
+			} else if (token === TOKENS.BUSD) {
+				return busdBalance.gte(price);
+			}
+		} else if (new BigNumber(price).eq(0)) {
+			if (token === TOKENS.BNB) {
+				return nativeBalance.gte(launchPrice);
+			} else if (token === TOKENS.BUSD) {
+				return busdBalance.gte(launchPrice);
+			}
+		}
+
+		return false;
+	};
+	const isRoyalty = () => {
+		// Is not royalty when:
+		//   - If the price for rescue is not free AND
+		//      + User has lesser than 12% value of total price in BUSD when user pay in BNB OR
+		//      + User has lesser than 112% value of total price in BUSD when user pay in BUSD
+		//   - If the rescue is free AND
+		//      + User has lesser than 12% value of launch price in BUSD.
+
+		// priceInBUSD in BigNumber
+		const p = new BigNumber(priceInBUSD);
+		// launchPriceInBUSD in BigNumber
+		const lp = new BigNumber(launchPriceInBUSD);
+
+		if (new BigNumber(price).gt(0)) {
+			if (token === TOKENS.BNB) {
+				return busdBalance.gte(p.times(0.12));
+			} else if (token === TOKENS.BUSD) {
+				return busdBalance.gte(p.times(1.12));
+			}
+		} else if (new BigNumber(price).eq(0)) {
+			return busdBalance.gte(lp.times(0.12));
+		}
+		return false;
+	};
+
+	const fetchPrice = async () => {
+		try {
+			if (dnftContract) {
+				// get price
+				const res = await dnftContract.rescuePrice();
+				setPriceInBUSD(new BigNumber(res._hex).div(TOKEN_DECIMAL));
+			}
+		} catch (e) {
+			handleCommonError(e);
+		}
+	};
+
+	const fetchLaunchPrice = async () => {
+		try {
+			if (dnftContract) {
+				// get price
+				const res = await dnftContract.launchPrice();
+				setLaunchPriceInBUSD(new BigNumber(res._hex).div(TOKEN_DECIMAL));
+			}
+		} catch (e) {
+			handleCommonError(e);
+		}
+	};
 
 	useEffect(() => {
-		const handleGetListPhaseMintNft = async () => {
-			try {
-				if (dnftContract) {
-					// @ts-ignore
-					const runningPhaseId = await dnftContract?.currentSalePhase();
-
-					const list = await Promise.all(
-						listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
-							// @ts-ignore
-							const res = await dnftContract?.salePhaseStatistics(salephaseid);
-							const {
-								endTime,
-								maxAmountUserCanBuy,
-								maxSaleAmount,
-								priceAfter24Hours,
-								priceInBUSD,
-								startTime,
-								totalSold,
-							} = res;
-							const phase: IPhaseStatistic = {
-								id: salephaseid,
-								type: geMintPhaseType(salephaseid) || '',
-								startTime: new BigNumber(startTime._hex).toNumber(),
-								endTime: new BigNumber(endTime._hex).toNumber(),
-								priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								priceInBUSD: new BigNumber(priceInBUSD._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								maxAmountUserCanBuy: new BigNumber(maxAmountUserCanBuy._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								maxSaleAmount: new BigNumber(maxSaleAmount._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-								totalSold: new BigNumber(totalSold._hex)
-									.div(TOKEN_DECIMAL)
-									.toString(10),
-							};
-							return phase;
-						})
-					);
-					setRunningPhaseId(runningPhaseId);
-					setListPhase(list);
-				}
-			} catch (e) {
-				// handle e
-			}
-		};
-
-		handleGetListPhaseMintNft();
+		fetchPrice();
+		fetchLaunchPrice();
 	}, [dnftContract]);
 
-	useEffect(() => {
-		const fetchRate = async () => {
-			try {
+	const fetchRate = async () => {
+		try {
+			if (dnftContract) {
 				// get rate
-				// @ts-ignore
-				const res = await dnftContract?.convertBNBToBUSD(
+				const res = await dnftContract.convertBNBToBUSD(
 					TOKEN_DECIMAL.toString(10)
 				);
 				const rate = new BigNumber(res._hex).toString(10);
 				setRate(new BigNumber(rate).div(TOKEN_DECIMAL));
-			} catch (e) {
-				setRate(1);
-				// handle e
-				// console.log(e);
 			}
-		};
-
-		if (dnftContract) {
-			fetchRate();
+		} catch (e) {
+			setRate(1);
+			handleFetchRateError(e);
 		}
-	}, [runningPhaseId, runningPhase, dnftContract]);
+	};
+
+	useEffect(() => {
+		fetchRate();
+	}, [dnftContract]);
+
+	const fetchPoolRemaining = async () => {
+		try {
+			if (dnftContract) {
+				const unSoldTokenOfAllPhase =
+					await dnftContract.getUnSoldTokenOfAllPhase();
+				const totalRescued = await dnftContract.totalRescued();
+				const theRest = new BigNumber(unSoldTokenOfAllPhase._hex).minus(
+					totalRescued._hex
+				);
+				setPoolRemaining(theRest);
+			}
+		} catch (e) {
+			handleCommonError(e);
+		}
+	};
+
+	useEffect(() => {
+		fetchPoolRemaining();
+	}, [dnftContract]);
+
+	// const fetchMinimumGXZBalanceRequired = async () => {
+	// 	if (dnftContract) {
+	// 		const minRequired = await dnftContract.minimumGalactixTokenRequire();
+	// 		setMinimumGXZBalanceRequired(
+	// 			new BigNumber(minRequired._hex).div(TOKEN_DECIMAL)
+	// 		);
+	// 	}
+	// };
+	// useEffect(() => {
+	// 	fetchMinimumGXZBalanceRequired();
+	// }, [dnftContract]);
+
+	const fetchKeyList = async () => {
+		try {
+			if (keyNftContract && dnftContract && addressWallet) {
+				const res =
+					(await keyNftContract.getAllTokenIdsOfAddress(addressWallet)) || [];
+				const allKeys = res.map((item) => {
+					return new BigNumber(item._hex).toString(10);
+				});
+				const usableKeys: Array<string> = [];
+				await Promise.all(
+					allKeys.map(async (item) => {
+						const nextTimeUsingKey = await dnftContract.nextTimeUsingKey(item);
+						if (new BigNumber(nextTimeUsingKey._hex).times(second).lt(now())) {
+							usableKeys.push(item);
+						}
+					})
+				);
+				setListKey(usableKeys);
+			}
+		} catch (e) {
+			handleCommonError();
+		}
+	};
+	useEffect(() => {
+		fetchKeyList();
+	}, [keyNftContract, dnftContract, addressWallet]);
+
+	const rescue = async () => {
+		try {
+			setIsLoadingRescue(true);
+			if (dnftContract) {
+				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+					await tryApproveBusd(false);
+				}
+				if (listKey?.length > 0) {
+					const res = await dnftContract.rescueUsingKey(listKey[0]);
+					await res.wait();
+					const hash: string = res ? res.hash : '';
+					if (hash) {
+						message.success(<MintSuccessToast txHash={hash} />);
+					}
+				}
+			}
+		} catch (e) {
+			handleCommonError();
+		} finally {
+			setIsLoadingRescue(false);
+		}
+	};
+
+	const getMessage = () => {
+		if (isConnectWallet) {
+			if (!haveEnoughBalance()) {
+				return "You don't have enough BNB/BUSD";
+			} else if (!isRoyalty()) {
+				return "You don't have enough BUSD for royalty";
+			} else {
+				return 'You are eligible to mint this dNFT';
+			}
+		} else {
+			return 'You are not eligible to mint this dNFT';
+		}
+	};
+
 	useEffect(() => {
 		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
 		// to report page view Google Analytics
 		ReactGa.pageview(router?.pathname || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
 	return (
 		<>
 			<HelmetCommon
@@ -155,20 +276,36 @@ const RescueDNFT = () => {
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
 				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
-					<div
-						className={
-							'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-5 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
-						}
-					>
-						Rescue
-					</div>
+					{isConnectWallet &&
+					!isLoadingRescue &&
+					haveEnoughBalance() &&
+					isRoyalty() &&
+					haveEnoughNft &&
+					haveEnoughKey ? (
+						<div
+							onClick={rescue}
+							className={
+								'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
+							}
+						>
+							Rescue
+						</div>
+					) : (
+						<div
+							className={
+								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px]'
+							}
+						>
+							{isLoadingRescue ? <Spin className={'flex'} /> : 'Rescue'}
+						</div>
+					)}
 				</div>
 
 				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
-					<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
+					<h6 className='text-h3 font-semibold mb-4'>Rescue</h6>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div
 						className={
@@ -184,24 +321,24 @@ const RescueDNFT = () => {
 							>
 								{formatBigNumber(price)} {token}
 							</div>
-							{new BigNumber(priceAfter).gt(0) && (
-								<Tooltip
-									className={'ml-2'}
-									placement={'bottom'}
-									title={
-										<>
-											<div>
-												First 24h:{' '}
-												{new BigNumber(price).toFixed(DECIMAL_PLACED)} {token}{' '}
-												then {new BigNumber(priceAfter).toFixed(DECIMAL_PLACED)}{' '}
-												{token}
-											</div>
-										</>
-									}
-								>
-									<ExclamationCircleOutlined />
-								</Tooltip>
-							)}
+							{/*{new BigNumber(priceAfter).gt(0) && (*/}
+							{/*	<Tooltip*/}
+							{/*		className={'ml-2'}*/}
+							{/*		placement={'bottom'}*/}
+							{/*		title={*/}
+							{/*			<>*/}
+							{/*				<div>*/}
+							{/*					First 24h:{' '}*/}
+							{/*					{new BigNumber(price).toFixed(DECIMAL_PLACED)} {token}{' '}*/}
+							{/*					then {new BigNumber(priceAfter).toFixed(DECIMAL_PLACED)}{' '}*/}
+							{/*					{token}*/}
+							{/*				</div>*/}
+							{/*			</>*/}
+							{/*		}*/}
+							{/*	>*/}
+							{/*		<ExclamationCircleOutlined />*/}
+							{/*	</Tooltip>*/}
+							{/*)}*/}
 						</div>
 						<CustomRadio
 							onChange={(e) => {
@@ -215,7 +352,7 @@ const RescueDNFT = () => {
 					</div>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
@@ -226,12 +363,12 @@ const RescueDNFT = () => {
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Current NFTs can be rescued
 							</div>
-							<div>{new BigNumber(600).toFixed(DECIMAL_PLACED)}</div>
+							<div>{formatBigNumber(poolRemaining)}</div>
 						</div>
 					</div>
 
 					{/* divider*/}
-					<hr className={'border border-white/[.07] mb-8'} />
+					<hr className={'border-t border-white/[.07] mb-4'} />
 
 					<div
 						className={
@@ -243,16 +380,20 @@ const RescueDNFT = () => {
 								'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
 							}
 						>
-							You are {(isConnectWallet && haveEnoughGXZBalance) || 'not'}{' '}
-							eligible to mint this dNFT
+							{getMessage()}
 						</div>
 						<div
 							className={
 								'flex flex-col text-center desktop:text-start text-h8 mt-4 gap-2'
 							}
 						>
-							<div>Notice: to mint this dNFT requires 5,000 GXZ Token</div>
+							{/*<div>*/}
+							{/*	Notice: to mint this dNFT requires{' '}*/}
+							{/*	{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token*/}
+							{/*</div>*/}
 							<div>
+								Notice: You can only rescue {listKey.length} dNFT this month
+								<br />
 								User can use 1 key to rescue 1 dNFT. Rescue chances will be
 								reset after 30 days
 							</div>

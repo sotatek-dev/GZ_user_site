@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /landing
-Allow: /merge-nft
+Allow: /list-dnft
 Allow: /mint-dnft
 Allow: /my-profile
 Allow: /nft-detail

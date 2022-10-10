@@ -30,7 +30,7 @@ export const LIST_SIDER = [
 	},
 
 	{
-		router: ROUTES.MERGE_NFT,
+		router: ROUTES.LIST_DNFT,
 		icon: '/icons/merge-dNFT.svg',
 		title: 'Merge dNFT',
 	},
