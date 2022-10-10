@@ -112,12 +112,6 @@ const MergeDNFT = () => {
 							return { label: value };
 					  })
 					: [];
-
-			// tạm thời repalace domain do BE chưa đẩy ảnh lên s3 được
-			const assetBase = asset.replace(
-				'172.16.1.217:5000',
-				'api.galactix.sotatek.works'
-			) as string;
 			// init property fur và gloves
 			const value =
 				property === PROPERTY.FUR || property === PROPERTY.GLOVESDEFAULT
@@ -128,7 +122,7 @@ const MergeDNFT = () => {
 				specialOrderLayer: specialOrderLayer
 					? Math.round(specialOrderLayer)
 					: specialOrderLayer,
-				assetBase,
+				assetBase: asset,
 				extension,
 				propertyName: property,
 				value: value,

@@ -13,10 +13,7 @@ interface ICardNftProps {
 const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 	const { isChecked } = dataDNFT;
 	// replace tạm chờ BE đẩy ảnh lên s3
-	const imageDNFT = get(dataDNFT, 'metadata.image', '').replace(
-		'172.16.1.217:5000',
-		'api.galactix.sotatek.works'
-	) as string;
+	const imageDNFT = get(dataDNFT, 'metadata.image', '');
 	return (
 		<div
 			onClick={(event) => SelectNft(event, index)}
