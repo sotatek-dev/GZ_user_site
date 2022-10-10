@@ -175,7 +175,7 @@ const RescueDNFT = () => {
 		const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 
 		if (isConnectWallet && isPublicSaleEndAfter7Days) {
-			if (haveEnoughNft) {
+			if (!haveEnoughNft) {
 				return <>{Message.NO_NFT_LEFT}</>;
 			} else if (!haveEnoughBalance()) {
 				if (token === TOKENS.BNB) {
@@ -186,8 +186,24 @@ const RescueDNFT = () => {
 			} else if (!isRoyalty()) {
 				return <>{Message.NOT_ROYALTY}</>;
 			} else {
-				//here: handle case click here
-				return <>{Message.ELIGIBLE_TO_RESCUE}</>;
+				if (haveEnoughKey) {
+					return <>{Message.ELIGIBLE_TO_RESCUE}</>;
+				} else {
+					return (
+						<>
+							{Message.NOT_ELIGIBLE_TO_MINT}. Click{' '}
+							<span
+								className={'underline cursor-pointer'}
+								onClick={() => {
+									router.push(ROUTES.MY_PROFILE);
+								}}
+							>
+								here
+							</span>{' '}
+							to mint key
+						</>
+					);
+				}
 			}
 		} else {
 			return <>{Message.NOT_ELIGIBLE_TO_MINT}</>;
