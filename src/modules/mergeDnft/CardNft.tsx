@@ -1,7 +1,8 @@
 import { Checkbox } from 'antd';
 import ImageBase from 'common/components/imageBase';
-import { IDFNT } from 'pages/merge-nft';
-import { FC } from 'react';
+import { get } from 'lodash';
+import { IDFNT } from 'pages/list-dnft';
+import { FC, memo } from 'react';
 
 interface ICardNftProps {
 	dataDNFT: IDFNT;
@@ -11,12 +12,15 @@ interface ICardNftProps {
 
 const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 	const { isChecked } = dataDNFT;
-	// const DFNTImage = get(dataDNFT, 'metadata.imageUrl', '')
+	// replace tạm chờ BE đẩy ảnh lên s3
+	const imageDNFT = get(dataDNFT, 'metadata.image', '').replace(
+		'172.16.1.217:5000',
+		'api.galactix.sotatek.works'
+	) as string;
 	return (
 		<div
 			onClick={(event) => SelectNft(event, index)}
-			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative cursor-pointer ${
-				isChecked && 'bg-[#5c62e1]'
+			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative cursor-pointer
 			}`}
 		>
 			<Checkbox
@@ -24,8 +28,13 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 				className='absolute top-3 right-3'
 				checked={isChecked}
 			/>
-			<ImageBase url={''} width='140px' height='134px' objectFit='contain' />
+			<ImageBase
+				url={imageDNFT}
+				width='213px'
+				height='213px'
+				objectFit='fill'
+			/>
 		</div>
 	);
 };
-export default CardNft;
+export default memo(CardNft);
