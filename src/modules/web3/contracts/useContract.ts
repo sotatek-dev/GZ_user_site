@@ -15,7 +15,8 @@ export const useContract = <T extends BaseContract>(
 		}
 
 		if (!library) {
-			return getContract<T>(abi, address);
+			// return getContract<T>(abi, address);
+			return null;
 		}
 
 		return getContract<T>(abi, address, library?.getSigner());
