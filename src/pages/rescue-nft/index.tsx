@@ -11,23 +11,31 @@ import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
+import DKEYNFTABI from 'web3/abis/abi-keynft.json';
 import CustomRadio from 'common/components/radio';
-import { formatBigNumber } from 'common/utils/functions';
-import { ROUTES } from 'common/constants/constants';
+import { formatBigNumber, isApproved } from 'common/utils/functions';
+import { now, ROUTES, second } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
 import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
-import { AbiDnft } from 'web3/abis/types';
+import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { handleFetchRateError } from 'modules/mintDnft/helpers/handleError';
 import { handleCommonError } from 'common/helpers/toast';
 import { useApproval, useNativeBalance } from 'web3/hooks';
-import { Spin } from 'antd';
+import { message, Spin } from 'antd';
+import MintSuccessToast from 'modules/mintDnft/MintSuccessToast';
 
 const RescueDNFT = () => {
 	const router = useRouter();
+	// list of key which can be used
+	const [listKey, setListKey] = useState<Array<string>>([]);
 	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+	);
+	const keyNftContract = useContract<AbiKeynft>(
+		DKEYNFTABI,
+		process.env.NEXT_PUBLIC_KEYNFT_ADDRESS || ''
 	);
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
@@ -59,6 +67,8 @@ const RescueDNFT = () => {
 
 	const isConnectWallet = !!addressWallet;
 	// const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
+	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
+	const haveEnoughKey = listKey.length > 0;
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
@@ -159,7 +169,6 @@ const RescueDNFT = () => {
 				const unSoldTokenOfAllPhase =
 					await dnftContract.getUnSoldTokenOfAllPhase();
 				const totalRescued = await dnftContract.totalRescued();
-
 				const theRest = new BigNumber(unSoldTokenOfAllPhase._hex).minus(
 					totalRescued._hex
 				);
@@ -186,7 +195,55 @@ const RescueDNFT = () => {
 	// 	fetchMinimumGXZBalanceRequired();
 	// }, [dnftContract]);
 
-	const rescue = async () => {};
+	const fetchKeyList = async () => {
+		try {
+			if (keyNftContract && dnftContract && addressWallet) {
+				const res =
+					(await keyNftContract.getAllTokenIdsOfAddress(addressWallet)) || [];
+				const allKeys = res.map((item) => {
+					return new BigNumber(item._hex).toString(10);
+				});
+				const usableKeys: Array<string> = [];
+				await Promise.all(
+					allKeys.map(async (item) => {
+						const nextTimeUsingKey = await dnftContract.nextTimeUsingKey(item);
+						if (new BigNumber(nextTimeUsingKey._hex).times(second).lt(now())) {
+							usableKeys.push(item);
+						}
+					})
+				);
+				setListKey(usableKeys);
+			}
+		} catch (e) {
+			handleCommonError();
+		}
+	};
+	useEffect(() => {
+		fetchKeyList();
+	}, [keyNftContract, dnftContract, addressWallet]);
+
+	const rescue = async () => {
+		try {
+			setIsLoadingRescue(true);
+			if (dnftContract) {
+				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+					await tryApproveBusd(false);
+				}
+				if (listKey?.length > 0) {
+					const res = await dnftContract.rescueUsingKey(listKey[0]);
+					await res.wait();
+					const hash: string = res ? res.hash : '';
+					if (hash) {
+						message.success(<MintSuccessToast txHash={hash} />);
+					}
+				}
+			}
+		} catch (e) {
+			handleCommonError();
+		} finally {
+			setIsLoadingRescue(false);
+		}
+	};
 
 	const getMessage = () => {
 		if (isConnectWallet) {
@@ -222,7 +279,9 @@ const RescueDNFT = () => {
 					{isConnectWallet &&
 					!isLoadingRescue &&
 					haveEnoughBalance() &&
-					isRoyalty() ? (
+					isRoyalty() &&
+					haveEnoughNft &&
+					haveEnoughKey ? (
 						<div
 							onClick={rescue}
 							className={
@@ -333,6 +392,8 @@ const RescueDNFT = () => {
 							{/*	{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token*/}
 							{/*</div>*/}
 							<div>
+								Notice: You can only rescue {listKey.length} dNFT this month
+								<br />
 								User can use 1 key to rescue 1 dNFT. Rescue chances will be
 								reset after 30 days
 							</div>
