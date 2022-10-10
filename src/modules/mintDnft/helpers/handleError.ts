@@ -43,3 +43,5 @@ export const handleFetchListPhaseError = (e?: any) => {
 		handleCommonError();
 	}
 };
+
+// create handeFetchError
