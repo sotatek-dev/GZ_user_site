@@ -35,10 +35,7 @@ const MergeDNFTDetail = () => {
 			const metadata = get(response, 'data.metadata', {});
 			const { image, properties } = metadata;
 			// tạm thời repalace domain do BE chưa đẩy ảnh lên s3 được
-			const imageDNFT = image.replace(
-				'172.16.1.217:5000',
-				'api.galactix.sotatek.works'
-			) as string;
+			const imageDNFT = image;
 			setProperties(properties);
 			setImageDNFT(imageDNFT);
 		}
