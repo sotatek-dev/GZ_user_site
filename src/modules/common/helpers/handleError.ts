@@ -29,3 +29,5 @@ export const handleCallMethodError = (e?: any) => {
 		handleCommonError();
 	}
 };
+
+// create handeFetchError

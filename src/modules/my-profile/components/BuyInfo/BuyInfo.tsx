@@ -12,9 +12,14 @@ import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppSelector } from 'stores';
 import Button from '../Button';
 import myProfileConstants from 'modules/my-profile/constant';
+import { useBalance } from 'web3/queries';
 
 export default function BuyInfo() {
-	const { userInfo } = useAppSelector((state) => state.myProfile);
+	const { userInfo, dnft_holding_count } = useAppSelector(
+		(state) => state.myProfile
+	);
+	// BUSD balance
+	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
 	const { systemSetting, busd2Bnb } = useAppSelector(
 		(state) => state.systemSetting
 	);
@@ -28,7 +33,7 @@ export default function BuyInfo() {
 		});
 	};
 
-	const buyState = () => {
+	const buyKeyState = useMemo(() => {
 		if (!userInfo || !systemSetting) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
 		}
@@ -38,13 +43,48 @@ export default function BuyInfo() {
 			return buyStatusConfigs[BuyStatus.Upcomming];
 		}
 
-		if (get(userInfo, 'nft_holding') < 0) {
+		if (dnft_holding_count <= 0) {
 			return buyStatusConfigs[BuyStatus.NFTRequired];
 		}
-		return buyStatusConfigs[BuyStatus.Available];
-	};
 
-	const buyKeyState = buyState();
+		let isEnoughRoyalty = false;
+
+		if (tokenCode === Token2Buy.BUSD) {
+			isEnoughRoyalty = +busdBalance >= systemSetting.key_price * 0.08;
+		}
+
+		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
+			isEnoughRoyalty =
+				+busdBalance >= +busd2Bnb.times(systemSetting.key_price) * 1.08;
+		}
+
+		if (!isEnoughRoyalty) {
+			return buyStatusConfigs[BuyStatus.NotEnoughRoyalty];
+		}
+
+		let isEnoughBalance = false;
+		if (tokenCode === Token2Buy.BUSD) {
+			isEnoughBalance = +busdBalance >= systemSetting.key_price;
+		}
+
+		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
+			isEnoughBalance =
+				+busdBalance >= busd2Bnb.times(systemSetting.key_price).toNumber();
+		}
+
+		if (!isEnoughBalance) {
+			return buyStatusConfigs[BuyStatus.NotEnoughBalance];
+		}
+
+		return buyStatusConfigs[BuyStatus.Available];
+	}, [
+		userInfo,
+		systemSetting,
+		tokenCode,
+		busdBalance,
+		busd2Bnb,
+		dnft_holding_count,
+	]);
 
 	const { inTimeBuyKey, secondsRemain } = useMemo(() => {
 		if (!systemSetting) {
