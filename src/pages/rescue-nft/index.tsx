@@ -15,7 +15,6 @@ import HelmetCommon from 'common/components/helmet';
 import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
-import { handleCommonError } from 'common/helpers/toast';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from 'stores';
@@ -29,6 +28,7 @@ import {
 import { setIsLoadingRescue } from 'stores/rescue-dnft';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
 import RescueSuccessToast from 'modules/rescueDnft/components/RescueSuccessToast';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 
 const RescueDNFT = () => {
 	const router = useRouter();
@@ -164,7 +164,7 @@ const RescueDNFT = () => {
 				}
 			}
 		} catch (e) {
-			handleCommonError();
+			handleWriteMethodError();
 		} finally {
 			reloadData();
 			dispatch(setIsLoadingRescue(false));

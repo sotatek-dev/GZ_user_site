@@ -25,7 +25,7 @@ import { now, ROUTES, second } from 'common/constants/constants';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft } from 'web3/abis/types';
 import { getMintDnftSignature } from 'modules/mintDnft/services';
-import { handleMintError } from 'modules/mintDnft/helpers/handleError';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 import MintSuccessToast from 'modules/mintDnft/components/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import HelmetCommon from 'common/components/helmet';
@@ -188,7 +188,7 @@ const MintDNFT: React.FC = () => {
 				}
 			}
 		} catch (e) {
-			handleMintError(e);
+			handleWriteMethodError(e);
 		} finally {
 			dispatch(setIsLoadingMint(false));
 			reloadData();

@@ -6,6 +6,7 @@ import {
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
 } from 'modules/rescueDnft/helpers/fetch';
+import { handleCallMethodError } from 'common/helpers/handleError';
 
 interface InitialState {
 	listKey: Array<string>;
@@ -37,33 +38,33 @@ const rescueDnftSlice = createSlice({
 		builder.addCase(fetchListKey.fulfilled, (state, action) => {
 			state.listKey = action.payload;
 		});
-		builder.addCase(fetchListKey.rejected, (state) => {
+		builder.addCase(fetchListKey.rejected, (state, action) => {
 			state.listKey = initialState.listKey;
-			// e = action.payload
+			handleCallMethodError(action.payload);
 		});
 
 		builder.addCase(fetchPoolRemaining.fulfilled, (state, action) => {
 			state.poolRemaining = action.payload;
 		});
-		builder.addCase(fetchPoolRemaining.rejected, (state) => {
+		builder.addCase(fetchPoolRemaining.rejected, (state, action) => {
 			state.poolRemaining = initialState.poolRemaining;
-			// e = action.payload
+			handleCallMethodError(action.payload);
 		});
 
 		builder.addCase(fetchPriceInBUSD.fulfilled, (state, action) => {
 			state.priceInBUSD = action.payload;
 		});
-		builder.addCase(fetchPriceInBUSD.rejected, (state) => {
+		builder.addCase(fetchPriceInBUSD.rejected, (state, action) => {
 			state.priceInBUSD = initialState.poolRemaining;
-			// e = action.payload
+			handleCallMethodError(action.payload);
 		});
 
 		builder.addCase(fetchLaunchPriceInBUSD.fulfilled, (state, action) => {
 			state.launchPriceInBUSD = action.payload;
 		});
-		builder.addCase(fetchLaunchPriceInBUSD.rejected, (state) => {
+		builder.addCase(fetchLaunchPriceInBUSD.rejected, (state, action) => {
 			state.launchPriceInBUSD = initialState.poolRemaining;
-			// e = action.payload
+			handleCallMethodError(action.payload);
 		});
 	},
 });
