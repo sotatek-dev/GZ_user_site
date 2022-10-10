@@ -317,7 +317,10 @@ const TokenSaleRoundDetail = () => {
 	return (
 		<div className='flex flex-col gap-2.5 desktop:gap-8'>
 			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
-				<BoxPool title='Pool Timeline' customClass='w-[50%] bg-gray-50'>
+				<BoxPool
+					title='Pool Timeline'
+					customClass='w-full desktop:w-[50%] bg-gray-50'
+				>
 					<div className='py-6'>
 						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
 					</div>
