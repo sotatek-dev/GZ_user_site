@@ -16,6 +16,7 @@ import thunkMiddleware from 'redux-thunk';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { dnftDetailStore } from 'stores/dnft/dnft-detail';
 import mintDnftReducer from 'stores/mint-dnft';
+import rescueDnftReducer from 'stores/rescue-dnft';
 
 let customStore: Store | undefined;
 
@@ -38,6 +39,7 @@ const appReducer = combineReducers({
 	myProfile: myProfileStore.reducer,
 	dnftDetail: dnftDetailStore.reducer,
 	mintDnft: mintDnftReducer,
+	rescueDnft: rescueDnftReducer,
 });
 
 const rootReducer = (state: any, action: any) => appReducer(state, action);

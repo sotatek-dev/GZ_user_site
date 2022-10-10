@@ -9,6 +9,7 @@ import {
 	fetchListPhase,
 	fetchMinimumGXZBalanceRequired,
 	fetchRate,
+	fetchUserBoughtAmount,
 } from 'modules/mintDnft/helpers/fetch';
 import { now } from 'common/constants/constants';
 import { convertTimelineMintNft } from 'common/utils/functions';
@@ -22,6 +23,7 @@ interface InitialState {
 	publicPhase?: IPhaseStatistic;
 	timelineMintNft: Array<ITimelineMintNftState>;
 
+	userBoughtAmount: BigNumber.Value;
 	rate: BigNumber.Value;
 	isWhitelisted: boolean;
 	minimumGXZBalanceRequired: BigNumber.Value;
@@ -34,6 +36,7 @@ const initialState: InitialState = {
 	runningPhaseId: 0,
 	timelineMintNft: [],
 
+	userBoughtAmount: new BigNumber(0),
 	rate: new BigNumber(1),
 	isWhitelisted: false,
 	minimumGXZBalanceRequired: new BigNumber(0),
@@ -49,7 +52,7 @@ const mintDnftSlice = createSlice({
 			state.isLoadingMint = action.payload;
 		},
 	},
-	extraReducers(builder) {
+	extraReducers: (builder) => {
 		builder.addCase(fetchListPhase.fulfilled, (state, action) => {
 			const { runningPhaseId, listPhase } = action.payload;
 			state.listPhase = listPhase;
@@ -82,6 +85,14 @@ const mintDnftSlice = createSlice({
 			state.timelineMintNft = initialState.timelineMintNft;
 			state.rate = initialState.rate;
 			state.isWhitelisted = initialState.isWhitelisted;
+			// e = action.payload
+		});
+
+		builder.addCase(fetchUserBoughtAmount.fulfilled, (state, action) => {
+			state.userBoughtAmount = action.payload;
+		});
+		builder.addCase(fetchUserBoughtAmount.rejected, (state) => {
+			state.userBoughtAmount = initialState.userBoughtAmount;
 			// e = action.payload
 		});
 
