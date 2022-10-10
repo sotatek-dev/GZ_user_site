@@ -28,6 +28,8 @@ export default function PersonalInfo() {
 		}
 	}, [isLogin, dispatch, keynftContract]);
 
+	useEffect(() => form.resetFields(), [userInfo]);
+
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
 			{ email },
@@ -44,10 +46,6 @@ export default function PersonalInfo() {
 	const onFinish = (values: { email: string }) => {
 		handleUpdateMyProfile(values.email);
 	};
-
-	if (!userInfo) {
-		return null;
-	}
 
 	const onFieldChanged = () => {
 		if (

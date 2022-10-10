@@ -116,8 +116,13 @@ export default function MyDNFT() {
 				.then((res) => {
 					return res.wait();
 				})
-				.then(() => {
-					message.success(myProfileConstants.TRANSACTION_COMPLETED);
+				.then((res) => {
+					message.success({
+						content: myProfileConstants.TRANSACTION_COMPLETED,
+						onClick: () => {
+							window.open(getExploreTxLink(res.transactionHash));
+						},
+					});
 					handleGetDNFTs();
 				})
 				.catch((err) => {
@@ -137,8 +142,13 @@ export default function MyDNFT() {
 				.then((res) => {
 					return res.wait();
 				})
-				.then(() => {
-					message.success(myProfileConstants.TRANSACTION_COMPLETED);
+				.then((res) => {
+					message.success({
+						content: myProfileConstants.TRANSACTION_COMPLETED,
+						onClick: () => {
+							window.open(getExploreTxLink(res.transactionHash));
+						},
+					});
 					handleGetDNFTs();
 				})
 				.catch((err) => {
@@ -165,6 +175,12 @@ export default function MyDNFT() {
 
 	const handleGetClaimableNFTsCount = async (total: number) => {
 		dispatch(getMyClaimableDNFTsCountRD(total));
+	};
+
+	const getExploreTxLink = (hash: string) => {
+		return `${
+			process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL || 'https://bscscan.com'
+		}/tx/${hash}`;
 	};
 
 	return (
