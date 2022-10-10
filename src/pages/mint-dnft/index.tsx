@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
@@ -16,6 +15,7 @@ import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
+	Message,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
@@ -155,14 +155,14 @@ const MintDNFT: React.FC = () => {
 					addressWallet
 				);
 				if (new BigNumber(boughtAmount._hex).gte(maxAmountUserCanBuy)) {
-					showError('You have reach the limitation of minting');
+					showError(Message.REACH_LIMIT);
 					return;
 				}
 
 				// set up signature
 				const signature = await getMintDnftSignature();
 				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
-					await tryApproveBusd(false);
+					await tryApproveBusd(true);
 				}
 				const amount =
 					token === TOKENS.BNB

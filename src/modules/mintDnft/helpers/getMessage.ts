@@ -1,3 +1,5 @@
+import { Message } from 'modules/mintDnft/constants';
+
 const getMessage = (
 	isConnectWallet: boolean,
 	haveEnoughGXZBalance: boolean,
@@ -6,14 +8,14 @@ const getMessage = (
 ) => {
 	if (isConnectWallet && haveEnoughGXZBalance) {
 		if (!haveEnoughBalance) {
-			return "You don't have enough BNB/BUSD";
+			return Message.NOT_HAVE_ENOUGH_BALANCE;
 		} else if (!isRoyalty) {
-			return "You don't have enough BUSD for royalty";
+			return Message.NOT_ROYALTY;
 		} else {
-			return 'You are eligible to mint this dNFT';
+			return Message.ELIGIBLE;
 		}
 	} else {
-		return 'You are not eligible to mint this dNFT';
+		return Message.NOT_ELIGIBLE;
 	}
 };
 
