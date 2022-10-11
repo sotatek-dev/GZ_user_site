@@ -16,8 +16,14 @@ export const useBalance = (address: string) => {
 			if (!tokenContract || !account) {
 				return;
 			}
-			const balance = await tokenContract.balanceOf(account);
-			setBalance(new BigNumber(formatEther(balance)));
+			tokenContract
+				.balanceOf(account)
+				.then((balance) => {
+					setBalance(new BigNumber(formatEther(balance)));
+				})
+				.catch(() => {
+					setBalance(BIG_ZERO);
+				});
 		};
 		getBalance();
 	}, [account, tokenContract]);
