@@ -255,7 +255,7 @@ const MintDNFT: React.FC = () => {
 				}
 			>
 				<div className={'w-64 flex flex-col items-center mb-6 desktop:mb-20'}>
-					<NftGroup className={'w-full h-fit mt-11 mb-6'} />
+					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
 					{isWhitelisted &&
 					isConnectWallet &&
 					!isLoadingMint &&
