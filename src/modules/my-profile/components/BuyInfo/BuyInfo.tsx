@@ -1,18 +1,18 @@
-import { useMemo, useState } from 'react';
-import { get } from 'lodash';
-import dayjs from 'dayjs';
-import Image from 'next/image';
 import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
 import CustomRadio from 'common/components/radio';
-import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
 import { formatCurrency } from 'common/helpers/number';
-import Token2BuyRadio from '../Token2BuyRadio';
-import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
-import { useAppSelector } from 'stores';
-import Button from '../Button';
+import dayjs from 'dayjs';
+import { get } from 'lodash';
 import myProfileConstants from 'modules/my-profile/constant';
+import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
+import Image from 'next/image';
+import { useMemo, useState } from 'react';
+import { useAppSelector } from 'stores';
 import { useBalance } from 'web3/queries';
+import Button from '../Button';
+import Token2BuyRadio from '../Token2BuyRadio';
+import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
 
 export default function BuyInfo() {
 	const { userInfo, dnft_holding_count } = useAppSelector(

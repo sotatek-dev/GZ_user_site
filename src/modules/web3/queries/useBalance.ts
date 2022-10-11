@@ -4,21 +4,29 @@ import { formatEther } from 'ethers/lib/utils';
 import { BIG_ZERO } from 'common/constants/bignumbers';
 import { useErc20Contract } from 'web3/contracts';
 import { useActiveWeb3React } from 'web3/hooks';
-import useSWR from 'swr';
+import { useEffect, useState } from 'react';
 
 export const useBalance = (address: string) => {
 	const { account } = useActiveWeb3React();
 	const tokenContract = useErc20Contract(address);
+	const [balance, setBalance] = useState<BigNumber>(BIG_ZERO);
 
-	const getBalance = async () => {
-		if (!tokenContract || !account) {
-			return;
-		}
+	useEffect(() => {
+		const getBalance = async () => {
+			if (!tokenContract || !account) {
+				return;
+			}
+			tokenContract
+				.balanceOf(account)
+				.then((balance) => {
+					setBalance(new BigNumber(formatEther(balance)));
+				})
+				.catch(() => {
+					setBalance(BIG_ZERO);
+				});
+		};
+		getBalance();
+	}, [account, tokenContract]);
 
-		const balance = await tokenContract.balanceOf(account);
-		return new BigNumber(formatEther(balance));
-	};
-
-	const { data: balance } = useSWR(['getBalance', address], getBalance);
-	return balance ?? BIG_ZERO;
+	return balance;
 };

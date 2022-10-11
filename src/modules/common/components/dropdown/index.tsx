@@ -10,13 +10,15 @@ type Props = {
 	customStyle?: string;
 	title?: string;
 	onClick: MenuProps['onClick'];
+	emptyOption?: string;
 };
 
 const Dropdown = (props: Props) => {
-	const { list, label, customStyle, title, onClick } = props;
+	const { list, label, customStyle, title, onClick, emptyOption } = props;
 
 	const menu = (
 		<Menu onClick={onClick}>
+			{emptyOption && <Menu.Item key={''}>{emptyOption}</Menu.Item>}
 			{list.map((item: Item) => (
 				<Menu.Item key={item.key}>{item.label}</Menu.Item>
 			))}
