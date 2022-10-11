@@ -165,7 +165,7 @@ const RescueDNFT = () => {
 				}
 			}
 		} catch (e) {
-			handleWriteMethodError();
+			handleWriteMethodError(e);
 		} finally {
 			reloadData();
 			dispatch(setIsLoadingRescue(false));
@@ -236,7 +236,7 @@ const RescueDNFT = () => {
 					isRoyalty() &&
 					haveEnoughNft &&
 					haveEnoughKey &&
-					isPublicSaleEndAfter7Days ? (
+					true ? (
 						<div
 							onClick={rescue}
 							className={
