@@ -249,8 +249,12 @@ const MintDNFT: React.FC = () => {
 				description='Description mint DNFT ...'
 				href={ROUTES.MINT_DNFT}
 			/>
-			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
-				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
+			<div
+				className={
+					'flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'
+				}
+			>
+				<div className={'w-64 flex flex-col items-center mb-6 desktop:mb-20'}>
 					<NftGroup className={'w-full h-fit mt-11 mb-6'} />
 					{isWhitelisted &&
 					isConnectWallet &&
@@ -277,8 +281,8 @@ const MintDNFT: React.FC = () => {
 					)}
 				</div>
 
-				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
-					<h6 className='text-h3 font-semibold mb-4'>Mint dNFT</h6>
+				<div className={'grow bg-black-10 p-8 rounded-[10px]'}>
+					<h6 className={'text-h3 font-semibold mb-4'}>Mint dNFT</h6>
 
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />

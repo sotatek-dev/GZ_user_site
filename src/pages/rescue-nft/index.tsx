@@ -223,8 +223,12 @@ const RescueDNFT = () => {
 				description='Description rescue NFT ...'
 				href={ROUTES.RESCUE_NFT}
 			/>
-			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
-				<div className='basis-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
+			<div
+				className={
+					'flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'
+				}
+			>
+				<div className={'w-64 flex flex-col items-center mb-6 desktop:mb-20'}>
 					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
 					{isConnectWallet &&
 					!isLoadingRescue &&
@@ -252,8 +256,8 @@ const RescueDNFT = () => {
 					)}
 				</div>
 
-				<div className='w-full bg-black-10 p-8 rounded-[10px]'>
-					<h6 className='text-h3 font-semibold mb-4'>Rescue</h6>
+				<div className={'grow bg-black-10 p-8 rounded-[10px]'}>
+					<h6 className={'text-h3 font-semibold mb-4'}>Rescue</h6>
 
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />

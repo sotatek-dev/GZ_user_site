@@ -46,7 +46,7 @@ export const listPhaseId = [
 
 export enum Message {
 	MINT_SUCCESS = 'You can collect your dNFT 7 days after the end of Public Sale',
-	RESCUE_SUCCESS = 'You can collect your dNFT in My Profile page',
+	RESCUE_SUCCESS = 'Transaction completed',
 
 	REACH_LIMIT = 'You have reach the limitation of minting',
 	NOT_HAVE_ENOUGH_BNB_BALANCE = "You don't have enough BNB",

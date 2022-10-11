@@ -6,7 +6,7 @@ export const handleWriteMethodError = (e?: any) => {
 	if (e?.code === ErrorCode.ACTION_REJECTED) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
-		e.code === ErrorCode.SERVER_ERROR ||
+		e?.code === ErrorCode.SERVER_ERROR ||
 		e?.code === ErrorCode.TIMEOUT ||
 		e?.code === ErrorCode.UNKNOWN_ERROR
 	) {
@@ -20,7 +20,7 @@ export const handleCallMethodError = (e?: any) => {
 	if (e?.code === ErrorCode.ACTION_REJECTED) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
-		e.code === ErrorCode.SERVER_ERROR ||
+		e?.code === ErrorCode.SERVER_ERROR ||
 		e?.code === ErrorCode.TIMEOUT ||
 		e?.code === ErrorCode.UNKNOWN_ERROR
 	) {
