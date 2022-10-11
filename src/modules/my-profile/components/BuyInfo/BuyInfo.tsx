@@ -8,11 +8,16 @@ import myProfileConstants from 'modules/my-profile/constant';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { useAppSelector } from 'stores';
+import { useAppDispatch, useAppSelector } from 'stores';
+import { getMyProfileRD } from 'stores/my-profile';
+import { AbiKeynft } from 'web3/abis/types';
+import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
+import { useContract } from 'web3/contracts/useContract';
 import { useBalance } from 'web3/queries';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
+import KeyNftAbi from 'web3/abis/abi-keynft.json';
 
 export default function BuyInfo() {
 	const { userInfo, dnft_holding_count } = useAppSelector(
@@ -25,12 +30,16 @@ export default function BuyInfo() {
 	);
 	const { buyDKeyNFT, isBuyDNFT } = useBuyDKeyNFT();
 	const [tokenCode, setTokenCode] = useState(Token2Buy.BUSD);
+	const keynftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
 
-	const handleBuyKey = () => {
-		buyDKeyNFT({
+	const dispatch = useAppDispatch();
+
+	const handleBuyKey = async () => {
+		await buyDKeyNFT({
 			keyPrice: systemSetting?.key_price,
 			token2Buy: tokenCode,
 		});
+		dispatch(getMyProfileRD(keynftContract));
 	};
 
 	const buyKeyState = useMemo(() => {

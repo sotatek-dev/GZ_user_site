@@ -166,8 +166,6 @@ export const getMyProfileRD = createAsyncThunk(
 				getMyProfile(),
 				getBnb2BusdRate(keyNftContract),
 			]);
-			// eslint-disable-next-line no-debugger
-			console.log({ profile, rate });
 
 			const data = get(profile, 'data.data', {});
 			dispatch(setSystemSettings(data.system_setting));
