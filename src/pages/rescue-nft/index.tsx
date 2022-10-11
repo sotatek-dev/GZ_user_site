@@ -236,7 +236,7 @@ const RescueDNFT = () => {
 					isRoyalty() &&
 					haveEnoughNft &&
 					haveEnoughKey &&
-					true ? (
+					isPublicSaleEndAfter7Days ? (
 						<div
 							onClick={rescue}
 							className={
