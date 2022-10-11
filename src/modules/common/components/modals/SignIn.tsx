@@ -38,7 +38,13 @@ export default function ModalSignin() {
 					<Form.Item
 						label=''
 						name='email'
-						rules={[{ required: true, message: 'This field cannot be empty.' }]}
+						rules={[
+							{ required: true, message: 'This field is required' },
+							{
+								type: 'email',
+								message: 'Please enter a correct email, example "abc@mail.com"',
+							},
+						]}
 					>
 						<Input
 							placeholder='Email address'

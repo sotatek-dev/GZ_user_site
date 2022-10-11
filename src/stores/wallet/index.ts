@@ -23,6 +23,7 @@ const initialState: IWalletState = {
 	network: null,
 	balance: {
 		busdBalance: '0',
+		bnbBalance: '0',
 	},
 };
 

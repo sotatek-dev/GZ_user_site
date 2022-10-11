@@ -97,6 +97,7 @@ export const ERC20_ADDRESS: { [key: string]: string } = {
 
 export const DECIMALS = {
 	BUSD_DECIMALS: 18,
+	BNB_DECIMALS: 18,
 };
 
 export const RPC_CHAIN: { [key: number]: string } = {
@@ -109,4 +110,12 @@ export const RPC_CHAIN: { [key: number]: string } = {
 
 export const STATUS_CODE = {
 	SUCCESS: 200,
+};
+
+export const TITLE_TIME_COUNTDOWN = {
+	UPCOMING: 'You can buy tokens in',
+	BUY: 'Buy phase will end in',
+	CLAIMABLE_ONE_TIME_ONLY: 'You can claim amount GXC tokens in',
+	CLAIMABLE_MORE_THAN: 'You can claim amount GXC tokens more in',
+	END: 'Round ended',
 };
