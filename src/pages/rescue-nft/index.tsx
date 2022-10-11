@@ -224,7 +224,7 @@ const RescueDNFT = () => {
 				href={ROUTES.RESCUE_NFT}
 			/>
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
-				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
+				<div className='basis-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
 					{isConnectWallet &&
 					!isLoadingRescue &&
