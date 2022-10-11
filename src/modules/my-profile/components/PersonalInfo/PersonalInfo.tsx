@@ -12,6 +12,7 @@ import type { Rule } from 'antd/lib/form';
 import { isValidEmail } from 'common/helpers/email';
 import { useEffect, useState } from 'react';
 import myProfileConstants from 'modules/my-profile/constant';
+import { copyToClipboard } from 'modules/my-profile/services';
 
 export default function PersonalInfo() {
 	const form = Form.useForm()[0];
@@ -26,15 +27,16 @@ export default function PersonalInfo() {
 		if (isLogin) {
 			dispatch(getMyProfileRD(keynftContract));
 		}
-	}, [isLogin, dispatch, keynftContract]);
+	}, [isLogin, keynftContract]);
 
 	useEffect(() => form.resetFields(), [userInfo]);
 
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
 			{ email },
-			async () => {
+			() => {
 				message.success('Update profile successfully');
+				setCanSave(false);
 				dispatch(getMyProfileRD(keynftContract));
 			},
 			(err) => {
@@ -43,8 +45,10 @@ export default function PersonalInfo() {
 		);
 	};
 
-	const onFinish = (values: { email: string }) => {
-		handleUpdateMyProfile(values.email);
+	const onFinish = async (values: { email: string }) => {
+		if (canSave) {
+			await handleUpdateMyProfile(values.email);
+		}
 	};
 
 	const onFieldChanged = () => {
@@ -74,10 +78,6 @@ export default function PersonalInfo() {
 					<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
 					<Form.Item shouldUpdate className='submit'>
 						<button
-							type='submit'
-							onClick={() => {
-								form.submit();
-							}}
 							className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
 							disabled={!canSave}
 						>
@@ -93,7 +93,14 @@ export default function PersonalInfo() {
 				>
 					<Input
 						suffix={
-							<button className='px-[10px]'>
+							<button
+								type='button'
+								className='px-[10px]'
+								onClick={(e) => {
+									e.stopPropagation();
+									copyToClipboard(userInfo?.wallet_address || '');
+								}}
+							>
 								<Image src='/icons/copy.svg' width='20' height='20' alt='' />
 							</button>
 						}
