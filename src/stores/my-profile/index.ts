@@ -81,6 +81,14 @@ const myProfileStore = createSlice({
 				dnft_holding_count: action.payload,
 			};
 		},
+		cleanDNFTs: (state) => {
+			return {
+				...state,
+				dnfts: undefined,
+				dnft_claimable_count: 0,
+				dnft_holding_count: 0,
+			};
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(getMyProfileRD.fulfilled, (state, action) => {
@@ -171,8 +179,13 @@ export const getMyProfileRD = createAsyncThunk(
 	}
 );
 
-export const { setUserInfo, setErrMessage, setLoading, setDNFTsCount } =
-	myProfileStore.actions;
+export const {
+	setUserInfo,
+	setErrMessage,
+	setLoading,
+	setDNFTsCount,
+	cleanDNFTs,
+} = myProfileStore.actions;
 
 export const setUserInfoRD = (userInfo?: ITypeUserInfo) => {
 	customStore &&

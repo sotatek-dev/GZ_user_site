@@ -31,7 +31,7 @@ import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
 import DNFTABI from '../../../web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
-	const { dnfts, dnft_claimable_count } = useSelector(
+	const { dnfts, dnft_claimable_count, loading } = useSelector(
 		(state) => state.myProfile
 	);
 	const { isLogin } = useAppSelector((state) => state.user);
@@ -249,6 +249,7 @@ export default function MyDNFT() {
 				</div>
 
 				<MyTable
+					loading={loading}
 					onRow={(record) => {
 						return {
 							onClick: () => {
