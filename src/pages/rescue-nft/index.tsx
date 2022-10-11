@@ -71,6 +71,7 @@ const RescueDNFT = () => {
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
 	const haveEnoughKey = listKey.length > 0;
+	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
@@ -172,8 +173,6 @@ const RescueDNFT = () => {
 	};
 
 	const getMessage = () => {
-		const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
-
 		if (isConnectWallet && isPublicSaleEndAfter7Days) {
 			if (!haveEnoughNft) {
 				return <>{Message.NO_NFT_LEFT}</>;
@@ -225,14 +224,15 @@ const RescueDNFT = () => {
 				href={ROUTES.RESCUE_NFT}
 			/>
 			<div className='flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'>
-				<div className='w-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
+				<div className='basis-[300px] flex flex-col items-center mb-6 desktop:mb-20'>
 					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
 					{isConnectWallet &&
 					!isLoadingRescue &&
 					haveEnoughBalance() &&
 					isRoyalty() &&
 					haveEnoughNft &&
-					haveEnoughKey ? (
+					haveEnoughKey &&
+					isPublicSaleEndAfter7Days ? (
 						<div
 							onClick={rescue}
 							className={

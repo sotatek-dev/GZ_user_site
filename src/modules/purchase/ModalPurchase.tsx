@@ -184,7 +184,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		<ModalCustom
 			isShow={isShow}
 			onCancel={onCancel}
-			customClass={'text-center w-full max-w-[95%] desktop:w-[520px]'}
+			customClass={
+				'text-center w-full !max-w-[calc(100%_-_2rem)] desktop:w-[520px]'
+			}
 		>
 			<div className={'p-4 desktop:p-8'}>
 				<div className='font-semibold text-[32px] mb-8'>Token Purchase</div>
@@ -209,7 +211,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								<Input
 									placeholder='1,000.1234'
 									className='custom-input-wrapper'
-									addonAfter={<div>GXC</div>}
+									addonAfter={<div>GXZ</div>}
 									value={amountGXC}
 									disabled
 								/>

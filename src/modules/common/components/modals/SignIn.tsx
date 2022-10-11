@@ -18,7 +18,7 @@ export default function ModalSignin() {
 	};
 
 	return (
-		<div>
+		<div className={'px-4'}>
 			<h5 className='font-bold text-white text-center  text-[32px] leading-10 font-semibold'>
 				Enter your email
 			</h5>

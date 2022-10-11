@@ -165,14 +165,9 @@ export default function ConnectWallet() {
 		<div className='wallet'>
 			<ModalCustom
 				isShow={modalConnectWallet}
+				customClass={'!max-w-[calc(100%_-_2rem)]'}
 				onOk={handleCloseModalConnectWallet}
 				onCancel={handleCloseModalConnectWallet}
-				closable={
-					stepModalConnectWallet ===
-					STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
-						? true
-						: false
-				}
 			>
 				<div className='w-full bg-[#38424E]'>{renderStepModal()}</div>
 			</ModalCustom>
