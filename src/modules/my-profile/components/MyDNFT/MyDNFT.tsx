@@ -97,9 +97,13 @@ export default function MyDNFT() {
 
 	const handleUnmerge = async () => {
 		if (!allowanceAmount) {
-			await tryApproval(true).catch(() => {
-				message.error(myProfileConstants.TRANSACTION_REJECTED);
-			});
+			await tryApproval(true)
+				.then(() => {
+					message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
+				})
+				.catch(() => {
+					message.error(myProfileConstants.TRANSACTION_REJECTED);
+				});
 		}
 		// await dnftContract?.unmerge();
 		// message.success('Unmerge successfully');
