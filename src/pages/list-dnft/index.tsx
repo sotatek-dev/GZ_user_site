@@ -148,16 +148,18 @@ const ListDNFT = () => {
 					<div className='flex items-end'>
 						<div className='flex gap-x-2 ml-auto'>
 							<Dropdown
+								emptyOption='All rarities'
 								customStyle='!w-[160px] !h-[36px] !rounded-[5px] mr-4 ml-8'
 								label={rarity}
-								title='Rarity'
+								title='All rarities'
 								list={SPECIES_DNFT}
 								onClick={handleChangeRarity}
 							/>
 							<Dropdown
+								emptyOption='All species'
 								customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
 								label={species}
-								title='Species'
+								title='All species'
 								list={RARITY_DNFT}
 								onClick={handleChangeSpecies}
 							/>
