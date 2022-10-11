@@ -3,8 +3,8 @@ import axiosInstance from 'apis/config';
 import BigNumber from 'bignumber.js';
 import { AbiKeynft } from 'web3/abis/types';
 
-export function copyToClipboard(text: string) {
-	navigator.clipboard.writeText(text);
+export async function copyToClipboard(text: string) {
+	await navigator.clipboard.writeText(text);
 	message.info('Copied to clipboard');
 }
 
