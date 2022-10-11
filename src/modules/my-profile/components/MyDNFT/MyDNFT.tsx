@@ -292,7 +292,7 @@ export default function MyDNFT() {
 										Species
 									</div>
 									<div className={'text-h8 text-white font-bold'}>
-										{value.species}
+										{value.species || 'TBA'}
 									</div>
 								</div>
 								<div className={'flex justify-between items-center'}>
@@ -300,7 +300,7 @@ export default function MyDNFT() {
 										Rarity
 									</div>
 									<div className={'text-h8 text-white font-bold'}>
-										{value.rank_level}
+										{value.rank_level || 'TBA'}
 									</div>
 								</div>
 								<div className={'flex justify-between items-center'}>
