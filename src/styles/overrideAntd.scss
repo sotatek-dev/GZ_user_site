@@ -469,3 +469,13 @@
 	display: flex;
 	align-items: center;
 }
+
+.ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
+	background: transparent !important;
+	.ant-empty-description {
+		color: white !important;
+	}
+}
+.ant-table-empty .ant-table-tbody > tr.ant-table-placeholder:hover > td {
+	background: transparent !important;
+}
