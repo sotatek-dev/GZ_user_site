@@ -76,21 +76,18 @@ export enum SALE_ROUND_CURRENT_STATUS {
 }
 
 export const SPECIES_DNFT: Array<{ [key: string]: string }> = [
-	{ key: '', label: 'Rarity' },
 	{ key: 'Adelio', label: 'Adelio' },
 	{ key: 'Kinga', label: 'Kinga' },
 	{ key: 'Empa', label: 'Empa' },
 ];
 
 export const RARITY_DNFT: Array<{ [key: string]: string }> = [
-	{ key: '', label: 'Species' },
 	{ key: 'Common', label: 'Common' },
 	{ key: 'Rare', label: 'Rare' },
 	{ key: 'UltraRare', label: 'Ultra Rare' },
 	{ key: 'Legendary', label: 'Legendary' },
 	{ key: 'UltraLegendary', label: 'Ultra Legendary' },
 	{ key: 'APEX', label: 'Apex' },
-	{ key: 'MAX', label: 'Max' },
 ];
 
 export const ERC20_ADDRESS: { [key: string]: string } = {

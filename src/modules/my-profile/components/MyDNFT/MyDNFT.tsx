@@ -83,7 +83,7 @@ export default function MyDNFT() {
 
 			return {
 				...cloneItem,
-				claimable_date: dayjs.unix(claimableTime).format('DD-MMM-YYYY HH:mm'),
+				claimable_date: dayjs.unix(claimableTime).format('DD-MMMM-YYYY HH:mm'),
 				onClick: () => {
 					if (cloneItem.status === 'claimable') {
 						handleClaim();
@@ -217,6 +217,7 @@ export default function MyDNFT() {
 						}
 					>
 						<Dropdown
+							emptyOption='All statuses'
 							onClick={(value) => {
 								setStatus(value.key);
 							}}
@@ -226,6 +227,7 @@ export default function MyDNFT() {
 							label={status}
 						/>
 						<Dropdown
+							emptyOption='All types'
 							onClick={(value) => {
 								setType(value.key);
 							}}
@@ -303,7 +305,7 @@ export default function MyDNFT() {
 								</div>
 								<div className={'flex justify-between items-center'}>
 									<div className={'text-h8 text-blue-20 font-medium'}>
-										Claimable data
+										Claimable date
 									</div>
 									<div className={'text-h8 text-white font-bold'}>
 										{value.claimable_date}
