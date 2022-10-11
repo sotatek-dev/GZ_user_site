@@ -8,7 +8,7 @@ import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
 } from 'stores/modal';
-import { setUserInfo } from 'stores/my-profile';
+import { cleanDNFTs, setUserInfo } from 'stores/my-profile';
 import { setSystemSettings } from 'stores/system-setting';
 import { setAccessToken, setLogin } from 'stores/user';
 import { setAddressWallet, setStatusConnect } from 'stores/wallet';
@@ -53,6 +53,7 @@ export const useConnectWallet = () => {
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
 		setLogin(false);
+		dispatch(cleanDNFTs());
 		dispatch(setUserInfo(undefined));
 		dispatch(setSystemSettings(undefined));
 		setAddressWallet('');
