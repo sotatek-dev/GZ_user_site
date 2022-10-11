@@ -165,7 +165,7 @@ const RescueDNFT = () => {
 				}
 			}
 		} catch (e) {
-			handleWriteMethodError();
+			handleWriteMethodError(e);
 		} finally {
 			reloadData();
 			dispatch(setIsLoadingRescue(false));
