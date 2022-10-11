@@ -3,6 +3,7 @@ const myProfileConstants = {
 	INVALID_EMAIL: 'Please enter a correct email, example "abc@mail.com"',
 	TRANSACTION_COMPLETED: 'Transaction Completed',
 	TRANSACTION_REJECTED: 'Transaction Rejected',
+	TRANSACTION_COMFIRMATION: 'Transaction confirmation Metamask',
 	NETWORK_ERROR: 'Network Error!',
 
 	BUYINFO_MESSAGE_UPCOMMING: 'Key can be mint when the dNFT sale round start',

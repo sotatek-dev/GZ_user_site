@@ -5,6 +5,8 @@ import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
 import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
 import { useAppSelector } from 'stores';
+import { message } from 'antd';
+import myProfileConstants from 'modules/my-profile/constant';
 
 export const useMintDKeyNFT = () => {
 	const { account } = useActiveWeb3React();
@@ -37,6 +39,7 @@ export const useMintDKeyNFT = () => {
 		if (token2Buy === Token2Buy.BUSD) {
 			if (allowanceAmount && allowanceAmount.lt(keyPrice)) {
 				await tryApproval(true);
+				message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
 			}
 			tx = await busdBuy(signature);
 		} else {
