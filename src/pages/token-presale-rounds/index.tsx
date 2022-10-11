@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Pagination } from 'antd';
+import { Pagination, Spin } from 'antd';
 import HelmetCommon from 'common/components/helmet';
 import ReactGa from 'react-ga';
 export const buyTimeDefault = {
@@ -50,6 +50,7 @@ const TokenPresaleRound = () => {
 		Array<ITokenSaleRoundState>
 	>([]);
 	const [totalPage, setTotalPage] = useState<number>(0);
+	const [isLoading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (perPage !== 0) {
@@ -59,12 +60,17 @@ const TokenPresaleRound = () => {
 	}, [perPage]);
 
 	const getListTokenSaleRounds = async () => {
+		setLoading(true);
 		const params: IPramsTokenSaleRounds = {
 			limit: LIMIT_10,
 			page: perPage,
 		};
-		const [data] = await getListSaleRound(params);
+		const [data, error] = await getListSaleRound(params);
+		if (error) {
+			return setLoading(false);
+		}
 		if (data) {
+			setLoading(false);
 			const resultTokenSaleRound = get(data, 'data.list', []);
 			const totalPage = get(data, 'data.pagination.total', 0);
 			setTotalPage(totalPage);
@@ -128,6 +134,7 @@ const TokenPresaleRound = () => {
 			<div>
 				{/* desktop*/}
 				<MyTable
+					loading={isLoading}
 					customClass='table-sale-round hidden desktop:block'
 					columns={columns}
 					dataSource={listTokenSaleRound}
@@ -149,7 +156,12 @@ const TokenPresaleRound = () => {
 
 				{/* mobile*/}
 				<div className={'desktop:hidden'}>
-					<div className={'flex flex-col gap-2.5'}>
+					{isLoading && (
+						<div className='fixed inset-0 flex justify-center items-center opacity-50'>
+							<Spin />
+						</div>
+					)}
+					<div className={'flex flex-col gap-2.5 mb-4'}>
 						{listTokenSaleRound.map(
 							(item: ITokenSaleRoundState, index: number) => {
 								const {
@@ -207,14 +219,16 @@ const TokenPresaleRound = () => {
 							}
 						)}
 					</div>
-					<Pagination
-						size={'small'}
-						defaultCurrent={6}
-						pageSize={LIMIT_10}
-						total={totalPage}
-						onChange={handleChangePage}
-						className={'flex wrap gap-x-2'}
-					/>
+					{listTokenSaleRound.length > 0 && (
+						<Pagination
+							size={'small'}
+							defaultCurrent={6}
+							pageSize={LIMIT_10}
+							total={totalPage}
+							onChange={handleChangePage}
+							className={'flex wrap gap-x-2'}
+						/>
+					)}
 				</div>
 			</div>
 		</>

@@ -22,6 +22,7 @@ import {
 	HEX_ZERO,
 	ROUTES,
 	TIME_LINE_SALE_ROUND,
+	TITLE_TIME_COUNTDOWN,
 	TYPE_SALE_ROUND,
 	UPCOMING,
 } from 'common/constants/constants';
@@ -33,7 +34,7 @@ import {
 	formatNumber,
 	fromWei,
 } from 'common/utils/functions';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, last } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -42,10 +43,12 @@ import { useSelector } from 'react-redux';
 import {
 	claimPurchasedToken,
 	convertBUSDtoBNB,
+	getRemainingClaimableAmount,
 	getSalePhaseInfo,
 	getUserPurchasedAmount,
 } from 'web3/contracts/useContractTokenSale';
 import { buyTimeDefault, ITokenSaleRoundState } from '..';
+import usePrevious from 'common/hooks/usePrevious';
 
 export const selectList = [
 	{
@@ -57,6 +60,11 @@ export const selectList = [
 		value: BNB_CURRENCY,
 	},
 ];
+
+interface claimConfig {
+	max_claim: string | number;
+	start_time: string | number;
+}
 
 const TokenSaleRoundDetail = () => {
 	const router = useRouter();
@@ -79,6 +87,7 @@ const TokenSaleRoundDetail = () => {
 	const [isOpenTokenPurchase, setOpenTokenPurchase] = useState<boolean>(false);
 	const [isOpenClaimPopup, setOpenClaimPopup] = useState<boolean>(false);
 	const [isWhitelist, setWhitelist] = useState<boolean>(false);
+	const [isLoading, setLoading] = useState<boolean>(false);
 	const buyLimit = get(detailSaleRound, 'details.buy_limit');
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const { isLogin } = useSelector((state) => state.user);
@@ -93,6 +102,7 @@ const TokenSaleRoundDetail = () => {
 		false
 	);
 	const saleRoundId = get(detailSaleRound, 'sale_round');
+	const prevLoading = usePrevious(isLoading);
 
 	const isShowButtonBuy =
 		statusTimeLine === BUY &&
@@ -101,8 +111,19 @@ const TokenSaleRoundDetail = () => {
 		isCurrentSaleRound &&
 		detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
+	const isShowButtonClaim =
+		statusTimeLine === CLAIMABLE &&
+		isLogin &&
+		isWhitelist &&
+		youCanClaimAmount > 0;
+
 	const getDetailSaleRound = useCallback(async () => {
-		const [data] = await getDetailTokenSaleRound(index as string);
+		if (isLoading || !index) return;
+		setLoading(true);
+		const [data, error] = await getDetailTokenSaleRound(index as string);
+		if (error) {
+			return setLoading(false);
+		}
 		const detailSaleRound = get(data, 'data', {});
 		const { claim_configs, current_status_timeline } = detailSaleRound;
 		const { start_time, end_time } = get(detailSaleRound, 'buy_time');
@@ -120,14 +141,29 @@ const TokenSaleRoundDetail = () => {
 		setPrice(exchangeRateBUSD);
 		setTokenClaimTime(startTimeClaim);
 		setTimeCountDow(timeCountDown);
-	}, [index]);
+		setLoading(false);
+	}, [index, isLoading]);
+
+	const handleClaimToken = async () => {
+		setOpenClaimPopup(true);
+		const [resClamin, errorClaim] = await claimPurchasedToken(saleRoundId);
+		if (resClamin) {
+			getDetailSaleRound();
+			message.success('Transaction Completed');
+			setOpenClaimPopup(false);
+		}
+		if (errorClaim) {
+			setOpenClaimPopup(false);
+			message.error('Transaction Rejected');
+		}
+	};
 
 	useEffect(() => {
-		if (index && isEmpty(detailSaleRound)) {
+		if (index && !prevLoading) {
 			getDetailSaleRound();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [index, detailSaleRound]);
+	}, [index, detailSaleRound, isLoading, isLogin]);
 
 	useEffect(() => {
 		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
@@ -171,18 +207,22 @@ const TokenSaleRoundDetail = () => {
 	}, [detailSaleRound, statusTimeLine, addressWallet, index]);
 
 	const handleGetUserPurchasedAmount = async (saleRoundId: number) => {
-		const [youBought] = await getUserPurchasedAmount(
+		const [youBought, error] = await getUserPurchasedAmount(
 			addressWallet,
 			saleRoundId
 		);
+		if (error) return setYouBought(0);
 		setYouBought(youBought);
 	};
 
 	const handleGetUserClaimedAmount = async (saleRoundId: number) => {
-		const [youCanClaimAmount] = await getUserPurchasedAmount(
+		const [youCanClaimAmount, error] = await getRemainingClaimableAmount(
 			addressWallet,
 			saleRoundId
 		);
+		if (error) {
+			return setYouCanClaimAmount(0);
+		}
 		setYouCanClaimAmount(youCanClaimAmount);
 	};
 
@@ -204,6 +244,7 @@ const TokenSaleRoundDetail = () => {
 		const maxPreSaleAmount = convertHexToNumber(
 			get(resSalePhaseInfo, 'maxPreSaleAmount._hex', HEX_ZERO)
 		);
+
 		setTotalSoldAmount(fromWei(totalSoldAmount));
 		setMaxPreSaleAmount(fromWei(maxPreSaleAmount));
 	};
@@ -226,17 +267,45 @@ const TokenSaleRoundDetail = () => {
 		}
 	};
 
-	const handleClaimToken = async () => {
-		setOpenClaimPopup(true);
-		const [resClamin, errorClaim] = await claimPurchasedToken(saleRoundId);
-		if (resClamin) {
-			message.success('Transaction Completed');
-			setOpenClaimPopup(false);
+	const checkTitleTimeCountdown = (startTimeClaim: string) => {
+		let title = TITLE_TIME_COUNTDOWN.UPCOMING;
+		if (startTimeClaim === BUY) {
+			title = TITLE_TIME_COUNTDOWN.BUY;
+		} else if (startTimeClaim === CLAIMABLE) {
+			const claimConfigs = get(
+				detailSaleRound,
+				'claim_configs',
+				[]
+			) as Array<claimConfig>;
+			if (claimConfigs.length === 1) {
+				// nếu chỉ có 1 time claim sẽ lấy luôn youbought vì max laim percent là 100%
+				title = TITLE_TIME_COUNTDOWN.CLAIMABLE_ONE_TIME_ONLY.replace(
+					'amount',
+					`${youBought}`
+				);
+			} else {
+				// nếu có nhiều hơn 1 time claim sẽ lấy you can claim theo time hiện tại
+				const timestampNow = moment().unix();
+				const claimConfig = claimConfigs.find((claimConfig: claimConfig) => {
+					if (Number(claimConfig.start_time) > timestampNow) {
+						return Number(claimConfig.start_time) > timestampNow;
+					}
+				});
+				// nếu tất cả time claim đã qua thì sẽ lấy time cuối cùng
+				const maxClaimPercent =
+					Number(get(claimConfig, 'max_claim', last(claimConfigs)?.max_claim)) /
+					10000;
+				title = TITLE_TIME_COUNTDOWN.CLAIMABLE_MORE_THAN.replace(
+					'amount',
+					`${(youBought * maxClaimPercent).toFixed(2)}`
+				);
+			}
+		} else if (startTimeClaim === END) {
+			title = TITLE_TIME_COUNTDOWN.END;
+		} else {
+			title = TITLE_TIME_COUNTDOWN.UPCOMING;
 		}
-		if (errorClaim) {
-			setOpenClaimPopup(false);
-			message.error('Transaction Rejected');
-		}
+		return title;
 	};
 
 	const renderPriceBuyInfoUpComing = () => {
@@ -314,6 +383,64 @@ const TokenSaleRoundDetail = () => {
 		);
 	};
 
+	const renderInprogessBuy = () => {
+		const buyProgess = Math.floor((totalSoldAmount / maxPreSaleAmount) * 100);
+		return (
+			<>
+				<div className='text-sm text font-normal'>Buy Progress:</div>
+				<Progress
+					strokeColor={{
+						'0%': '#40bbfd',
+						'7%': '#36C1FF',
+						'47%': '#77A3F8',
+						'71%': '#BD81F1',
+						'100%': '#CF79EE',
+					}}
+					trailColor='#ffffff0d'
+					percent={buyProgess > 0 ? buyProgess : 0}
+					showInfo={false}
+					status='active'
+				/>
+				<div className='flex justify-between'>
+					<div>{`${buyProgess > 0 ? buyProgess : 0}%`}</div>
+					<div>{`${formatNumber(totalSoldAmount)}/${formatNumber(
+						maxPreSaleAmount
+					)}`}</div>
+				</div>
+			</>
+		);
+	};
+
+	const renderInprogessClaim = () => {
+		const totalClaimed = youBought - youCanClaimAmount;
+		const claimProgess = Math.floor((totalClaimed / youBought) * 100);
+
+		return (
+			<>
+				<div className='text-sm text font-normal'>Claim Progress:</div>
+				<Progress
+					strokeColor={{
+						'0%': '#40bbfd',
+						'7%': '#36C1FF',
+						'47%': '#77A3F8',
+						'71%': '#BD81F1',
+						'100%': '#CF79EE',
+					}}
+					trailColor='#ffffff0d'
+					percent={claimProgess > 0 ? claimProgess : 0}
+					showInfo={false}
+					status='active'
+				/>
+				<div className='flex justify-between'>
+					<div>{`${claimProgess > 0 ? claimProgess : 0}%`}</div>
+					<div>{`${formatNumber(totalClaimed)}/${formatNumber(
+						youBought
+					)}`}</div>
+				</div>
+			</>
+		);
+	};
+
 	return (
 		<div className='flex flex-col gap-2.5 desktop:gap-8'>
 			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
@@ -326,7 +453,7 @@ const TokenSaleRoundDetail = () => {
 					</div>
 					<Countdown
 						millisecondsRemain={timeCountDow}
-						title='You can buy tokens in'
+						title={checkTitleTimeCountdown(statusTimeLine)}
 						callBackApi={getDetailSaleRound}
 					/>
 				</BoxPool>
@@ -347,39 +474,18 @@ const TokenSaleRoundDetail = () => {
 									classCustom='buy-token'
 								/>
 							)}
-							{statusTimeLine === CLAIMABLE && isLogin && isWhitelist && (
+							{isShowButtonClaim && (
 								<Button
 									onClick={handleClaimToken}
-									label='claim'
+									label='Claim'
 									classCustom='buy-token'
 								/>
 							)}
 						</div>
 					</div>
 					<div className='mt-auto'>
-						<div className='text-sm text font-normal'>Buy Progress:</div>
-						<Progress
-							strokeColor={{
-								'0%': '#9E90F3',
-								'100%': '#9E90F3',
-							}}
-							percent={
-								maxPreSaleAmount > 0
-									? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
-									: 0
-							}
-							showInfo={false}
-						/>
-						<div className='flex justify-between'>
-							<div>{`${
-								maxPreSaleAmount > 0
-									? Math.floor((totalSoldAmount / maxPreSaleAmount) * 100)
-									: 0
-							}%`}</div>
-							<div>{`${formatNumber(
-								totalSoldAmount
-							)}/${maxPreSaleAmount}`}</div>
-						</div>
+						{statusTimeLine === BUY && renderInprogessBuy()}
+						{statusTimeLine === CLAIMABLE && renderInprogessClaim()}
 					</div>
 				</BoxPool>
 			</div>
@@ -448,6 +554,7 @@ const TokenSaleRoundDetail = () => {
 				maxPreSaleAmount={maxPreSaleAmount}
 				youBought={youBought}
 				handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
+				getDetailSaleRound={getDetailSaleRound}
 			/>
 			<ModalCustom
 				isShow={isOpenClaimPopup}

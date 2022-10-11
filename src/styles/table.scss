@@ -56,3 +56,14 @@
 		color: #36c1ff;
 	}
 }
+
+tr.ant-table-placeholder:hover > td {
+	.ant-empty-description {
+		color: white;
+	}
+
+	&:hover,
+	&:focus {
+		background-color: #0e1a2b !important;
+	}
+}

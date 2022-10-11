@@ -3,7 +3,7 @@ import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
-import { BUSD_CURRENCY } from 'common/constants/constants';
+import { BNB_CURRENCY, BUSD_CURRENCY } from 'common/constants/constants';
 import { formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
@@ -13,6 +13,7 @@ import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
 import {
 	buyTokenWithExactlyBNB,
 	buyTokenWithExactlyBUSD,
+	convertBUSDtoBNB,
 	getTokenAmountFromBUSD,
 } from 'web3/contracts/useContractTokenSale';
 import {
@@ -27,6 +28,7 @@ interface IModalPurchaseProps {
 	exchangeRate: number;
 	detailSaleRound: ITokenSaleRoundState | undefined;
 	handleGetUserPurchasedAmount: (saleRoundId: number) => void;
+	getDetailSaleRound: () => void;
 	maxPreSaleAmount: number;
 	youBought: number;
 }
@@ -40,6 +42,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	handleGetUserPurchasedAmount,
 	maxPreSaleAmount,
 	youBought,
+	getDetailSaleRound,
 }) => {
 	const [form] = Form.useForm();
 	const { addressWallet, balance } = useSelector((state) => state.wallet);
@@ -76,17 +79,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				{
 					name: 'amount',
 					errors: [
-						`The round only have ${
+						`The round only have ${formatNumber(
 							maxPreSaleAmount - youBought
-						} Galactix tokens left to be purchased`,
+						)} Galactix tokens left to be purchased`,
 					],
-				},
-			]);
-		} else {
-			form.setFields([
-				{
-					name: 'amount',
-					errors: [],
 				},
 			]);
 		}
@@ -117,6 +113,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					return;
 				}
 			}
+
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
 				saleRoundId,
 				addressWallet,
@@ -129,6 +126,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				onCancel();
 				handleGetUserPurchasedAmount(saleRoundId);
 				message.success('Transaction Completed');
+				getDetailSaleRound();
 			}
 			if (errorBuyWithBUSD) {
 				setLoading(false);
@@ -146,6 +144,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				onCancel();
 				handleGetUserPurchasedAmount(saleRoundId);
 				message.success('Transaction Completed');
+				getDetailSaleRound();
 			}
 			if (errorBuyWithBNB) {
 				setLoading(false);
@@ -154,9 +153,16 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 	};
 
-	const validateToken = (_: any, value: string) => {
-		const { busdBalance } = balance;
-		const buyLimit = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+	const validateToken = async (_: any, value: string) => {
+		const { busdBalance, bnbBalance } = balance;
+
+		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+		let buyLimit = buyLimitBUSD;
+		const amountOfTokensPurchased = youBought * exchangeRate;
+		if (currency === BNB_CURRENCY) {
+			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
+			buyLimit = buyLimitBNB;
+		}
 
 		if (!value) {
 			return Promise.resolve();
@@ -166,13 +172,17 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		) {
 			return Promise.reject(new Error('Insufficient amount!'));
 		} else if (
-			currency === BUSD_CURRENCY &&
+			currency === BNB_CURRENCY &&
+			Number(value) > Number(bnbBalance)
+		) {
+			return Promise.reject(new Error('Insufficient amount!'));
+		} else if (
 			buyLimit !== 0 &&
-			Number(value) > buyLimit - youBought
+			Number(value) > buyLimit - amountOfTokensPurchased
 		) {
 			return Promise.reject(
 				new Error(
-					`User can only purchase maximum ${formatNumber(buyLimit)} BUSD`
+					`User can only purchase maximum ${formatNumber(buyLimit)} ${currency}`
 				)
 			);
 		} else {
