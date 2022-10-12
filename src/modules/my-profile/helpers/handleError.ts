@@ -3,7 +3,7 @@ import { ErrorMessage } from 'common/constants/error';
 import { handleCommonError, showError } from 'common/helpers/toast';
 
 export const handleBuyInfoError = (e?: any) => {
-	if (e?.code === ErrorCode.ACTION_REJECTED) {
+	if (e?.code === ErrorCode.ACTION_REJECTED || e?.code === 4001) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
 		e.code === ErrorCode.SERVER_ERROR ||
@@ -17,7 +17,7 @@ export const handleBuyInfoError = (e?: any) => {
 };
 
 export const handleClaimError = (e?: any) => {
-	if (e?.code === ErrorCode.ACTION_REJECTED) {
+	if (e?.code === ErrorCode.ACTION_REJECTED || e?.code === 4001) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
 		e.code === ErrorCode.SERVER_ERROR ||

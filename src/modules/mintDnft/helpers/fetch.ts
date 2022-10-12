@@ -144,7 +144,7 @@ export const fetchMinimumGXZBalanceRequired = createAsyncThunk(
 );
 
 interface FetchUserBoughtAmountParams {
-	dnftContract?: AbiDnft | null;
+	dnftContract?: AbiDnft | null | any;
 	runningPhaseId: MINT_PHASE_ID | number;
 	walletAddress: string;
 }

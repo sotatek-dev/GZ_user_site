@@ -3,6 +3,8 @@ import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { useEffect, useState } from 'react';
 import { ConnectorKey } from 'web3/connectors';
 import { Injected } from 'web3/connectors/injected';
+import { useConnectWallet } from './useConnectWallet';
+import { isMobile } from 'react-device-detect';
 
 /**
  * Trying eager connect to connectors at first time.
@@ -11,6 +13,7 @@ import { Injected } from 'web3/connectors/injected';
 export function useEagerConnect() {
 	const { active, activate } = useWeb3React();
 	const [tried, setTried] = useState(false);
+	const { disconnectWallet } = useConnectWallet();
 
 	useEffect(() => {
 		const walletSelected = StorageUtils.getSectionStorageItem(
@@ -21,13 +24,18 @@ export function useEagerConnect() {
 		if (!active && walletSelected === ConnectorKey.injected) {
 			Injected.isAuthorized().then((isAuthorized: boolean) => {
 				if (isAuthorized) {
+					console.log('isAuthorized0', isAuthorized);
 					activate(Injected, undefined, true).catch(() => {
+						console.log('false');
+
 						setTried(true);
+						disconnectWallet();
 					});
 				} else {
-					if (ethereum) {
+					if (ethereum && isMobile) {
 						activate(Injected, undefined, true).catch(() => {
 							setTried(true);
+							disconnectWallet();
 						});
 					} else {
 						setTried(true);
@@ -36,7 +44,7 @@ export function useEagerConnect() {
 			});
 			return;
 		}
-		setTried(true);
+		// setTried(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active]);
 

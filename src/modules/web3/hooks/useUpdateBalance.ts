@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
-import { DECIMALS, ERC20_ADDRESS } from 'common/constants/constants';
+import { DECIMALS, ERC20_ADDRESS, RPC_CHAIN } from 'common/constants/constants';
 import { getERC20AmountBalance } from 'web3/contracts/useErc20Contract';
 import { convertBigNumberValueToNumber } from 'web3/contracts/ether';
 import { setBalance } from 'stores/wallet';
+import { ethers } from 'ethers';
 
 export const useUpdateBalance = () => {
 	const { library, account, chainId } = useWeb3React();
@@ -14,9 +15,16 @@ export const useUpdateBalance = () => {
 	const handleGetBalance = useCallback(async () => {
 		if (!accessToken || !library || !account) return;
 		try {
+			const provider = ethers.getDefaultProvider(RPC_CHAIN[chainId as any]);
+			const temptNativeCoinBalance = await provider.getBalance(account);
 			const temptBUSDBalance = await getERC20AmountBalance(
 				ERC20_ADDRESS.busd,
 				account as string
+			);
+
+			const numberNativeBalance = convertBigNumberValueToNumber(
+				temptNativeCoinBalance,
+				DECIMALS.BNB_DECIMALS
 			);
 
 			const numberBUSDBalance = temptBUSDBalance[0]
@@ -28,6 +36,7 @@ export const useUpdateBalance = () => {
 
 			setBalance({
 				busdBalance: JSON.parse(numberBUSDBalance),
+				bnbBalance: JSON.parse(numberNativeBalance),
 			});
 		} catch (error) {
 			console.log('Error getBalance', error);

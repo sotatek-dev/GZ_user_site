@@ -51,6 +51,23 @@ export const getUserPurchasedAmount = async (
 	}
 };
 
+export const getRemainingClaimableAmount = async (
+	address: string,
+	saleRoundId: number
+) => {
+	try {
+		const contract = await genPresalePoolContractEther();
+		const res = await contract.getRemainingClaimableAmount(
+			address,
+			saleRoundId
+		);
+		const amount = fromWei(convertHexToNumber(get(res, '_hex', HEX_ZERO)));
+		return [JSON.parse(amount), null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
 export const getUserClaimedAmount = async (
 	address: string,
 	saleRoundId: number
