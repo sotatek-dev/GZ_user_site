@@ -1,9 +1,19 @@
 import { genDNFTContractEther } from './instance';
 
-export const permanentMerge = async (listTokenId: number[] | false) => {
+export const permanentMerge = async (
+	listTokenId: number[],
+	timesTamp: number,
+	sessionId: string,
+	signature: string
+) => {
 	try {
 		const contract = await genDNFTContractEther();
-		const res = await contract.permanentMerge(listTokenId);
+		const res = await contract.permanentMerge(
+			listTokenId,
+			timesTamp,
+			sessionId,
+			signature
+		);
 		const result = await res.wait(1);
 		return [result, null];
 	} catch (error) {
@@ -12,16 +22,18 @@ export const permanentMerge = async (listTokenId: number[] | false) => {
 };
 
 export const temporaryMerge = async (
-	listTokenId: string[] | string,
+	listTokenId: number[],
+	timesTamp: number,
 	sessionId: string,
-	signatureMerge: string
+	signature: string
 ) => {
 	try {
 		const contract = await genDNFTContractEther();
 		const res = await contract.temporaryMerge(
 			listTokenId,
+			timesTamp,
 			sessionId,
-			signatureMerge
+			signature
 		);
 		const result = await res.wait(1);
 		return [result, null];

@@ -14,7 +14,6 @@ const ListCard: FC<IListCardProps> = ({ list, SelectNft, pagination }) => {
 		<div className='flex flex-col'>
 			<div className='grid grid-cols-4 gap-8 w-fit mx-auto'>
 				{list.map((data: IDFNT, index: number) => {
-					if (data.is_locked) return null;
 					return (
 						<Col key={index} span={6}>
 							<CardNft dataDNFT={data} index={index} SelectNft={SelectNft} />

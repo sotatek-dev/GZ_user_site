@@ -34,8 +34,15 @@ export const CURRENCY = 'BUSD';
 export const UPCOMING = 'Upcoming';
 export const BUY = 'Buy';
 export const CLAIMABLE = 'Claimable';
+export const UPCOMING_CLAIMABLE = 'Upcoming Claimable';
 export const END = 'End';
 export const TIME_LINE_SALE_ROUND = [UPCOMING, BUY, CLAIMABLE, END];
+export const STATUS_LIST_SALE_ROUND = {
+	UPCOMING: 'Upcoming',
+	BUY: 'Buyable',
+	CLAIMABLE: 'Claimable',
+	END: 'Ended',
+};
 
 export enum ROUND_TYPE {
 	MINT_NFT = 'mint-nft',

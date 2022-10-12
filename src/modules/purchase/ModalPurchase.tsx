@@ -170,12 +170,12 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			currency === BUSD_CURRENCY &&
 			Number(value) > Number(busdBalance)
 		) {
-			return Promise.reject(new Error('Insufficient amount!'));
+			return Promise.reject(new Error("You don't have enough BUSD"));
 		} else if (
 			currency === BNB_CURRENCY &&
 			Number(value) > Number(bnbBalance)
 		) {
-			return Promise.reject(new Error('Insufficient amount!'));
+			return Promise.reject(new Error("You don't have enough BNB"));
 		} else if (
 			buyLimit !== 0 &&
 			Number(value) > buyLimit - amountOfTokensPurchased

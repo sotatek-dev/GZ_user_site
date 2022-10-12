@@ -28,6 +28,7 @@ interface IInitImage {
 	zIndex: number | undefined;
 	specialOrderLayer: number | undefined;
 	value: string;
+	displayName: string;
 	type: string;
 	values: Array<{ label: string }>;
 	valuesSpecialOrder: Array<{ label: string }>;
@@ -42,6 +43,7 @@ interface IProperty {
 		type: string;
 		values: Array<string>;
 		valuesSpecialOrder: Array<string>;
+		displayName: string;
 	};
 }
 
@@ -59,7 +61,6 @@ const MergeDNFT = () => {
 	// state
 	const [initImages, setInitImages] = useState<Array<IInitImage>>([]);
 	const [defaultImages, setDefaultImages] = useState<Array<IInitImage>>([]);
-	const [tokenIds, settokenIds] = useState<number[] | false>([]);
 	const [speciesAndRank, setSpeciesAndRank] = useState<ISpeciesAndRank>();
 	const [isLoadingPermanentlyMerge, setLoadingPermanentlyMerge] =
 		useState<boolean>(false);
@@ -79,17 +80,6 @@ const MergeDNFT = () => {
 		}
 	}, [listTokenId, isLogin]);
 
-	useEffect(() => {
-		if (!listTokenId || listTokenId?.length === 0) {
-			router.push(ROUTES.LIST_DNFT);
-		} else {
-			const tokenIds =
-				Array.isArray(listTokenId) &&
-				listTokenId.map((tokenId: string) => Number(tokenId));
-			settokenIds(tokenIds);
-		}
-	}, [listTokenId]);
-
 	const handleInitListImage = (properties: IProperty) => {
 		const initListImage = [];
 		const furDefault = properties[PROPERTY.FUR]?.values[0] || '';
@@ -102,6 +92,7 @@ const MergeDNFT = () => {
 				valuesSpecialOrder,
 				type,
 				specialOrderLayer,
+				displayName,
 			} = properties[property];
 			const convertValues = values.map((value: string) => {
 				return { label: value };
@@ -131,6 +122,7 @@ const MergeDNFT = () => {
 				isAsset: orderLayer ? true : false,
 				values: convertValues,
 				valuesSpecialOrder: convertValuesSpecialOrder,
+				displayName,
 			} as IInitImage;
 			initListImage.push(result);
 		}
@@ -139,6 +131,14 @@ const MergeDNFT = () => {
 
 	const handleGetMergeRule = async (params: IParamsMergeRuleDFNT) => {
 		const [data, error] = await mergeRuleDFNT(params);
+		if (error) {
+			const { message } = error;
+			messageAntd.error(message);
+			setTimeout(() => {
+				router.push(ROUTES.LIST_DNFT);
+			}, 2000);
+			return;
+		}
 		const properties = get(data, 'data.seed.properties', {});
 		const species = get(data, 'data.seed.species[0]');
 		const rankLevel = get(data, 'data.seed.rankLevel[0]', '');
@@ -146,13 +146,6 @@ const MergeDNFT = () => {
 		setSpeciesAndRank({ species, rankLevel });
 		setInitImages(initListImage);
 		setDefaultImages(initListImage);
-		if (error) {
-			const { message } = error;
-			messageAntd.error(message);
-			setTimeout(() => {
-				router.push(ROUTES.LIST_DNFT);
-			}, 2000);
-		}
 	};
 
 	const onChangeValue = (event: any, propertyName: string) => {
@@ -207,19 +200,25 @@ const MergeDNFT = () => {
 			return messageAntd.error(message);
 		}
 		if (data?.statusCode === STATUS_CODE.SUCCESS) {
-			if (listTokenId && listTokenId?.length > 0) {
-				const sessionId = get(data, 'data._id', '');
-				const [responsePushContract, errorPushContract] = await permanentMerge(
-					tokenIds
-				);
-				setLoadingPermanentlyMerge(false);
-				if (errorPushContract) return messageAntd.error('Transaction Rejected');
-				if (responsePushContract) {
-					messageAntd.success('You can claim your NFT in My Profile');
-					setTimeout(() => {
-						router.push(`/merge-dnft/detail/${sessionId}`);
-					}, 1500);
-				}
+			const sessionId = get(data, 'data._id', '');
+			const paramsSignature = {
+				session_id: sessionId,
+			};
+			const [dataSignature] = await getSignatureMerge(paramsSignature);
+			const { session_id, signature, time_stamp, token_ids } = dataSignature;
+			const [responsePushContract, errorPushContract] = await permanentMerge(
+				token_ids,
+				time_stamp,
+				session_id,
+				signature
+			);
+			setLoadingPermanentlyMerge(false);
+			if (errorPushContract) return messageAntd.error('Transaction Rejected');
+			if (responsePushContract) {
+				messageAntd.success('You can claim your NFT in My Profile');
+				setTimeout(() => {
+					router.push(`/merge-dnft/detail/${sessionId}`);
+				}, 1500);
 			}
 		}
 	};
@@ -245,25 +244,25 @@ const MergeDNFT = () => {
 			return messageAntd.error(message);
 		}
 		if (data?.statusCode === STATUS_CODE.SUCCESS) {
-			if (listTokenId && listTokenId?.length > 0) {
-				const sessionId = get(data, 'data._id', '');
-				const paramsSignature = {
-					session_id: sessionId,
-				};
-				const [signatureMerge] = await getSignatureMerge(paramsSignature);
-				const [responsePushContract, errorPushContract] = await temporaryMerge(
-					listTokenId,
-					sessionId,
-					signatureMerge
-				);
-				setLoadingTemporaryMerge(false);
-				if (errorPushContract) return messageAntd.error('Transaction Rejected');
-				if (responsePushContract) {
-					messageAntd.success('Your NFT will be locked in 30 days');
-					setTimeout(() => {
-						router.push(ROUTES.MY_PROFILE);
-					}, 1500);
-				}
+			const sessionId = get(data, 'data._id', '');
+			const paramsSignature = {
+				session_id: sessionId,
+			};
+			const [dataSignature] = await getSignatureMerge(paramsSignature);
+			const { session_id, signature, time_stamp, token_ids } = dataSignature;
+			const [responsePushContract, errorPushContract] = await temporaryMerge(
+				token_ids,
+				time_stamp,
+				session_id,
+				signature
+			);
+			setLoadingTemporaryMerge(false);
+			if (errorPushContract) return messageAntd.error('Transaction Rejected');
+			if (responsePushContract) {
+				messageAntd.success('Your NFT will be locked in 30 days');
+				setTimeout(() => {
+					router.push(ROUTES.MY_PROFILE);
+				}, 1500);
 			}
 		}
 	};
@@ -277,11 +276,12 @@ const MergeDNFT = () => {
 			const { assetBase, extension, isAsset, propertyName, zIndex, value } =
 				property;
 			const linkImage = value ? `${assetBase}/${value}${extension}` : '';
+
 			if (!isAsset || !linkImage) return null;
 			return (
 				<Image
 					key={index}
-					className={`!absolute !inset-0 !w-[600px] !h-[600px]`}
+					className={`!absolute !inset-0 !w-[400px] !h-[400px]`}
 					layout='fill'
 					src={linkImage}
 					style={{ zIndex: `${zIndex}` }}
@@ -326,12 +326,12 @@ const MergeDNFT = () => {
 				</div>
 				<div className='grid gap-x-12 gap-y-5 grid-cols-2 h-fit'>
 					{initImages.map((property: IInitImage, index: number) => {
-						const { propertyName, values, value } = property;
+						const { propertyName, values, value, displayName } = property;
 						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
 						return (
 							<DropdownMegeDnft
 								list={values}
-								label={propertyName}
+								label={displayName}
 								key={index}
 								value={value}
 								customStyle='!max-w-[330px] !w-[290px]'
