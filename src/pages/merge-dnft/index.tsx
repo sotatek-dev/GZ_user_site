@@ -332,6 +332,7 @@ const MergeDNFT = () => {
 							<DropdownMegeDnft
 								list={values}
 								label={displayName}
+								placeholder={`Choose ${displayName.toLowerCase()}`}
 								key={index}
 								value={value}
 								customStyle='!max-w-[330px] !w-[290px]'
