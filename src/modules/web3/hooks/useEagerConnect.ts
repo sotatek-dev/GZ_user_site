@@ -16,18 +16,15 @@ export function useEagerConnect() {
 	const { disconnectWallet } = useConnectWallet();
 
 	useEffect(() => {
+		const { ethereum } = window;
 		const walletSelected = StorageUtils.getSectionStorageItem(
 			STORAGE_KEYS.WALLET_CONNECTED
 		);
-		const { ethereum } = window;
 		if (!walletSelected) return;
 		if (!active && walletSelected === ConnectorKey.injected) {
 			Injected.isAuthorized().then((isAuthorized: boolean) => {
 				if (isAuthorized) {
-					console.log('isAuthorized0', isAuthorized);
 					activate(Injected, undefined, true).catch(() => {
-						console.log('false');
-
 						setTried(true);
 						disconnectWallet();
 					});
@@ -42,11 +39,15 @@ export function useEagerConnect() {
 					}
 				}
 			});
-			return;
 		}
-		// setTried(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active]);
+
+	useEffect(() => {
+		if (!tried && active) {
+			setTried(true);
+		}
+	}, [tried, active]);
 
 	return tried;
 }
