@@ -70,6 +70,6 @@ export const getSignatureMerge = async (params: { session_id: string }) => {
 	const queryString = `dnft/signature`;
 	return await axiosInstance()
 		.post(queryString, { ...params })
-		.then((data) => [data.data.data.signature, null])
+		.then((data) => [data.data.data, null])
 		.catch((error) => [null, error.response.data]);
 };

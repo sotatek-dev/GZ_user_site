@@ -11,20 +11,25 @@ interface ICardNftProps {
 }
 
 const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
-	const { isChecked } = dataDNFT;
+	const { isChecked, is_locked } = dataDNFT;
 	// replace tạm chờ BE đẩy ảnh lên s3
 	const imageDNFT = get(dataDNFT, 'metadata.image', '');
+
 	return (
 		<div
-			onClick={(event) => SelectNft(event, index)}
-			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative cursor-pointer
+			onClick={!is_locked ? (event) => SelectNft(event, index) : () => {}}
+			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative ${
+				!is_locked && 'cursor-pointer'
+			} 
 			}`}
 		>
-			<Checkbox
-				onClick={(event) => SelectNft(event, index)}
-				className='absolute top-3 right-3'
-				checked={isChecked}
-			/>
+			{!is_locked && (
+				<Checkbox
+					onClick={(event) => SelectNft(event, index)}
+					className='absolute top-3 right-3'
+					checked={isChecked}
+				/>
+			)}
 			<ImageBase
 				url={imageDNFT}
 				width='213px'
