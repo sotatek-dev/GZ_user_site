@@ -245,6 +245,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								/>
 							</Form.Item>
 							<Button
+								isDisabled={!amount}
 								classCustom='bg-purple-30 !rounded-[40px] mx-auto !w-[200px] mt-4'
 								htmlType='submit'
 								label='Buy'
