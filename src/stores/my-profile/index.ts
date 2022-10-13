@@ -47,7 +47,7 @@ interface initialStateProps {
 }
 
 const initialState: initialStateProps = {
-	loading: false,
+	loading: true,
 	dnft_claimable_count: 0,
 	dnft_holding_count: 0,
 };
