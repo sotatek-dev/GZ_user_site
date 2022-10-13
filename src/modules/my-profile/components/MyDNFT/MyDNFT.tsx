@@ -139,7 +139,7 @@ export default function MyDNFT() {
 							window.open(getExploreTxLink(res.transactionHash));
 						},
 					});
-					handleGetDNFTs();
+					Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
 				})
 				.catch((err) => {
 					handleClaimError(err);
@@ -161,7 +161,7 @@ export default function MyDNFT() {
 							window.open(getExploreTxLink(res.transactionHash));
 						},
 					});
-					handleGetDNFTs();
+					Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
 				})
 				.catch((err) => {
 					handleClaimError(err);
@@ -176,13 +176,13 @@ export default function MyDNFT() {
 	};
 
 	useEffect(() => {
-		if (dnfts && dnfts.pagination.total) {
-			handleGetClaimableNFTsCount(dnfts.pagination.total);
-		}
+		handleGetClaimableNFTsCount();
 	}, [dnfts?.pagination.total]);
 
-	const handleGetClaimableNFTsCount = async (total: number) => {
-		dispatch(getMyClaimableDNFTsCountRD(total));
+	const handleGetClaimableNFTsCount = async () => {
+		if (dnfts && dnfts.pagination.total) {
+			dispatch(getMyClaimableDNFTsCountRD(dnfts.pagination.total));
+		}
 	};
 
 	const getExploreTxLink = (hash: string) => {
