@@ -177,16 +177,18 @@ const ListDNFT = () => {
 						/>
 					</div>
 				</div>
-				<ListCard
-					list={listDNFT}
-					SelectNft={SelectNft}
-					pagination={{
-						defaultCurrent: 1,
-						pageSize: LIMIT_12,
-						total: totalDNFT,
-						onChange: handleChangePage,
-					}}
-				/>
+				{!!listDNFT.length && (
+					<ListCard
+						list={listDNFT}
+						SelectNft={SelectNft}
+						pagination={{
+							defaultCurrent: 1,
+							pageSize: LIMIT_12,
+							total: totalDNFT,
+							onChange: handleChangePage,
+						}}
+					/>
+				)}
 				{isShowModalChooseMetarialToMerge && dNFTSelected && (
 					<ModalCustom
 						title={
