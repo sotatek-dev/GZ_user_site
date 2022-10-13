@@ -10,14 +10,15 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/my-profile';
+import KeyNftAbi from 'web3/abis/abi-keynft.json';
 import { AbiKeynft } from 'web3/abis/types';
 import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
+import { useNativeBalance } from 'web3/hooks';
 import { useBalance } from 'web3/queries';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
-import KeyNftAbi from 'web3/abis/abi-keynft.json';
 
 export default function BuyInfo() {
 	const { userInfo, dnft_holding_count } = useAppSelector(
@@ -25,6 +26,7 @@ export default function BuyInfo() {
 	);
 	// BUSD balance
 	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
+	const bnbBalance = useNativeBalance();
 	const { systemSetting, busd2Bnb } = useAppSelector(
 		(state) => state.systemSetting
 	);
@@ -59,12 +61,11 @@ export default function BuyInfo() {
 		let isEnoughRoyalty = false;
 
 		if (tokenCode === Token2Buy.BUSD) {
-			isEnoughRoyalty = +busdBalance >= systemSetting.key_price * 0.08;
+			isEnoughRoyalty = +busdBalance >= systemSetting.key_price * 1.08;
 		}
 
 		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
-			isEnoughRoyalty =
-				+busdBalance >= +busd2Bnb.times(systemSetting.key_price) * 1.08;
+			isEnoughRoyalty = +busdBalance >= systemSetting.key_price * 0.08;
 		}
 
 		if (!isEnoughRoyalty) {
@@ -78,7 +79,7 @@ export default function BuyInfo() {
 
 		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
 			isEnoughBalance =
-				+busdBalance >= busd2Bnb.times(systemSetting.key_price).toNumber();
+				+bnbBalance >= busd2Bnb.times(systemSetting.key_price).toNumber();
 		}
 
 		if (!isEnoughBalance) {
@@ -93,6 +94,7 @@ export default function BuyInfo() {
 		busdBalance,
 		busd2Bnb,
 		dnft_holding_count,
+		bnbBalance,
 	]);
 
 	const { inTimeBuyKey, secondsRemain } = useMemo(() => {
