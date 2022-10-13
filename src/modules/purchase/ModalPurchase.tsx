@@ -107,11 +107,15 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				addressWallet,
 				amount
 			);
+
 			if (!isUserApproved) {
-				const [, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
+				const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
 				if (error) {
+					setLoading(false);
+					message.error('Transaction Rejected');
 					return;
 				}
+				await res.wait();
 			}
 
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(

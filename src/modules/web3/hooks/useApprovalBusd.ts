@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
@@ -42,7 +41,6 @@ export const useApprovalBusd = (tokenAddress: string, spender: string) => {
 		try {
 			const txn = await tokenContract.approve(spender, constants.MaxUint256);
 			await txn.wait();
-			message.success('');
 		} catch (error) {
 			if (rethrowErr) {
 				throw error;
