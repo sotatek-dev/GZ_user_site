@@ -220,7 +220,8 @@ const MintDNFT: React.FC = () => {
 					if (isMinted) {
 						return (
 							<>
-								{Message.ELIGIBLE_TO_CLAIM}. Click{' '}
+								{Message.ELIGIBLE_TO_CLAIM}. <br className={'desktop:hidden'} />
+								Click{' '}
 								<span
 									className={'underline cursor-pointer'}
 									onClick={() => {
@@ -463,7 +464,7 @@ const MintDNFT: React.FC = () => {
 						>
 							<div
 								className={
-									'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
+									'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
 								}
 							>
 								{getMessage()}
