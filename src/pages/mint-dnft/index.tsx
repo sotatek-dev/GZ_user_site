@@ -8,7 +8,6 @@ import {
 	getMintPhaseLabel,
 	isApproved,
 } from 'common/utils/functions';
-import NftGroup from 'assets/svg-components/nftGroup';
 import { useBalance } from 'web3/queries';
 import ReactGa from 'react-ga';
 import { useContract } from 'web3/contracts/useContract';
@@ -40,6 +39,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'stores';
 import { setIsLoadingMint } from 'stores/mint-dnft';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
+import NftGroupImg from 'assets/imgs/nft-group.png';
+import Image from 'next/image';
 
 const MintDNFT: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -89,6 +90,7 @@ const MintDNFT: React.FC = () => {
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
+	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 
 	// mint validation
 	const isConnectWallet = !!addressWallet;
@@ -203,18 +205,17 @@ const MintDNFT: React.FC = () => {
 	}, []);
 
 	const getMessage = () => {
-		const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 		const isMinted = new BigNumber(userBoughtAmount).gt(0);
 
 		if (isConnectWallet) {
-			if (!haveEnoughBalance()) {
+			if (!isRoyalty()) {
+				return <>{Message.NOT_ROYALTY}</>;
+			} else if (!haveEnoughBalance()) {
 				if (token === TOKENS.BNB) {
 					return <>{Message.NOT_HAVE_ENOUGH_BNB_BALANCE}</>;
 				} else if (token === TOKENS.BUSD) {
 					return <>{Message.NOT_HAVE_ENOUGH_BUSD_BALANCE}</>;
 				}
-			} else if (!isRoyalty()) {
-				return <>{Message.NOT_ROYALTY}</>;
 			} else {
 				if (isPublicSaleEndAfter7Days) {
 					if (isMinted) {
@@ -256,7 +257,19 @@ const MintDNFT: React.FC = () => {
 				}
 			>
 				<div className={'w-64 flex flex-col items-center mb-6 desktop:mb-20'}>
-					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
+					<div
+						className={
+							'mt-11 mb-20 flex items-center justify-center overflow-hidden'
+						}
+					>
+						<Image
+							className={'desktop:hidden'}
+							src={NftGroupImg.src}
+							alt={NftGroupImg.src}
+							width={353}
+							height={308}
+						/>
+					</div>
 					{isWhitelisted &&
 					isConnectWallet &&
 					!isLoadingMint &&
@@ -339,13 +352,13 @@ const MintDNFT: React.FC = () => {
 					</div>
 					<div
 						className={
-							'flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-h8 h-fit'
+							'flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-[13px] h-fit'
 						}
 					>
 						<div
 							className={'flex justify-between items-center desktop:w-[33%]'}
 						>
-							<div className={'flex items-center text-[13px]'}>
+							<div className={'flex items-center'}>
 								<div
 									className={
 										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
@@ -363,7 +376,7 @@ const MintDNFT: React.FC = () => {
 						<div
 							className={'flex justify-between items-center desktop:w-[33%]'}
 						>
-							<div className={'flex items-center text-[13px]'}>
+							<div className={'flex items-center'}>
 								<div
 									className={
 										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
@@ -383,7 +396,7 @@ const MintDNFT: React.FC = () => {
 						<div
 							className={'flex justify-between items-center desktop:w-[33%]'}
 						>
-							<div className={'flex items-center text-[13px]'}>
+							<div className={'flex items-center'}>
 								<div
 									className={
 										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
@@ -462,13 +475,15 @@ const MintDNFT: React.FC = () => {
 								'flex flex-col items-center desktop:items-end rounded-[10px] text-h8'
 							}
 						>
-							<div
-								className={
-									'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
-								}
-							>
-								{getMessage()}
-							</div>
+							{!isPublicSaleEndAfter7Days && (
+								<div
+									className={
+										'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
+									}
+								>
+									{getMessage()}
+								</div>
+							)}
 							<div className={'text-h8 mt-4'}>
 								Notice: to mint this dNFT requires{' '}
 								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
