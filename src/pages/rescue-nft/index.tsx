@@ -276,7 +276,11 @@ const RescueDNFT = () => {
 					)}
 				</div>
 
-				<div className={'grow bg-black-10 p-8 rounded-[10px]'}>
+				<div
+					className={
+						'w-full desktop:w-auto desktop:grow bg-black-10 p-8 rounded-[10px]'
+					}
+				>
 					<h6 className={'text-h3 font-semibold mb-4'}>Rescue</h6>
 
 					{/* divider*/}
