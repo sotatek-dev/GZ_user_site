@@ -181,14 +181,14 @@ const RescueDNFT = () => {
 		if (isConnectWallet && isPublicSaleEndAfter7Days) {
 			if (!haveEnoughNft) {
 				return <>{Message.NO_NFT_LEFT}</>;
+			} else if (!isRoyalty()) {
+				return <>{Message.NOT_ROYALTY}</>;
 			} else if (!haveEnoughBalance()) {
 				if (token === TOKENS.BNB) {
 					return <>{Message.NOT_HAVE_ENOUGH_BNB_BALANCE}</>;
 				} else if (token === TOKENS.BUSD) {
 					return <>{Message.NOT_HAVE_ENOUGH_BUSD_BALANCE}</>;
 				}
-			} else if (!isRoyalty()) {
-				return <>{Message.NOT_ROYALTY}</>;
 			} else {
 				if (haveEnoughKey) {
 					return <>{Message.ELIGIBLE_TO_RESCUE}</>;
