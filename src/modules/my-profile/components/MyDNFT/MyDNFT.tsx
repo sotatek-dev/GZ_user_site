@@ -1,4 +1,4 @@
-import { message, Pagination } from 'antd';
+import { message, Pagination, Spin } from 'antd';
 import BoxPool from 'common/components/boxPool';
 import Dropdown from 'common/components/dropdown';
 import MyTable from 'common/components/table';
@@ -246,7 +246,14 @@ export default function MyDNFT() {
 				</div>
 
 				<MyTable
-					loading={loading}
+					locale={{
+						emptyText: () => {
+							if (loading) {
+								return <Spin />;
+							}
+							return 'No data';
+						},
+					}}
 					onRow={(record) => {
 						return {
 							onClick: () => {
