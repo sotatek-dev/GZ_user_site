@@ -336,10 +336,20 @@ const MintDNFT: React.FC = () => {
 					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
 					</div>
-					<div className='flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-h8 h-fit'>
-						<div className='flex justify-between items-center desktop:w-[33%]'>
-							<div className='flex items-center'>
-								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
+					<div
+						className={
+							'flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-h8 h-fit'
+						}
+					>
+						<div
+							className={'flex justify-between items-center desktop:w-[33%]'}
+						>
+							<div className={'flex items-center text-[13px]'}>
+								<div
+									className={
+										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
+									}
+								/>
 								Total NFT
 							</div>
 							<div>{formatBigNumber(maxSaleAmount)}</div>
@@ -349,9 +359,15 @@ const MintDNFT: React.FC = () => {
 								'hidden desktop:block border border-white/[.07] h-full min-h-[1.25em]'
 							}
 						/>
-						<div className='flex justify-between items-center desktop:w-[33%]'>
-							<div className='flex items-center'>
-								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
+						<div
+							className={'flex justify-between items-center desktop:w-[33%]'}
+						>
+							<div className={'flex items-center text-[13px]'}>
+								<div
+									className={
+										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
+									}
+								/>
 								Remaining
 							</div>
 							<div>
@@ -363,9 +379,15 @@ const MintDNFT: React.FC = () => {
 								'hidden desktop:block border border-white/[.07] h-full min-h-[1.25em]'
 							}
 						/>
-						<div className='flex justify-between items-center desktop:w-[33%]'>
-							<div className='flex items-center'>
-								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
+						<div
+							className={'flex justify-between items-center desktop:w-[33%]'}
+						>
+							<div className={'flex items-center text-[13px]'}>
+								<div
+									className={
+										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
+									}
+								/>
 								NFT Minted
 							</div>
 							<div>{formatBigNumber(totalSold)}</div>

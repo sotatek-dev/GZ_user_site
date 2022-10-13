@@ -12,10 +12,10 @@ interface IListCardProps {
 const ListCard: FC<IListCardProps> = ({ list, SelectNft, pagination }) => {
 	return (
 		<div className='flex flex-col'>
-			<div className='grid grid-cols-4 gap-8 w-fit mx-auto'>
+			<div className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-8 w-fit mx-auto'>
 				{list.map((data: IDFNT, index: number) => {
 					return (
-						<Col key={index} span={6}>
+						<Col key={index} span={6} className={'scale-75 desktop:scale-100'}>
 							<CardNft dataDNFT={data} index={index} SelectNft={SelectNft} />
 						</Col>
 					);

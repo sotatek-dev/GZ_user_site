@@ -147,12 +147,14 @@ const ListDNFT = () => {
 			/>
 			<div className='flex flex-col'>
 				<div className='flex mb-8 items-end justify-between	'>
-					<div>Select the first NFT to merge</div>
-					<div className='flex items-end'>
-						<div className='flex gap-x-2 ml-auto'>
+					<div className={'hidden desktop:visible'}>
+						Select the first NFT to merge
+					</div>
+					<div className='flex flex-col-reverse desktop:flex-row gap-y-6 items-end w-full'>
+						<div className='flex flex-col w-full gap-y-6 desktop:flex-row gap-x-2 ml-auto'>
 							<Dropdown
 								emptyOption='All rarities'
-								customStyle='!w-[160px] !h-[36px] !rounded-[5px] mr-4 ml-8'
+								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] desktop:mr-4 desktop:ml-8'
 								label={rarity}
 								title='All rarities'
 								list={SPECIES_DNFT}
@@ -160,7 +162,7 @@ const ListDNFT = () => {
 							/>
 							<Dropdown
 								emptyOption='All species'
-								customStyle='!w-[160px] !h-[36px] !rounded-[5px]'
+								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px]'
 								label={species}
 								title='All species'
 								list={RARITY_DNFT}

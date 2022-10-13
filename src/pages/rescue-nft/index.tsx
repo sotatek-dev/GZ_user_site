@@ -156,6 +156,7 @@ const RescueDNFT = () => {
 					await tryApproveBusd(false);
 				}
 				if (listKey?.length > 0) {
+					console.log(listKey);
 					const res = await dnftContract.rescueUsingKey(listKey[0]);
 					await res.wait();
 					const hash: string = res ? res.hash : '';
@@ -294,9 +295,15 @@ const RescueDNFT = () => {
 					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
 					</div>
-					<div className='flex flex-col justify-start desktop:flex-row gap-6 mb-5 font-medium text-h8 h-fit'>
-						<div className='flex justify-between items-center desktop:w-[50%]'>
-							<div className='flex items-center'>
+					<div
+						className={
+							'flex flex-col justify-start desktop:flex-row gap-6 mb-5 font-medium text-h8 h-fit'
+						}
+					>
+						<div
+							className={'flex justify-between items-center desktop:w-[50%]'}
+						>
+							<div className={'flex items-center text-[13px]'}>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Current NFTs can be rescued
 							</div>
