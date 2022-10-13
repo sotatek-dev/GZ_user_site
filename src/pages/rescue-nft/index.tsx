@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react';
-import NftGroup from 'assets/svg-components/nftGroup';
 import BigNumber from 'bignumber.js';
 import { Message, selectTokensList, TOKENS } from 'modules/mintDnft/constants';
 import { useSelector } from 'react-redux';
@@ -29,6 +28,8 @@ import { setIsLoadingRescue } from 'stores/rescue-dnft';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
 import RescueSuccessToast from 'modules/rescueDnft/components/RescueSuccessToast';
 import { handleWriteMethodError } from 'common/helpers/handleError';
+import Image from 'next/image';
+import NftGroupImg from 'assets/imgs/nft-group.png';
 
 const RescueDNFT = () => {
 	const router = useRouter();
@@ -236,7 +237,19 @@ const RescueDNFT = () => {
 				}
 			>
 				<div className={'w-64 flex flex-col items-center mb-6 desktop:mb-20'}>
-					<NftGroup className={'w-full h-fit mt-11 mb-20'} />
+					<div
+						className={
+							'mt-11 mb-20 flex items-center justify-center overflow-hidden'
+						}
+					>
+						<Image
+							className={'desktop:hidden'}
+							src={NftGroupImg.src}
+							alt={NftGroupImg.src}
+							width={353}
+							height={308}
+						/>
+					</div>
 					{isConnectWallet &&
 					!isLoadingRescue &&
 					haveEnoughBalance() &&
@@ -303,13 +316,13 @@ const RescueDNFT = () => {
 					</div>
 					<div
 						className={
-							'flex flex-col justify-start desktop:flex-row gap-6 mb-5 font-medium text-h8 h-fit'
+							'flex flex-col justify-start desktop:flex-row gap-6 mb-5 font-medium text-[13px] h-fit'
 						}
 					>
 						<div
 							className={'flex justify-between items-center desktop:w-[50%]'}
 						>
-							<div className={'flex items-center text-[13px]'}>
+							<div className={'flex items-center'}>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
 								Current NFTs can be rescued
 							</div>
