@@ -192,7 +192,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 
 	return (
 		<ModalCustom
-			isShow={isShow}
+			isShow={true}
 			onCancel={onCancel}
 			customClass={
 				'text-center w-full !max-w-[calc(100%_-_2rem)] desktop:w-[520px]'
