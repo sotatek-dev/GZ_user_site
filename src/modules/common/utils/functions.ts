@@ -159,17 +159,22 @@ export const formatBigNumber = (
 		return `${negative}${nabs
 			.div(billion)
 			.dp(decimalPlaced)
-			.toFormat({ groupSeparator: ',', groupSize: 3 })}B`;
+			.toFormat({
+				decimalSeparator: '.',
+				groupSeparator: ',',
+				groupSize: 3,
+			})}B`;
 	} else if (nabs.gte(million) && nabs.lt(billion)) {
-		return `${negative}${nabs
-			.div(million)
-			.dp(decimalPlaced)
-			.toFormat({ groupSeparator: ',', groupSize: 3 })}M`;
+		return `${negative}${nabs.div(million).dp(decimalPlaced).toFormat({
+			decimalSeparator: '.',
+			groupSeparator: ',',
+			groupSize: 3,
+		})}M`;
 	}
 
 	return `${negative}${nabs
 		.dp(decimalPlaced)
-		.toFormat({ groupSeparator: ',', groupSize: 3 })}`;
+		.toFormat({ decimalSeparator: '.', groupSeparator: ',', groupSize: 3 })}`;
 };
 
 export const isApproved = (allowance?: BigNumber.Value): boolean => {
