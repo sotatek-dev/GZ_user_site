@@ -138,7 +138,7 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 					next={handleLoadMoreDNFT}
 					hasMore={true}
 					loader={<></>}
-					className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-6 justify-center'
+					className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-6 justify-items-center'
 					scrollableTarget='scrollableDiv'
 					height={380}
 				>
