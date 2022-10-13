@@ -18,7 +18,7 @@ import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { message, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { fetchRate } from 'modules/mintDnft/helpers/fetch';
+import { fetchListPhase, fetchRate } from 'modules/mintDnft/helpers/fetch';
 import {
 	fetchLaunchPriceInBUSD,
 	fetchListKey,
@@ -118,6 +118,8 @@ const RescueDNFT = () => {
 	};
 
 	const reloadData = async () => {
+		dispatch(fetchListPhase({ dnftContract }));
+
 		dispatch(fetchPriceInBUSD({ dnftContract }));
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
 		dispatch(fetchPoolRemaining({ dnftContract }));
@@ -132,6 +134,8 @@ const RescueDNFT = () => {
 	};
 
 	useEffect(() => {
+		dispatch(fetchListPhase({ dnftContract }));
+
 		dispatch(fetchPriceInBUSD({ dnftContract }));
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
 		dispatch(fetchPoolRemaining({ dnftContract }));
