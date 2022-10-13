@@ -90,6 +90,7 @@ const MintDNFT: React.FC = () => {
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
+	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 
 	// mint validation
 	const isConnectWallet = !!addressWallet;
@@ -204,7 +205,6 @@ const MintDNFT: React.FC = () => {
 	}, []);
 
 	const getMessage = () => {
-		const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 		const isMinted = new BigNumber(userBoughtAmount).gt(0);
 
 		if (isConnectWallet) {
@@ -475,13 +475,15 @@ const MintDNFT: React.FC = () => {
 								'flex flex-col items-center desktop:items-end rounded-[10px] text-h8'
 							}
 						>
-							<div
-								className={
-									'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
-								}
-							>
-								{getMessage()}
-							</div>
+							{!isPublicSaleEndAfter7Days && (
+								<div
+									className={
+										'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
+									}
+								>
+									{getMessage()}
+								</div>
+							)}
 							<div className={'text-h8 mt-4'}>
 								Notice: to mint this dNFT requires{' '}
 								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
