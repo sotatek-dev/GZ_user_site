@@ -15,7 +15,7 @@ const ListCard: FC<IListCardProps> = ({ list, SelectNft, pagination }) => {
 			<div className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-8 w-fit mx-auto'>
 				{list.map((data: IDFNT, index: number) => {
 					return (
-						<Col key={index} span={6} className={'scale-75 desktop:scale-100'}>
+						<Col key={index} span={6}>
 							<CardNft dataDNFT={data} index={index} SelectNft={SelectNft} />
 						</Col>
 					);

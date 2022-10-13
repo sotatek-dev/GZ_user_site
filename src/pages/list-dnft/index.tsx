@@ -147,11 +147,11 @@ const ListDNFT = () => {
 			/>
 			<div className='flex flex-col'>
 				<div className='flex mb-8 items-end justify-between	'>
-					<div className={'hidden desktop:visible'}>
+					<div className={'hidden desktop:inline-block'}>
 						Select the first NFT to merge
 					</div>
-					<div className='flex flex-col-reverse desktop:flex-row gap-y-6 items-end w-full'>
-						<div className='flex flex-col w-full gap-y-6 desktop:flex-row gap-x-2 ml-auto'>
+					<div className='flex flex-col-reverse desktop:flex-row gap-y-6 items-end grow'>
+						<div className='flex flex-col w-full gap-y-6 justify-end desktop:flex-row gap-x-2 ml-auto'>
 							<Dropdown
 								emptyOption='All rarities'
 								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] desktop:mr-4 desktop:ml-8'
@@ -189,8 +189,12 @@ const ListDNFT = () => {
 				/>
 				{isShowModalChooseMetarialToMerge && dNFTSelected && (
 					<ModalCustom
-						title='Choose material to merge'
-						customClass='!w-auto !max-w-[1200px]'
+						title={
+							<div className={'text-h4 text-center'}>
+								Choose material to merge
+							</div>
+						}
+						customClass='!w-auto desktop:!max-w-[1200px]'
 						isShow={isShowModalChooseMetarialToMerge}
 						onCancel={() => setShowModalChooseMetarialToMerge(false)}
 					>
