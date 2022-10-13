@@ -52,8 +52,8 @@ const MergeDNFTDetail = () => {
 					Congratulation, you got a new NFT
 				</div>
 			</div>
-			<div className='flex gap-x-12 mt-8'>
-				<div className='!w-[600px] !h-[600px]'>
+			<div className='flex flex-col desktop:flex-row justify-center gap-x-12 mt-8'>
+				<div className='!w-[252px] !h-[252px] desktop:!w-[600px] desktop:!h-[600px]'>
 					<Image
 						src={imageDNFT}
 						width='600px'
@@ -62,14 +62,14 @@ const MergeDNFTDetail = () => {
 						objectFit='fill'
 					/>
 				</div>
-				<div className='grid grid-cols-2 gap-[20px] h-fit'>
+				<div className='grid grid-cols-1 desktop:grid-cols-2 gap-[20px] h-fit w-full'>
 					{Object.keys(properties).map((propertyName: string, index) => {
 						const { displayName, value } = properties[propertyName];
 						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
 						return (
 							<div key={index}>
 								<div className='text-gray-40 text-base mb-2'>{displayName}</div>
-								<div className='px-4 py-2 rounded-md border-2 border-[#ffffff33] w-[320px]'>
+								<div className='px-4 py-2 rounded-md border-2 border-[#ffffff33] w-full desktop:w-[320px]'>
 									{value}
 								</div>
 							</div>
