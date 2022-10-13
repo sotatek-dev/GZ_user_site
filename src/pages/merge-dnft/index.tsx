@@ -311,7 +311,7 @@ const MergeDNFT = () => {
 					<div className='relative w-[252px] h-[252px] desktop:w-[400px] desktop:h-[400px]'>
 						{renderImages()}
 					</div>
-					<div className='hidden desktop:block flex flex-col items-center gap-y-3 mt-8'>
+					<div className='hidden desktop:flex flex-col items-center gap-3 mt-8'>
 						<Button
 							isLoading={isLoadingPermanentlyMerge}
 							onClick={handlePermanentlyMerge}
@@ -345,7 +345,7 @@ const MergeDNFT = () => {
 				</div>
 			</div>
 
-			<div className='bg-[#0C1E32] w-[100vw] fixed flex items-center justify-center gap-x-3 px-4 py-2 bottom-0 left-0'>
+			<div className='desktop:hidden bg-[#0C1E32] w-[100vw] fixed flex items-center justify-center gap-x-3 px-4 py-2 bottom-0 left-0'>
 				<Button
 					isLoading={isLoadingPermanentlyMerge}
 					onClick={handlePermanentlyMerge}
