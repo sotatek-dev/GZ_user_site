@@ -295,7 +295,7 @@ const MergeDNFT = () => {
 	};
 
 	return (
-		<div>
+		<div className={'relative'}>
 			<Button
 				onClick={onResetAllSetting}
 				label='Reset all setting'
@@ -306,10 +306,12 @@ const MergeDNFT = () => {
 				Notice: choosen NFT will be burned after 30 days if you agree to
 				Temporary merge (immediately if permantly merge)
 			</div>
-			<div className='flex gap-x-12 mt-6'>
+			<div className='flex flex-col desktop:flex-row items-center justify-center gap-x-12 mt-6'>
 				<div>
-					<div className='relative w-[400px] h-[400px]'>{renderImages()}</div>
-					<div className='flex flex-col items-center gap-y-3 mt-8'>
+					<div className='relative w-[252px] h-[252px] desktop:w-[400px] desktop:h-[400px]'>
+						{renderImages()}
+					</div>
+					<div className='hidden desktop:block flex flex-col items-center gap-y-3 mt-8'>
 						<Button
 							isLoading={isLoadingPermanentlyMerge}
 							onClick={handlePermanentlyMerge}
@@ -324,7 +326,7 @@ const MergeDNFT = () => {
 						/>
 					</div>
 				</div>
-				<div className='grid gap-x-12 gap-y-5 grid-cols-2 h-fit'>
+				<div className='grid gap-x-12 gap-y-5 grid-cols-1 desktop:grid-cols-2 h-fit w-full mb-6 mb-24'>
 					{initImages.map((property: IInitImage, index: number) => {
 						const { propertyName, values, value, displayName } = property;
 						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
@@ -335,12 +337,27 @@ const MergeDNFT = () => {
 								placeholder={`Choose ${displayName.toLowerCase()}`}
 								key={index}
 								value={value}
-								customStyle='!max-w-[330px] !w-[290px]'
+								customStyle='w-full desktop:!max-w-[330px] desktop:!w-[290px]'
 								onClick={(event) => onChangeValue(event, propertyName)}
 							/>
 						);
 					})}
 				</div>
+			</div>
+
+			<div className='bg-[#0C1E32] w-[100vw] fixed flex items-center justify-center gap-x-3 px-4 py-2 bottom-0 left-0'>
+				<Button
+					isLoading={isLoadingPermanentlyMerge}
+					onClick={handlePermanentlyMerge}
+					label='Permanently'
+					classCustom='bg-purple-20 !w-[150px] rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3'
+				/>
+				<Button
+					isLoading={isLoadingTemporaryMerge}
+					onClick={handleTemporaryMerge}
+					label='Temporary'
+					classCustom='bg-transparent !w-[150px] hover:bg-transparent hover:text-purple-30 focus:bg-transparent shadow-none text-purple-30 !border-purple-30 !border-solid !border-2 !rounded-[40px] !py-3'
+				/>
 			</div>
 		</div>
 	);
