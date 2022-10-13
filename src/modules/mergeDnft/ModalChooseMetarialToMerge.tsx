@@ -120,13 +120,14 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 
 	return (
 		<div>
-			<div className='text-xl	flex mb-12'>
+			<div className='hidden desktop:block text-h7 flex'>
 				<div>Merged NFT rarity:</div>
 				<div className='text-red-10 ml-2'>
 					{rankLevelMerge ? rankLevelMerge : 'TBA'}
 				</div>
 			</div>
 			<div
+				className={'mt-12'}
 				id='scrollableDiv'
 				style={{
 					overflow: 'auto',
@@ -137,7 +138,7 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 					next={handleLoadMoreDNFT}
 					hasMore={true}
 					loader={<></>}
-					className='grid grid-cols-4 gap-6'
+					className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-6 justify-center'
 					scrollableTarget='scrollableDiv'
 					height={380}
 				>
@@ -158,12 +159,12 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 				<Button
 					onClick={onCancel}
 					label='Cancel'
-					classCustom='bg-transparent hover:bg-transparent  shadow-none !border-gray-60 !border-solid !border-2 !min-w-[200px] !rounded-[40px] !py-3'
+					classCustom='!min-w-[150px] desktop:!min-w-[200px] bg-transparent hover:bg-transparent  shadow-none !border-gray-60 !border-solid !border-2 !rounded-[40px] !py-3'
 				/>
 				<Button
 					onClick={handleMergeDNFT}
 					label='Next'
-					classCustom='bg-purple-20 !min-w-[200px] rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3'
+					classCustom='!min-w-[150px] desktop:!min-w-[200px] bg-purple-20 rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3'
 					isDisabled={listDNFTToMergeSelected.length < 2 || !rankLevelMerge}
 				/>
 			</div>

@@ -18,7 +18,7 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 	return (
 		<div
 			onClick={!is_locked ? (event) => SelectNft(event, index) : () => {}}
-			className={`flex justify-center items-center w-[213px] h-[290px] bg-gray-50 !rounded-[10px] relative ${
+			className={`flex justify-center items-center w-[160px] h-[230px] desktop:w-[213px] desktop:h-[290px] bg-gray-50 !rounded-[10px] relative ${
 				!is_locked && 'cursor-pointer'
 			} 
 			}`}

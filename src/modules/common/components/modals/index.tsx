@@ -1,10 +1,11 @@
 import { Modal } from 'antd';
 import Image from 'next/image';
+import { ReactNode } from 'react';
 
 interface ModalProps {
 	children?: React.ReactNode;
 	isShow: boolean;
-	title?: string;
+	title?: string | ReactNode;
 	width?: number;
 	customClass?: string;
 	footer?: React.ReactNode;
