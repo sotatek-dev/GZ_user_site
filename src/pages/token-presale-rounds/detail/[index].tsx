@@ -34,7 +34,7 @@ import {
 	formatNumber,
 	fromWei,
 } from 'common/utils/functions';
-import { get, isEmpty, last } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
 import moment from 'moment';
 import { useRouter } from 'next/router';
@@ -45,6 +45,7 @@ import {
 	convertBUSDtoBNB,
 	getRemainingClaimableAmount,
 	getSalePhaseInfo,
+	getUserClaimedAmount,
 	getUserPurchasedAmount,
 } from 'web3/contracts/useContractTokenSale';
 import { buyTimeDefault, ITokenSaleRoundState } from '..';
@@ -78,6 +79,10 @@ const TokenSaleRoundDetail = () => {
 	const [statusTimeLine, setStatusTimeLine] = useState<string>(UPCOMING);
 	const [timeCountDow, setTimeCountDow] = useState<number>(-1);
 	const [tokenClaimTime, setTokenClaimTime] = useState<number>(0);
+	const [claimedAmount, setClaimedAmount] = useState<number>(0);
+	const [titleTimeCountDown, setTitleTimeCountDown] = useState<string>(
+		TITLE_TIME_COUNTDOWN.UPCOMING
+	);
 	const [totalSoldAmount, setTotalSoldAmount] = useState<number>(0);
 	const [maxPreSaleAmount, setMaxPreSaleAmount] = useState<number>(0);
 	const [currency, setCurrency] = useState<string>(BUSD_CURRENCY);
@@ -166,6 +171,11 @@ const TokenSaleRoundDetail = () => {
 	}, [index, detailSaleRound, isLoading, isLogin]);
 
 	useEffect(() => {
+		checkTitleTimeCountdown(statusTimeLine);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [statusTimeLine, claimedAmount]);
+
+	useEffect(() => {
 		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
 		// to report page view Google Analytics
 		ReactGa.pageview(router?.pathname || '');
@@ -176,9 +186,13 @@ const TokenSaleRoundDetail = () => {
 		if (!isEmpty(detailSaleRound)) {
 			const { sale_round } = detailSaleRound;
 			handleGetSalePhaseInfo(sale_round);
+			if (youBought) {
+				getClaimableAmount(addressWallet, sale_round);
+			}
 		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [detailSaleRound]);
+	}, [detailSaleRound, youBought]);
 
 	useEffect(() => {
 		if (!isEmpty(detailSaleRound)) {
@@ -205,6 +219,28 @@ const TokenSaleRoundDetail = () => {
 			}
 		}
 	}, [detailSaleRound, statusTimeLine, addressWallet, index]);
+
+	const getClaimableAmount = async (address: string, saleRoundId: number) => {
+		const timestampNow = moment().unix();
+		const claimConfigs = get(
+			detailSaleRound,
+			'claim_configs',
+			[]
+		) as Array<claimConfig>;
+		const [totalClaimedAmount] = await getUserClaimedAmount(
+			address,
+			saleRoundId
+		);
+		let claimableRate = 0;
+		for (let i = 0; i < claimConfigs.length; i++) {
+			if (timestampNow >= Number(claimConfigs[i].start_time)) {
+				claimableRate += Number(claimConfigs[i].max_claim);
+			}
+		}
+		const claimedAmount =
+			youBought * (claimableRate / 10000) - totalClaimedAmount;
+		setClaimedAmount(claimedAmount);
+	};
 
 	const handleGetUserPurchasedAmount = async (saleRoundId: number) => {
 		const [youBought, error] = await getUserPurchasedAmount(
@@ -267,11 +303,11 @@ const TokenSaleRoundDetail = () => {
 		}
 	};
 
-	const checkTitleTimeCountdown = (startTimeClaim: string) => {
+	const checkTitleTimeCountdown = async (statusTimeLine: string) => {
 		let title = TITLE_TIME_COUNTDOWN.UPCOMING;
-		if (startTimeClaim === BUY) {
+		if (statusTimeLine === BUY) {
 			title = TITLE_TIME_COUNTDOWN.BUY;
-		} else if (startTimeClaim === CLAIMABLE) {
+		} else if (statusTimeLine === CLAIMABLE) {
 			const claimConfigs = get(
 				detailSaleRound,
 				'claim_configs',
@@ -284,28 +320,17 @@ const TokenSaleRoundDetail = () => {
 					`${youBought}`
 				);
 			} else {
-				// nếu có nhiều hơn 1 time claim sẽ lấy you can claim theo time hiện tại
-				const timestampNow = moment().unix();
-				const claimConfig = claimConfigs.find((claimConfig: claimConfig) => {
-					if (Number(claimConfig.start_time) > timestampNow) {
-						return Number(claimConfig.start_time) > timestampNow;
-					}
-				});
-				// nếu tất cả time claim đã qua thì sẽ lấy time cuối cùng
-				const maxClaimPercent =
-					Number(get(claimConfig, 'max_claim', last(claimConfigs)?.max_claim)) /
-					10000;
 				title = TITLE_TIME_COUNTDOWN.CLAIMABLE_MORE_THAN.replace(
 					'amount',
-					`${(youBought * maxClaimPercent).toFixed(2)}`
+					`${claimedAmount.toFixed(2)}`
 				);
 			}
-		} else if (startTimeClaim === END) {
+		} else if (statusTimeLine === END) {
 			title = TITLE_TIME_COUNTDOWN.END;
 		} else {
 			title = TITLE_TIME_COUNTDOWN.UPCOMING;
 		}
-		return title;
+		setTitleTimeCountDown(title);
 	};
 
 	const renderPriceBuyInfoUpComing = () => {
@@ -453,7 +478,7 @@ const TokenSaleRoundDetail = () => {
 					</div>
 					<Countdown
 						millisecondsRemain={timeCountDow}
-						title={checkTitleTimeCountdown(statusTimeLine)}
+						title={titleTimeCountDown}
 						callBackApi={getDetailSaleRound}
 					/>
 				</BoxPool>
@@ -463,8 +488,8 @@ const TokenSaleRoundDetail = () => {
 				>
 					<div className='pt-6 flex'>
 						<div className='flex justify-between w-full'>
-							{statusTimeLine === UPCOMING ||
-								(statusTimeLine === BUY && renderPriceBuyInfoUpComing())}
+							{(statusTimeLine === UPCOMING || statusTimeLine === BUY) &&
+								renderPriceBuyInfoUpComing()}
 							{statusTimeLine === CLAIMABLE && renderPriceBuyInfoClaimable()}
 							{statusTimeLine === END && renderPriceBuyInfoEnd()}
 							{isShowButtonBuy && (

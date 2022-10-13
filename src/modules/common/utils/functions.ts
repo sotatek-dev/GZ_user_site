@@ -7,6 +7,7 @@ import {
 	million,
 	now,
 	SALE_ROUND_CURRENT_STATUS,
+	STATUS_LIST_SALE_ROUND,
 	UPCOMING,
 } from 'common/constants/constants';
 import { get, toNumber } from 'lodash';
@@ -47,18 +48,23 @@ export const convertTimeLine = (
 	claimConfigs: Array<{ [key: string]: string | number }>
 ) => {
 	let status = UPCOMING;
+	let statusListSaleRound = STATUS_LIST_SALE_ROUND.UPCOMING;
 	let timeCountDown = -1;
 	let startTimeClaim = get(claimConfigs[0], 'start_time', 0) as number; // mặc định khi chưa đến phase claim sẽ lấy thời gian claim đầu tiên
 	if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.UPCOMING) {
 		timeCountDown = startTime - timestampNow;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.UPCOMING;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.BUY) {
 		timeCountDown = endTime - timestampNow;
 		status = BUY;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING) {
 		status = BUY;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
 		timeCountDown = startTimeClaim - timestampNow;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
 		status = CLAIMABLE;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
 		for (let index = 0; index < claimConfigs?.length; index++) {
 			startTimeClaim = get(claimConfigs[index], 'start_time') as number;
 			if (startTimeClaim > timestampNow) {
@@ -70,11 +76,13 @@ export const convertTimeLine = (
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.END) {
 		status = END;
 		startTimeClaim = 0;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.END;
 	} else {
 		status = '';
 		startTimeClaim = 0;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.END;
 	}
-	return { status, timeCountDown, startTimeClaim };
+	return { status, timeCountDown, startTimeClaim, statusListSaleRound };
 };
 
 export const convertTimeStampToDate = (date: number, formatDate?: string) => {

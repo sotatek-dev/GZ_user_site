@@ -142,8 +142,7 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 					height={380}
 				>
 					{listDNFTToMerge.map((DNFT: IDFNT, index: number) => {
-						if (DNFT.token_id === dNFTSelected.token_id || DNFT.is_locked)
-							return null;
+						if (DNFT.token_id === dNFTSelected.token_id) return null;
 						return (
 							<CardNft
 								key={index}

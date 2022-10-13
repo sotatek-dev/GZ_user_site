@@ -62,6 +62,7 @@ const ListDNFT = () => {
 		Array<IDFNT>
 	>([]);
 	const { isLogin } = useSelector((state) => state.user);
+	console.log('listDNFT =', listDNFT);
 
 	const [isShowModalChooseMetarialToMerge, setShowModalChooseMetarialToMerge] =
 		useState<boolean>(false);
@@ -107,6 +108,8 @@ const ListDNFT = () => {
 	const handleGetListDFNT = async (params: IParamsListDFNT) => {
 		const [dataListDNFT] = await getListDFNT(params);
 		const listDNFT = get(dataListDNFT, 'data.list', []);
+		console.log('listDNFT', listDNFT);
+
 		const totalDNFT = get(dataListDNFT, 'data.pagination.total', 0);
 		const resultListDNFT = handleAddCheckBoxListDNFT(listDNFT);
 		setTotalDNFT(totalDNFT);

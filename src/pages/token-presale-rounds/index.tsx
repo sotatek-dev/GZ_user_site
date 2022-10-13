@@ -104,14 +104,14 @@ const TokenPresaleRound = () => {
 					buyTimeDefault
 				);
 				const { claim_configs } = record;
-				const { status } = convertTimeLine(
+				const { statusListSaleRound } = convertTimeLine(
 					Number(start_time),
 					Number(end_time),
 					timestampNow,
 					currentStatusTimeline,
 					claim_configs
 				);
-				return <div>{status}</div>;
+				return <div>{statusListSaleRound}</div>;
 			},
 		},
 	];

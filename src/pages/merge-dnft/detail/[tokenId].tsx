@@ -6,11 +6,13 @@ import { getDetailDNFT } from 'apis/mergeDnft';
 import { get } from 'lodash';
 import { message } from 'antd';
 import Image from 'next/image';
+import { PROPERTY } from 'common/constants/mergeDNFT';
 
 interface IProperties {
 	[key: string]: {
 		type: string;
 		value: string;
+		displayName: string;
 	};
 }
 
@@ -34,7 +36,6 @@ const MergeDNFTDetail = () => {
 		if (response) {
 			const metadata = get(response, 'data.metadata', {});
 			const { image, properties } = metadata;
-			// tạm thời repalace domain do BE chưa đẩy ảnh lên s3 được
 			const imageDNFT = image;
 			setProperties(properties);
 			setImageDNFT(imageDNFT);
@@ -63,10 +64,11 @@ const MergeDNFTDetail = () => {
 				</div>
 				<div className='grid grid-cols-2 gap-[20px] h-fit'>
 					{Object.keys(properties).map((propertyName: string, index) => {
-						const { type, value } = properties[propertyName];
+						const { displayName, value } = properties[propertyName];
+						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
 						return (
 							<div key={index}>
-								<div className='text-gray-40 text-base mb-2'>{type}</div>
+								<div className='text-gray-40 text-base mb-2'>{displayName}</div>
 								<div className='px-4 py-2 rounded-md border-2 border-[#ffffff33] w-[320px]'>
 									{value}
 								</div>
