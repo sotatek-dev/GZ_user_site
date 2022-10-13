@@ -156,12 +156,20 @@ export const formatBigNumber = (
 	const negative = n.lt(0) ? '-' : '';
 
 	if (nabs.gte(billion)) {
-		return `${negative}${nabs.div(billion).dp(decimalPlaced).toString(10)}B`;
+		return `${negative}${nabs
+			.div(billion)
+			.dp(decimalPlaced)
+			.toFormat({ groupSeparator: ',', groupSize: 3 })}B`;
 	} else if (nabs.gte(million) && nabs.lt(billion)) {
-		return `${negative}${nabs.div(million).dp(decimalPlaced).toString(10)}M`;
+		return `${negative}${nabs
+			.div(million)
+			.dp(decimalPlaced)
+			.toFormat({ groupSeparator: ',', groupSize: 3 })}M`;
 	}
 
-	return `${negative}${nabs.dp(decimalPlaced).toString(10)}`;
+	return `${negative}${nabs
+		.dp(decimalPlaced)
+		.toFormat({ groupSeparator: ',', groupSize: 3 })}`;
 };
 
 export const isApproved = (allowance?: BigNumber.Value): boolean => {

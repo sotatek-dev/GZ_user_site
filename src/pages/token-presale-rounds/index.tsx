@@ -202,7 +202,7 @@ const TokenPresaleRound = () => {
 													Rounds
 												</div>
 												<div className={'text-h8 font-medium text-white'}>
-													{status}
+													{item.name}
 												</div>
 											</div>
 											<div className={'flex justify-between items-center'}>
