@@ -196,12 +196,12 @@ const TokenPresaleRound = () => {
 											>{`${formatNumber(
 												fromWei(exchangeRate)
 											)} ${CURRENCY}`}</div>
-											<hr className={'border border-blue-20 mb-5'} />
+											<hr className={'border-t border-blue-20/[0.1] mb-5'} />
 											<div className={'flex justify-between items-center mb-5'}>
 												<div className={'text-h8 font-medium text-blue-20'}>
 													Rounds
 												</div>
-												<div className={'text-h8 font-medium text-white'}>
+												<div className={'text-h8 font-bold text-white'}>
 													{item.name}
 												</div>
 											</div>
@@ -209,7 +209,7 @@ const TokenPresaleRound = () => {
 												<div className={'text-h8 font-medium text-blue-20'}>
 													Status
 												</div>
-												<div className={'text-h8 font-medium text-white'}>
+												<div className={'text-h8 font-bold text-white'}>
 													{status}
 												</div>
 											</div>
