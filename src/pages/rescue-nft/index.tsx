@@ -191,7 +191,9 @@ const RescueDNFT = () => {
 				} else {
 					return (
 						<>
-							{Message.NOT_ELIGIBLE_TO_MINT}. Click{' '}
+							{Message.NOT_ELIGIBLE_TO_MINT}.{' '}
+							<br className={'desktop:hidden'} />
+							Click{' '}
 							<span
 								className={'underline cursor-pointer'}
 								onClick={() => {
@@ -321,7 +323,7 @@ const RescueDNFT = () => {
 					>
 						<div
 							className={
-								'bg-blue-to-pink-102deg text-h8 px-4 py-1 rounded-[40px] select-none'
+								'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
 							}
 						>
 							{getMessage()}
