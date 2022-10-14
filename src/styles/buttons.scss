@@ -69,8 +69,8 @@
 }
 
 .buy-token {
-	padding: 9px 36px;
-	height: fit-content;
+	padding: 0 36px;
+	height: 36px;
 	background: linear-gradient(
 		102.92deg,
 		#36c1ff 6.55%,
@@ -92,5 +92,14 @@
 			#bd81f1 71.51%,
 			#cf79ee 98.22%
 		);
+	}
+	&:disabled {
+		background: #2b3a51;
+		color: rgba(#ffffff, 0.3);
+
+		&:hover {
+			background: #2b3a51;
+			color: rgba(#ffffff, 0.3);
+		}
 	}
 }
