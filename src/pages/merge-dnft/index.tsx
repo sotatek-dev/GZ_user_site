@@ -19,7 +19,7 @@ import { PROPERTY } from 'common/constants/mergeDNFT';
 import Button from 'common/components/button';
 import { permanentMerge, temporaryMerge } from 'web3/contracts/useContractDNFT';
 import DropdownMegeDnft from 'common/components/dropdown/DropdownMegeDnft';
-
+import styles from './merge-dnft.module.scss';
 interface IInitImage {
 	assetBase: string;
 	extension: string;
@@ -294,13 +294,42 @@ const MergeDNFT = () => {
 		});
 	};
 
+	const [tab, setTab] = useState(false);
+
+	useEffect(() => {
+		if (tab) {
+			onResetAllSetting();
+		} else {
+			console.log('Preview dnft');
+		}
+	}, [tab]);
+
 	return (
 		<div className={'relative'}>
-			<Button
-				onClick={onResetAllSetting}
-				label='Reset all setting'
-				classCustom='bg-purple-20 rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3 px-8'
-			/>
+			<label className={styles['switch']}>
+				<input
+					type='checkbox'
+					onChange={(e) => {
+						setTab(e.target.checked);
+					}}
+				/>
+				<div className={styles['switch-btn']} />
+				<span
+					className={`${styles['slider']} ${styles['slider_left']} ${
+						tab ? 'text-[#ffffff4d]' : 'text-white'
+					}`}
+				>
+					Preview Your NFT
+				</span>
+				<span
+					className={`${styles['slider']} ${styles['slider_right']} ${
+						tab ? 'text-white' : 'text-[#ffffff4d]'
+					}`}
+				>
+					Reset all setting
+				</span>
+			</label>
+
 			<div className='px-4 py-3 bg-pink-10 text-red-20 text-sm font-normal flex items-center mt-8'>
 				<ExclamationCircleOutlined twoToneColor='#F02727' className='mr-3' />
 				Notice: choosen NFT will be burned after 30 days if you agree to
