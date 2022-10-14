@@ -130,7 +130,8 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 				className={'mt-12'}
 				id='scrollableDiv'
 				style={{
-					overflow: 'auto',
+					overflowY: 'auto',
+					overflowX: 'hidden',
 				}}
 			>
 				<InfiniteScroll

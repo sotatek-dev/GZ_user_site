@@ -64,7 +64,7 @@ export const million = 1000000;
 export const HEX_ZERO = '0x00';
 export const BUSD_CURRENCY = 'BUSD';
 export const BNB_CURRENCY = 'BNB';
-export const GXZ_CURRENCY = 'GXC';
+export const GXZ_CURRENCY = 'GXZ';
 export const BSC_DECIMAL = 18;
 export const TYPE_SALE_ROUND = 'sale-round';
 export enum STATUS_LIST_DNFT {
@@ -122,7 +122,7 @@ export const STATUS_CODE = {
 export const TITLE_TIME_COUNTDOWN = {
 	UPCOMING: 'You can buy tokens in',
 	BUY: 'Buy phase will end in',
-	CLAIMABLE_ONE_TIME_ONLY: 'You can claim amount GXC tokens in',
-	CLAIMABLE_MORE_THAN: 'You can claim amount GXC tokens more in',
+	CLAIMABLE_ONE_TIME_ONLY: 'You can claim amount GXZ tokens in',
+	CLAIMABLE_MORE_THAN: 'You can claim amount GXZ tokens more in',
 	END: 'Round ended',
 };

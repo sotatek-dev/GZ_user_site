@@ -73,7 +73,7 @@ const MergeDNFT = () => {
 		const params = {
 			ingredient_ids: listTokenId,
 		} as IParamsMergeRuleDFNT;
-		if (Array.isArray(listTokenId) && listTokenId?.length > 0 && isLogin) {
+		if (Array.isArray(listTokenId) && listTokenId?.length > 0) {
 			handleGetMergeRule(params);
 		} else {
 			//

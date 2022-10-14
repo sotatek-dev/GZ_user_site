@@ -202,84 +202,95 @@ export const fromWei = (value: string | number | BigNumber) => {
 	return JSON.parse(result);
 };
 
-export function formatNumber(value: string | number): string {
-	const MIN_NUMBER = 0.0001;
-	const SUPER_MIN = '< 0.0001';
-	if (value === undefined) {
-		return '';
-	}
-	const comps = String(value).split('.');
-
-	if (
-		comps.length > 2 ||
-		!comps[0].match(/^[0-9,]*$/) ||
-		(comps[1] && !comps[1].match(/^[0-9]*$/)) ||
-		value === '.' ||
-		value === '-.'
-	) {
-		return '';
-	}
-
-	let suffix = '';
-	if (comps.length === 1) {
-		suffix = '.00';
-	}
-	if (comps.length === 2) {
-		suffix = '.' + (comps[1] || '0');
-	}
-	while (suffix.length > 3 && suffix[suffix.length - 1] === '0') {
-		suffix = suffix.substring(0, suffix.length - 1);
-	}
-
-	const formatted = [];
-	let whole = comps[0].replace(/[^0-9]/g, '');
-	while (whole.substring(0, 1) === '0') {
-		whole = whole.substring(1);
-	}
-
-	if (whole === '') {
-		whole = '0';
-		if (
-			toNumber(whole + suffix) !== 0 &&
-			toNumber(whole + suffix) < MIN_NUMBER
-		) {
-			return SUPER_MIN;
-		}
-	}
-
-	const roundNumber = Number(
-		Math.floor(toNumber('0' + suffix) * 10000) / 10000
-	);
-
-	if (roundNumber) {
-		suffix = '.' + String(roundNumber).split('.')[1];
+export function formatNumber(value: any) {
+	value = value.toString().replace(/,/g, '');
+	if (Math.round(value).toString().length > 9) {
+		if (Math.round(value).toString().length === 12)
+			return `${parseFloat(
+				(value / 1000000000).toString().substring(0, 5)
+			).toString()}B`;
+		return `${parseFloat(
+			(value / 1000000000).toString().substring(0, 4)
+		).toString()}B`;
+	} else if (Math.round(value).toString().length > 6) {
+		if (Math.round(value).toString().length === 9)
+			return `${parseFloat(
+				(value / 1000000).toString().substring(0, 5)
+			).toString()}M`;
+		return `${parseFloat(
+			(value / 1000000).toString().substring(0, 4)
+		).toString()}M`;
 	} else {
-		suffix = '';
-	}
-
-	while (whole.length) {
-		if (whole.length <= 3) {
-			formatted.unshift(whole);
-			break;
-		} else {
-			const index = whole.length - 3;
-			formatted.unshift(whole.substring(index));
-			whole = whole.substring(0, index);
+		const MIN_NUMBER = 0.0001;
+		const SUPER_MIN = '< 0.0001';
+		if (value === undefined) {
+			return '';
 		}
-	}
+		const comps = String(value).split('.');
 
-	return formatted.join(',') + suffix;
+		if (
+			comps.length > 2 ||
+			!comps[0].match(/^[0-9,]*$/) ||
+			(comps[1] && !comps[1].match(/^[0-9]*$/)) ||
+			value === '.' ||
+			value === '-.'
+		) {
+			return '';
+		}
+
+		let suffix = '';
+		if (comps.length === 1) {
+			suffix = '.00';
+		}
+		if (comps.length === 2) {
+			suffix = '.' + (comps[1] || '0');
+		}
+		while (suffix.length > 3 && suffix[suffix.length - 1] === '0') {
+			suffix = suffix.substring(0, suffix.length - 1);
+		}
+
+		const formatted = [];
+		let whole = comps[0].replace(/[^0-9]/g, '');
+		while (whole.substring(0, 1) === '0') {
+			whole = whole.substring(1);
+		}
+
+		if (whole === '') {
+			whole = '0';
+			if (
+				toNumber(whole + suffix) !== 0 &&
+				toNumber(whole + suffix) < MIN_NUMBER
+			) {
+				return SUPER_MIN;
+			}
+		}
+
+		const roundNumber = Number(
+			Math.floor(toNumber('0' + suffix) * 10000) / 10000
+		);
+
+		if (roundNumber) {
+			suffix = '.' + String(roundNumber).split('.')[1];
+		} else {
+			suffix = '';
+		}
+
+		while (whole.length) {
+			if (whole.length <= 3) {
+				formatted.unshift(whole);
+				break;
+			} else {
+				const index = whole.length - 3;
+				formatted.unshift(whole.substring(index));
+				whole = whole.substring(0, index);
+			}
+		}
+
+		return formatted.join(',') + suffix;
+	}
 }
 
 export const formatBignumberToNumber = (bignumber: BigNumber) => {
 	const number = fromWei(bignumber);
 	return formatNumber(number);
 };
-
-// export const convertObjectToListDropdown = (data: {[key: string]: string | number}) =>{
-// 	const result = [];
-// 	for(const property in data){
-// 		result.push({label: data[property]});
-// 	}
-// 	return result
-//  }

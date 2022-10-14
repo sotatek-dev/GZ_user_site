@@ -62,7 +62,6 @@ const ListDNFT = () => {
 		Array<IDFNT>
 	>([]);
 	const { isLogin } = useSelector((state) => state.user);
-	console.log('listDNFT =', listDNFT);
 
 	const [isShowModalChooseMetarialToMerge, setShowModalChooseMetarialToMerge] =
 		useState<boolean>(false);
@@ -153,20 +152,20 @@ const ListDNFT = () => {
 					<div className='flex flex-col-reverse desktop:flex-row gap-y-6 items-end grow'>
 						<div className='flex flex-col w-full gap-y-6 justify-end desktop:flex-row gap-x-2 ml-auto'>
 							<Dropdown
-								emptyOption='All rarities'
-								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] desktop:mr-4 desktop:ml-8'
-								label={rarity}
-								title='All rarities'
-								list={SPECIES_DNFT}
-								onClick={handleChangeRarity}
-							/>
-							<Dropdown
 								emptyOption='All species'
-								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px]'
+								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] mr-4 ml-8'
 								label={species}
 								title='All species'
-								list={RARITY_DNFT}
+								list={SPECIES_DNFT}
 								onClick={handleChangeSpecies}
+							/>
+							<Dropdown
+								emptyOption='All rarities'
+								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px]'
+								label={rarity}
+								title='All rarities'
+								list={RARITY_DNFT}
+								onClick={handleChangeRarity}
 							/>
 						</div>
 						<Button
@@ -177,38 +176,31 @@ const ListDNFT = () => {
 						/>
 					</div>
 				</div>
-				{!!listDNFT.length && (
-					<ListCard
-						list={listDNFT}
-						SelectNft={SelectNft}
-						pagination={{
-							defaultCurrent: 1,
-							pageSize: LIMIT_12,
-							total: totalDNFT,
-							onChange: handleChangePage,
-						}}
-					/>
-				)}
-
-				<ModalCustom
-					title={
-						<div className={'text-h4 text-center'}>
-							Choose material to merge
-						</div>
-					}
-					customClass='!w-auto desktop:!max-w-[1200px]'
-					isShow={isShowModalChooseMetarialToMerge}
-					onCancel={() => setShowModalChooseMetarialToMerge(false)}
-				>
-					{dNFTSelected && (
+				<ListCard
+					list={listDNFT}
+					SelectNft={SelectNft}
+					pagination={{
+						defaultCurrent: 1,
+						pageSize: LIMIT_12,
+						total: totalDNFT,
+						onChange: handleChangePage,
+					}}
+				/>
+				{isShowModalChooseMetarialToMerge && dNFTSelected && (
+					<ModalCustom
+						title='Choose material to merge'
+						customClass='!w-auto !max-w-[1300px]'
+						isShow={isShowModalChooseMetarialToMerge}
+						onCancel={() => setShowModalChooseMetarialToMerge(false)}
+					>
 						<ModalChooseMetarialToMerge
 							onCancel={() => setShowModalChooseMetarialToMerge(false)}
 							dNFTSelected={dNFTSelected}
 							setListDNFTToMergeSelected={setListDNFTToMergeSelected}
 							listDNFTToMergeSelected={listDNFTToMergeSelected}
 						/>
-					)}
-				</ModalCustom>
+					</ModalCustom>
+				)}
 			</div>
 		</>
 	);

@@ -1,4 +1,4 @@
-import { Form, Input, InputRef, message } from 'antd';
+import { Form, Input, InputNumber, message } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
 import Loading from 'common/components/loading';
@@ -49,7 +49,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const [amountGXC, setAmountGXC] = useState<number>(0);
 	const [amount, setAmount] = useState<number>(0);
 	const [isLoading, setLoading] = useState<boolean>(false);
-	const amountBUSDRef = useRef<InputRef | null>(null);
+	const amountBUSDRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (isShow) {
@@ -66,10 +66,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 	}, [isShow, form]);
 
-	const handleChangeBUSD = async (
-		event: React.ChangeEvent<HTMLInputElement>
-	) => {
-		const value = event.target.valueAsNumber;
+	const handleChangeBUSD = async (value: number | string | null) => {
+		if (!value) return setAmount(0);
+		value = Number(value);
 		setAmount(value);
 		const [amountGXC] = await getTokenAmountFromBUSD(value, exchangeRate);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
@@ -238,14 +237,16 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									{ validator: validateToken },
 								]}
 							>
-								<Input
+								<InputNumber
+									formatter={(value) =>
+										`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+									}
 									ref={amountBUSDRef}
 									placeholder='1,000.1234'
 									className='custom-input-wrapper'
 									addonAfter={<div>{currency}</div>}
 									onChange={handleChangeBUSD}
 									value={amount}
-									type='number'
 								/>
 							</Form.Item>
 							<Button
