@@ -17,6 +17,7 @@ export default function ModalSignin() {
 		if (values?.email && !EMAIL_REGEX.test(values?.email)) {
 			return setDisableConfirm(true);
 		}
+		if (!values?.email) return setDisableConfirm(true);
 		return setDisableConfirm(false);
 	};
 
