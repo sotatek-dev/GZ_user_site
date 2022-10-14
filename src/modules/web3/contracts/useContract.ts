@@ -17,8 +17,10 @@ export const useContract = <T extends BaseContract>(
 
 		const signer: JsonRpcSigner | undefined = library?.getSigner();
 		let signerOrProvider: Parameters<typeof getContract>[2] =
-			new ethers.providers.Web3Provider(window.ethereum);
-
+			// new ethers.providers.Web3Provider(window.ethereum);
+			new ethers.providers.JsonRpcProvider(
+				'https://data-seed-prebsc-1-s1.binance.org:8545/'
+			);
 		if (signer) {
 			signerOrProvider = signer;
 		}

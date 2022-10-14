@@ -132,7 +132,7 @@ const LayoutHeader = () => {
 			<div
 				className={`${
 					openMobileNav ? 'block' : 'hidden'
-				} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-10 leading-5`}
+				} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-50 leading-5`}
 			>
 				{/* spacer*/}
 				<div className={'w-14'} />
