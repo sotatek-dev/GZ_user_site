@@ -5,7 +5,7 @@ import { AbiKeynft } from 'web3/abis/types';
 
 export async function copyToClipboard(text: string) {
 	await navigator.clipboard.writeText(text);
-	message.info('Copied to clipboard');
+	message.info('Copied');
 }
 
 const API_GET_SIGNATURE = '/setting-mint/signature/key';
