@@ -15,8 +15,6 @@ import { setAddressWallet, setStatusConnect } from 'stores/wallet';
 import { ConnectorKey } from 'web3/connectors';
 import { SIGN_MESSAGE } from 'web3/constants/envs';
 import { BSC_NETWORK } from 'web3/constants/networks';
-import { useRouter } from 'next/router';
-import { ROUTES } from 'common/constants/constants';
 import { message } from 'antd';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 
@@ -26,7 +24,6 @@ import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider'
  */
 
 export const useConnectWallet = () => {
-	const router = useRouter();
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
@@ -59,15 +56,6 @@ export const useConnectWallet = () => {
 					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 				}
 			});
-
-		ethereum?.on('networkChanged', (val: string | undefined) => {
-			if (
-				val &&
-				parseInt(String(BSC_NETWORK.CHAIN_ID_HEX), 16) != Number(val)
-			) {
-				redirectRoutes();
-			}
-		});
 	}
 
 	async function disconnectWallet() {
@@ -85,10 +73,6 @@ export const useConnectWallet = () => {
 			STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
 		);
 	}
-
-	const redirectRoutes = () => {
-		router.push(ROUTES.TOKEN_PRESALE_ROUNDS);
-	};
 
 	const changeNetwork = async (connector: any) => {
 		const addressWallet = await connector.getAccount();

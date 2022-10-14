@@ -1,6 +1,8 @@
 import { useWeb3React } from '@web3-react/core';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import React, { useEffect } from 'react';
+import { ROUTES } from 'common/constants/constants';
+import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { setAccessToken, setLogin } from 'stores/user';
 import { setAddressWallet, setNetwork } from 'stores/wallet';
@@ -9,6 +11,7 @@ import { useConnectWallet, useEagerConnect } from 'web3/hooks';
 import { useUpdateBalance } from 'web3/hooks/useUpdateBalance';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+	const router = useRouter();
 	const triedEagerConnect = useEagerConnect();
 	const { account, chainId, library } = useWeb3React();
 
@@ -55,6 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		};
 
 		const onChangeNetwork = (chainId: string | number) => {
+			router.push(ROUTES.TOKEN_PRESALE_ROUNDS);
 			if (chainId !== BSC_CHAIN_ID_HEX) return;
 			disconnectWallet();
 		};
