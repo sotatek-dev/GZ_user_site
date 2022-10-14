@@ -17,6 +17,7 @@ import { SIGN_MESSAGE } from 'web3/constants/envs';
 import { BSC_NETWORK } from 'web3/constants/networks';
 import { useRouter } from 'next/router';
 import { ROUTES } from 'common/constants/constants';
+import { message } from 'antd';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 
 /**
@@ -32,6 +33,8 @@ export const useConnectWallet = () => {
 	const dispatch = useDispatch<any>();
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
+		if (!ethereum?.isMetaMask)
+			return message.error('Please install or unlock MetaMask');
 		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
 
