@@ -449,6 +449,19 @@
 	justify-content: center;
 }
 
+.ant-pagination-jump-next .ant-pagination-item-container:hover {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.ant-pagination-jump-prev .ant-pagination-item-container:hover {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .input-property {
 	::placeholder {
 		color: #ffffff1a !important;

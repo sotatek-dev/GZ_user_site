@@ -156,14 +156,11 @@ export const formatBigNumber = (
 	const negative = n.lt(0) ? '-' : '';
 
 	if (nabs.gte(billion)) {
-		return `${negative}${nabs
-			.div(billion)
-			.dp(decimalPlaced)
-			.toFormat({
-				decimalSeparator: '.',
-				groupSeparator: ',',
-				groupSize: 3,
-			})}B`;
+		return `${negative}${nabs.div(billion).dp(decimalPlaced).toFormat({
+			decimalSeparator: '.',
+			groupSeparator: ',',
+			groupSize: 3,
+		})}B`;
 	} else if (nabs.gte(million) && nabs.lt(billion)) {
 		return `${negative}${nabs.div(million).dp(decimalPlaced).toFormat({
 			decimalSeparator: '.',
