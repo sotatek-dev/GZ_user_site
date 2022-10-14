@@ -51,8 +51,10 @@ const NFTDetail = () => {
 				href={ROUTES.NFT_DETAIL}
 			/>
 
-			{dnftDetail.loading || !dnftDetail.dnftDetail ? (
-				<Loading />
+			{!dnftDetail.loading || !dnftDetail.dnftDetail ? (
+				<div className='flex h-[100%] items-center justify-center'>
+					<Loading />
+				</div>
 			) : (
 				<div>
 					<label className={styles['switch']}>
