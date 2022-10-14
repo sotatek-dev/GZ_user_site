@@ -11,6 +11,7 @@ import { useUpdateBalance } from 'web3/hooks/useUpdateBalance';
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const triedEagerConnect = useEagerConnect();
 	const { account, chainId, library } = useWeb3React();
+
 	const { disconnectWallet } = useConnectWallet();
 	const { updateBalance } = useUpdateBalance();
 	const { isLogin, accessToken } = useSelector((state) => state.user);

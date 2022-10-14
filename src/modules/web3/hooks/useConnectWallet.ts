@@ -15,13 +15,17 @@ import { setAddressWallet, setStatusConnect } from 'stores/wallet';
 import { ConnectorKey } from 'web3/connectors';
 import { SIGN_MESSAGE } from 'web3/constants/envs';
 import { BSC_NETWORK } from 'web3/constants/networks';
+import { useRouter } from 'next/router';
+import { ROUTES } from 'common/constants/constants';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 
 /**
  * Hook for connect/disconnect to a wallet
  * @returns `connectWallet` and `disconnectWallet` functions .
  */
+
 export const useConnectWallet = () => {
+	const router = useRouter();
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
@@ -30,10 +34,13 @@ export const useConnectWallet = () => {
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
+
 		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 		activateInjectedProvider(walletName);
 		setStorageWallet(walletName);
 		setStorageNetwork(networkConnected);
+
+		// activate connect wallet via metamask
 		await activate(connector, undefined, true)
 			.then(async () => {
 				const addressWallet = await connector.getAccount();
@@ -43,7 +50,21 @@ export const useConnectWallet = () => {
 				if (error instanceof UnsupportedChainIdError) {
 					await changeNetwork(connector);
 				}
+
+				if (error && error.message.includes('user rejected')) {
+					setStatusModalConnectWallet(false);
+					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
+				}
 			});
+
+		ethereum?.on('networkChanged', (val: string | undefined) => {
+			if (
+				val &&
+				parseInt(String(BSC_NETWORK.CHAIN_ID_HEX), 16) != Number(val)
+			) {
+				redirectRoutes();
+			}
+		});
 	}
 
 	async function disconnectWallet() {
@@ -62,6 +83,10 @@ export const useConnectWallet = () => {
 		);
 	}
 
+	const redirectRoutes = () => {
+		router.push(ROUTES.TOKEN_PRESALE_ROUNDS);
+	};
+
 	const changeNetwork = async (connector: any) => {
 		const addressWallet = await connector.getAccount();
 		try {
@@ -69,7 +94,7 @@ export const useConnectWallet = () => {
 				method: 'wallet_switchEthereumChain',
 				params: [{ chainId: BSC_NETWORK.CHAIN_ID_HEX }],
 			});
-			checkLogin(addressWallet);
+			await checkLogin(addressWallet);
 		} catch (switchError: any) {
 			if (switchError.code === 4902) {
 				try {
@@ -90,12 +115,14 @@ export const useConnectWallet = () => {
 						],
 					});
 					checkLogin(addressWallet);
+					return;
 				} catch (addError) {
 					deactivate();
 				}
 			} else {
 				deactivate();
 			}
+			setStatusModalConnectWallet(false);
 		}
 	};
 
@@ -103,6 +130,7 @@ export const useConnectWallet = () => {
 		try {
 			const signer = (library as any).getSigner();
 			const signature = await signer.signMessage(`${SIGN_MESSAGE}`, address);
+
 			if (signature) {
 				const params = {
 					wallet_address: address,
@@ -136,8 +164,9 @@ export const useConnectWallet = () => {
 
 	async function checkLogin(addressWallet: string) {
 		const [dataCheckUser] = await checkEmailUser(addressWallet);
+
+		// check user đăng nhập lần đầu.
 		if (dataCheckUser?.is_user_exist) {
-			// check user đăng nhập lần đầu
 			setStatusConnect(true);
 		} else {
 			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
