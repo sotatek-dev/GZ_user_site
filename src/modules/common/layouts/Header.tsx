@@ -29,8 +29,8 @@ const LayoutHeader = () => {
 	// const wallet = useSelector(state => state.wallet)
 
 	useEffect(() => {
-		const { currency } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
-		setCurrency(currency);
+		const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
+		setCurrency(networkName);
 	}, [account, active, isLogin]);
 
 	const menu = (

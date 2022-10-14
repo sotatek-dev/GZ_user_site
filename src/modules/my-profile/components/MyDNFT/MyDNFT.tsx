@@ -1,4 +1,5 @@
 import { message, Pagination, Spin } from 'antd';
+import { getDNFTSignature } from 'apis/dnft';
 import BoxPool from 'common/components/boxPool';
 import Dropdown from 'common/components/dropdown';
 import MyTable from 'common/components/table';
@@ -89,14 +90,14 @@ export default function MyDNFT() {
 					if (cloneItem.status === 'claimable') {
 						handleClaim();
 					} else if (cloneItem.status === 'wait-to-merge') {
-						handleUnmerge();
+						handleUnmerge(cloneItem._id);
 					}
 				},
 			};
 		});
 	}, [dnfts, claimableTime]);
 
-	const handleUnmerge = async () => {
+	const handleUnmerge = async (sessionId: string) => {
 		if (!allowanceAmount) {
 			await tryApproval(true)
 				.then(() => {
@@ -106,9 +107,29 @@ export default function MyDNFT() {
 					message.error(myProfileConstants.TRANSACTION_REJECTED);
 				});
 		}
-		// await dnftContract?.unmerge();
-		// message.success('Unmerge successfully');
-		handleGetDNFTs();
+		const res = await getDNFTSignature(sessionId);
+		const { session_id, signature, token_ids, time_stamp } = get(
+			res,
+			'data.data'
+		);
+
+		await dnftContract
+			?.cancelTemporaryMerge(token_ids, time_stamp, session_id, signature)
+			.then((res) => {
+				return res.wait();
+			})
+			.then((res) => {
+				message.success({
+					content: myProfileConstants.TRANSACTION_COMPLETED,
+					onClick: () => {
+						window.open(getExploreTxLink(res.transactionHash), '_blank');
+					},
+				});
+				handleGetDNFTs();
+			})
+			.catch((err) => {
+				handleClaimError(err);
+			});
 	};
 
 	const handleGetClaimableTime = async () => {

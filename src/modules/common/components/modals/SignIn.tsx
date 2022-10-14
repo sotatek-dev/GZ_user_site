@@ -1,4 +1,5 @@
 import { Form, Input } from 'antd';
+import { useState } from 'react';
 import { useActiveWeb3React } from 'web3/hooks';
 import { useConnectWallet } from 'web3/hooks/useConnectWallet';
 import Button from '../button';
@@ -6,10 +7,27 @@ import Button from '../button';
 interface IFormRule {
 	email: string;
 }
+const EMAIL_REGEX = /^[\w]{1,64}@([\w]{1,253}\.)+(com|org|net)$/;
 
 export default function ModalSignin() {
 	const { handleLogin } = useConnectWallet();
 	const { account } = useActiveWeb3React();
+	const [isDisabledConfirm, setDisableConfirm] = useState<boolean>(true);
+	const handlerEmailChange = (values: { email: string }) => {
+		if (values?.email && !EMAIL_REGEX.test(values?.email)) {
+			return setDisableConfirm(true);
+		}
+		return setDisableConfirm(false);
+	};
+
+	const emailValidator = (_: unknown, value: string) => {
+		if (value && !EMAIL_REGEX.test(value)) {
+			return Promise.reject(
+				new Error('Please enter a correct email, example "abc@mail.com"')
+			);
+		}
+		return Promise.resolve();
+	};
 
 	const onFinish = (values: IFormRule) => {
 		const { email } = values;
@@ -30,9 +48,8 @@ export default function ModalSignin() {
 					name='verify-email'
 					layout='vertical'
 					onFinish={onFinish}
-					onFinishFailed={() => {}}
+					onValuesChange={handlerEmailChange}
 					autoComplete='off'
-					initialValues={{}}
 					className='flex justify-center flex-col'
 				>
 					<Form.Item
@@ -41,8 +58,7 @@ export default function ModalSignin() {
 						rules={[
 							{ required: true, message: 'This field is required' },
 							{
-								type: 'email',
-								message: 'Please enter a correct email, example "abc@mail.com"',
+								validator: emailValidator,
 							},
 						]}
 					>
@@ -52,6 +68,7 @@ export default function ModalSignin() {
 						/>
 					</Form.Item>
 					<Button
+						isDisabled={isDisabledConfirm}
 						classCustom='bg-charcoal-purple !rounded-[40px] !mt-[30px] mx-auto !px-[45px] !py-[11px] text-[#777] !font-semibold'
 						htmlType='submit'
 						label='Confirm'

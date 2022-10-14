@@ -189,25 +189,26 @@ const ListDNFT = () => {
 						}}
 					/>
 				)}
-				{isShowModalChooseMetarialToMerge && dNFTSelected && (
-					<ModalCustom
-						title={
-							<div className={'text-h4 text-center'}>
-								Choose material to merge
-							</div>
-						}
-						customClass='!w-auto desktop:!max-w-[1200px]'
-						isShow={isShowModalChooseMetarialToMerge}
-						onCancel={() => setShowModalChooseMetarialToMerge(false)}
-					>
+
+				<ModalCustom
+					title={
+						<div className={'text-h4 text-center'}>
+							Choose material to merge
+						</div>
+					}
+					customClass='!w-auto desktop:!max-w-[1200px]'
+					isShow={isShowModalChooseMetarialToMerge}
+					onCancel={() => setShowModalChooseMetarialToMerge(false)}
+				>
+					{dNFTSelected && (
 						<ModalChooseMetarialToMerge
 							onCancel={() => setShowModalChooseMetarialToMerge(false)}
 							dNFTSelected={dNFTSelected}
 							setListDNFTToMergeSelected={setListDNFTToMergeSelected}
 							listDNFTToMergeSelected={listDNFTToMergeSelected}
 						/>
-					</ModalCustom>
-				)}
+					)}
+				</ModalCustom>
 			</div>
 		</>
 	);
