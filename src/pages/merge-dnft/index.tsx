@@ -366,7 +366,7 @@ const MergeDNFT = () => {
 								placeholder={`Choose ${displayName.toLowerCase()}`}
 								key={index}
 								value={value}
-								customStyle='w-full desktop:!max-w-[330px] desktop:!w-[290px]'
+								customStyle='w-full'
 								onClick={(event) => onChangeValue(event, propertyName)}
 							/>
 						);
