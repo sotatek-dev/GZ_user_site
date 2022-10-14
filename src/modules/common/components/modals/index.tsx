@@ -53,7 +53,7 @@ const ModalCustom = (props: ModalProps) => {
 				)
 			}
 			destroyOnClose={false}
-			maskClosable={false}
+			maskClosable={true}
 			{...rest}
 		>
 			{children}
