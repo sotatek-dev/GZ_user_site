@@ -64,10 +64,10 @@ const RescueDNFT = () => {
 	const { addressWallet } = useSelector((state) => state.wallet);
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
-	const launchPrice =
-		token === TOKENS.BUSD
-			? launchPriceInBUSD
-			: new BigNumber(launchPriceInBUSD).div(rate);
+	// const launchPrice =
+	// 	token === TOKENS.BUSD
+	// 		? launchPriceInBUSD
+	// 		: new BigNumber(launchPriceInBUSD).div(rate);
 
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
