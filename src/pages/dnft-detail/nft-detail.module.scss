@@ -61,8 +61,11 @@
 .nft-detail {
 	@apply mt-[35px] flex flex-col w-[100%] desktop:flex-row items-center desktop:items-start gap-12;
 
-	&_img {
-		@apply w-[345px] h-[410px] relative;
+	&_box {
+		@apply w-[345px] h-[345px] flex items-center justify-center;
+		&_img {
+			@apply w-[252px] h-[252px] relative;
+		}
 	}
 
 	&_point {
@@ -79,12 +82,8 @@
 	&_carousel {
 		@apply mt-[16px]  w-[100%]  overflow-x-scroll whitespace-nowrap;
 
-		&::-webkit-scrollbar {
-			display: none;
-		}
-
 		&_item {
-			@apply w-[252px] h-[300px] relative inline-block mr-[30px];
+			@apply w-[252px] h-[252px] relative inline-block mr-[30px];
 			user-select: none;
 			cursor: pointer;
 
