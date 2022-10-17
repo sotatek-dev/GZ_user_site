@@ -1,3 +1,5 @@
+import { convertHexToNumber, fromWei } from 'common/utils/functions';
+import { get } from 'lodash';
 import { genDNFTContractEther } from './instance';
 
 export const permanentMerge = async (
@@ -37,6 +39,17 @@ export const temporaryMerge = async (
 		);
 		const result = await res.wait(1);
 		return [result, null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
+export const getMergeTax = async () => {
+	try {
+		const contract = await genDNFTContractEther();
+		const res = await contract.getMergeTax();
+		const mergeTax = fromWei(convertHexToNumber(get(res, '_hex')));
+		return [mergeTax, null];
 	} catch (error) {
 		return [null, error];
 	}

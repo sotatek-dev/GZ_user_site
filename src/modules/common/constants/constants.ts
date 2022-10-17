@@ -126,3 +126,5 @@ export const TITLE_TIME_COUNTDOWN = {
 	CLAIMABLE_MORE_THAN: 'You can claim amount GXZ tokens more in',
 	END: 'Round ended',
 };
+
+export const ROYALTY_FEE_PURCHASE = 0.0225; // 2.25%

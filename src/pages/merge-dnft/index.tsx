@@ -1,4 +1,4 @@
-import { message as messageAntd } from 'antd';
+import { message, message as messageAntd } from 'antd';
 import { cloneDeep, get } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -17,9 +17,17 @@ import {
 import { ROUTES, STATUS_CODE } from 'common/constants/constants';
 import { PROPERTY } from 'common/constants/mergeDNFT';
 import Button from 'common/components/button';
-import { permanentMerge, temporaryMerge } from 'web3/contracts/useContractDNFT';
+import {
+	getMergeTax,
+	permanentMerge,
+	temporaryMerge,
+} from 'web3/contracts/useContractDNFT';
 import DropdownMegeDnft from 'common/components/dropdown/DropdownMegeDnft';
-import styles from './merge-dnft.module.scss';
+import {
+	handleUserApproveERC20,
+	isUserApprovedERC20,
+} from 'web3/contracts/useErc20Contract';
+import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
 interface IInitImage {
 	assetBase: string;
 	extension: string;
@@ -69,6 +77,7 @@ const MergeDNFT = () => {
 
 	//state store
 	const { isLogin } = useSelector((state) => state.user);
+	const { addressWallet } = useSelector((state) => state.wallet);
 	useEffect(() => {
 		const params = {
 			ingredient_ids: listTokenId,
@@ -190,6 +199,7 @@ const MergeDNFT = () => {
 				properties,
 			},
 		} as IParamsDnftMerge;
+		// push value merge
 		const [data, error] = await dnftPermanentMerge(params);
 		if (error) {
 			const { message } = error;
@@ -199,27 +209,49 @@ const MergeDNFT = () => {
 			}
 			return messageAntd.error(message);
 		}
-		if (data?.statusCode === STATUS_CODE.SUCCESS) {
-			const sessionId = get(data, 'data._id', '');
-			const paramsSignature = {
-				session_id: sessionId,
-			};
-			const [dataSignature] = await getSignatureMerge(paramsSignature);
-			const { session_id, signature, time_stamp, token_ids } = dataSignature;
-			const [responsePushContract, errorPushContract] = await permanentMerge(
-				token_ids,
-				time_stamp,
-				session_id,
-				signature
-			);
-			setLoadingPermanentlyMerge(false);
-			if (errorPushContract) return messageAntd.error('Transaction Rejected');
-			if (responsePushContract) {
-				messageAntd.success('You can claim your NFT in My Profile');
-				setTimeout(() => {
-					router.push(`/merge-dnft/detail/${sessionId}`);
-				}, 1500);
+		// get merge tax(thuế setting trên admin)
+		const [mergeTax, errorGetMergeTax] = await getMergeTax();
+		console.log('mergeTax', mergeTax);
+		if (errorGetMergeTax) return;
+		// check approve khi user merge
+		const isUserApproved = await isUserApprovedERC20(
+			NEXT_PUBLIC_BUSD,
+			addressWallet,
+			mergeTax
+		);
+		console.log('isUserApproved', isUserApproved);
+		if (!isUserApproved) {
+			const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
+			if (error) {
+				message.error('Transaction Rejected');
+				return;
 			}
+			await res.wait();
+		}
+		const sessionId = get(data, 'data._id', '');
+		const paramsSignature = {
+			session_id: sessionId,
+		};
+		const [dataSignature] = await getSignatureMerge(paramsSignature);
+		const { session_id, signature, time_stamp, token_ids } = dataSignature;
+		const [responsePushContract, errorPushContract] = await permanentMerge(
+			token_ids,
+			time_stamp,
+			session_id,
+			signature
+		);
+		setLoadingPermanentlyMerge(false);
+		if (errorPushContract) {
+			if (errorPushContract.error.code === -32603) {
+				return messageAntd.error('Network Error!');
+			}
+			return messageAntd.error('Transaction Rejected');
+		}
+		if (responsePushContract) {
+			messageAntd.success('You can claim your NFT in My Profile');
+			setTimeout(() => {
+				router.push(`/merge-dnft/detail/${sessionId}`);
+			}, 1500);
 		}
 	};
 
@@ -234,6 +266,7 @@ const MergeDNFT = () => {
 				properties,
 			},
 		} as IParamsDnftMerge;
+		// push value merge
 		const [data, error] = await dnftTempoaryMerge(params);
 		if (error) {
 			const { message } = error;
@@ -244,6 +277,27 @@ const MergeDNFT = () => {
 			return messageAntd.error(message);
 		}
 		if (data?.statusCode === STATUS_CODE.SUCCESS) {
+			// get merge tax(thuế setting trên admin)
+			const [mergeTax, errorGetMergeTax] = await getMergeTax();
+			console.log('mergeTax', mergeTax);
+
+			if (errorGetMergeTax) return;
+			// check approve khi user merge
+			const isUserApproved = await isUserApprovedERC20(
+				NEXT_PUBLIC_BUSD,
+				addressWallet,
+				mergeTax
+			);
+			console.log('isUserApproved', isUserApproved);
+
+			if (!isUserApproved) {
+				const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
+				if (error) {
+					message.error('Transaction Rejected');
+					return;
+				}
+				await res.wait();
+			}
 			const sessionId = get(data, 'data._id', '');
 			const paramsSignature = {
 				session_id: sessionId,
@@ -257,7 +311,13 @@ const MergeDNFT = () => {
 				signature
 			);
 			setLoadingTemporaryMerge(false);
-			if (errorPushContract) return messageAntd.error('Transaction Rejected');
+			if (errorPushContract) {
+				if (errorPushContract.error.code === -32603) {
+					return messageAntd.error('Network Error!');
+				}
+				return messageAntd.error('Transaction Rejected');
+			}
+
 			if (responsePushContract) {
 				messageAntd.success('Your NFT will be locked in 30 days');
 				setTimeout(() => {
@@ -294,41 +354,13 @@ const MergeDNFT = () => {
 		});
 	};
 
-	const [tab, setTab] = useState(false);
-
-	useEffect(() => {
-		if (tab) {
-			onResetAllSetting();
-		} else {
-			console.log('Preview dnft');
-		}
-	}, [tab]);
-
 	return (
 		<div className={'relative'}>
-			<label className={styles['switch']}>
-				<input
-					type='checkbox'
-					onChange={(e) => {
-						setTab(e.target.checked);
-					}}
-				/>
-				<div className={styles['switch-btn']} />
-				<span
-					className={`${styles['slider']} ${styles['slider_left']} ${
-						tab ? 'text-[#ffffff4d]' : 'text-white'
-					}`}
-				>
-					Preview Your NFT
-				</span>
-				<span
-					className={`${styles['slider']} ${styles['slider_right']} ${
-						tab ? 'text-white' : 'text-[#ffffff4d]'
-					}`}
-				>
-					Reset all setting
-				</span>
-			</label>
+			<Button
+				onClick={onResetAllSetting}
+				label='Reset all setting'
+				classCustom='bg-purple-20 rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3 px-8'
+			/>
 
 			<div className='px-4 py-3 bg-pink-10 text-red-20 text-sm font-normal flex items-center mt-8'>
 				<ExclamationCircleOutlined twoToneColor='#F02727' className='mr-3' />

@@ -27,9 +27,9 @@ const Dropdown = (props: Props) => {
 
 	return (
 		<AntDropdown className={customStyle} overlay={menu} trigger={['click']}>
-			<Button className='dropdown-button flex justify-between	items-center'>
+			<Button className='dropdown-button flex justify-between	items-center !text-white'>
 				{label ? list.find((item: Item) => item.key === label)?.label : title}{' '}
-				<DownOutlined />
+				<DownOutlined twoToneColor='#fff' />
 			</Button>
 		</AntDropdown>
 	);

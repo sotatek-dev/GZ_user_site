@@ -6,14 +6,10 @@ import { getDetailDNFT } from 'apis/mergeDnft';
 import { get } from 'lodash';
 import { message } from 'antd';
 import Image from 'next/image';
-import { PROPERTY } from 'common/constants/mergeDNFT';
+import { ATTRIBUTES } from 'common/constants/mergeDNFT';
 
-interface IProperties {
-	[key: string]: {
-		type: string;
-		value: string;
-		displayName: string;
-	};
+interface IAttribute {
+	[key: string]: string | number;
 }
 
 const MergeDNFTDetail = () => {
@@ -22,7 +18,7 @@ const MergeDNFTDetail = () => {
 	const {
 		query: { tokenId = '' },
 	} = router;
-	const [properties, setProperties] = useState<IProperties>({});
+	const [attributes, setAttributes] = useState<IAttribute>({});
 	const [imageDNFT, setImageDNFT] = useState<string>('');
 
 	useEffect(() => {
@@ -33,15 +29,16 @@ const MergeDNFTDetail = () => {
 
 	const handleGetDetailDNFT = async (tokenId: string | string[]) => {
 		const [response, error] = await getDetailDNFT(tokenId);
-		if (response) {
-			const metadata = get(response, 'data.metadata', {});
-			const { image, properties } = metadata;
-			const imageDNFT = image;
-			setProperties(properties);
-			setImageDNFT(imageDNFT);
-		}
 		if (error) {
 			message.error('error');
+		}
+
+		if (response) {
+			const metadata = get(response, 'data.metadata', {});
+			const { image, attribute } = metadata;
+			const imageDNFT = image;
+			setAttributes(attribute);
+			setImageDNFT(imageDNFT);
 		}
 	};
 	return (
@@ -63,12 +60,15 @@ const MergeDNFTDetail = () => {
 					/>
 				</div>
 				<div className='grid grid-cols-1 desktop:grid-cols-2 gap-[20px] h-fit w-full'>
-					{Object.keys(properties).map((propertyName: string, index) => {
-						const { displayName, value } = properties[propertyName];
-						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
+					{Object.keys(attributes).map((attribute: string, index) => {
+						const value = attributes[attribute];
+						if (value === 0) return null;
+
 						return (
 							<div key={index}>
-								<div className='text-gray-40 text-base mb-2'>{displayName}</div>
+								<div className='text-gray-40 text-base mb-2'>
+									{ATTRIBUTES[attribute]}
+								</div>
 								<div className='px-4 py-2 rounded-md border-2 border-[#ffffff33] w-full desktop:w-[320px]'>
 									{value}
 								</div>

@@ -3,7 +3,11 @@ import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
-import { BNB_CURRENCY, BUSD_CURRENCY } from 'common/constants/constants';
+import {
+	BNB_CURRENCY,
+	BUSD_CURRENCY,
+	ROYALTY_FEE_PURCHASE,
+} from 'common/constants/constants';
 import { formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
@@ -67,7 +71,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	}, [isShow, form]);
 
 	const handleChangeBUSD = async (value: number | string | null) => {
-		if (!value) return setAmount(0);
+		if (!value) value = 0;
 		value = Number(value);
 		setAmount(value);
 		const [amountGXC] = await getTokenAmountFromBUSD(value, exchangeRate);
@@ -157,32 +161,34 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	const validateToken = async (_: any, value: string) => {
+		const amount = Number(value);
 		const { busdBalance, bnbBalance } = balance;
-
+		let royaltyFee = (amount * ROYALTY_FEE_PURCHASE) as number;
 		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
 		let buyLimit = buyLimitBUSD;
 		const amountOfTokensPurchased = youBought * exchangeRate;
 		if (currency === BNB_CURRENCY) {
 			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
+			const [royaltyFeeBNB] = await convertBUSDtoBNB(royaltyFee);
 			buyLimit = buyLimitBNB;
+			royaltyFee = royaltyFeeBNB;
 		}
 
-		if (!value) {
+		if (!amount) {
 			return Promise.resolve();
 		} else if (
-			currency === BUSD_CURRENCY &&
-			Number(value) > Number(busdBalance)
+			(currency === BUSD_CURRENCY &&
+				Number(busdBalance) < amount + royaltyFee) ||
+			(currency === BNB_CURRENCY && Number(bnbBalance) < amount + royaltyFee)
 		) {
+			return Promise.reject(
+				new Error(`You don't have enough ${currency} in wallet for royalty fee`)
+			);
+		} else if (currency === BUSD_CURRENCY && amount > Number(busdBalance)) {
 			return Promise.reject(new Error("You don't have enough BUSD"));
-		} else if (
-			currency === BNB_CURRENCY &&
-			Number(value) > Number(bnbBalance)
-		) {
+		} else if (currency === BNB_CURRENCY && amount > Number(bnbBalance)) {
 			return Promise.reject(new Error("You don't have enough BNB"));
-		} else if (
-			buyLimit !== 0 &&
-			Number(value) > buyLimit - amountOfTokensPurchased
-		) {
+		} else if (buyLimit !== 0 && amount > buyLimit - amountOfTokensPurchased) {
 			return Promise.reject(
 				new Error(
 					`User can only purchase maximum ${formatNumber(buyLimit)} ${currency}`
