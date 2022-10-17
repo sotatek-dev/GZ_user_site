@@ -2,8 +2,13 @@ import { ErrorCode } from '@ethersproject/logger';
 import { handleCommonError, showError } from 'common/helpers/toast';
 import { ErrorMessage } from 'common/constants/error';
 
+const METAMASK_SP_REJECTED_ERROR_CODE = 4001;
+
 export const handleWriteMethodError = (e?: any) => {
-	if (e?.code === ErrorCode.ACTION_REJECTED) {
+	if (
+		e?.code === ErrorCode.ACTION_REJECTED ||
+		e.code === METAMASK_SP_REJECTED_ERROR_CODE
+	) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
 		e?.code === ErrorCode.SERVER_ERROR ||
