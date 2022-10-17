@@ -8,6 +8,7 @@ export const ROUTES = {
 	MINT_KEY: '/mint-key',
 	LIST_DNFT: '/list-dnft',
 	LIST_DNFT_DETAIL: '/list-dnft/',
+	MERGE_DNFT: '/merge-dnft',
 	RESCUE_NFT: '/rescue-nft',
 	LANDING: '/landing',
 	NFT_DETAIL: '/dnft-detail',

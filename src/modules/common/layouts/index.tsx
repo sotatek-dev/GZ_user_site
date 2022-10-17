@@ -6,8 +6,10 @@ import { ROUTES } from 'common/constants/constants';
 import { get } from 'lodash';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import Footer from './Footer';
 import LayoutHeader from './Header';
+import { useMemo } from 'react';
 
 const { Sider, Content } = Layout;
 
@@ -43,6 +45,13 @@ export const LIST_SIDER = [
 
 const DefaultLayout = ({ children, appProps }: any) => {
 	const { isLogin } = useSelector((state) => state.user);
+	const router = useRouter();
+	const isActivateSideBar: string[] = useMemo((): string[] => {
+		if (router.pathname.includes(ROUTES.MERGE_DNFT)) return [ROUTES.LIST_DNFT];
+		if (router.pathname.includes(ROUTES.NFT_DETAIL)) return [ROUTES.MY_PROFILE];
+		return [router.pathname];
+	}, [router]);
+
 	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
 		return <>{children}</>;
 	}
@@ -70,6 +79,7 @@ const DefaultLayout = ({ children, appProps }: any) => {
 					theme='dark'
 					className='!bg-[#0E1A2B]  mt-[1.5625rem]'
 					mode='inline'
+					selectedKeys={isActivateSideBar}
 					defaultSelectedKeys={['4']}
 				>
 					{LIST_SIDER.map((sider: any) => {
