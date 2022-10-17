@@ -10,7 +10,6 @@ import HelmetCommon from 'common/components/helmet';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
 import CustomRadio from 'common/components/radio';
-import ReactGa from 'react-ga';
 import Stepper from 'common/components/steps';
 import {
 	BNB_CURRENCY,
@@ -174,13 +173,6 @@ const TokenSaleRoundDetail = () => {
 		checkTitleTimeCountdown(statusTimeLine);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [statusTimeLine, claimedAmount]);
-
-	useEffect(() => {
-		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
-		// to report page view Google Analytics
-		ReactGa.pageview(router?.pathname || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	useEffect(() => {
 		if (!isEmpty(detailSaleRound)) {

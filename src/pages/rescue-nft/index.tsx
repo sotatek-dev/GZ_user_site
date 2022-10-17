@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { Message, selectTokensList, TOKENS } from 'modules/mintDnft/constants';
@@ -11,7 +10,6 @@ import CustomRadio from 'common/components/radio';
 import { formatBigNumber, isApproved } from 'common/utils/functions';
 import { ROUTES } from 'common/constants/constants';
 import HelmetCommon from 'common/components/helmet';
-import ReactGa from 'react-ga';
 import { useRouter } from 'next/router';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { useApproval, useNativeBalance } from 'web3/hooks';
@@ -72,7 +70,7 @@ const RescueDNFT = () => {
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
 	const haveEnoughKey = listKey.length > 0;
-	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
+	const isPublicSaleEndAfter7Days = !isPublicSaleEnd(publicPhase?.endTime);
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
@@ -157,7 +155,6 @@ const RescueDNFT = () => {
 					await tryApproveBusd(false);
 				}
 				if (listKey?.length > 0) {
-					console.log(listKey);
 					const res = await dnftContract.rescueUsingKey(listKey[0]);
 					await res.wait();
 					const hash: string = res ? res.hash : '';
@@ -212,13 +209,6 @@ const RescueDNFT = () => {
 			return <>{Message.NOT_ELIGIBLE_TO_MINT}</>;
 		}
 	};
-
-	useEffect(() => {
-		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
-		// to report page view Google Analytics
-		ReactGa.pageview(router?.pathname || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<>

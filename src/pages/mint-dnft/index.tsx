@@ -9,7 +9,6 @@ import {
 	isApproved,
 } from 'common/utils/functions';
 import { useBalance } from 'web3/queries';
-import ReactGa from 'react-ga';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
@@ -196,13 +195,6 @@ const MintDNFT: React.FC = () => {
 			reloadData();
 		}
 	};
-
-	useEffect(() => {
-		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
-		// to report page view Google Analytics
-		ReactGa.pageview(router?.pathname || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const getMessage = () => {
 		const isMinted = new BigNumber(userBoughtAmount).gt(0);
