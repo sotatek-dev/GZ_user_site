@@ -70,7 +70,7 @@ const RescueDNFT = () => {
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
 	const haveEnoughKey = listKey.length > 0;
-	const isPublicSaleEndAfter7Days = !isPublicSaleEnd(publicPhase?.endTime);
+	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
