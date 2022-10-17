@@ -7,23 +7,16 @@ import { get, map, toString } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import ReactGa from 'react-ga';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getDNFTDetailRD } from 'stores/dnft/dnft-detail';
 import styles from './nft-detail.module.scss';
+
 const NFTDetail = () => {
 	const [tab, setTab] = useState(false);
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const dnftDetail = useAppSelector((state) => state.dnftDetail);
-
-	useEffect(() => {
-		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
-		// to report page view Google Analytics
-		ReactGa.pageview(router?.pathname || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	useEffect(() => {
 		if (router.query.id) {

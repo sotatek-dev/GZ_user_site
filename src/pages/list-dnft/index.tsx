@@ -11,13 +11,11 @@ import {
 	STATUS_LIST_DNFT,
 } from 'common/constants/constants';
 import type { MenuProps } from 'antd';
-import ReactGa from 'react-ga';
 import { cloneDeep, get, isEmpty } from 'lodash';
 import ListCard from 'modules/mergeDnft/ListCard';
 import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
 // import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 
 export interface IDFNT {
@@ -50,7 +48,6 @@ export interface IDNFTToMerge {
 }
 
 const ListDNFT = () => {
-	const router = useRouter();
 	const [page, setPage] = useState<number>(1);
 	// const [isSelectAll, setSelectAll] = useState<boolean>(false);
 	const [totalDNFT, setTotalDNFT] = useState<number>(0);
@@ -128,12 +125,6 @@ const ListDNFT = () => {
 	const handleChangeSpecies: MenuProps['onClick'] = ({ key }) => {
 		setSpecies(key);
 	};
-	useEffect(() => {
-		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
-		// to report page view Google Analytics
-		ReactGa.pageview(router?.pathname || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<>

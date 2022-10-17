@@ -1,10 +1,8 @@
 import HelmetCommon from 'common/components/helmet';
 import { ROUTES } from 'common/constants/constants';
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from '../../modules/landing/style/landing.module.scss';
-import ReactGa from 'react-ga';
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 const Header = dynamic(
 	() => import('./../../modules/landing/components/Header/index')
@@ -22,14 +20,8 @@ const Roadmap = dynamic(
 const Statistic = dynamic(
 	() => import('./../../modules/landing/components/Statistic')
 );
+
 export default function LandingPage() {
-	const router = useRouter();
-	useEffect(() => {
-		ReactGa.initialize(process?.env?.NEXT_PUBLIC_GA_TRACKING_CODE || '');
-		// to report page view Google Analytics
-		ReactGa.pageview(router?.pathname || '');
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 	return (
 		<>
 			<HelmetCommon
