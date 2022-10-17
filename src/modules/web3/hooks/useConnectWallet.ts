@@ -34,7 +34,6 @@ export const useConnectWallet = () => {
 			return message.error('Please install or unlock MetaMask');
 		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
-
 		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 		activateInjectedProvider(walletName);
 		setStorageWallet(walletName);
@@ -139,7 +138,10 @@ export const useConnectWallet = () => {
 					setAddressWallet(wallet_address);
 				}
 			}
-		} catch (error) {
+		} catch (error: any) {
+			if (error?.code === 'ACTION_REJECTED') {
+				message.warning('User rejected to sign');
+			}
 			removeStorageWallet();
 		} finally {
 			setStatusModalConnectWallet(false);

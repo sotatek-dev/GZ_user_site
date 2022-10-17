@@ -41,3 +41,15 @@ export const PROPERTY = {
 	GLOVES: 'gloves',
 	GLOVESDEFAULT: 'glovesDefault',
 };
+
+export const ATTRIBUTES: { [key: string]: string | number } = {
+	strength: 'Strength',
+	speed: 'Speed',
+	agility: 'Agility',
+	durability: 'Durability',
+	intelligence: 'Intelligence',
+	cosmicPower1: 'Cosmic Power 1',
+	cosmicPower2: 'Cosmic Power 2',
+	cosmicPower3: 'Cosmic Power 3',
+	cosmicPower4: 'Cosmic Power 4',
+};

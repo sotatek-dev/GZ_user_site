@@ -317,12 +317,12 @@ const TokenSaleRoundDetail = () => {
 				// nếu chỉ có 1 time claim sẽ lấy luôn youbought vì max laim percent là 100%
 				title = TITLE_TIME_COUNTDOWN.CLAIMABLE_ONE_TIME_ONLY.replace(
 					'amount',
-					`${youBought}`
+					`${formatNumber(youBought)}`
 				);
 			} else {
 				title = TITLE_TIME_COUNTDOWN.CLAIMABLE_MORE_THAN.replace(
 					'amount',
-					`${claimedAmount.toFixed(2)}`
+					`${formatNumber(claimedAmount.toFixed(2))}`
 				);
 			}
 		} else if (statusTimeLine === END) {

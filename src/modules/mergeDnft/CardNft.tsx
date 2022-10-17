@@ -1,4 +1,3 @@
-import { Checkbox } from 'antd';
 import ImageBase from 'common/components/imageBase';
 import { get } from 'lodash';
 import { IDFNT } from 'pages/list-dnft';
@@ -12,30 +11,48 @@ interface ICardNftProps {
 
 const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 	const { isChecked, is_locked } = dataDNFT;
-	// replace tạm chờ BE đẩy ảnh lên s3
 	const imageDNFT = get(dataDNFT, 'metadata.image', '');
 
 	return (
 		<div
 			onClick={!is_locked ? (event) => SelectNft(event, index) : () => {}}
-			className={`flex justify-center items-center w-[160px] h-[230px] desktop:w-[213px] desktop:h-[290px] bg-gray-50 !rounded-[10px] relative ${
+			className={`${
+				isChecked && 'outer-card-nft'
+			} flex justify-center items-center w-[252px] h-[252px] bugfix/token-sale-round relative ${
 				!is_locked && 'cursor-pointer'
 			} 
 			}`}
 		>
-			{!is_locked && (
-				<Checkbox
-					onClick={(event) => SelectNft(event, index)}
-					className='absolute top-3 right-3'
-					checked={isChecked}
+			<div className={'inner-card-nft'}>
+				{is_locked && (
+					<div className='card-nft-lock absolute inset-0 w-full flex justify-center items-center z-20 text-base font-semibold'>
+						<div className='w-full flex justify-center items-center'>
+							<ImageBase
+								url='/icons/locked.svg'
+								width='35px'
+								height='20px'
+								objectFit='fill'
+								layout='fixed'
+							/>
+							LOCKED NFT
+						</div>
+					</div>
+				)}
+				<ImageBase
+					url={imageDNFT}
+					width='252px'
+					height='252px'
+					objectFit='fill'
 				/>
+			</div>
+			{isChecked && (
+				<>
+					<span className='span span-1'></span>
+					<span className='span span-2'></span>
+					<span className='span span-3'></span>
+					<span className='span span-4'></span>
+				</>
 			)}
-			<ImageBase
-				url={imageDNFT}
-				width='213px'
-				height='213px'
-				objectFit='fill'
-			/>
 		</div>
 	);
 };
