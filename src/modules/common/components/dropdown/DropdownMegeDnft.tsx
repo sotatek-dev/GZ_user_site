@@ -36,17 +36,23 @@ const DropdownMegeDnft = (props: Props) => {
 
 	return (
 		<div className={`flex flex-col ${customStyle && customStyle} w-[100%]`}>
-			<div className='mb-[8px] leading-[24px] text-[#ffffff80]'>{label}</div>
+			<div className='mb-[8px] leading-[24px] text-[#ffffff80] overflow-hidden text-ellipsis whitespace-nowrap'>
+				{label}
+			</div>
 			<AntDropdown
 				className='flex justify-between items-center !w-[100%]'
 				overlay={menu}
 				trigger={['click']}
 			>
-				<Button className='dropdown-button !border-[#ffffff33] !h-[47px]'>
+				<Button className='dropdown-button !border-[#ffffff33] !h-[47px] '>
 					{value ? (
-						<div className='text-white'>{value}</div>
+						<div className='text-white  overflow-hidden text-ellipsis '>
+							{value}
+						</div>
 					) : (
-						<div className='text-[#ffffff1a]'>{placeholder} </div>
+						<div className='text-[#ffffff1a]  overflow-hidden text-ellipsis  '>
+							{placeholder}
+						</div>
 					)}
 					<DownOutlined className='!text-[#ffffff80]' />
 				</Button>

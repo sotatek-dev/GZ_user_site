@@ -52,7 +52,9 @@ const NFTDetail = () => {
 			/>
 
 			{dnftDetail.loading || !dnftDetail.dnftDetail ? (
-				<Loading />
+				<div className='flex h-[100%] items-center justify-center'>
+					<Loading />
+				</div>
 			) : (
 				<div>
 					<label className={styles['switch']}>
