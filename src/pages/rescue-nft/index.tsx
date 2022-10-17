@@ -84,11 +84,7 @@ const RescueDNFT = () => {
 				return busdBalance.gte(price);
 			}
 		} else if (new BigNumber(price).eq(0)) {
-			if (token === TOKENS.BNB) {
-				return nativeBalance.gte(launchPrice);
-			} else if (token === TOKENS.BUSD) {
-				return busdBalance.gte(launchPrice);
-			}
+			return true;
 		}
 
 		return false;
