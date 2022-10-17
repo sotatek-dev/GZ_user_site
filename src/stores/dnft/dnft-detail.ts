@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getDNFTDetail } from 'apis/dnft';
-import { getMyDNFTs } from 'apis/my-profile';
-import { filter, get } from 'lodash';
+import { get } from 'lodash';
 import { IDNFT } from 'modules/my-profile/interfaces';
 
 interface initialStateProps {
@@ -43,17 +42,7 @@ export const getDNFTDetailRD = createAsyncThunk(
 		try {
 			const res = await getDNFTDetail(_id);
 			const data = get(res, 'data.data', []);
-			const resRelateDNFTs = await getMyDNFTs({
-				limit: 10,
-				page: 1,
-				species: data.species,
-				rarities: data.rank_level,
-			});
-
-			const relatedDNFTs = filter(
-				get(resRelateDNFTs, 'data.data.list', []),
-				(item) => item._id !== _id
-			);
+			const relatedDNFTs = get(data, 'ingredients');
 
 			return {
 				relatedDNFTs,

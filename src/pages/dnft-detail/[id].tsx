@@ -246,37 +246,41 @@ const NFTDetail = () => {
 							)}
 						</div>
 					</div>
-					<div className={styles['nft-material']}>
-						<div className={styles['nft-material_title']}>Material</div>
-						{dnftDetail && (
-							<ScrollContainer
-								stopPropagation
-								className={styles['nft-material_carousel']}
-								horizontal
-							>
-								{map(dnftDetail.relatedDNFTs, (item, index) => (
-									<div
-										className={styles['nft-material_carousel_item']}
-										key={index}
-										onClick={() => {
-											router.replace(`/dnft-detail/${item._id}`);
-										}}
-									>
-										<Image
-											src={
-												get(item, 'metadata.image') || '/images/ntf-example.svg'
-											}
-											alt=''
-											width='100%'
-											height='100%'
-											layout='fill'
-											objectFit='contain'
-										/>
-									</div>
-								))}
-							</ScrollContainer>
+
+					{dnftDetail.dnftDetail &&
+						dnftDetail.dnftDetail.type === 'temp-merged' && (
+							<div className={styles['nft-material']}>
+								<div className={styles['nft-material_title']}>Material</div>
+
+								<ScrollContainer
+									stopPropagation
+									className={styles['nft-material_carousel']}
+									horizontal
+								>
+									{map(dnftDetail.relatedDNFTs, (item, index) => (
+										<div
+											className={styles['nft-material_carousel_item']}
+											key={index}
+											onClick={() => {
+												router.push(`/dnft-detail/${item._id}`);
+											}}
+										>
+											<Image
+												src={
+													get(item, 'metadata.image') ||
+													'/images/ntf-example.svg'
+												}
+												alt=''
+												width='100%'
+												height='100%'
+												layout='fill'
+												objectFit='contain'
+											/>
+										</div>
+									))}
+								</ScrollContainer>
+							</div>
 						)}
-					</div>
 				</div>
 			)}
 		</>
