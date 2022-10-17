@@ -82,18 +82,21 @@ const NFTDetail = () => {
 					</label>
 
 					<div className={styles['nft-detail']}>
-						<div className={styles['nft-detail_img']}>
-							<Image
-								src={
-									dnftDetail.dnftDetail.metadata.image ||
-									'/images/ntf-example.svg'
-								}
-								alt=''
-								width='100%'
-								height='100%'
-								layout='fill'
-								objectFit='contain'
-							/>
+						<div className={styles['nft-detail_box']}>
+							<div className={styles['nft-detail_box_img']}>
+								<Image
+									src={get(
+										dnftDetail.dnftDetail,
+										'metadata.image',
+										'/images/ntf-example.svg'
+									)}
+									alt=''
+									width='100%'
+									height='100%'
+									layout='fill'
+									objectFit='contain'
+								/>
+							</div>
 						</div>
 
 						<div className={styles['nft-detail_point']}>
@@ -247,6 +250,7 @@ const NFTDetail = () => {
 						<div className={styles['nft-material_title']}>Material</div>
 						{dnftDetail && (
 							<ScrollContainer
+								stopPropagation
 								className={styles['nft-material_carousel']}
 								horizontal
 							>
