@@ -140,9 +140,10 @@ const TokenSaleRoundDetail = () => {
 			claim_configs
 		);
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
+
+		setPrice(exchangeRateBUSD);
 		setStatusTimeLine(status);
 		setDetailSaleRound(detailSaleRound);
-		setPrice(exchangeRateBUSD);
 		setTokenClaimTime(startTimeClaim);
 		setTimeCountDow(timeCountDown);
 		setLoading(false);
@@ -169,6 +170,7 @@ const TokenSaleRoundDetail = () => {
 		if (index && !prevLoading) {
 			getDetailSaleRound();
 		}
+		calculatorCurrency(currency);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [index, detailSaleRound, isLoading, isLogin]);
 
@@ -289,7 +291,11 @@ const TokenSaleRoundDetail = () => {
 	const handleSelectCurrency = async (event: RadioChangeEvent) => {
 		const { value } = event.target;
 		setCurrency(value);
-		if (value === BNB_CURRENCY) {
+		await calculatorCurrency(value);
+	};
+
+	const calculatorCurrency = async (val: string) => {
+		if (val === BNB_CURRENCY) {
 			const [priceBNB] = await convertBUSDtoBNB(price);
 			setPrice(priceBNB);
 		} else {
