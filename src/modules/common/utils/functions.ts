@@ -60,7 +60,7 @@ export const convertTimeLine = (
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING) {
 		status = BUY;
-		statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 		timeCountDown = startTimeClaim - timestampNow;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
 		status = CLAIMABLE;

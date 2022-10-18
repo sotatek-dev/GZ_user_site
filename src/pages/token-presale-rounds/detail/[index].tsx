@@ -159,7 +159,10 @@ const TokenSaleRoundDetail = () => {
 		}
 		if (errorClaim) {
 			setOpenClaimPopup(false);
-			message.error('Transaction Rejected');
+			if (errorClaim?.error?.code === -32603) {
+				return message.error('Network Error!');
+			}
+			return message.error('Transaction Rejected');
 		}
 	};
 
