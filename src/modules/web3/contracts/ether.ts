@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, providers, utils } from 'ethers';
-import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import { Injected } from 'web3/connectors/injected';
 
@@ -65,18 +63,4 @@ export const getBalance = async (
 	const rawBalance = await (provider as any).getBalance(address);
 
 	return utils.formatUnits(rawBalance, unit);
-};
-
-export const getWeb3Instance = (window?: any) => {
-	if (typeof window === 'undefined') {
-		return null;
-	}
-	const { ethereum, web3 } = window;
-	if (ethereum && ethereum.isMetamask) {
-		return new Web3(ethereum);
-	}
-	if (web3) {
-		return new Web3(web3.currentProvider);
-	}
-	return null;
 };

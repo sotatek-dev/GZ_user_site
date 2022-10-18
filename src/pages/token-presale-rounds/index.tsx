@@ -3,7 +3,7 @@ import MyTable from 'common/components/table';
 import { CURRENCY, LIMIT_10, ROUTES } from 'common/constants/constants';
 import { convertTimeLine, formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination, Spin } from 'antd';
@@ -97,7 +97,7 @@ const TokenPresaleRound = () => {
 			title: 'Status',
 			dataIndex: 'current_status_timeline',
 			render: (currentStatusTimeline: string, record: ITokenSaleRoundState) => {
-				const timestampNow = moment().unix();
+				const timestampNow = dayjs().unix();
 				const { start_time, end_time } = get(
 					record,
 					'buy_time',
@@ -167,7 +167,7 @@ const TokenPresaleRound = () => {
 									_id,
 									claim_configs,
 								} = item;
-								const timestampNow = moment().unix();
+								const timestampNow = dayjs().unix();
 								const { start_time, end_time } = buy_time;
 								const { status } = convertTimeLine(
 									Number(start_time),

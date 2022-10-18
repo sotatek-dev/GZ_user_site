@@ -11,7 +11,7 @@ import {
 	UPCOMING,
 } from 'common/constants/constants';
 import { get, toNumber } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
@@ -86,14 +86,14 @@ export const convertTimeLine = (
 };
 
 export const convertTimeStampToDate = (date: number, formatDate?: string) => {
-	return moment.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
+	return dayjs.unix(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
 };
 
 export const convertMiliSecondTimestampToDate = (
 	date: number,
 	formatDate?: string
 ) => {
-	return moment(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
+	return dayjs(date).format(formatDate ? formatDate : 'MM-DD-YYYY HH:mm');
 };
 
 export const geMintPhaseType = (id: MINT_PHASE_ID): MINT_PHASE | void => {
