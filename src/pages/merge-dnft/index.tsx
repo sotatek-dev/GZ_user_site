@@ -384,7 +384,7 @@ const MergeDNFT = () => {
 				Temporary merge (immediately if permantly merge)
 			</div>
 			<div className='flex flex-col desktop:flex-row desktop:justify-start items-center justify-center gap-x-12 mt-6'>
-				<div>
+				<div className='w-full desktop:w-auto'>
 					<div className='relative w-full h-[350px] desktop:w-[345px] desktop:h-[345px]'>
 						{renderImages()}
 					</div>
