@@ -142,7 +142,7 @@ const ListDNFT = () => {
 						<div className='flex flex-col w-full gap-y-6 justify-end desktop:flex-row gap-x-2 ml-auto'>
 							<Dropdown
 								emptyOption='All species'
-								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] mr-4 ml-8'
+								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] mr-4 desktop:ml-8'
 								label={species}
 								title='All species'
 								list={SPECIES_DNFT}
