@@ -10,6 +10,7 @@ export interface IDNFT {
 	deleted_at: number;
 	random_at: string[];
 	email_notice_sent: boolean;
+	created_at: Date;
 }
 export interface IProperty {
 	value: string;
