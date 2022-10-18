@@ -237,6 +237,7 @@ export default function MyDNFT() {
 						<Dropdown
 							emptyOption='All statuses'
 							onClick={(value) => {
+								setPage(1);
 								setStatus(value.key);
 							}}
 							customStyle={'!w-1/2 desktop:!w-[160px]'}
@@ -247,6 +248,7 @@ export default function MyDNFT() {
 						<Dropdown
 							emptyOption='All types'
 							onClick={(value) => {
+								setPage(1);
 								setType(value.key);
 							}}
 							customStyle={'!w-1/2 desktop:!w-[160px]'}
@@ -342,7 +344,7 @@ export default function MyDNFT() {
 					})}
 				</div>
 				<div className='mt-[30px] w-[100%] flex justify-end'>
-					{dnfts && (
+					{dnfts && !!get(dnfts, 'data.length') && (
 						<Pagination
 							defaultCurrent={1}
 							pageSize={LIMIT_10}
