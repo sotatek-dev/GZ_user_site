@@ -40,6 +40,7 @@ import { setIsLoadingMint } from 'stores/mint-dnft';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
 import NftGroupImg from 'assets/imgs/nft-group.png';
 import Image from 'next/image';
+import dayjs from 'dayjs';
 
 const MintDNFT: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -81,14 +82,21 @@ const MintDNFT: React.FC = () => {
 		maxSaleAmount: maxSaleAmount = 0,
 		totalSold: totalSold = 0,
 		maxAmountUserCanBuy,
+		startTime,
 	} = runningPhase || {};
 	// price of selected token
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
+
 	const priceAfter =
 		token === TOKENS.BUSD
 			? priceAfter24Hours
 			: new BigNumber(priceAfter24Hours).div(rate);
+
+	const currentPrice =
+		startTime && dayjs().isAfter(dayjs.unix(startTime / 1000).add(1, 'day'))
+			? priceAfter
+			: price;
 	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
 
 	// mint validation
@@ -96,9 +104,9 @@ const MintDNFT: React.FC = () => {
 	const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
 	const haveEnoughBalance = () => {
 		if (token === TOKENS.BNB) {
-			return nativeBalance.gte(price);
+			return nativeBalance.gte(currentPrice);
 		} else if (token === TOKENS.BUSD) {
-			return busdBalance.gte(price);
+			return busdBalance.gte(currentPrice);
 		}
 		return false;
 	};
@@ -310,7 +318,7 @@ const MintDNFT: React.FC = () => {
 									'text-h6 font-bold desktop:text-h8 desktop:font-normal'
 								}
 							>
-								{formatBigNumber(price)} {token}
+								{formatBigNumber(currentPrice)} {token}
 							</div>
 							{new BigNumber(priceAfter).gt(0) && (
 								<Tooltip
