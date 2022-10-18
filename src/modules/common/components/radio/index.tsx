@@ -4,6 +4,7 @@ import { FC } from 'react';
 interface ICustomRadioProps {
 	onChange: (event: RadioChangeEvent) => void;
 	defaultValue: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	options: Array<any>;
 }
 

@@ -11,6 +11,13 @@ import LayoutHeader from './Header';
 
 const { Sider, Content } = Layout;
 
+interface ISider {
+	router: string;
+	icon: string;
+	title: string;
+	needLogin?: boolean;
+}
+
 export const LIST_SIDER = [
 	{
 		router: ROUTES.TOKEN_PRESALE_ROUNDS,
@@ -72,7 +79,7 @@ const DefaultLayout = ({ children, appProps }: any) => {
 					mode='inline'
 					defaultSelectedKeys={['4']}
 				>
-					{LIST_SIDER.map((sider: any) => {
+					{LIST_SIDER.map((sider: ISider) => {
 						const { router, icon, title, needLogin } = sider;
 						if (needLogin && !isLogin) {
 							return null;
