@@ -36,6 +36,8 @@ interface IInitImage {
 	zIndex: number | undefined;
 	specialOrderLayer: number | undefined;
 	value: string;
+	orderLayer: number | undefined;
+	valueDefault: string;
 	displayName: string;
 	type: string;
 	values: Array<{ label: string }>;
@@ -52,6 +54,7 @@ interface IProperty {
 		values: Array<string>;
 		valuesSpecialOrder: Array<string>;
 		displayName: string;
+		isRequired: boolean | undefined;
 	};
 }
 
@@ -74,6 +77,7 @@ const MergeDNFT = () => {
 		useState<boolean>(false);
 	const [isLoadingTemporaryMerge, setLoadingTemporaryMerge] =
 		useState<boolean>(false);
+	const [isDisableMerge, setDisableMerge] = useState<boolean>(false);
 
 	//state store
 	const { isLogin } = useSelector((state) => state.user);
@@ -84,14 +88,13 @@ const MergeDNFT = () => {
 		} as IParamsMergeRuleDFNT;
 		if (Array.isArray(listTokenId) && listTokenId?.length > 0) {
 			handleGetMergeRule(params);
-		} else {
-			//
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [listTokenId, isLogin]);
 
 	const handleInitListImage = (properties: IProperty) => {
 		const initListImage = [];
-		const furDefault = properties[PROPERTY.FUR]?.values[0] || '';
+		const valueDefault = properties[PROPERTY.FUR]?.values[0] || '';
 		for (const property in properties) {
 			const {
 				orderLayer,
@@ -102,6 +105,7 @@ const MergeDNFT = () => {
 				type,
 				specialOrderLayer,
 				displayName,
+				isRequired,
 			} = properties[property];
 			const convertValues = values.map((value: string) => {
 				return { label: value };
@@ -113,19 +117,18 @@ const MergeDNFT = () => {
 					  })
 					: [];
 			// init property fur và gloves
-			const value =
-				property === PROPERTY.FUR || property === PROPERTY.GLOVESDEFAULT
-					? furDefault
-					: '';
+			const value = property === PROPERTY.GLOVESDEFAULT ? valueDefault : '';
 			const result = {
 				zIndex: orderLayer ? orderLayer + 2 : orderLayer,
+				orderLayer: orderLayer ? orderLayer + 2 : orderLayer,
 				specialOrderLayer: specialOrderLayer
 					? Math.round(specialOrderLayer)
-					: specialOrderLayer,
+					: 0,
 				assetBase: asset,
 				extension,
 				propertyName: property,
 				value: value,
+				valueDefault: isRequired ? valueDefault : '',
 				type,
 				// property không có orderLayer thì là một thuộc tính thường, không phải ảnh
 				isAsset: orderLayer ? true : false,
@@ -135,7 +138,7 @@ const MergeDNFT = () => {
 			} as IInitImage;
 			initListImage.push(result);
 		}
-		return { initListImage, furDefault };
+		return { initListImage, valueDefault };
 	};
 
 	const handleGetMergeRule = async (params: IParamsMergeRuleDFNT) => {
@@ -161,7 +164,8 @@ const MergeDNFT = () => {
 		const { key } = event;
 		const initImagesClone = cloneDeep(initImages);
 		const newInitImages = initImagesClone.map((propertyImgae: IInitImage) => {
-			const { valuesSpecialOrder, zIndex, specialOrderLayer } = propertyImgae;
+			const { valuesSpecialOrder, specialOrderLayer, orderLayer } =
+				propertyImgae;
 			if (propertyImgae.propertyName === propertyName) {
 				const isValueSpecial =
 					valuesSpecialOrder.filter(
@@ -170,7 +174,7 @@ const MergeDNFT = () => {
 				return {
 					...propertyImgae,
 					value: key,
-					zIndex: isValueSpecial ? specialOrderLayer : zIndex,
+					zIndex: isValueSpecial ? specialOrderLayer : orderLayer,
 				};
 			}
 			return { ...propertyImgae };
@@ -209,6 +213,7 @@ const MergeDNFT = () => {
 			}
 			return messageAntd.error(message);
 		}
+		setDisableMerge(true);
 		// get merge tax(thuế setting trên admin)
 		const [mergeTax, errorGetMergeTax] = await getMergeTax();
 		console.log('mergeTax', mergeTax);
@@ -277,6 +282,7 @@ const MergeDNFT = () => {
 			return messageAntd.error(message);
 		}
 		if (data?.statusCode === STATUS_CODE.SUCCESS) {
+			setDisableMerge(true);
 			// get merge tax(thuế setting trên admin)
 			const [mergeTax, errorGetMergeTax] = await getMergeTax();
 			console.log('mergeTax', mergeTax);
@@ -333,17 +339,27 @@ const MergeDNFT = () => {
 
 	const renderImages = () => {
 		return initImages.map((property: IInitImage, index: number) => {
-			const { assetBase, extension, isAsset, propertyName, zIndex, value } =
-				property;
+			const {
+				assetBase,
+				extension,
+				isAsset,
+				propertyName,
+				zIndex,
+				value,
+				valueDefault,
+			} = property;
 			const linkImage = value ? `${assetBase}/${value}${extension}` : '';
+			const linkImageDefault = valueDefault
+				? `${assetBase}/${valueDefault}${extension}`
+				: '';
+			if (!isAsset || (!linkImage && !linkImageDefault)) return null;
 
-			if (!isAsset || !linkImage) return null;
 			return (
 				<Image
 					key={index}
 					className={`!absolute !inset-0 !w-[400px] !h-[400px]`}
 					layout='fill'
-					src={linkImage}
+					src={linkImage ? linkImage : linkImageDefault}
 					style={{ zIndex: `${zIndex}` }}
 					width='100%'
 					height='100%'
@@ -367,27 +383,31 @@ const MergeDNFT = () => {
 				Notice: choosen NFT will be burned after 30 days if you agree to
 				Temporary merge (immediately if permantly merge)
 			</div>
-			<div className='flex flex-col desktop:flex-row items-center justify-center gap-x-12 mt-6'>
+			<div className='flex flex-col desktop:flex-row desktop:justify-start items-center justify-center gap-x-12 mt-6'>
 				<div>
-					<div className='relative w-[252px] h-[252px] desktop:w-[400px] desktop:h-[400px]'>
+					<div className='relative w-full h-[350px] desktop:w-[345px] desktop:h-[345px]'>
 						{renderImages()}
 					</div>
 					<div className='hidden desktop:flex flex-col items-center gap-3 mt-8'>
 						<Button
+							isDisabled={isDisableMerge}
 							isLoading={isLoadingPermanentlyMerge}
 							onClick={handlePermanentlyMerge}
 							label='Permanently Merge'
+							colorIconLoading='#fff'
 							classCustom='bg-purple-20 !w-[350px] rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3'
 						/>
 						<Button
+							isDisabled={isDisableMerge}
 							isLoading={isLoadingTemporaryMerge}
 							onClick={handleTemporaryMerge}
 							label='Temporary Merge'
+							colorIconLoading='#D47AF5'
 							classCustom='bg-transparent hover:bg-transparent hover:text-purple-30 focus:bg-transparent shadow-none text-purple-30 !border-purple-30 !border-solid !border-2 !w-[350px] !rounded-[40px] !py-3'
 						/>
 					</div>
 				</div>
-				<div className='grid gap-x-12 gap-y-5 grid-cols-1 desktop:grid-cols-2 h-fit w-full mb-6 mb-24'>
+				<div className='grid gap-x-12 gap-y-5 grid-cols-1 desktop:grid-cols-2 desktop:max-w-[704px] h-fit w-full mb-6 mb-24'>
 					{initImages.map((property: IInitImage, index: number) => {
 						const { propertyName, values, value, displayName } = property;
 						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;
@@ -408,12 +428,14 @@ const MergeDNFT = () => {
 
 			<div className='desktop:hidden bg-[#0C1E32] w-[100vw] fixed flex items-center justify-center gap-x-3 px-4 py-2 bottom-0 left-0'>
 				<Button
+					isDisabled={isDisableMerge}
 					isLoading={isLoadingPermanentlyMerge}
 					onClick={handlePermanentlyMerge}
 					label='Permanently'
 					classCustom='bg-purple-20 !w-[150px] rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3'
 				/>
 				<Button
+					isDisabled={isDisableMerge}
 					isLoading={isLoadingTemporaryMerge}
 					onClick={handleTemporaryMerge}
 					label='Temporary'

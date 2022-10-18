@@ -14,6 +14,7 @@ type Props = {
 	ghost?: boolean;
 	isLoading?: boolean;
 	styles?: object;
+	colorIconLoading?: string;
 };
 
 const Button = (props: Props) => {
@@ -26,6 +27,7 @@ const Button = (props: Props) => {
 		isLoading = false,
 		classCustom,
 		styles,
+		colorIconLoading = '#212325',
 	} = props;
 
 	const antIcon = (
@@ -33,8 +35,8 @@ const Button = (props: Props) => {
 			style={{
 				fontSize: 18,
 				fontWeight: 900,
-				color: '#212325',
-				marginRight: '5px',
+				color: colorIconLoading,
+				marginRight: '10px',
 			}}
 			spin
 		/>

@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { CheckCircleOutlined } from '@ant-design/icons';
 
 import { getDetailDNFT } from 'apis/mergeDnft';
 import { get } from 'lodash';
@@ -43,38 +42,45 @@ const MergeDNFTDetail = () => {
 	};
 	return (
 		<div>
-			<div className='bg-[#00d26133] px-4 py-3 flex items-center'>
-				<CheckCircleOutlined twoToneColor='#00D261' className='mr-3' />
-				<div className='text-sm font-normal text-[#00D261]'>
+			<div className='bg-[#00d26133] px-4 py-3 flex items-center rounded-[5px]'>
+				<Image
+					src='/icons/CheckCircleOutlined.svg'
+					width={20}
+					height={20}
+					layout='fixed'
+					alt='CheckCircleOutlined'
+				/>
+				<div className='rounded-[5px] text-sm font-normal text-[#00D261] ml-3'>
 					Congratulation, you got a new NFT
 				</div>
 			</div>
-			<div className='flex flex-col desktop:flex-row justify-center gap-x-12 mt-8'>
-				<div className='!w-[252px] !h-[252px] desktop:!w-[600px] desktop:!h-[600px]'>
+			<div className='flex flex-col desktop:flex-row desktop:justify-start justify-center gap-x-12 mt-8'>
+				<div className='mb-6 !w-full !h-[312px] desktop:!w-[345px] desktop:!h-[345px] desktop:mb-0 flex !justify-center !items-center'>
 					<Image
 						src={imageDNFT}
-						width='600px'
-						height='600px'
+						width='252px'
+						height='252px'
 						alt='dnft'
 						objectFit='fill'
 					/>
 				</div>
-				<div className='grid grid-cols-1 desktop:grid-cols-2 gap-[20px] h-fit w-full'>
-					{Object.keys(attributes).map((attribute: string, index) => {
-						const value = attributes[attribute];
-						if (value === 0) return null;
+				<div className='grid grid-cols-1 desktop:grid-cols-2 desktop:gap-x-[50px] gap-[20px] h-fit desktop:w-[690px]'>
+					{attributes &&
+						Object.keys(attributes).map((attribute: string, index) => {
+							const value = attributes[attribute];
+							if (value === 0) return null;
 
-						return (
-							<div key={index}>
-								<div className='text-gray-40 text-base mb-2'>
-									{ATTRIBUTES[attribute]}
+							return (
+								<div key={index}>
+									<div className='text-gray-40 text-base mb-2'>
+										{ATTRIBUTES[attribute]}
+									</div>
+									<div className='flex justify-start items-center	px-4 py-2 rounded-md border-2 border-[#ffffff33] w-full h-[47px] desktop:max-w-[320px]'>
+										{value}
+									</div>
 								</div>
-								<div className='px-4 py-2 rounded-md border-2 border-[#ffffff33] w-full desktop:w-[320px]'>
-									{value}
-								</div>
-							</div>
-						);
-					})}
+							);
+						})}
 				</div>
 			</div>
 		</div>
