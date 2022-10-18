@@ -50,6 +50,8 @@ export default function MyDNFT() {
 	);
 	const router = useRouter();
 
+	const [loadingMap, setLoadingMap] = useState({});
+
 	useEffect(() => {
 		if (isLogin) {
 			handleGetDNFTs();
@@ -93,7 +95,7 @@ export default function MyDNFT() {
 				claimable_date: dayjs.unix(claimable_date).format('DD-MMMM-YYYY HH:mm'),
 				onClick: () => {
 					if (cloneItem.status === 'claimable') {
-						handleClaim();
+						handleClaim(cloneItem._id);
 					} else if (cloneItem.status === 'wait-to-merge') {
 						handleUnmerge(cloneItem._id);
 					}
@@ -103,38 +105,43 @@ export default function MyDNFT() {
 	}, [dnfts, claimableTime]);
 
 	const handleUnmerge = async (sessionId: string) => {
-		if (!allowanceAmount) {
-			await tryApproval(true)
-				.then(() => {
-					message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
-				})
-				.catch(() => {
-					message.error(myProfileConstants.TRANSACTION_REJECTED);
-				});
-		}
-		const res = await getDNFTSignature(sessionId);
-		const { session_id, signature, token_ids, time_stamp } = get(
-			res,
-			'data.data'
-		);
+		try {
+			setLoadingMap({ [sessionId]: true });
+			if (!allowanceAmount) {
+				await tryApproval(true)
+					.then(() => {
+						message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
+					})
+					.catch(() => {
+						message.error(myProfileConstants.TRANSACTION_REJECTED);
+					});
+			}
+			const res = await getDNFTSignature(sessionId);
+			const { session_id, signature, token_ids, time_stamp } = get(
+				res,
+				'data.data'
+			);
 
-		await dnftContract
-			?.cancelTemporaryMerge(token_ids, time_stamp, session_id, signature)
-			.then((res) => {
-				return res.wait();
-			})
-			.then((res) => {
-				message.success({
-					content: myProfileConstants.TRANSACTION_COMPLETED,
-					onClick: () => {
-						window.open(getExploreTxLink(res.transactionHash), '_blank');
-					},
+			await dnftContract
+				?.cancelTemporaryMerge(token_ids, time_stamp, session_id, signature)
+				.then((res) => {
+					return res.wait();
+				})
+				.then((res) => {
+					message.success({
+						content: myProfileConstants.TRANSACTION_COMPLETED,
+						onClick: () => {
+							window.open(getExploreTxLink(res.transactionHash), '_blank');
+						},
+					});
+					handleGetDNFTs();
+				})
+				.catch((err) => {
+					handleClaimError(err);
 				});
-				handleGetDNFTs();
-			})
-			.catch((err) => {
-				handleClaimError(err);
-			});
+		} finally {
+			setLoadingMap({});
+		}
 	};
 
 	const handleGetClaimableTime = async () => {
@@ -151,47 +158,57 @@ export default function MyDNFT() {
 		}
 	};
 
-	const handleClaim = async () => {
-		if (dnftContract) {
-			await dnftContract
-				.claimPurchasedToken(1)
-				.then((res) => {
-					return res.wait();
-				})
-				.then((res) => {
-					message.success({
-						content: myProfileConstants.TRANSACTION_COMPLETED,
-						onClick: () => {
-							window.open(getExploreTxLink(res.transactionHash));
-						},
+	const handleClaim = async (id: string) => {
+		try {
+			setLoadingMap({ [id]: true });
+			if (dnftContract) {
+				await dnftContract
+					.claimPurchasedToken(1)
+					.then((res) => {
+						return res.wait();
+					})
+					.then((res) => {
+						message.success({
+							content: myProfileConstants.TRANSACTION_COMPLETED,
+							onClick: () => {
+								window.open(getExploreTxLink(res.transactionHash));
+							},
+						});
+						Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
+					})
+					.catch((err) => {
+						handleClaimError(err);
 					});
-					Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
-				})
-				.catch((err) => {
-					handleClaimError(err);
-				});
+			}
+		} finally {
+			setLoadingMap({});
 		}
 	};
 
 	const handleClaimAll = async (amount: number) => {
-		if (dnftContract) {
-			await dnftContract
-				.claimPurchasedToken(amount)
-				.then((res) => {
-					return res.wait();
-				})
-				.then((res) => {
-					message.success({
-						content: myProfileConstants.TRANSACTION_COMPLETED,
-						onClick: () => {
-							window.open(getExploreTxLink(res.transactionHash));
-						},
+		try {
+			setLoadingMap({ claimAll: true });
+			if (dnftContract) {
+				await dnftContract
+					.claimPurchasedToken(amount)
+					.then((res) => {
+						return res.wait();
+					})
+					.then((res) => {
+						message.success({
+							content: myProfileConstants.TRANSACTION_COMPLETED,
+							onClick: () => {
+								window.open(getExploreTxLink(res.transactionHash));
+							},
+						});
+						Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
+					})
+					.catch((err) => {
+						handleClaimError(err);
 					});
-					Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
-				})
-				.catch((err) => {
-					handleClaimError(err);
-				});
+			}
+		} finally {
+			setLoadingMap({});
 		}
 	};
 
@@ -217,18 +234,73 @@ export default function MyDNFT() {
 		}/tx/${hash}`;
 	};
 
+	const columns = [
+		{
+			title: 'Species',
+			dataIndex: 'species',
+			render: (Species: string) => {
+				return <div>{Species}</div>;
+			},
+			width: '30%',
+		},
+		{
+			title: 'Rarity',
+			dataIndex: 'rank_level',
+			render: (Rarity: string) => {
+				return <div>{Rarity}</div>;
+			},
+			width: '30%',
+		},
+		{
+			title: 'Claimable date',
+			dataIndex: 'claimable_date',
+			render: (Claimable_date: string) => {
+				return <div>{Claimable_date}</div>;
+			},
+			width: '30%',
+		},
+		{
+			render: (record: any) => {
+				const statusMap = get(DNFTStatusMap, record.status);
+				const isLoading = get(loadingMap, record._id);
+				const isClaimingAll = get(loadingMap, 'claimAll');
+				return (
+					<button
+						disabled={get(statusMap, 'disabled') || isLoading || isClaimingAll}
+						onClick={(e) => {
+							e.stopPropagation();
+							record.onClick();
+						}}
+						className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
+					>
+						{isLoading ? (
+							<Spin
+								size='small'
+								style={{
+									color: '#D47AF5',
+								}}
+							/>
+						) : (
+							get(statusMap, `title`)
+						)}
+					</button>
+				);
+			},
+		},
+	];
+
 	return (
 		<BoxPool>
 			<div className={'flex justify-between items-start mb-3'}>
 				<h5 className={`text-h6 font-semibold text-white`}>My dNFT</h5>
 				<button
-					disabled={!dnft_claimable_count}
+					disabled={!dnft_claimable_count || get(loadingMap, 'claimAll')}
 					onClick={() => handleClaimAll(dnft_claimable_count)}
 					className={
-						'desktop:hidden text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
+						'desktop:hidden text-h8 text-white rounded-[40px] py-2 border-[2px] border-white/[0.3] min-w-[7.125rem]'
 					}
 				>
-					Claim all
+					{get(loadingMap, 'claimAll') ? <Spin size='small' /> : 'Claim all'}
 				</button>
 			</div>
 			<hr className={'border-t border-blue-20/[0.1]'} />
@@ -263,13 +335,13 @@ export default function MyDNFT() {
 						/>
 					</div>
 					<button
-						disabled={!dnft_claimable_count}
+						disabled={!dnft_claimable_count || get(loadingMap, 'claimAll')}
 						onClick={() => handleClaimAll(dnft_claimable_count)}
 						className={
-							'hidden desktop:block text-h8 text-white rounded-[40px] px-7 py-2 border-[2px] border-white/[0.3]'
+							'hidden desktop:block text-h8 text-white rounded-[40px]  py-2 border-[2px] border-white/[0.3] min-w-[7.125rem]'
 						}
 					>
-						Claim all
+						{get(loadingMap, 'claimAll') ? <Spin size='small' /> : 'Claim all'}
 					</button>
 				</div>
 
@@ -298,6 +370,8 @@ export default function MyDNFT() {
 				<div className={'desktop:hidden'}>
 					{mutantDNFTs.map((value, item) => {
 						const statusMap = get(DNFTStatusMap, value.status);
+						const isLoading = get(loadingMap, value._id);
+						const isClaimingAll = get(loadingMap, 'claimAll');
 						return (
 							<div
 								className={'flex flex-col gap-6 mb-6'}
@@ -310,14 +384,16 @@ export default function MyDNFT() {
 							>
 								<hr className={'border-t border-white/[0.07]'} />
 								<button
-									disabled={get(statusMap, 'disabled')}
+									disabled={
+										get(statusMap, 'disabled') || isLoading || isClaimingAll
+									}
 									onClick={(e) => {
 										e.stopPropagation();
 										value.onClick();
 									}}
 									className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
 								>
-									{get(statusMap, `title`)}
+									{isLoading ? <Spin size='small' /> : get(statusMap, `title`)}
 								</button>
 
 								<div className={'flex justify-between items-center'}>
@@ -368,47 +444,3 @@ export default function MyDNFT() {
 		</BoxPool>
 	);
 }
-
-const columns = [
-	{
-		title: 'Species',
-		dataIndex: 'species',
-		render: (Species: string) => {
-			return <div>{Species}</div>;
-		},
-		width: '30%',
-	},
-	{
-		title: 'Rarity',
-		dataIndex: 'rank_level',
-		render: (Rarity: string) => {
-			return <div>{Rarity}</div>;
-		},
-		width: '30%',
-	},
-	{
-		title: 'Claimable date',
-		dataIndex: 'claimable_date',
-		render: (Claimable_date: string) => {
-			return <div>{Claimable_date}</div>;
-		},
-		width: '30%',
-	},
-	{
-		render: (record: any) => {
-			const statusMap = get(DNFTStatusMap, record.status);
-			return (
-				<button
-					disabled={get(statusMap, 'disabled')}
-					onClick={(e) => {
-						e.stopPropagation();
-						record.onClick();
-					}}
-					className='text-[#D47AF5] disabled:text-white/[.3] justify-center font-semibold rounded-[40px] !min-w-[100px]  py-[7px] border-[2px] border-[#D47AF5] disabled:border-[#2B3A51] disabled:bg-[#2B3A51] flex ml-auto'
-				>
-					{get(statusMap, `title`)}
-				</button>
-			);
-		},
-	},
-];
