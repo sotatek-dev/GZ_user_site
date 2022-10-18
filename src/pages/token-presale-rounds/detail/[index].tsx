@@ -129,15 +129,18 @@ const TokenSaleRoundDetail = () => {
 			return setLoading(false);
 		}
 		const detailSaleRound = get(data, 'data', {});
-		const { claim_configs, current_status_timeline } = detailSaleRound;
+		const { claim_configs, current_status_timeline, sale_round } =
+			detailSaleRound;
 		const { start_time, end_time } = get(detailSaleRound, 'buy_time');
 		const timestampNow = dayjs().unix();
-		const { status, timeCountDown, startTimeClaim } = convertTimeLine(
+		const { status, timeCountDown, startTimeClaim } = await convertTimeLine(
 			Number(start_time),
 			Number(end_time),
 			timestampNow,
 			current_status_timeline,
-			claim_configs
+			claim_configs,
+			addressWallet,
+			sale_round
 		);
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
 
