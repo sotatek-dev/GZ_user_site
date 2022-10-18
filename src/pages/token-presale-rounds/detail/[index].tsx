@@ -35,7 +35,7 @@ import {
 } from 'common/utils/functions';
 import { get, isEmpty } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -131,7 +131,7 @@ const TokenSaleRoundDetail = () => {
 		const detailSaleRound = get(data, 'data', {});
 		const { claim_configs, current_status_timeline } = detailSaleRound;
 		const { start_time, end_time } = get(detailSaleRound, 'buy_time');
-		const timestampNow = moment().unix();
+		const timestampNow = dayjs().unix();
 		const { status, timeCountDown, startTimeClaim } = convertTimeLine(
 			Number(start_time),
 			Number(end_time),
@@ -213,7 +213,7 @@ const TokenSaleRoundDetail = () => {
 	}, [detailSaleRound, statusTimeLine, addressWallet, index]);
 
 	const getClaimableAmount = async (address: string, saleRoundId: number) => {
-		const timestampNow = moment().unix();
+		const timestampNow = dayjs().unix();
 		const claimConfigs = get(
 			detailSaleRound,
 			'claim_configs',
