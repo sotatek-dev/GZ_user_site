@@ -1,4 +1,3 @@
-import 'antd/dist/antd.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import 'styles/globals.scss';
 import 'styles/index.scss';
@@ -12,7 +11,7 @@ import DefaultLayout from 'common/layouts';
 import { Provider } from 'react-redux';
 import store from 'stores';
 import { AuthProvider } from 'web3/contexts/authContext';
-import HeadCommon from 'common/components/head';
+import DocumentHead from 'common/components/head';
 import { HelmetProvider } from 'react-helmet-async';
 import BigNumber from 'bignumber.js';
 
@@ -33,7 +32,7 @@ BigNumber.config({
 function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 	return (
 		<>
-			<HeadCommon title='Galactix Zone' />
+			<DocumentHead title='Galactix Zone' />
 			<QueryClientProvider client={queryClient}>
 				<Web3ReactProvider getLibrary={getLibrary}>
 					<Provider store={store}>

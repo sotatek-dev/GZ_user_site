@@ -1,5 +1,6 @@
 import Head from 'next/head';
-const HeadCommon = ({ title }: { title: string }) => {
+
+const DocumentHead = ({ title }: { title: string }) => {
 	return (
 		<Head>
 			<title>{title}</title>
@@ -9,6 +10,7 @@ const HeadCommon = ({ title }: { title: string }) => {
 				content='Turn your products, arts or services into publicly tradable items'
 				data-rh='true'
 			/>
+			<meta name='viewport' content='viewport-fit=cover' />
 			<meta property='google:app_id' content={title} />
 			<meta name='keywords' content='nextjs, realworld' />
 			<meta name='author' content={title} />
@@ -102,4 +104,4 @@ const HeadCommon = ({ title }: { title: string }) => {
 		</Head>
 	);
 };
-export default HeadCommon;
+export default DocumentHead;
