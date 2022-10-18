@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination, Spin } from 'antd';
 import HelmetCommon from 'common/components/helmet';
-
+import { useSelector } from 'react-redux';
 export const buyTimeDefault = {
 	start_time: 0,
 	end_time: 0,
@@ -41,6 +41,7 @@ export interface ITokenSaleRoundState {
 	};
 	updated_at: Date;
 	_id: string;
+	statusListSaleRound: string;
 }
 
 const TokenPresaleRound = () => {
@@ -51,6 +52,7 @@ const TokenPresaleRound = () => {
 	>([]);
 	const [totalPage, setTotalPage] = useState<number>(0);
 	const [isLoading, setLoading] = useState<boolean>(false);
+	const { addressWallet } = useSelector((state) => state.wallet);
 
 	useEffect(() => {
 		if (perPage !== 0) {
@@ -58,6 +60,28 @@ const TokenPresaleRound = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [perPage]);
+
+	const handleConvertListTokenSaleRound = async (resultTokenSaleRound: any) => {
+		const result = [];
+		for await (const saleRound of resultTokenSaleRound) {
+			const timestampNow = dayjs().unix();
+			const { claim_configs, sale_round, current_status_timeline, buy_time } =
+				saleRound;
+			const { start_time, end_time } = buy_time;
+			const { statusListSaleRound } = await convertTimeLine(
+				Number(start_time),
+				Number(end_time),
+				timestampNow,
+				current_status_timeline,
+				claim_configs,
+				addressWallet,
+				sale_round
+			);
+			const newSaleRound = { ...saleRound, statusListSaleRound };
+			result.push(newSaleRound);
+		}
+		setListTokenSaleRound(result);
+	};
 
 	const getListTokenSaleRounds = async () => {
 		setLoading(true);
@@ -74,7 +98,7 @@ const TokenPresaleRound = () => {
 			const resultTokenSaleRound = get(data, 'data.list', []);
 			const totalPage = get(data, 'data.pagination.total', 0);
 			setTotalPage(totalPage);
-			setListTokenSaleRound(resultTokenSaleRound);
+			handleConvertListTokenSaleRound(resultTokenSaleRound);
 		}
 	};
 
@@ -95,22 +119,8 @@ const TokenPresaleRound = () => {
 		},
 		{
 			title: 'Status',
-			dataIndex: 'current_status_timeline',
-			render: (currentStatusTimeline: string, record: ITokenSaleRoundState) => {
-				const timestampNow = dayjs().unix();
-				const { start_time, end_time } = get(
-					record,
-					'buy_time',
-					buyTimeDefault
-				);
-				const { claim_configs } = record;
-				const { statusListSaleRound } = convertTimeLine(
-					Number(start_time),
-					Number(end_time),
-					timestampNow,
-					currentStatusTimeline,
-					claim_configs
-				);
+			dataIndex: 'statusListSaleRound',
+			render: (statusListSaleRound: string) => {
 				return <div>{statusListSaleRound}</div>;
 			},
 		},
@@ -161,21 +171,10 @@ const TokenPresaleRound = () => {
 						{listTokenSaleRound.map(
 							(item: ITokenSaleRoundState, index: number) => {
 								const {
-									current_status_timeline: currentStatusTimeline,
-									buy_time,
 									exchange_rate: exchangeRate,
 									_id,
-									claim_configs,
+									statusListSaleRound,
 								} = item;
-								const timestampNow = dayjs().unix();
-								const { start_time, end_time } = buy_time;
-								const { status } = convertTimeLine(
-									Number(start_time),
-									Number(end_time),
-									timestampNow,
-									currentStatusTimeline,
-									claim_configs
-								);
 
 								return (
 									<>
@@ -206,7 +205,7 @@ const TokenPresaleRound = () => {
 													Status
 												</div>
 												<div className={'text-h8 font-bold text-white'}>
-													{status}
+													{statusListSaleRound}
 												</div>
 											</div>
 										</div>

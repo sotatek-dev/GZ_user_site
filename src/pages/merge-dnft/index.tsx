@@ -183,13 +183,15 @@ const MergeDNFT = () => {
 	};
 
 	const handleConvertPropertyWhenPush = (initImages: Array<IInitImage>) => {
-		return initImages.reduce(
-			(obj, item) =>
-				Object.assign(obj, {
-					[item.propertyName]: { type: item.type, value: item.value },
-				}),
-			{}
-		);
+		return initImages.reduce((obj, item) => {
+			if (item.value && !item.propertyName.includes('Default')) {
+				return {
+					...obj,
+					[item.propertyName]: { value: item.value, type: item.type },
+				};
+			}
+			return { ...obj };
+		}, {});
 	};
 
 	const handlePermanentlyMerge = async () => {
