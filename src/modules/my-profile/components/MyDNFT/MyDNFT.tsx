@@ -83,9 +83,14 @@ export default function MyDNFT() {
 				cloneItem.rank_level = 'TBA';
 			}
 
+			let claimable_date = claimableTime;
+			if (cloneItem.status === 'wait-to-merge') {
+				claimable_date = dayjs(cloneItem.created_at).add(30, 'day').unix();
+			}
+
 			return {
 				...cloneItem,
-				claimable_date: dayjs.unix(claimableTime).format('DD-MMMM-YYYY HH:mm'),
+				claimable_date: dayjs.unix(claimable_date).format('DD-MMMM-YYYY HH:mm'),
 				onClick: () => {
 					if (cloneItem.status === 'claimable') {
 						handleClaim();
