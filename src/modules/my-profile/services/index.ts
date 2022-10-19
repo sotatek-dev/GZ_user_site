@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import axiosInstance from 'apis/config';
 import BigNumber from 'bignumber.js';
+import { formatEther } from 'ethers/lib/utils';
 import { AbiKeynft } from 'web3/abis/types';
 
 export async function copyToClipboard(text: string) {
@@ -16,13 +17,23 @@ export const getSignature = async () => {
 		.catch((error) => [null, error]);
 };
 
-export const getBnb2BusdRate = async (dKeyNFTContract: AbiKeynft | null) => {
+export const getBusb2Bnb = async (
+	dKeyNFTContract: AbiKeynft | null,
+	busdVal: BigNumber.Value
+) => {
 	if (!dKeyNFTContract) {
 		return null;
 	}
 
-	const ONE_BUSD = new BigNumber(1e18).toString();
-	const bnbAmount = await dKeyNFTContract.convertBUSDToBNB(ONE_BUSD);
+	const bnbAmount = await dKeyNFTContract.convertBUSDToBNB(busdVal.toString());
+	return new BigNumber(bnbAmount.toString());
+};
 
-	return new BigNumber(bnbAmount.toString()).div(ONE_BUSD);
+export const getKeyPriceBusd = async (dKeyNFTContract: AbiKeynft | null) => {
+	if (!dKeyNFTContract) {
+		return null;
+	}
+
+	const bnbAmount = await dKeyNFTContract.keyPrice();
+	return new BigNumber(formatEther(bnbAmount));
 };

@@ -8,13 +8,13 @@ export const setSystemSettingStore = (store: Store) => {
 };
 
 export interface ISystemSetting {
-	key_price: number;
 	rescure_price: number;
 	treasury_address: string;
 	mint_days: number;
 }
 interface initialStateProps {
 	systemSetting?: ISystemSetting;
+	keyPriceBusd?: BigNumber;
 	busd2Bnb?: BigNumber;
 }
 
@@ -38,6 +38,12 @@ const systemSettingStore = createSlice({
 				busd2Bnb: action.payload,
 			};
 		},
+		setKeyPriceBusd: (state, action: PayloadAction<BigNumber | undefined>) => {
+			return {
+				...state,
+				keyPriceBusd: action.payload,
+			};
+		},
 	},
 });
 
@@ -46,7 +52,7 @@ export const dispatchSetSystemSettings = (setting?: ISystemSetting) => {
 		customStore.dispatch(systemSettingStore.actions.setSystemSettings(setting));
 };
 
-export const { setSystemSettings, setBusd2BnbRate } =
+export const { setSystemSettings, setBusd2BnbRate, setKeyPriceBusd } =
 	systemSettingStore.actions;
 
 export { systemSettingStore };

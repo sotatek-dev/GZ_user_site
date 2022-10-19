@@ -27,7 +27,7 @@ export default function BuyInfo() {
 	// BUSD balance
 	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
 	const bnbBalance = useNativeBalance();
-	const { systemSetting, busd2Bnb } = useAppSelector(
+	const { systemSetting, busd2Bnb, keyPriceBusd } = useAppSelector(
 		(state) => state.systemSetting
 	);
 	const { buyDKeyNFT, isBuyDNFT } = useBuyDKeyNFT();
@@ -38,7 +38,7 @@ export default function BuyInfo() {
 
 	const handleBuyKey = async () => {
 		await buyDKeyNFT({
-			keyPrice: systemSetting?.key_price,
+			keyPrice: keyPriceBusd?.toNumber(),
 			token2Buy: tokenCode,
 		});
 		dispatch(getMyProfileRD(keynftContract));
@@ -61,11 +61,13 @@ export default function BuyInfo() {
 		let isEnoughRoyalty = false;
 
 		if (tokenCode === Token2Buy.BUSD) {
-			isEnoughRoyalty = +busdBalance >= systemSetting.key_price * 1.08;
+			isEnoughRoyalty =
+				!!keyPriceBusd && keyPriceBusd.times(1.08).lte(busdBalance);
 		}
 
 		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
-			isEnoughRoyalty = +busdBalance >= systemSetting.key_price * 0.08;
+			isEnoughRoyalty =
+				!!keyPriceBusd && keyPriceBusd.times(0.08).lte(busdBalance);
 		}
 
 		if (!isEnoughRoyalty) {
@@ -74,12 +76,12 @@ export default function BuyInfo() {
 
 		let isEnoughBalance = false;
 		if (tokenCode === Token2Buy.BUSD) {
-			isEnoughBalance = +busdBalance >= systemSetting.key_price;
+			isEnoughBalance = !!keyPriceBusd && keyPriceBusd.lte(busdBalance);
 		}
 
 		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
 			isEnoughBalance =
-				+bnbBalance >= busd2Bnb.times(systemSetting.key_price).toNumber();
+				!!keyPriceBusd && busd2Bnb.times(keyPriceBusd).lte(bnbBalance);
 		}
 
 		if (!isEnoughBalance) {
@@ -95,6 +97,7 @@ export default function BuyInfo() {
 		busd2Bnb,
 		dnft_holding_count,
 		bnbBalance,
+		keyPriceBusd,
 	]);
 
 	const { inTimeBuyKey, secondsRemain } = useMemo(() => {
@@ -124,17 +127,13 @@ export default function BuyInfo() {
 
 	const getPrice = () => {
 		if (tokenCode === Token2Buy.BUSD) {
-			return systemSetting?.key_price;
+			return keyPriceBusd;
 		}
 
-		return (
-			busd2Bnb &&
-			systemSetting &&
-			busd2Bnb.times(systemSetting.key_price).toNumber()
-		);
+		return busd2Bnb && keyPriceBusd && busd2Bnb.times(keyPriceBusd);
 	};
 
-	const price = getPrice();
+	const price = getPrice()?.toNumber();
 
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>
