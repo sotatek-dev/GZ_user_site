@@ -25,6 +25,8 @@ export const useBuyDKeyNFT = () => {
 					message.success(myProfileConstants.TRANSACTION_COMPLETED);
 				})
 				.catch((err) => {
+					console.log({ err });
+
 					handleBuyInfoError(err);
 				});
 		} finally {

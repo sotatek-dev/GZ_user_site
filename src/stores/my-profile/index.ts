@@ -7,8 +7,12 @@ import {
 import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/my-profile';
 import { get } from 'lodash';
 import { IDNFT } from 'modules/my-profile/interfaces';
-import { getBnb2BusdRate } from 'modules/my-profile/services';
-import { setSystemSettings, setBusd2BnbRate } from 'stores/system-setting';
+import { getBusb2Bnb, getKeyPriceBusd } from 'modules/my-profile/services';
+import {
+	setSystemSettings,
+	setBusd2BnbRate,
+	setKeyPriceBusd,
+} from 'stores/system-setting';
 import { AbiKeynft } from 'web3/abis/types';
 
 let customStore: Store | undefined;
@@ -162,16 +166,18 @@ export const getMyProfileRD = createAsyncThunk(
 	'profile/getMyProfile',
 	async (keyNftContract: AbiKeynft | null, { rejectWithValue, dispatch }) => {
 		try {
-			const [profile, rate] = await Promise.all([
+			const [profileRes, rate, keyPrice] = await Promise.all([
 				getMyProfile(),
-				getBnb2BusdRate(keyNftContract),
+				getBusb2Bnb(keyNftContract, 1e18),
+				getKeyPriceBusd(keyNftContract),
 			]);
 
-			const data = get(profile, 'data.data', {});
+			const data = get(profileRes, 'data.data', {});
 			dispatch(setSystemSettings(data.system_setting));
-			dispatch(setBusd2BnbRate(rate ?? undefined));
+			dispatch(setBusd2BnbRate(rate?.div(1e18) ?? undefined));
+			dispatch(setKeyPriceBusd(keyPrice ?? undefined));
 			return data;
-		} catch (error: any) {
+		} catch (error) {
 			return rejectWithValue(error);
 		}
 	}
