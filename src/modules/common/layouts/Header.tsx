@@ -1,5 +1,5 @@
 import { Layout, Button, Dropdown, Menu } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import ConnectWallet from 'wallet/connect/ConnectWallet';
 import {
@@ -11,14 +11,17 @@ import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { EllipsisMiddle } from 'common/utils/functions';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import { useSelector } from 'react-redux';
-import Image from 'next/image';
 import { LIST_SIDER } from 'common/layouts/index';
+import { useRouter } from 'next/router';
+import { ROUTES } from 'common/constants/constants';
 import Link from 'next/link';
+import Image from 'next/image';
 import ImageBase from 'common/components/imageBase';
 
 const { Header } = Layout;
 
 const LayoutHeader = () => {
+	const router = useRouter();
 	const { account, active } = useActiveWeb3React();
 	const [currency, setCurrency] = useState();
 	const { disconnectWallet } = useConnectWallet();
@@ -32,6 +35,13 @@ const LayoutHeader = () => {
 		const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
 		setCurrency(networkName);
 	}, [account, active, isLogin]);
+
+	const isActivateSideBar: string[] = useMemo((): string[] => {
+		setOpenMobileNav(false);
+		if (router.pathname.includes(ROUTES.MERGE_DNFT)) return [ROUTES.LIST_DNFT];
+		if (router.pathname.includes(ROUTES.NFT_DETAIL)) return [ROUTES.MY_PROFILE];
+		return [router.pathname];
+	}, [router]);
 
 	const menu = (
 		<Menu className='remove-ant-menu'>
@@ -160,6 +170,7 @@ const LayoutHeader = () => {
 						theme='dark'
 						className={'!bg-black-10 grow'}
 						mode='inline'
+						selectedKeys={isActivateSideBar}
 						defaultSelectedKeys={['4']}
 					>
 						{LIST_SIDER.map((sider: any) => {

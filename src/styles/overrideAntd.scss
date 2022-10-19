@@ -512,3 +512,7 @@
 .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder:hover > td {
 	background: transparent !important;
 }
+#siderbar-desktop .ant-menu-title-content {
+	margin-left: 0;
+	text-overflow: unset;
+}
