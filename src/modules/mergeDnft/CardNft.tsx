@@ -18,7 +18,7 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 			onClick={!is_locked ? (event) => SelectNft(event, index) : () => {}}
 			className={`${
 				isChecked && 'outer-card-nft'
-			} flex justify-center items-center w-[252px] h-[252px] bugfix/token-sale-round relative ${
+			} flex justify-center items-center desktop:w-[252px] desktop:h-[252px] w-[166px] h-[166px] relative ${
 				!is_locked && 'cursor-pointer'
 			} 
 			}`}

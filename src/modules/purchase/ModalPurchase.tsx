@@ -115,8 +115,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
 				if (error) {
 					setLoading(false);
-					message.error('Transaction Rejected');
-					return;
+					if (error?.error?.code === -32603) {
+						return message.error('Network Error!');
+					}
+					return message.error('Transaction Rejected');
 				}
 				await res.wait();
 			}
@@ -137,7 +139,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 			if (errorBuyWithBUSD) {
 				setLoading(false);
-				message.error('Transaction Rejected');
+				if (errorBuyWithBUSD?.error?.code === -32603) {
+					return message.error('Network Error!');
+				}
+				return message.error('Transaction Rejected');
 			}
 		} else {
 			const [resBuyWithBNB, errorBuyWithBNB] = await buyTokenWithExactlyBNB(
@@ -155,7 +160,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 			if (errorBuyWithBNB) {
 				setLoading(false);
-				message.error('Transaction Rejected');
+				if (errorBuyWithBNB?.error?.code === -32603) {
+					return message.error('Network Error!');
+				}
+				return message.error('Transaction Rejected');
 			}
 		}
 	};
@@ -163,31 +171,29 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const validateToken = async (_: any, value: string) => {
 		const amount = Number(value);
 		const { busdBalance, bnbBalance } = balance;
-		let royaltyFee = (amount * ROYALTY_FEE_PURCHASE) as number;
+		const royaltyFee = (amount * ROYALTY_FEE_PURCHASE) as number;
 		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
 		let buyLimit = buyLimitBUSD;
 		const amountOfTokensPurchased = youBought * exchangeRate;
 		if (currency === BNB_CURRENCY) {
 			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
-			const [royaltyFeeBNB] = await convertBUSDtoBNB(royaltyFee);
 			buyLimit = buyLimitBNB;
-			royaltyFee = royaltyFeeBNB;
 		}
 
 		if (!amount) {
 			return Promise.resolve();
-		} else if (
-			(currency === BUSD_CURRENCY &&
-				Number(busdBalance) < amount + royaltyFee) ||
-			(currency === BNB_CURRENCY && Number(bnbBalance) < amount + royaltyFee)
-		) {
-			return Promise.reject(
-				new Error(`You don't have enough ${currency} in wallet for royalty fee`)
-			);
 		} else if (currency === BUSD_CURRENCY && amount > Number(busdBalance)) {
 			return Promise.reject(new Error("You don't have enough BUSD"));
 		} else if (currency === BNB_CURRENCY && amount > Number(bnbBalance)) {
 			return Promise.reject(new Error("You don't have enough BNB"));
+		} else if (
+			(currency === BUSD_CURRENCY &&
+				Number(busdBalance) < amount + royaltyFee) ||
+			(currency === BNB_CURRENCY && Number(busdBalance) < royaltyFee)
+		) {
+			return Promise.reject(
+				new Error(`You don't have enough ${currency} in wallet for royalty fee`)
+			);
 		} else if (buyLimit !== 0 && amount > buyLimit - amountOfTokensPurchased) {
 			return Promise.reject(
 				new Error(

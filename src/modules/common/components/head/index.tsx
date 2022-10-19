@@ -10,7 +10,10 @@ const DocumentHead = ({ title }: { title: string }) => {
 				content='Turn your products, arts or services into publicly tradable items'
 				data-rh='true'
 			/>
-			<meta name='viewport' content='viewport-fit=cover' />
+			<meta
+				name='viewport'
+				content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0'
+			/>
 			<meta property='google:app_id' content={title} />
 			<meta name='keywords' content='nextjs, realworld' />
 			<meta name='author' content={title} />

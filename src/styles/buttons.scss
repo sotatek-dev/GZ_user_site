@@ -48,6 +48,9 @@
 }
 
 .common-normal-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	border-radius: 10px;
 	height: auto;
 	width: auto;
@@ -59,7 +62,16 @@
 	padding: 8px 20px;
 	border: none;
 
-	&:hover {
+	&:disabled {
+		background: #2b3a51;
+		color: rgba(#ffffff, 0.3);
+		border: none !important;
+
+		&:hover {
+			background: #2b3a51;
+			color: rgba(#ffffff, 0.3);
+			border: none !important;
+		}
 	}
 }
 

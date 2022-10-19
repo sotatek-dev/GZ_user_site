@@ -26,6 +26,7 @@ import {
 } from 'modules/mintDnft/constants';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
+import { getRemainingClaimableAmount } from 'web3/contracts/useContractTokenSale';
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
@@ -40,12 +41,14 @@ export const secondsToTime = (time: number) => {
 	return { days, hours, minutes, seconds };
 };
 
-export const convertTimeLine = (
+export const convertTimeLine = async (
 	startTime: number,
 	endTime: number,
 	timestampNow: number,
 	currentTimeLine: string,
-	claimConfigs: Array<{ [key: string]: string | number }>
+	claimConfigs: Array<{ [key: string]: string | number }>,
+	addressWallet: string,
+	saleRoundId: number
 ) => {
 	let status = UPCOMING;
 	let statusListSaleRound = STATUS_LIST_SALE_ROUND.UPCOMING;
@@ -60,18 +63,29 @@ export const convertTimeLine = (
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING) {
 		status = BUY;
-		statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 		timeCountDown = startTimeClaim - timestampNow;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
-		status = CLAIMABLE;
-		statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
-		for (let index = 0; index < claimConfigs?.length; index++) {
-			startTimeClaim = get(claimConfigs[index], 'start_time') as number;
-			if (startTimeClaim > timestampNow) {
-				timeCountDown = startTimeClaim - timestampNow;
-			} else {
-				startTimeClaim = 0;
+		const [youCanClaimAmount] = await getRemainingClaimableAmount(
+			addressWallet,
+			saleRoundId
+		);
+		// console.log('youCanClaimAmount', youCanClaimAmount);
+		if (youCanClaimAmount > 0) {
+			status = CLAIMABLE;
+			statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
+			for (let index = 0; index < claimConfigs?.length; index++) {
+				startTimeClaim = get(claimConfigs[index], 'start_time') as number;
+				if (startTimeClaim > timestampNow) {
+					timeCountDown = startTimeClaim - timestampNow;
+				} else {
+					startTimeClaim = 0;
+				}
 			}
+		} else {
+			status = END;
+			statusListSaleRound = STATUS_LIST_SALE_ROUND.END;
+			startTimeClaim = 0;
 		}
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.END) {
 		status = END;

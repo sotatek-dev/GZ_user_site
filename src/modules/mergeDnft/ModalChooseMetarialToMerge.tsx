@@ -75,6 +75,7 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 	const handleResetData = () => {
 		setPage(1);
 		setListDNFTToMerge([]);
+		setListDNFTToMergeSelected([]);
 	};
 
 	const handleGetListTokenId = (listDNFTSelectd: Array<IDFNT>) => {

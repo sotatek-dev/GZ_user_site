@@ -129,20 +129,24 @@ const TokenSaleRoundDetail = () => {
 			return setLoading(false);
 		}
 		const detailSaleRound = get(data, 'data', {});
-		const { claim_configs, current_status_timeline } = detailSaleRound;
+		const { claim_configs, current_status_timeline, sale_round } =
+			detailSaleRound;
 		const { start_time, end_time } = get(detailSaleRound, 'buy_time');
 		const timestampNow = dayjs().unix();
-		const { status, timeCountDown, startTimeClaim } = convertTimeLine(
+		const { status, timeCountDown, startTimeClaim } = await convertTimeLine(
 			Number(start_time),
 			Number(end_time),
 			timestampNow,
 			current_status_timeline,
-			claim_configs
+			claim_configs,
+			addressWallet,
+			sale_round
 		);
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
+
+		setPrice(exchangeRateBUSD);
 		setStatusTimeLine(status);
 		setDetailSaleRound(detailSaleRound);
-		setPrice(exchangeRateBUSD);
 		setTokenClaimTime(startTimeClaim);
 		setTimeCountDow(timeCountDown);
 		setLoading(false);
@@ -158,7 +162,10 @@ const TokenSaleRoundDetail = () => {
 		}
 		if (errorClaim) {
 			setOpenClaimPopup(false);
-			message.error('Transaction Rejected');
+			if (errorClaim?.error?.code === -32603) {
+				return message.error('Network Error!');
+			}
+			return message.error('Transaction Rejected');
 		}
 	};
 
@@ -166,6 +173,7 @@ const TokenSaleRoundDetail = () => {
 		if (index && !prevLoading) {
 			getDetailSaleRound();
 		}
+		calculatorCurrency(currency);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [index, detailSaleRound, isLoading, isLogin]);
 
@@ -286,7 +294,11 @@ const TokenSaleRoundDetail = () => {
 	const handleSelectCurrency = async (event: RadioChangeEvent) => {
 		const { value } = event.target;
 		setCurrency(value);
-		if (value === BNB_CURRENCY) {
+		await calculatorCurrency(value);
+	};
+
+	const calculatorCurrency = async (val: string) => {
+		if (val === BNB_CURRENCY) {
 			const [priceBNB] = await convertBUSDtoBNB(price);
 			setPrice(priceBNB);
 		} else {
