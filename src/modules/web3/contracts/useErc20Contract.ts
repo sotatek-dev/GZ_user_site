@@ -1,9 +1,9 @@
 import { HEX_ZERO } from 'common/constants/constants';
-import { fromWei } from 'common/utils/functions';
+import { convertHexToNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import Erc20ABI from 'web3/abis/erc20.json';
 import { Erc20 } from '../abis/types';
-import { genERC20PaymentContract, NEXT_PUBLIC_PRESALE_POOL } from './instance';
+import { genERC20PaymentContract } from './instance';
 import { useContract } from './useContract';
 const MAX_INT =
 	'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
@@ -13,28 +13,32 @@ export const useErc20Contract = (address: string): Erc20 | null => {
 };
 
 export const isUserApprovedERC20 = async (
-	contractAddress: string,
+	tokenApproveAddress: string,
 	userAddress: string,
-	amount: number
+	amount: number,
+	contractAddress: string
 ) => {
 	try {
-		const contract = await genERC20PaymentContract(contractAddress);
-		const result = await contract.allowance(
-			userAddress,
-			NEXT_PUBLIC_PRESALE_POOL
+		const contract = await genERC20PaymentContract(tokenApproveAddress);
+		const result = await contract.allowance(userAddress, contractAddress);
+		const allowance = fromWei(
+			convertHexToNumber(get(result, '_hex', HEX_ZERO))
 		);
-		const allowance = fromWei(get(result, '_hex', HEX_ZERO));
 		if (allowance > amount) return true;
 	} catch (error) {
 		return false;
 	}
 };
 
-export const handleUserApproveERC20 = async (contractAddress: string) => {
+export const handleUserApproveERC20 = async (
+	addressToken: string,
+	contractAddress: string
+) => {
 	try {
-		const contract = await genERC20PaymentContract(contractAddress);
-		const approve = await contract.approve(NEXT_PUBLIC_PRESALE_POOL, MAX_INT);
-		return [approve, null];
+		const contract = await genERC20PaymentContract(addressToken);
+		const approve = await contract.approve(contractAddress, MAX_INT);
+		const result = await approve.wait(1);
+		return [result, null];
 	} catch (error) {
 		return [null, error];
 	}

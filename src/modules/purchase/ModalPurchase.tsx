@@ -13,7 +13,10 @@ import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
 import { FC, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
+import {
+	NEXT_PUBLIC_BUSD,
+	NEXT_PUBLIC_PRESALE_POOL,
+} from 'web3/contracts/instance';
 import {
 	buyTokenWithExactlyBNB,
 	buyTokenWithExactlyBUSD,
@@ -108,11 +111,15 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			const isUserApproved = await isUserApprovedERC20(
 				NEXT_PUBLIC_BUSD,
 				addressWallet,
-				amount
+				amount,
+				NEXT_PUBLIC_PRESALE_POOL
 			);
 
 			if (!isUserApproved) {
-				const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
+				const [, error] = await handleUserApproveERC20(
+					NEXT_PUBLIC_BUSD,
+					NEXT_PUBLIC_PRESALE_POOL
+				);
 				if (error) {
 					setLoading(false);
 					if (error?.error?.code === -32603) {
@@ -120,7 +127,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					}
 					return message.error('Transaction Rejected');
 				}
-				await res.wait();
 			}
 
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(

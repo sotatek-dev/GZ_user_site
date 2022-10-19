@@ -27,7 +27,7 @@ import {
 	handleUserApproveERC20,
 	isUserApprovedERC20,
 } from 'web3/contracts/useErc20Contract';
-import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
+import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 interface IInitImage {
 	assetBase: string;
 	extension: string;
@@ -145,7 +145,8 @@ const MergeDNFT = () => {
 		const [data, error] = await mergeRuleDFNT(params);
 		if (error) {
 			const { message } = error;
-			messageAntd.error(message);
+			if (message === 'DNFT_IS_LOCKED')
+				messageAntd.error('The used NFTs are locked.');
 			setTimeout(() => {
 				router.push(ROUTES.LIST_DNFT);
 			}, 2000);
@@ -211,29 +212,34 @@ const MergeDNFT = () => {
 			const { message } = error;
 			setLoadingPermanentlyMerge(false);
 			if (message === 'NOT_ENOUGH_AMOUNT_PROPERTIES') {
-				return messageAntd.error('Bạn cần chọn đủ các thuộc tính của NFT');
+				return messageAntd.error('Fur and eyes are required fields');
 			}
 			return messageAntd.error(message);
 		}
 		setDisableMerge(true);
 		// get merge tax(thuế setting trên admin)
 		const [mergeTax, errorGetMergeTax] = await getMergeTax();
-		console.log('mergeTax', mergeTax);
 		if (errorGetMergeTax) return;
 		// check approve khi user merge
 		const isUserApproved = await isUserApprovedERC20(
 			NEXT_PUBLIC_BUSD,
 			addressWallet,
-			mergeTax
+			mergeTax,
+			NEXT_PUBLIC_DNFT
 		);
 		console.log('isUserApproved', isUserApproved);
 		if (!isUserApproved) {
-			const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
+			const [, error] = await handleUserApproveERC20(
+				NEXT_PUBLIC_BUSD,
+				NEXT_PUBLIC_DNFT
+			);
 			if (error) {
-				message.error('Transaction Rejected');
-				return;
+				setLoadingPermanentlyMerge(false);
+				if (error?.error?.code === -32603) {
+					return messageAntd.error('Network Error!');
+				}
+				return message.error('Transaction Rejected');
 			}
-			await res.wait();
 		}
 		const sessionId = get(data, 'data._id', '');
 		const paramsSignature = {
@@ -249,7 +255,7 @@ const MergeDNFT = () => {
 		);
 		setLoadingPermanentlyMerge(false);
 		if (errorPushContract) {
-			if (errorPushContract.error.code === -32603) {
+			if (errorPushContract?.error?.code === -32603) {
 				return messageAntd.error('Network Error!');
 			}
 			return messageAntd.error('Transaction Rejected');
@@ -279,7 +285,7 @@ const MergeDNFT = () => {
 			const { message } = error;
 			setLoadingTemporaryMerge(false);
 			if (message === 'NOT_ENOUGH_AMOUNT_PROPERTIES') {
-				return messageAntd.error('Bạn cần chọn đủ các thuộc tính của NFT');
+				return messageAntd.error('Fur and eyes are required fields');
 			}
 			return messageAntd.error(message);
 		}
@@ -287,24 +293,27 @@ const MergeDNFT = () => {
 			setDisableMerge(true);
 			// get merge tax(thuế setting trên admin)
 			const [mergeTax, errorGetMergeTax] = await getMergeTax();
-			console.log('mergeTax', mergeTax);
-
 			if (errorGetMergeTax) return;
 			// check approve khi user merge
 			const isUserApproved = await isUserApprovedERC20(
 				NEXT_PUBLIC_BUSD,
 				addressWallet,
-				mergeTax
+				mergeTax,
+				NEXT_PUBLIC_DNFT
 			);
 			console.log('isUserApproved', isUserApproved);
-
 			if (!isUserApproved) {
-				const [res, error] = await handleUserApproveERC20(NEXT_PUBLIC_BUSD);
+				const [, error] = await handleUserApproveERC20(
+					NEXT_PUBLIC_BUSD,
+					NEXT_PUBLIC_DNFT
+				);
 				if (error) {
-					message.error('Transaction Rejected');
-					return;
+					setLoadingTemporaryMerge(false);
+					if (error?.error?.code === -32603) {
+						return messageAntd.error('Network Error!');
+					}
+					return message.error('Transaction Rejected');
 				}
-				await res.wait();
 			}
 			const sessionId = get(data, 'data._id', '');
 			const paramsSignature = {
@@ -320,7 +329,7 @@ const MergeDNFT = () => {
 			);
 			setLoadingTemporaryMerge(false);
 			if (errorPushContract) {
-				if (errorPushContract.error.code === -32603) {
+				if (errorPushContract?.error?.code === -32603) {
 					return messageAntd.error('Network Error!');
 				}
 				return messageAntd.error('Transaction Rejected');
