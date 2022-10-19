@@ -1,17 +1,39 @@
 import { Layout, Menu } from 'antd';
-import ImageBase from 'common/components/imageBase';
-// import ImageBase from 'common/components/imageBase';
+import { useMemo, useState } from 'react';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
-import { ROUTES } from 'common/constants/constants';
-import { get } from 'lodash';
-import Link from 'next/link';
+import IconOutLined from 'assets/svg-components/LeftOutlinedCustom';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import { ROUTES } from 'common/constants/constants';
+import { get } from 'lodash';
+import type { MenuProps } from 'antd';
+// import Link from 'next/link';
 import Footer from './Footer';
+import ImageBase from 'common/components/imageBase';
 import LayoutHeader from './Header';
-import { useMemo } from 'react';
 
 const { Sider, Content } = Layout;
+type MenuItem = Required<MenuProps>['items'][number];
+
+function getItem(
+	label: React.ReactNode,
+	key: React.Key,
+	onClick: () => void,
+	icon?: React.ReactNode,
+	className?: string,
+	children?: MenuItem[],
+	type?: 'group'
+): MenuItem {
+	return {
+		key,
+		icon,
+		children,
+		label,
+		type,
+		className,
+		onClick,
+	} as MenuItem;
+}
 
 interface ISider {
 	router: string;
@@ -52,6 +74,7 @@ export const LIST_SIDER = [
 
 const DefaultLayout = ({ children, appProps }: any) => {
 	const { isLogin } = useSelector((state) => state.user);
+	const [collapsed, setCollapsed] = useState(false);
 	const router = useRouter();
 	const isActivateSideBar: string[] = useMemo((): string[] => {
 		if (router.pathname.includes(ROUTES.MERGE_DNFT)) return [ROUTES.LIST_DNFT];
@@ -59,19 +82,39 @@ const DefaultLayout = ({ children, appProps }: any) => {
 		return [router.pathname];
 	}, [router]);
 
+	const itemsMenuSide = useMemo(() => {
+		const results: MenuItem[] = [];
+		LIST_SIDER.forEach((sider: ISider) => {
+			if (!sider.needLogin || (sider.needLogin && isLogin))
+				results.push(
+					getItem(
+						sider.title,
+						sider.router,
+						() => router.push(sider.router),
+						<IconDynamic
+							image={sider.icon}
+							className='!w-[22px] !h-[22px] mr-[1rem] mb-0'
+						/>,
+						'!py-[5px] !px-[24px] !h-fit font-semibold text-base'
+					)
+				);
+		});
+		return results;
+	}, [isLogin, router]);
+
 	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
 		return <>{children}</>;
 	}
 	return (
 		<Layout className='!bg-[#353945] desktop:!bg-background-dark min-h-[100vh]'>
 			<Sider
-				// breakpoint='lg'
-				// collapsedWidth='0'
-				className={
-					'hidden desktop:block !bg-[#0E1A2B] min-h-screen !min-w-[260px] !flex-auto'
-				}
+				id='siderbar-desktop'
+				collapsed={collapsed}
+				onCollapse={(value) => setCollapsed(value)}
+				width={260}
+				className={'hidden desktop:block !bg-[#0E1A2B] min-h-screen !flex-auto'}
 			>
-				<div className='flex items-center justify-center py-[2rem] px-[10px] border-b-[1px] border-[#36c1ff0d]'>
+				<div className='flex items-center justify-center py-[2rem] px-[10px] border-b-[1px] border-[#36c1ff0d] relative'>
 					<ImageBase
 						url='/images/logo.svg'
 						width={100}
@@ -81,6 +124,12 @@ const DefaultLayout = ({ children, appProps }: any) => {
 						}}
 						className='w-[5.0625rem] h-[5.0625rem] mt-[1.25rem]'
 					/>
+					<div
+						className='absolute btn-collapsed-sidebar'
+						onClick={() => setCollapsed(!collapsed)}
+					>
+						<BtnCollapsed collapsedStatus={collapsed} />
+					</div>
 				</div>
 				<Menu
 					theme='dark'
@@ -88,33 +137,8 @@ const DefaultLayout = ({ children, appProps }: any) => {
 					mode='inline'
 					selectedKeys={isActivateSideBar}
 					defaultSelectedKeys={['4']}
-				>
-					{LIST_SIDER.map((sider: ISider) => {
-						const { router, icon, title, needLogin } = sider;
-						if (needLogin && !isLogin) {
-							return null;
-						}
-						return (
-							<Menu.Item
-								key={router}
-								// onClick={() => router.push(ROUTES.TOKEN_PRESALE_ROUNDS)}
-								className='!py-[13px] !px-[24px] !h-fit'
-							>
-								<Link href={router}>
-									<a className='flex items-center font-semibold text-base'>
-										{icon && (
-											<IconDynamic
-												image={icon}
-												className='!w-[22px] !h-[22px] mr-[1rem] mb-0'
-											/>
-										)}
-										{title}
-									</a>
-								</Link>
-							</Menu.Item>
-						);
-					})}
-				</Menu>
+					items={itemsMenuSide || [null]}
+				/>
 			</Sider>
 			<Layout>
 				<LayoutHeader />
@@ -126,6 +150,18 @@ const DefaultLayout = ({ children, appProps }: any) => {
 				<Footer />
 			</Layout>
 		</Layout>
+	);
+};
+
+const BtnCollapsed = (props: {
+	collapsedStatus: boolean;
+	className?: string;
+}) => {
+	const { collapsedStatus } = props;
+	return (
+		<span className={`${collapsedStatus ? 'activate' : ''}`}>
+			<IconOutLined />
+		</span>
 	);
 };
 

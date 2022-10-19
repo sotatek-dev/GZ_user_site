@@ -115,3 +115,20 @@
 		}
 	}
 }
+.btn-collapsed-sidebar {
+	right: -8px;
+	z-index: 9;
+	width: 26px;
+	height: 26px;
+	background: #714a90;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	cursor: pointer;
+
+	& .activate {
+		transform: rotateZ(180deg);
+		transition: 1s;
+	}
+}
