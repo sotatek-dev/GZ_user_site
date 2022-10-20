@@ -51,8 +51,8 @@ export const BSC_NETWORK = {
 	RPC_URLS: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
 	BLOCK_EXPLORER_URLS: 'https://testnet.bscscan.com/',
 	NATIVE_CURRENCY: {
-		NAME: 'Binance Smart Chain',
-		SYMBOL: 'BSC',
+		NAME: 'Binance Smart Chain Testnet',
+		SYMBOL: 'tBNB',
 		DECIMAL: 18,
 	},
 };
