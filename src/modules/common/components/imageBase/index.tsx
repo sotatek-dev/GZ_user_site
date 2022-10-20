@@ -10,6 +10,7 @@ interface Props extends Omit<ImageProps, 'src'> {
 	style?: object;
 	onFinish?: () => void;
 }
+
 const ImageBase = (props: Props) => {
 	const { url, errorImg, type, style = {} } = props;
 	const [img, setImg] = useState<string>('');
@@ -19,17 +20,16 @@ const ImageBase = (props: Props) => {
 	 * Handle url props change
 	 */
 	useEffect(() => {
+		const getImageURL = () => {
+			const imgUrl = convertUrlImage(url, errorImg);
+			setImg(imgUrl);
+		};
+
 		getImageURL();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [url]);
+	}, [url, errorImg]);
 
 	const onFinish = () => {
 		// console.log(e.target.value);
-	};
-
-	const getImageURL = () => {
-		const imgUrl = convertUrlImage(url, errorImg);
-		setImg(imgUrl);
 	};
 
 	/**
@@ -39,24 +39,26 @@ const ImageBase = (props: Props) => {
 	if (type === 'HtmlImage') {
 		return (
 			<Image
-				{...newProps}
 				style={style}
 				alt='image'
 				// src={img?.default?.src || img}
 				src={img}
 				// onError={() => setImg(convertUrlImage(null, errorImg))}
 				onLoad={onFinish}
+				className='max-w-full'
+				{...newProps}
 			/>
 		);
 	}
 	return (
 		<Image
-			{...newProps}
 			style={style}
 			onError={() => setImg(convertUrlImage(null, errorImg))}
 			src={img || '/images/galatic-zone.png'}
 			alt='image'
 			onLoadingComplete={onFinish}
+			className='max-w-full'
+			{...newProps}
 		/>
 	);
 };

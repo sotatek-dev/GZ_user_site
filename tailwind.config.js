@@ -64,5 +64,8 @@ module.exports = {
 			'pink-10': '#f0272733',
 		},
 	},
-	plugins: [],
+	plugins: [require('tailwind-scrollbar')({ nocompatible: true })],
+	variants: {
+		scrollbar: ['rounded'],
+	},
 };

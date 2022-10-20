@@ -1,6 +1,13 @@
+// Horizontal scroll fliker
+.ant-modal-root {
+	.ant-modal-wrap {
+		@apply max-w-full overflow-x-hidden;
+	}
+}
+
 .modal-custom {
 	.ant-modal-header {
-		background-color: #38424e;
+		background: #1d2c3e;
 		color: #efeff0 !important;
 		border: none;
 		padding: 0;
@@ -10,8 +17,9 @@
 	.ant-modal-title {
 		color: #efeff0 !important;
 		font-weight: 600;
-		font-size: 32px;
 		line-height: 42px;
+
+		@apply text-2xl desktop:text-[32px] text-center;
 	}
 
 	.ant-modal-mask {
@@ -19,23 +27,25 @@
 	}
 
 	.ant-modal-content {
-		background-color: #38424e;
+		background: #1d2c3e;
 		color: #efeff0;
 		border-radius: 12px !important;
 		padding: 0;
 
-		@apply desktop:px-[65px] py-[50px];
+		@apply desktop:px-12 pt-12 py-6;
 	}
 
 	.ant-modal-body {
-		background-color: #38424e;
+		background: #1d2c3e;
 		color: #efeff0;
 		padding: 0;
+
+		@apply px-4;
 	}
 
 	.ant-modal-footer {
+		background: #1d2c3e;
 		border: none;
-		background-color: #38424e;
 		display: flex;
 		justify-content: center;
 		padding: 0;

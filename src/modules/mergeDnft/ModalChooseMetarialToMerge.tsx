@@ -121,52 +121,47 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 
 	return (
 		<div>
-			<div className='hidden desktop:block text-h7 flex'>
-				<div>Merged NFT rarity:</div>
-				<div className='text-red-10 ml-2'>
+			<div className='desktop:block text-h7 text-center desktop:text-left desktop:mt-8'>
+				<span className='opacity-70'>Merged NFT rarity:</span>
+				<span className='inline-block text-purple-30 ml-2 bg-purple-30 bg-opacity-20 px-3 rounded-md font-bold text-sm'>
 					{rankLevelMerge ? rankLevelMerge : 'TBA'}
-				</div>
+				</span>
 			</div>
-			<div
-				className={'mt-12'}
-				id='scrollableDiv'
-				style={{
-					overflowY: 'auto',
-					overflowX: 'hidden',
-				}}
-			>
+			<div className='mt-8 desktop:mt-6' id='scrollableDiv'>
 				<InfiniteScroll
 					dataLength={listDNFTToMerge.length}
 					next={handleLoadMoreDNFT}
 					hasMore={true}
 					loader={<></>}
-					className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-6 justify-items-center'
 					scrollableTarget='scrollableDiv'
 					height={380}
+					className='scrollbar-thin scrollbar-thumb-white/20 scrollbar-thumb-rounded-md scrollbar-track-[#182737] pr-2'
 				>
-					{listDNFTToMerge.map((DNFT: IDFNT, index: number) => {
-						if (DNFT.token_id === dNFTSelected.token_id) return null;
-						return (
-							<CardNft
-								key={index}
-								dataDNFT={DNFT}
-								index={index}
-								SelectNft={SelectNft}
-							/>
-						);
-					})}
+					<div className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-6 justify-items-center'>
+						{listDNFTToMerge.map((DNFT: IDFNT, index: number) => {
+							if (DNFT.token_id === dNFTSelected.token_id) return null;
+							return (
+								<CardNft
+									key={index}
+									dataDNFT={DNFT}
+									index={index}
+									SelectNft={SelectNft}
+								/>
+							);
+						})}
+					</div>
 				</InfiniteScroll>
 			</div>
 			<div className='flex gap-x-8 justify-center mt-10'>
 				<Button
 					onClick={onCancel}
 					label='Cancel'
-					classCustom='!min-w-[150px] desktop:!min-w-[200px] bg-transparent hover:bg-transparent  shadow-none !border-gray-60 !border-solid !border-2 !rounded-[40px] !py-3'
+					classCustom='!font-semibold !min-w-[150px] desktop:!min-w-[200px] bg-transparent hover:bg-transparent  shadow-none !border-gray-60 !border-solid !border-2 !rounded-[40px] !py-2'
 				/>
 				<Button
 					onClick={handleMergeDNFT}
 					label='Next'
-					classCustom='!min-w-[150px] desktop:!min-w-[200px] bg-purple-20 rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3'
+					classCustom='!font-semibold !min-w-[150px] desktop:!min-w-[200px] bg-purple-20 rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-2'
 					isDisabled={listDNFTToMergeSelected.length < 2 || !rankLevelMerge}
 				/>
 			</div>

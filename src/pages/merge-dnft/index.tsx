@@ -3,7 +3,6 @@ import { cloneDeep, get } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import {
@@ -28,6 +27,7 @@ import {
 	isUserApprovedERC20,
 } from 'web3/contracts/useErc20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
+import { useAppSelector } from 'stores';
 interface IInitImage {
 	assetBase: string;
 	extension: string;
@@ -80,8 +80,8 @@ const MergeDNFT = () => {
 	const [isDisableMerge, setDisableMerge] = useState<boolean>(false);
 
 	//state store
-	const { isLogin } = useSelector((state) => state.user);
-	const { addressWallet } = useSelector((state) => state.wallet);
+	const { isLogin } = useAppSelector((state) => state.user);
+	const { addressWallet } = useAppSelector((state) => state.wallet);
 	useEffect(() => {
 		const params = {
 			ingredient_ids: listTokenId,
@@ -418,7 +418,7 @@ const MergeDNFT = () => {
 						/>
 					</div>
 				</div>
-				<div className='grid gap-x-12 gap-y-5 grid-cols-1 desktop:grid-cols-2 desktop:max-w-[704px] h-fit w-full mb-6 mb-24'>
+				<div className='grid gap-x-12 gap-y-5 grid-cols-1 desktop:grid-cols-2 desktop:max-w-[704px] h-fit w-full mb-24'>
 					{initImages.map((property: IInitImage, index: number) => {
 						const { propertyName, values, value, displayName } = property;
 						if (propertyName === PROPERTY.GLOVESDEFAULT) return null;

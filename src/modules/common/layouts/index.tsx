@@ -2,15 +2,14 @@ import { Layout, Menu } from 'antd';
 import { useMemo, useState } from 'react';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import IconOutLined from 'assets/svg-components/LeftOutlinedCustom';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ROUTES } from 'common/constants/constants';
-import { get } from 'lodash';
 import type { MenuProps } from 'antd';
-// import Link from 'next/link';
+import type { AppProps } from 'next/app';
 import Footer from './Footer';
 import ImageBase from 'common/components/imageBase';
 import LayoutHeader from './Header';
+import { useAppSelector } from 'stores';
 
 const { Sider, Content } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -72,8 +71,8 @@ export const LIST_SIDER = [
 	},
 ];
 
-const DefaultLayout = ({ children, appProps }: any) => {
-	const { isLogin } = useSelector((state) => state.user);
+const DefaultLayout = ({ Component, pageProps }: AppProps) => {
+	const { isLogin } = useAppSelector((state) => state.user);
 	const [collapsed, setCollapsed] = useState(false);
 	const router = useRouter();
 	const isActivateSideBar: string[] = useMemo((): string[] => {
@@ -102,9 +101,6 @@ const DefaultLayout = ({ children, appProps }: any) => {
 		return results;
 	}, [isLogin, router]);
 
-	if (['/landing'].includes(get(appProps, 'router.pathname'))) {
-		return <>{children}</>;
-	}
 	return (
 		<Layout className='!bg-[#353945] desktop:!bg-background-dark min-h-[100vh]'>
 			<Sider
@@ -145,7 +141,7 @@ const DefaultLayout = ({ children, appProps }: any) => {
 				<Content
 					className={'p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'}
 				>
-					{children}
+					<Component {...pageProps} />
 				</Content>
 				<Footer />
 			</Layout>
