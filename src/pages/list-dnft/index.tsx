@@ -14,9 +14,8 @@ import type { MenuProps } from 'antd';
 import { cloneDeep, get, isEmpty } from 'lodash';
 import ListCard from 'modules/mergeDnft/ListCard';
 import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
-// import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'stores';
 
 export interface IDFNT {
 	created_at: Date;
@@ -58,7 +57,7 @@ const ListDNFT = () => {
 	const [listDNFTToMergeSelected, setListDNFTToMergeSelected] = useState<
 		Array<IDFNT>
 	>([]);
-	const { isLogin } = useSelector((state) => state.user);
+	const { isLogin } = useAppSelector((state) => state.user);
 
 	const [isShowModalChooseMetarialToMerge, setShowModalChooseMetarialToMerge] =
 		useState<boolean>(false);
@@ -173,14 +172,17 @@ const ListDNFT = () => {
 						pageSize: LIMIT_12,
 						total: totalDNFT,
 						onChange: handleChangePage,
+						responsive: true,
 					}}
 				/>
 				{isShowModalChooseMetarialToMerge && dNFTSelected && (
 					<ModalCustom
 						title='Choose material to merge'
-						customClass='!w-auto !max-w-[1300px]'
+						customClass='desktop:!max-w-[1024px]'
 						isShow={isShowModalChooseMetarialToMerge}
 						onCancel={() => setShowModalChooseMetarialToMerge(false)}
+						width={1024}
+						centered
 					>
 						<ModalChooseMetarialToMerge
 							onCancel={() => setShowModalChooseMetarialToMerge(false)}

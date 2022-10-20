@@ -5,7 +5,6 @@ import 'styles/index.scss';
 import { Web3ReactProvider } from '@web3-react/core';
 import { providers } from 'ethers';
 import type { AppProps } from 'next/app';
-// import DefaultLayout from '@common/layouts';
 
 import DefaultLayout from 'common/layouts';
 import { Provider } from 'react-redux';
@@ -29,7 +28,7 @@ BigNumber.config({
 	EXPONENTIAL_AT: [-50, 50],
 });
 
-function MyApp({ Component, pageProps, ...appProps }: AppProps) {
+function MyApp(props: AppProps) {
 	return (
 		<>
 			<DocumentHead title='Galactix Zone' />
@@ -38,9 +37,7 @@ function MyApp({ Component, pageProps, ...appProps }: AppProps) {
 					<Provider store={store}>
 						<AuthProvider>
 							<HelmetProvider>
-								<DefaultLayout appProps={appProps}>
-									<Component {...pageProps} />
-								</DefaultLayout>
+								<DefaultLayout {...props} />
 							</HelmetProvider>
 						</AuthProvider>
 					</Provider>

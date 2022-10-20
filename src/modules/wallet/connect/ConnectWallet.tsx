@@ -169,7 +169,7 @@ export default function ConnectWallet() {
 				onOk={handleCloseModalConnectWallet}
 				onCancel={handleCloseModalConnectWallet}
 			>
-				<div className='w-full bg-[#38424E]'>{renderStepModal()}</div>
+				<div className='w-full'>{renderStepModal()}</div>
 			</ModalCustom>
 		</div>
 	);

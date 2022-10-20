@@ -1,8 +1,10 @@
 import { Modal } from 'antd';
+import classNames from 'classnames';
 import Image from 'next/image';
 import { ReactNode } from 'react';
+import type { ModalProps } from 'antd';
 
-interface ModalProps {
+interface Props extends ModalProps {
 	children?: React.ReactNode;
 	isShow: boolean;
 	title?: string | ReactNode;
@@ -15,7 +17,7 @@ interface ModalProps {
 	closable?: boolean;
 }
 
-const ModalCustom = (props: ModalProps) => {
+const ModalCustom = (props: Props) => {
 	const {
 		children,
 		isShow,
@@ -30,12 +32,14 @@ const ModalCustom = (props: ModalProps) => {
 		...rest
 	} = props;
 
+	const clns = classNames('modal-custom', customClass);
+
 	return (
 		<Modal
 			open={isShow}
 			title={title}
 			width={width}
-			className={`modal-custom ${customClass}`}
+			className={clns}
 			onOk={onOk}
 			onCancel={onCancel}
 			footer={[footer]}
