@@ -16,7 +16,7 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 	const clns = classNames(
 		{ 'outer-card-nft': isChecked },
 		{ 'cursor-pointer': is_locked },
-		'w-full cursor-pointer'
+		'w-full cursor-pointer relative'
 	);
 
 	return (
@@ -26,9 +26,9 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 		>
 			{is_locked && (
 				<div className='card-nft-lock absolute inset-0 w-full flex justify-center items-center z-20 text-base font-semibold'>
-					<div className='w-full flex justify-center items-center'>
-						<ImageBase url='/icons/locked.svg' width='35px' height='20px' />
-						LOCKED NFT
+					<div className='w-full flex justify-center items-center gap-2'>
+						<ImageBase url='/icons/locked.svg' width={16} height={20} />
+						<span>LOCKED NFT</span>
 					</div>
 				</div>
 			)}
