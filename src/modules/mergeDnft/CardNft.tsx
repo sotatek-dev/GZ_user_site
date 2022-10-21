@@ -38,7 +38,7 @@ const CardNft: FC<ICardNftProps> = ({ dataDNFT, index, SelectNft }) => {
 					width={300}
 					height={300}
 					placeholder='blur'
-					blurDataURL='/images/galatic-zone.png'
+					blurDataURL='/images/logo.svg'
 					layout='responsive'
 				/>
 			</div>

@@ -1,9 +1,7 @@
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import Button from 'common/components/button';
 import Dropdown from 'common/components/dropdown';
-import HelmetCommon from 'common/components/helmet';
 import ModalCustom from 'common/components/modals';
-import { ROUTES } from 'common/constants/constants';
 import {
 	LIMIT_12,
 	RARITY_DNFT,
@@ -127,11 +125,6 @@ const ListDNFT = () => {
 
 	return (
 		<>
-			<HelmetCommon
-				title='Merge NFT'
-				description='Description merge nft...'
-				href={ROUTES.LIST_DNFT}
-			/>
 			<div className='flex flex-col'>
 				<div className='flex mb-8 items-end justify-between	'>
 					<div className={'hidden desktop:inline-block'}>

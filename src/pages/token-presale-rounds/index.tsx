@@ -1,14 +1,14 @@
 import { getListSaleRound, IPramsTokenSaleRounds } from 'apis/tokenSaleRounds';
 import MyTable from 'common/components/table';
-import { CURRENCY, LIMIT_10, ROUTES } from 'common/constants/constants';
+import { CURRENCY, LIMIT_10 } from 'common/constants/constants';
 import { convertTimeLine, formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination, Spin } from 'antd';
-import HelmetCommon from 'common/components/helmet';
 import { useSelector } from 'react-redux';
+
 export const buyTimeDefault = {
 	start_time: 0,
 	end_time: 0,
@@ -132,11 +132,6 @@ const TokenPresaleRound = () => {
 
 	return (
 		<>
-			<HelmetCommon
-				title='Token Presale Rounds'
-				description='Description token presale rounds...'
-				href={ROUTES.TOKEN_PRESALE_ROUNDS}
-			/>
 			<div>
 				{/* desktop*/}
 				<MyTable

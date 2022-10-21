@@ -9,7 +9,6 @@ import DKEYNFTABI from 'web3/abis/abi-keynft.json';
 import CustomRadio from 'common/components/radio';
 import { formatBigNumber, isApproved } from 'common/utils/functions';
 import { ROUTES } from 'common/constants/constants';
-import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { useApproval, useNativeBalance } from 'web3/hooks';
@@ -210,11 +209,6 @@ const RescueDNFT = () => {
 
 	return (
 		<>
-			<HelmetCommon
-				title='Rescue NFT'
-				description='Description rescue NFT ...'
-				href={ROUTES.RESCUE_NFT}
-			/>
 			<div
 				className={
 					'flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'
