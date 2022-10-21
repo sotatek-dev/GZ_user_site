@@ -22,7 +22,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Deployment
 
-Production optimization build
+Production optimization build 
 
 ```bash
 yarn build
