@@ -174,6 +174,7 @@ const ListDNFT = () => {
 						onChange: handleChangePage,
 						responsive: true,
 					}}
+					showPagination={!!listDNFT.length}
 				/>
 				{isShowModalChooseMetarialToMerge && dNFTSelected && (
 					<ModalCustom
