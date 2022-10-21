@@ -1,14 +1,15 @@
+import { FC, useCallback, useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useRouter } from 'next/router';
+import { cloneDeep, get } from 'lodash';
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import Button from 'common/components/button';
 import { LIMIT_8, STATUS_LIST_DNFT } from 'common/constants/constants';
-import { cloneDeep, get } from 'lodash';
-import { IDFNT } from 'pages/list-dnft';
-import { FC, useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import CardNft from './CardNft';
+import CardNft from '../NFTCard/NFTCard';
 import { ERankLevel, MergeNftRule } from 'common/constants/mergeDNFT';
-import { useRouter } from 'next/router';
+import { useAppSelector } from 'stores';
+import { IDFNT } from 'types/dnft';
+import ModalCustom from 'common/components/modals';
 
 interface IModalChooseMetarialToMergeProps {
 	onCancel: () => void;
@@ -19,7 +20,7 @@ interface IModalChooseMetarialToMergeProps {
 	listDNFTToMergeSelected: Array<IDFNT>;
 }
 
-const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
+const MergeMaterialModal: FC<IModalChooseMetarialToMergeProps> = ({
 	onCancel,
 	dNFTSelected,
 	listDNFTToMergeSelected,
@@ -27,9 +28,10 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 }) => {
 	const router = useRouter();
 	const [page, setPage] = useState<number>(1);
-	const { isLogin } = useSelector((state) => state.user);
+	const { isLogin } = useAppSelector((state) => state.user);
 	const [listDNFTToMerge, setListDNFTToMerge] = useState<Array<IDFNT>>([]);
-	const { rank_level, species } = dNFTSelected as IDFNT;
+
+	const { rank_level, species } = dNFTSelected;
 	const rankLevelMerge = MergeNftRule[rank_level]?.[
 		listDNFTToMergeSelected?.length
 	] as ERankLevel;
@@ -120,7 +122,14 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 	};
 
 	return (
-		<div>
+		<ModalCustom
+			title='Choose material to merge'
+			customClass='desktop:!max-w-[1024px]'
+			onCancel={onCancel}
+			isShow
+			width={1024}
+			centered
+		>
 			<div className='desktop:block text-h7 text-center desktop:text-left desktop:mt-8'>
 				<span className='opacity-70'>Merged NFT rarity:</span>
 				<span className='inline-block text-purple-30 ml-2 bg-purple-30 bg-opacity-20 px-3 rounded-md font-bold text-sm'>
@@ -165,8 +174,8 @@ const ModalChooseMetarialToMerge: FC<IModalChooseMetarialToMergeProps> = ({
 					isDisabled={listDNFTToMergeSelected.length < 2 || !rankLevelMerge}
 				/>
 			</div>
-		</div>
+		</ModalCustom>
 	);
 };
 
-export default ModalChooseMetarialToMerge;
+export default MergeMaterialModal;
