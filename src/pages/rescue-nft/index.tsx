@@ -89,27 +89,25 @@ const RescueDNFT = () => {
 	};
 	const isRoyalty = () => {
 		// Is not royalty when:
-		//   - If the price for rescue is not free AND
-		//      + User has lesser than 12% value of total price in BUSD when user pay in BNB OR
-		//      + User has lesser than 112% value of total price in BUSD when user pay in BUSD
-		//   - If the rescue is free AND
-		//      + User has lesser than 12% value of launch price in BUSD.
+		//    + User has lesser than 12% value of launch price in BUSD.
 
 		// priceInBUSD in BigNumber
-		const p = new BigNumber(priceInBUSD);
+		// const p = new BigNumber(priceInBUSD);
 		// launchPriceInBUSD in BigNumber
 		const lp = new BigNumber(launchPriceInBUSD);
 
-		if (new BigNumber(price).gt(0)) {
-			if (token === TOKENS.BNB) {
-				return busdBalance.gte(p.times(0.12));
-			} else if (token === TOKENS.BUSD) {
-				return busdBalance.gte(p.times(1.12));
-			}
-		} else if (new BigNumber(price).eq(0)) {
-			return busdBalance.gte(lp.times(0.12));
-		}
-		return false;
+		// if (new BigNumber(price).gt(0)) {
+		// 	if (token === TOKENS.BNB) {
+		// 		return busdBalance.gte(p.times(0.12));
+		// 	} else if (token === TOKENS.BUSD) {
+		// 		return busdBalance.gte(p.times(1.12));
+		// 	}
+		// } else if (new BigNumber(price).eq(0)) {
+		// 	return busdBalance.gte(lp.times(0.12));
+		// }
+		// return false;
+
+		return busdBalance.gte(lp.times(0.12));
 	};
 
 	const reloadData = async () => {
