@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { Message, selectTokensList, TOKENS } from 'modules/mintDnft/constants';
-import { useSelector } from 'react-redux';
 import { useBalance } from 'web3/queries';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
 import DKEYNFTABI from 'web3/abis/abi-keynft.json';
 import CustomRadio from 'common/components/radio';
-import { formatBigNumber, isApproved } from 'common/utils/functions';
+import { formatBigNumber } from 'common/utils/functions';
 import { ROUTES } from 'common/constants/constants';
 import { useRouter } from 'next/router';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
-import { useApproval, useNativeBalance } from 'web3/hooks';
-import { message, Spin } from 'antd';
+import { useNativeBalance } from 'web3/hooks';
+import { Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { fetchListPhase, fetchRate } from 'modules/mintDnft/helpers/fetch';
 import {
@@ -20,25 +19,19 @@ import {
 	fetchListKey,
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
-} from 'modules/rescueDnft/helpers/fetch';
-import { setIsLoadingRescue } from 'stores/rescue-dnft';
+} from 'modules/rescue-dnft/helpers/fetch';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
-import RescueSuccessToast from 'modules/rescueDnft/components/RescueSuccessToast';
-import { handleWriteMethodError } from 'common/helpers/handleError';
 import Image from 'next/image';
 import NftGroupImg from 'assets/imgs/nft-group.png';
+import { useRescueMutation } from 'modules/rescue-dnft/services/useRescueMutation';
 
 const RescueDNFT = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const { publicPhase, rate } = useAppSelector((state) => state.mintDnft);
-	const {
-		listKey,
-		poolRemaining,
-		priceInBUSD,
-		launchPriceInBUSD,
-		isLoadingRescue,
-	} = useAppSelector((state) => state.rescueDnft);
+	const { listKey, poolRemaining, priceInBUSD, launchPriceInBUSD } =
+		useAppSelector((state) => state.rescueDnft);
+	const { tryRescue, isDoingRescue } = useRescueMutation();
 
 	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
@@ -52,13 +45,8 @@ const RescueDNFT = () => {
 	const nativeBalance = useNativeBalance();
 	// BUSD balance
 	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
-	// busd approve
-	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
-		useApproval(
-			process.env.NEXT_PUBLIC_BUSD_ADDRESS || '',
-			process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
-		);
-	const { addressWallet } = useSelector((state) => state.wallet);
+
+	const { addressWallet } = useAppSelector((state) => state.wallet);
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
 	// const launchPrice =
@@ -109,22 +97,6 @@ const RescueDNFT = () => {
 		return busdBalance.gte(lp.times(0.12));
 	};
 
-	const reloadData = async () => {
-		dispatch(fetchListPhase({ dnftContract }));
-
-		dispatch(fetchPriceInBUSD({ dnftContract }));
-		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
-		dispatch(fetchPoolRemaining({ dnftContract }));
-		dispatch(fetchRate({ dnftContract }));
-		dispatch(
-			fetchListKey({
-				dnftContract,
-				keyNftContract,
-				walletAddress: addressWallet,
-			})
-		);
-	};
-
 	useEffect(() => {
 		dispatch(fetchListPhase({ dnftContract }));
 
@@ -143,30 +115,6 @@ const RescueDNFT = () => {
 			})
 		);
 	}, [dnftContract, keyNftContract, addressWallet]);
-
-	const rescue = async () => {
-		try {
-			dispatch(setIsLoadingRescue(true));
-			if (dnftContract) {
-				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
-					await tryApproveBusd(false);
-				}
-				if (listKey?.length > 0) {
-					const res = await dnftContract.rescueUsingKey(listKey[0]);
-					await res.wait();
-					const hash: string = res ? res.hash : '';
-					if (hash) {
-						message.success(<RescueSuccessToast txHash={hash} />);
-					}
-				}
-			}
-		} catch (e) {
-			handleWriteMethodError(e);
-		} finally {
-			reloadData();
-			dispatch(setIsLoadingRescue(false));
-		}
-	};
 
 	const getMessage = () => {
 		if (isConnectWallet && isPublicSaleEndAfter7Days) {
@@ -229,14 +177,17 @@ const RescueDNFT = () => {
 						/>
 					</div>
 					{isConnectWallet &&
-					!isLoadingRescue &&
+					!isDoingRescue &&
 					haveEnoughBalance() &&
 					isRoyalty() &&
 					haveEnoughNft &&
 					haveEnoughKey &&
 					isPublicSaleEndAfter7Days ? (
 						<div
-							onClick={rescue}
+							onClick={() => {
+								if (!listKey.length) return;
+								tryRescue(listKey[0], token);
+							}}
 							className={
 								'flex justify-center bg-blue-to-pink-102deg text-h7 text-white font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px] cursor-pointer'
 							}
@@ -249,7 +200,7 @@ const RescueDNFT = () => {
 								'flex justify-center items-center bg-charcoal-purple text-h7 text-white/[.3] font-semibold px-6 py-3 w-fit desktop:w-full rounded-[40px]'
 							}
 						>
-							{isLoadingRescue ? <Spin className={'flex'} /> : 'Rescue'}
+							{isDoingRescue ? <Spin className={'flex'} /> : 'Rescue'}
 						</div>
 					)}
 				</div>

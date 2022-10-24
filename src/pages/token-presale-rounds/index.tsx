@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination, Spin } from 'antd';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'stores';
 
 export const buyTimeDefault = {
 	start_time: 0,
@@ -52,7 +52,7 @@ const TokenPresaleRound = () => {
 	>([]);
 	const [totalPage, setTotalPage] = useState<number>(0);
 	const [isLoading, setLoading] = useState<boolean>(false);
-	const { addressWallet } = useSelector((state) => state.wallet);
+	const { addressWallet } = useAppSelector((state) => state.wallet);
 
 	useEffect(() => {
 		if (perPage !== 0) {
@@ -211,12 +211,11 @@ const TokenPresaleRound = () => {
 					</div>
 					{listTokenSaleRound.length > 0 && (
 						<Pagination
-							size={'small'}
-							defaultCurrent={6}
-							pageSize={LIMIT_10}
+							size='small'
+							current={perPage}
 							total={totalPage}
 							onChange={handleChangePage}
-							className={'flex wrap gap-x-2'}
+							className='flex wrap gap-x-2'
 						/>
 					)}
 				</div>

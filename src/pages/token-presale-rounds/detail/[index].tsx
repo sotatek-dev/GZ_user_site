@@ -6,7 +6,6 @@ import {
 import BoxPool from 'common/components/boxPool';
 import Button from 'common/components/button';
 import Countdown from 'common/components/countdown';
-import HelmetCommon from 'common/components/helmet';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
 import CustomRadio from 'common/components/radio';
@@ -19,7 +18,6 @@ import {
 	END,
 	GXZ_CURRENCY,
 	HEX_ZERO,
-	ROUTES,
 	TIME_LINE_SALE_ROUND,
 	TITLE_TIME_COUNTDOWN,
 	TYPE_SALE_ROUND,
@@ -38,7 +36,6 @@ import ModalPurchase from 'modules/purchase/ModalPurchase';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	claimPurchasedToken,
 	convertBUSDtoBNB,
@@ -49,6 +46,7 @@ import {
 } from 'web3/contracts/useContractTokenSale';
 import { buyTimeDefault, ITokenSaleRoundState } from '..';
 import usePrevious from 'common/hooks/usePrevious';
+import { useAppSelector } from 'stores';
 
 export const selectList = [
 	{
@@ -93,8 +91,8 @@ const TokenSaleRoundDetail = () => {
 	const [isWhitelist, setWhitelist] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
 	const buyLimit = get(detailSaleRound, 'details.buy_limit');
-	const { addressWallet } = useSelector((state) => state.wallet);
-	const { isLogin } = useSelector((state) => state.user);
+	const { addressWallet } = useAppSelector((state) => state.wallet);
+	const { isLogin } = useAppSelector((state) => state.user);
 	const { start_time, end_time } = get(
 		detailSaleRound,
 		'buy_time',
@@ -340,11 +338,6 @@ const TokenSaleRoundDetail = () => {
 	const renderPriceBuyInfoUpComing = () => {
 		return (
 			<>
-				<HelmetCommon
-					title='Token presale rounds detail'
-					description='Description token presale rounds detail...'
-					href={ROUTES.TOKEN_PRESALE_ROUNDS_DETAIL}
-				/>
 				<div>
 					<div className='flex gap-x-2'>
 						Price
