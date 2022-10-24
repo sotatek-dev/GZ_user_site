@@ -11,7 +11,6 @@ import { Provider } from 'react-redux';
 import store from 'stores';
 import { AuthProvider } from 'web3/contexts/authContext';
 import DocumentHead from 'common/components/head';
-import { HelmetProvider } from 'react-helmet-async';
 import BigNumber from 'bignumber.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,9 +35,7 @@ function MyApp(props: AppProps) {
 				<Web3ReactProvider getLibrary={getLibrary}>
 					<Provider store={store}>
 						<AuthProvider>
-							<HelmetProvider>
-								<DefaultLayout {...props} />
-							</HelmetProvider>
+							<DefaultLayout {...props} />
 						</AuthProvider>
 					</Provider>
 				</Web3ReactProvider>

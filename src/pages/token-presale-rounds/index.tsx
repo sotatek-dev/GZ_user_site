@@ -1,14 +1,14 @@
 import { getListSaleRound, IPramsTokenSaleRounds } from 'apis/tokenSaleRounds';
 import MyTable from 'common/components/table';
-import { CURRENCY, LIMIT_10, ROUTES } from 'common/constants/constants';
+import { CURRENCY, LIMIT_10 } from 'common/constants/constants';
 import { convertTimeLine, formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pagination, Spin } from 'antd';
-import HelmetCommon from 'common/components/helmet';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'stores';
+
 export const buyTimeDefault = {
 	start_time: 0,
 	end_time: 0,
@@ -52,7 +52,7 @@ const TokenPresaleRound = () => {
 	>([]);
 	const [totalPage, setTotalPage] = useState<number>(0);
 	const [isLoading, setLoading] = useState<boolean>(false);
-	const { addressWallet } = useSelector((state) => state.wallet);
+	const { addressWallet } = useAppSelector((state) => state.wallet);
 
 	useEffect(() => {
 		if (perPage !== 0) {
@@ -132,11 +132,6 @@ const TokenPresaleRound = () => {
 
 	return (
 		<>
-			<HelmetCommon
-				title='Token Presale Rounds'
-				description='Description token presale rounds...'
-				href={ROUTES.TOKEN_PRESALE_ROUNDS}
-			/>
 			<div>
 				{/* desktop*/}
 				<MyTable
@@ -216,12 +211,11 @@ const TokenPresaleRound = () => {
 					</div>
 					{listTokenSaleRound.length > 0 && (
 						<Pagination
-							size={'small'}
-							defaultCurrent={6}
-							pageSize={LIMIT_10}
+							size='small'
+							current={perPage}
 							total={totalPage}
 							onChange={handleChangePage}
-							className={'flex wrap gap-x-2'}
+							className='flex wrap gap-x-2'
 						/>
 					)}
 				</div>
