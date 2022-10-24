@@ -213,6 +213,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 
 	return (
 		<ModalCustom
+			key={`presaleround-token-${isShow}`}
 			isShow={isShow}
 			onCancel={onCancel}
 			customClass={
