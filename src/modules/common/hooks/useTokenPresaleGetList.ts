@@ -1,9 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from 'react-query';
 import axiosInstance from 'apis/config';
 import { convertTimeLine } from 'common/utils/functions';
 import dayjs from 'dayjs';
 
-type Request = any;
+interface IPramsTokenSaleRounds {
+	limit: number;
+	page: number;
+}
+
+type Request = IPramsTokenSaleRounds;
 
 type Response = any;
 
@@ -29,7 +35,10 @@ const fetcher = async (payload: Request, addressWallet: string) => {
 	};
 };
 
-export const useTokenPresaleList = (payload: any, addressWallet: string) => {
+export const useTokenPresaleList = (
+	payload: IPramsTokenSaleRounds,
+	addressWallet: string
+) => {
 	return useQuery([APIs.getSaleRoundList(), payload], () =>
 		fetcher(payload, addressWallet)
 	);

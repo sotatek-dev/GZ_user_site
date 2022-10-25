@@ -166,6 +166,7 @@ const TokenPresaleRound = () => {
 							size={'small'}
 							current={payloadPaging.page}
 							total={data?.pagination.total}
+							defaultPageSize={payloadPaging.limit}
 							onChange={handleChangePage}
 							className={'flex wrap gap-x-2'}
 						/>
