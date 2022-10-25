@@ -110,11 +110,11 @@ const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 				width={260}
 				className={'hidden desktop:block !bg-[#0E1A2B] min-h-screen !flex-auto'}
 			>
-				<div className='flex items-center justify-center py-[2rem] px-[10px] border-b-[1px] border-[#36c1ff0d] relative'>
+				<div className='flex items-center justify-center py-4 px-[10px] border-b-[1px] border-[#36c1ff0d] relative'>
 					<ImageBase
 						url='/images/logo.svg'
-						width={100}
-						height={100}
+						width={80}
+						height={80}
 						style={{
 							objectFit: 'contain',
 						}}
@@ -138,7 +138,7 @@ const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 			</Sider>
 			<Layout>
 				<LayoutHeader />
-				<Content className='p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'>
+				<Content className='p-4 desktop:px-12 !bg-gray desktop:!bg-background-dark'>
 					<Component {...pageProps} />
 				</Content>
 				<Footer />

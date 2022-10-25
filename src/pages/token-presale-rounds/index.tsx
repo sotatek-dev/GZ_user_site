@@ -56,6 +56,7 @@ const TokenPresaleRound = () => {
 		{
 			title: 'Rounds',
 			dataIndex: 'name',
+			width: '50%',
 			render: (name: string) => {
 				return <div>{name}</div>;
 			},
@@ -63,6 +64,7 @@ const TokenPresaleRound = () => {
 		{
 			title: 'Price',
 			dataIndex: 'exchange_rate',
+			width: '35%',
 			render: (exchangeRate: string) => (
 				<>{`${formatNumber(fromWei(exchangeRate))} ${CURRENCY}`}</>
 			),
@@ -70,6 +72,7 @@ const TokenPresaleRound = () => {
 		{
 			title: 'Status',
 			dataIndex: 'statusListSaleRound',
+			width: '15%',
 			render: (statusListSaleRound: string) => {
 				return <div>{statusListSaleRound}</div>;
 			},

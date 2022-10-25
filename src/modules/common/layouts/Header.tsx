@@ -10,13 +10,13 @@ import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { EllipsisMiddle } from 'common/utils/functions';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
-import { useSelector } from 'react-redux';
 import { LIST_SIDER } from 'common/layouts/index';
 import { useRouter } from 'next/router';
 import { ROUTES } from 'common/constants/constants';
 import Link from 'next/link';
 import Image from 'next/image';
 import ImageBase from 'common/components/imageBase';
+import { useAppSelector } from 'stores';
 
 const { Header } = Layout;
 
@@ -27,7 +27,7 @@ const LayoutHeader = () => {
 	const { disconnectWallet } = useConnectWallet();
 	const [openMobileNav, setOpenMobileNav] = useState<boolean>(false);
 
-	const isLogin = useSelector((state) => state.user.isLogin);
+	const isLogin = useAppSelector((state) => state.user.isLogin);
 	// const addressWallet = useSelector(state => state.wallet.addressWallet);
 	// const wallet = useSelector(state => state.wallet)
 
@@ -137,7 +137,7 @@ const LayoutHeader = () => {
 	);
 
 	return (
-		<Header className='relative site-layout-sub-header-background !bg-background-dark w-full flex p-4 desktop:p-6 !h-fit'>
+		<Header className='relative site-layout-sub-header-background !bg-background-dark w-full flex p-4 desktop:py-9 desktop:px-12 !h-fit'>
 			{/* mobile nav*/}
 			<div
 				className={`${
@@ -173,7 +173,7 @@ const LayoutHeader = () => {
 						selectedKeys={isActivateSideBar}
 						defaultSelectedKeys={['4']}
 					>
-						{LIST_SIDER.map((sider: any) => {
+						{LIST_SIDER.map((sider) => {
 							const { router, icon, title, needLogin } = sider;
 							if (needLogin && !isLogin) {
 								return null;
