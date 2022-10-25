@@ -26,7 +26,6 @@ import { getMintDnftSignature } from 'modules/mintDnft/services';
 import { handleWriteMethodError } from 'common/helpers/handleError';
 import MintSuccessToast from 'modules/mintDnft/components/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
-import HelmetCommon from 'common/components/helmet';
 import { useRouter } from 'next/router';
 import { showError } from 'common/helpers/toast';
 import {
@@ -246,11 +245,6 @@ const MintDNFT: React.FC = () => {
 
 	return (
 		<>
-			<HelmetCommon
-				title='Mint DNFT'
-				description='Description mint DNFT ...'
-				href={ROUTES.MINT_DNFT}
-			/>
 			<div
 				className={
 					'flex flex-col justify-center items-center desktop:flex-row desktop:items-start gap-x-3'

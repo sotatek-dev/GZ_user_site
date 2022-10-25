@@ -1,7 +1,7 @@
 import { Col, Pagination, PaginationProps } from 'antd';
-import { IDFNT } from 'pages/list-dnft';
 import { FC, memo } from 'react';
-import CardNft from './CardNft';
+import { IDFNT } from 'types/dnft';
+import CardNft from '../NFTCard/NFTCard';
 
 interface IListCardProps {
 	list: Array<IDFNT>;

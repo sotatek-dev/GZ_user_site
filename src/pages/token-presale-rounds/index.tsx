@@ -1,13 +1,12 @@
 import { IPramsTokenSaleRounds } from 'apis/tokenSaleRounds';
 import MyTable from 'common/components/table';
-import { CURRENCY, LIMIT_20, ROUTES } from 'common/constants/constants';
+import { CURRENCY, LIMIT_20 } from 'common/constants/constants';
 import { formatNumber, fromWei } from 'common/utils/functions';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Pagination, Spin } from 'antd';
-import HelmetCommon from 'common/components/helmet';
-import { useSelector } from 'react-redux';
 import { useTokenPresaleList } from 'modules/common/hooks/useTokenPresaleGetList';
+import { useAppSelector } from 'stores';
 
 export const buyTimeDefault = {
 	start_time: 0,
@@ -50,7 +49,7 @@ const TokenPresaleRound = () => {
 		limit: LIMIT_20,
 		page: 1,
 	});
-	const { addressWallet } = useSelector((state) => state.wallet);
+	const { addressWallet } = useAppSelector((state) => state.wallet);
 	const { data, isLoading } = useTokenPresaleList(payloadPaging, addressWallet);
 
 	const columns = [
@@ -83,11 +82,6 @@ const TokenPresaleRound = () => {
 
 	return (
 		<>
-			<HelmetCommon
-				title='Token Presale Rounds'
-				description='Description token presale rounds...'
-				href={ROUTES.TOKEN_PRESALE_ROUNDS}
-			/>
 			<div>
 				{/* desktop*/}
 				<MyTable
@@ -168,7 +162,7 @@ const TokenPresaleRound = () => {
 							total={data?.pagination.total}
 							defaultPageSize={payloadPaging.limit}
 							onChange={handleChangePage}
-							className={'flex wrap gap-x-2'}
+							className='flex wrap gap-x-2'
 						/>
 					)}
 				</div>

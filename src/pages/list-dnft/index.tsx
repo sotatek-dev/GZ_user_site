@@ -1,81 +1,70 @@
+import { useCallback, useEffect, useState } from 'react';
+import { cloneDeep, get, isEmpty } from 'lodash';
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import Button from 'common/components/button';
-import Dropdown from 'common/components/dropdown';
-import HelmetCommon from 'common/components/helmet';
-import ModalCustom from 'common/components/modals';
-import { ROUTES } from 'common/constants/constants';
+import { LIMIT_12, STATUS_LIST_DNFT } from 'common/constants/constants';
 import {
-	LIMIT_12,
-	RARITY_DNFT,
-	SPECIES_DNFT,
-	STATUS_LIST_DNFT,
-} from 'common/constants/constants';
-import type { MenuProps } from 'antd';
-import { cloneDeep, get, isEmpty } from 'lodash';
-import ListCard from 'modules/mergeDnft/ListCard';
-import ModalChooseMetarialToMerge from 'modules/mergeDnft/ModalChooseMetarialToMerge';
-import { useCallback, useEffect, useState } from 'react';
+	NFTFilter,
+	MergeMaterialModal,
+	ListNFT,
+} from 'modules/merge-dnft/components';
 import { useAppSelector } from 'stores';
-
-export interface IDFNT {
-	created_at: Date;
-	email_notice_sent: boolean;
-	metadata?: any;
-	random_at: Array<string>;
-	rank_level: string;
-	species: string;
-	status: string;
-	token_id: string;
-	type: string;
-	updated_at: Date;
-	wallet_address: string;
-	_id: string;
-	isChecked: boolean;
-	is_locked: boolean;
-}
-
-interface IPagination {
-	limit: number;
-	page: number;
-	page_count: number;
-	total: number;
-}
+import { IDFNT } from 'types/dnft';
+import { IPagination } from 'types/pagination';
 
 export interface IDNFTToMerge {
 	list: Array<IDFNT> | undefined;
 	pagination: IPagination;
 }
 
+export interface Filter {
+	rarity?: string;
+	species?: string;
+}
+
 const ListDNFT = () => {
-	const [page, setPage] = useState<number>(1);
-	// const [isSelectAll, setSelectAll] = useState<boolean>(false);
+	const { isLogin } = useAppSelector((state) => state.user);
+	const [page, setPage] = useState<Pick<IPagination, 'page'>['page']>(1);
 	const [totalDNFT, setTotalDNFT] = useState<number>(0);
 	const [dNFTSelected, setDNFTSelected] = useState<IDFNT>();
 	const [listDNFT, setListDNFT] = useState<Array<IDFNT>>([]);
-	const [rarity, setRarity] = useState<string>('');
-	const [species, setSpecies] = useState<string>('');
+	const [isShowMergeMaterialModal, setIsShowMergeMaterialModal] =
+		useState<boolean>(false);
+	const [filter, setFilter] = useState<Filter>({});
+
 	const [listDNFTToMergeSelected, setListDNFTToMergeSelected] = useState<
 		Array<IDFNT>
 	>([]);
-	const { isLogin } = useAppSelector((state) => state.user);
 
-	const [isShowModalChooseMetarialToMerge, setShowModalChooseMetarialToMerge] =
-		useState<boolean>(false);
+	const handleChangeFilter = (field: keyof Filter, filterValue: string) => {
+		setFilter({ ...filter, [field]: filterValue });
+	};
 
 	useEffect(() => {
+		const { rarity, species } = filter;
 		const params = {
 			limit: LIMIT_12,
 			page: page,
 			status: `${STATUS_LIST_DNFT.NORMAL}`, // tạm thời chờ BE sửa
 		} as IParamsListDFNT;
-		if (rarity) params.rarities = rarity;
+
+		const handleGetListDFNT = async (params: IParamsListDFNT) => {
+			const [dataListDNFT] = await getListDFNT(params);
+			const listDNFT = get(dataListDNFT, 'data.list', []);
+			const totalDNFT = get(dataListDNFT, 'data.pagination.total', 0);
+			const resultListDNFT = handleSelectNFT(listDNFT);
+			setTotalDNFT(totalDNFT);
+			setListDNFT(resultListDNFT);
+		};
+
+		if (filter.rarity) params.rarities = rarity;
 		if (species) params.species = species;
 		if (isLogin) {
 			handleGetListDFNT(params);
 		} else {
 			setListDNFT([]);
 		}
-	}, [rarity, species, page, isLogin]);
+	}, [filter, page, isLogin]);
 
 	const SelectNft = useCallback(
 		(event: React.MouseEvent<HTMLElement>, indexSelected: number) => {
@@ -94,77 +83,43 @@ const ListDNFT = () => {
 		[listDNFT]
 	);
 
-	const handleAddCheckBoxListDNFT = (listDNFT: Array<IDFNT>) => {
+	const handleSelectNFT = (listDNFT: Array<IDFNT>) => {
 		return listDNFT.map((DNFT: IDFNT) => {
 			return { ...DNFT, isChecked: false };
 		});
-	};
-
-	const handleGetListDFNT = async (params: IParamsListDFNT) => {
-		const [dataListDNFT] = await getListDFNT(params);
-		const listDNFT = get(dataListDNFT, 'data.list', []);
-		const totalDNFT = get(dataListDNFT, 'data.pagination.total', 0);
-		const resultListDNFT = handleAddCheckBoxListDNFT(listDNFT);
-		setTotalDNFT(totalDNFT);
-		setListDNFT(resultListDNFT);
-	};
-
-	const handleShowModal = async () => {
-		setShowModalChooseMetarialToMerge(true);
 	};
 
 	const handleChangePage = (page: number) => {
 		setPage(page);
 	};
 
-	const handleChangeRarity: MenuProps['onClick'] = ({ key }) => {
-		setRarity(key);
-	};
-
-	const handleChangeSpecies: MenuProps['onClick'] = ({ key }) => {
-		setSpecies(key);
+	const handleShowModal = async () => {
+		setIsShowMergeMaterialModal(true);
 	};
 
 	return (
 		<>
-			<HelmetCommon
-				title='Merge NFT'
-				description='Description merge nft...'
-				href={ROUTES.LIST_DNFT}
-			/>
 			<div className='flex flex-col'>
-				<div className='flex mb-8 items-end justify-between	'>
-					<div className={'hidden desktop:inline-block'}>
+				<div className='flex mb-8 justify-between items-center'>
+					<h3 className='hidden desktop:inline-block'>
 						Select the first NFT to merge
-					</div>
-					<div className='flex flex-col-reverse desktop:flex-row gap-y-6 items-end grow'>
-						<div className='flex flex-col w-full gap-y-6 justify-end desktop:flex-row gap-x-2 ml-auto'>
-							<Dropdown
-								emptyOption='All species'
-								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px] mr-4 desktop:ml-8'
-								label={species}
-								title='All species'
-								list={SPECIES_DNFT}
-								onClick={handleChangeSpecies}
-							/>
-							<Dropdown
-								emptyOption='All rarities'
-								customStyle='!w-full desktop:!w-[160px] !h-[36px] !rounded-[5px]'
-								label={rarity}
-								title='All rarities'
-								list={RARITY_DNFT}
-								onClick={handleChangeRarity}
+					</h3>
+					<div className='flex flex-col-reverse justify-end w-full desktop:w-auto desktop:flex-row'>
+						<NFTFilter
+							filter={filter}
+							handleChangeFilter={handleChangeFilter}
+						/>
+						<div className='flex justify-end'>
+							<Button
+								onClick={handleShowModal}
+								classCustom='buy-token rounded-[50px] !min-w-20 mb-6 ml-8 desktop:mb-0'
+								label='Choose'
+								isDisabled={isEmpty(dNFTSelected)}
 							/>
 						</div>
-						<Button
-							onClick={handleShowModal}
-							classCustom='buy-token rounded-[50px] !min-w-20 mt-6 ml-8'
-							label='Choose'
-							isDisabled={isEmpty(dNFTSelected)}
-						/>
 					</div>
 				</div>
-				<ListCard
+				<ListNFT
 					list={listDNFT}
 					SelectNft={SelectNft}
 					pagination={{
@@ -176,22 +131,13 @@ const ListDNFT = () => {
 					}}
 					showPagination={!!listDNFT.length}
 				/>
-				{isShowModalChooseMetarialToMerge && dNFTSelected && (
-					<ModalCustom
-						title='Choose material to merge'
-						customClass='desktop:!max-w-[1024px]'
-						isShow={isShowModalChooseMetarialToMerge}
-						onCancel={() => setShowModalChooseMetarialToMerge(false)}
-						width={1024}
-						centered
-					>
-						<ModalChooseMetarialToMerge
-							onCancel={() => setShowModalChooseMetarialToMerge(false)}
-							dNFTSelected={dNFTSelected}
-							setListDNFTToMergeSelected={setListDNFTToMergeSelected}
-							listDNFTToMergeSelected={listDNFTToMergeSelected}
-						/>
-					</ModalCustom>
+				{isShowMergeMaterialModal && dNFTSelected && (
+					<MergeMaterialModal
+						onCancel={() => setIsShowMergeMaterialModal(false)}
+						dNFTSelected={dNFTSelected}
+						setListDNFTToMergeSelected={setListDNFTToMergeSelected}
+						listDNFTToMergeSelected={listDNFTToMergeSelected}
+					/>
 				)}
 			</div>
 		</>
