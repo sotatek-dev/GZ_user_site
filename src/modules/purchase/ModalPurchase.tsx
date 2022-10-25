@@ -1,8 +1,9 @@
-import { Form, Input, InputNumber, message } from 'antd';
+import { Form, Input, message } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
+import BigNumber from 'bignumber.js';
 import {
 	BNB_CURRENCY,
 	BUSD_CURRENCY,
@@ -12,6 +13,7 @@ import { formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
 import { FC, useEffect, useRef, useState } from 'react';
+import NumericInput from './NumericInput';
 import { useSelector } from 'react-redux';
 import {
 	NEXT_PUBLIC_BUSD,
@@ -53,48 +55,67 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 }) => {
 	const [form] = Form.useForm();
 	const { addressWallet, balance } = useSelector((state) => state.wallet);
-	const [amountGXC, setAmountGXC] = useState<number>(0);
-	const [amount, setAmount] = useState<number>(0);
+	const [amountGXC, setAmountGXC] = useState<string>('0');
+	const [amount, setAmount] = useState<string>('0');
 	const [isLoading, setLoading] = useState<boolean>(false);
 	const amountBUSDRef = useRef<HTMLInputElement>(null);
+	let checkValidate = true;
 
 	useEffect(() => {
 		if (isShow) {
 			setTimeout(() => {
 				amountBUSDRef?.current?.focus();
+				handleChangeBUSD(amount);
 			}, 300);
 		}
 
 		if (!isShow) {
-			setAmountGXC(0);
-			setAmount(0);
+			setAmount('0');
 			form.setFieldValue('amountGXC', '');
 			form.setFieldValue('amount', '');
 		}
 	}, [isShow, form]);
 
-	const handleChangeBUSD = async (value: number | string | null) => {
-		if (!value) value = 0;
-		value = Number(value);
-		setAmount(value);
-		const [amountGXC] = await getTokenAmountFromBUSD(value, exchangeRate);
+	useEffect(() => {
+		handleChangeBUSD(amount);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [amount]);
+
+	const handleChangeBUSD = async (value: string | null) => {
+		if (!value) value = '0';
+		const newValue = new BigNumber(value.replace(/,/g, ''));
+
+		setAmount(newValue.toString());
+		const [amountGXC] = await getTokenAmountFromBUSD(
+			newValue.toNumber(),
+			exchangeRate
+		);
+
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
-		if (amountGXC > maxPreSaleAmount - youBought) {
+		if (
+			new BigNumber(amountGXC).gt(
+				new BigNumber(maxPreSaleAmount).minus(youBought)
+			)
+		) {
+			checkValidate = false;
 			form.setFields([
 				{
 					name: 'amount',
 					errors: [
 						`The round only have ${formatNumber(
-							maxPreSaleAmount - youBought
+							new BigNumber(maxPreSaleAmount).minus(new BigNumber(youBought))
 						)} Galactix tokens left to be purchased`,
 					],
 				},
 			]);
+		} else {
+			checkValidate = true;
 		}
 	};
 
 	const onFinish = () => {
+		if (!checkValidate) return handleChangeBUSD(amount);
 		handleBuyToken();
 	};
 
@@ -111,7 +132,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			const isUserApproved = await isUserApprovedERC20(
 				NEXT_PUBLIC_BUSD,
 				addressWallet,
-				amount,
+				Number(amount),
 				NEXT_PUBLIC_PRESALE_POOL
 			);
 
@@ -132,7 +153,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
 				saleRoundId,
 				addressWallet,
-				amount,
+				Number(amount),
 				signature
 			);
 
@@ -155,7 +176,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				saleRoundId,
 				addressWallet,
 				signature,
-				amount
+				Number(amount)
 			);
 			if (resBuyWithBNB) {
 				setLoading(false);
@@ -174,41 +195,46 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 	};
 
-	const validateToken = async (_: any, value: string) => {
-		const amount = Number(value);
+	const validateToken = async (_: unknown, value: string) => {
+		const amount = new BigNumber(value);
 		const { busdBalance, bnbBalance } = balance;
-		const royaltyFee = (amount * ROYALTY_FEE_PURCHASE) as number;
+		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
 		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
 		let buyLimit = buyLimitBUSD;
-		const amountOfTokensPurchased = youBought * exchangeRate;
+		const amountOfTokensPurchased = new BigNumber(youBought).times(
+			exchangeRate
+		);
 		if (currency === BNB_CURRENCY) {
 			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
 			buyLimit = buyLimitBNB;
 		}
 
-		if (!amount) {
-			return Promise.resolve();
-		} else if (currency === BUSD_CURRENCY && amount > Number(busdBalance)) {
+		if (currency === BUSD_CURRENCY && amount.gt(new BigNumber(busdBalance))) {
 			return Promise.reject(new Error("You don't have enough BUSD"));
-		} else if (currency === BNB_CURRENCY && amount > Number(bnbBalance)) {
+		} else if (
+			currency === BNB_CURRENCY &&
+			amount.gt(new BigNumber(bnbBalance))
+		) {
 			return Promise.reject(new Error("You don't have enough BNB"));
 		} else if (
 			(currency === BUSD_CURRENCY &&
-				Number(busdBalance) < amount + royaltyFee) ||
-			(currency === BNB_CURRENCY && Number(busdBalance) < royaltyFee)
+				new BigNumber(busdBalance).lt(amount.plus(royaltyFee))) ||
+			(currency === BNB_CURRENCY && new BigNumber(busdBalance).lt(royaltyFee))
 		) {
 			return Promise.reject(
 				new Error(`You don't have enough ${currency} in wallet for royalty fee`)
 			);
-		} else if (buyLimit !== 0 && amount > buyLimit - amountOfTokensPurchased) {
+		} else if (
+			buyLimit !== 0 &&
+			amount.gt(new BigNumber(buyLimit).minus(amountOfTokensPurchased))
+		) {
 			return Promise.reject(
 				new Error(
 					`User can only purchase maximum ${formatNumber(buyLimit)} ${currency}`
 				)
 			);
-		} else {
-			return Promise.resolve();
 		}
+		return Promise.resolve();
 	};
 
 	return (
@@ -256,7 +282,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									{ validator: validateToken },
 								]}
 							>
-								<InputNumber
+								{/* <InputNumber
 									formatter={(value) =>
 										`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 									}
@@ -265,6 +291,11 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									className='custom-input-wrapper'
 									addonAfter={<div>{currency}</div>}
 									onChange={handleChangeBUSD}
+									value={amount}
+								/> */}
+								<NumericInput
+									className='custom-input-wrapper'
+									onChange={setAmount}
 									value={amount}
 								/>
 							</Form.Item>
