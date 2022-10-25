@@ -50,8 +50,9 @@ export const useRescueMutation = () => {
 
 			if (isBnbRescue) {
 				tx = await tryBNBRescue(key, token);
+			} else {
+				tx = await tryBUSDRescue(key, token);
 			}
-			tx = await tryBUSDRescue(key, token);
 
 			await tx.wait();
 			const hash: string = tx ? tx.hash : '';
