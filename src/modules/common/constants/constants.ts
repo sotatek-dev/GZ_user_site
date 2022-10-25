@@ -30,6 +30,7 @@ export enum STATUS_STEP {
 
 export const LIMIT_8 = 8 as number;
 export const LIMIT_10 = 10 as number;
+export const LIMIT_20 = 20 as number;
 export const LIMIT_12 = 12 as number;
 export const CURRENCY = 'BUSD';
 export const UPCOMING = 'Upcoming';

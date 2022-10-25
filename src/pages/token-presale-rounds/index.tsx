@@ -1,12 +1,11 @@
-import { getListSaleRound, IPramsTokenSaleRounds } from 'apis/tokenSaleRounds';
+import { IPramsTokenSaleRounds } from 'apis/tokenSaleRounds';
 import MyTable from 'common/components/table';
-import { CURRENCY, LIMIT_10 } from 'common/constants/constants';
-import { convertTimeLine, formatNumber, fromWei } from 'common/utils/functions';
-import { get } from 'lodash';
-import dayjs from 'dayjs';
+import { CURRENCY, LIMIT_20 } from 'common/constants/constants';
+import { formatNumber, fromWei } from 'common/utils/functions';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pagination, Spin } from 'antd';
+import { useTokenPresaleList } from 'modules/common/hooks/useTokenPresaleGetList';
 import { useAppSelector } from 'stores';
 
 export const buyTimeDefault = {
@@ -46,61 +45,12 @@ export interface ITokenSaleRoundState {
 
 const TokenPresaleRound = () => {
 	const router = useRouter();
-	const [perPage, setPerPage] = useState<number>(1);
-	const [listTokenSaleRound, setListTokenSaleRound] = useState<
-		Array<ITokenSaleRoundState>
-	>([]);
-	const [totalPage, setTotalPage] = useState<number>(0);
-	const [isLoading, setLoading] = useState<boolean>(false);
+	const [payloadPaging, setPayloadPaging] = useState<IPramsTokenSaleRounds>({
+		limit: LIMIT_20,
+		page: 1,
+	});
 	const { addressWallet } = useAppSelector((state) => state.wallet);
-
-	useEffect(() => {
-		if (perPage !== 0) {
-			getListTokenSaleRounds();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [perPage]);
-
-	const handleConvertListTokenSaleRound = async (resultTokenSaleRound: any) => {
-		const result = [];
-		for await (const saleRound of resultTokenSaleRound) {
-			const timestampNow = dayjs().unix();
-			const { claim_configs, sale_round, current_status_timeline, buy_time } =
-				saleRound;
-			const { start_time, end_time } = buy_time;
-			const { statusListSaleRound } = await convertTimeLine(
-				Number(start_time),
-				Number(end_time),
-				timestampNow,
-				current_status_timeline,
-				claim_configs,
-				addressWallet,
-				sale_round
-			);
-			const newSaleRound = { ...saleRound, statusListSaleRound };
-			result.push(newSaleRound);
-		}
-		setListTokenSaleRound(result);
-	};
-
-	const getListTokenSaleRounds = async () => {
-		setLoading(true);
-		const params: IPramsTokenSaleRounds = {
-			limit: LIMIT_10,
-			page: perPage,
-		};
-		const [data, error] = await getListSaleRound(params);
-		if (error) {
-			return setLoading(false);
-		}
-		if (data) {
-			setLoading(false);
-			const resultTokenSaleRound = get(data, 'data.list', []);
-			const totalPage = get(data, 'data.pagination.total', 0);
-			setTotalPage(totalPage);
-			handleConvertListTokenSaleRound(resultTokenSaleRound);
-		}
-	};
+	const { data, isLoading } = useTokenPresaleList(payloadPaging, addressWallet);
 
 	const columns = [
 		{
@@ -126,8 +76,8 @@ const TokenPresaleRound = () => {
 		},
 	];
 
-	const handleChangePage = (page: number) => {
-		setPerPage(page);
+	const handleChangePage = (page: number, pageSize: number) => {
+		setPayloadPaging({ limit: pageSize, page });
 	};
 
 	return (
@@ -138,7 +88,7 @@ const TokenPresaleRound = () => {
 					loading={isLoading}
 					customClass='table-sale-round hidden desktop:block'
 					columns={columns}
-					dataSource={listTokenSaleRound}
+					dataSource={data?.list}
 					onRow={(record: ITokenSaleRoundState) => {
 						return {
 							onClick: () => {
@@ -147,10 +97,10 @@ const TokenPresaleRound = () => {
 						};
 					}}
 					pagination={{
-						defaultCurrent: 1,
-						pageSize: LIMIT_10,
+						current: payloadPaging.page,
 						position: ['bottomCenter'],
-						total: totalPage,
+						total: data?.pagination?.total,
+						defaultPageSize: payloadPaging.limit,
 						onChange: handleChangePage,
 					}}
 				/>
@@ -163,57 +113,54 @@ const TokenPresaleRound = () => {
 						</div>
 					)}
 					<div className={'flex flex-col gap-2.5 mb-4'}>
-						{listTokenSaleRound.map(
-							(item: ITokenSaleRoundState, index: number) => {
-								const {
-									exchange_rate: exchangeRate,
-									_id,
-									statusListSaleRound,
-								} = item;
+						{data?.list?.map((item: ITokenSaleRoundState, index: number) => {
+							const {
+								exchange_rate: exchangeRate,
+								_id,
+								statusListSaleRound,
+							} = item;
 
-								return (
-									<>
-										{/*card container*/}
-										<div
-											className={'flex flex-col bg-black-10 p-4 rounded-[4px]'}
-											key={index}
-											onClick={() => {
-												router.push(`/token-presale-rounds/detail/${_id}`);
-											}}
-										>
-											<div
-												className={'text-h6 font-bold mb-4'}
-											>{`${formatNumber(
-												fromWei(exchangeRate)
-											)} ${CURRENCY}`}</div>
-											<hr className={'border-t border-blue-20/[0.1] mb-5'} />
-											<div className={'flex justify-between items-center mb-5'}>
-												<div className={'text-h8 font-medium text-blue-20'}>
-													Rounds
-												</div>
-												<div className={'text-h8 font-bold text-white'}>
-													{item.name}
-												</div>
+							return (
+								<>
+									{/*card container*/}
+									<div
+										className={'flex flex-col bg-black-10 p-4 rounded-[4px]'}
+										key={index}
+										onClick={() => {
+											router.push(`/token-presale-rounds/detail/${_id}`);
+										}}
+									>
+										<div className={'text-h6 font-bold mb-4'}>{`${formatNumber(
+											fromWei(exchangeRate)
+										)} ${CURRENCY}`}</div>
+										<hr className={'border-t border-blue-20/[0.1] mb-5'} />
+										<div className={'flex justify-between items-center mb-5'}>
+											<div className={'text-h8 font-medium text-blue-20'}>
+												Rounds
 											</div>
-											<div className={'flex justify-between items-center'}>
-												<div className={'text-h8 font-medium text-blue-20'}>
-													Status
-												</div>
-												<div className={'text-h8 font-bold text-white'}>
-													{statusListSaleRound}
-												</div>
+											<div className={'text-h8 font-bold text-white'}>
+												{item.name}
 											</div>
 										</div>
-									</>
-								);
-							}
-						)}
+										<div className={'flex justify-between items-center'}>
+											<div className={'text-h8 font-medium text-blue-20'}>
+												Status
+											</div>
+											<div className={'text-h8 font-bold text-white'}>
+												{statusListSaleRound}
+											</div>
+										</div>
+									</div>
+								</>
+							);
+						})}
 					</div>
-					{listTokenSaleRound.length > 0 && (
+					{data && data?.list?.length > 0 && (
 						<Pagination
-							size='small'
-							current={perPage}
-							total={totalPage}
+							size={'small'}
+							current={payloadPaging.page}
+							total={data?.pagination.total}
+							defaultPageSize={payloadPaging.limit}
 							onChange={handleChangePage}
 							className='flex wrap gap-x-2'
 						/>
