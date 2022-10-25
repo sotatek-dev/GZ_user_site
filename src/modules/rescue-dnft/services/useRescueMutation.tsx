@@ -19,6 +19,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'stores';
 import { fetchRescuePriceBUSD } from './api/fetchRescuePrice';
 import { getBusb2Bnb } from 'modules/my-profile/services';
+import { ContractTransaction } from 'ethers';
 
 export const useRescueMutation = () => {
 	const dispatch = useAppDispatch();
@@ -44,35 +45,18 @@ export const useRescueMutation = () => {
 		try {
 			setIsDoingRescue(true);
 
-			const rescuePriceBUSD = await fetchRescuePriceBUSD(dnftContract);
-			if (!rescuePriceBUSD) return;
+			const isBnbRescue = token === TOKENS.BNB;
+			let tx: ContractTransaction;
 
-			const rescuePriceBNB = await getBusb2Bnb(
-				keyNftContract,
-				rescuePriceBUSD.times(1e18)
-			);
+			if (isBnbRescue) {
+				tx = await tryBNBRescue(key, token);
+			}
+			tx = await tryBUSDRescue(key, token);
 
-			if (dnftContract) {
-				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
-					await tryApproveBusd(false);
-				}
-
-				const isBnbRescue = token === TOKENS.BNB;
-				const res = await dnftContract.rescueUsingKey(
-					key,
-					isBnbRescue,
-					isBnbRescue
-						? {
-								value: rescuePriceBNB?.toString(),
-						  }
-						: undefined
-				);
-
-				await res.wait();
-				const hash: string = res ? res.hash : '';
-				if (hash) {
-					message.success(<RescueSuccessToast txHash={hash} />);
-				}
+			await tx.wait();
+			const hash: string = tx ? tx.hash : '';
+			if (hash) {
+				message.success(<RescueSuccessToast txHash={hash} />);
 			}
 		} catch (e) {
 			handleWriteMethodError(e);
@@ -80,6 +64,43 @@ export const useRescueMutation = () => {
 			reloadData();
 			setIsDoingRescue(false);
 		}
+	};
+
+	const tryBUSDRescue = async (...params: Parameters<typeof tryRescue>) => {
+		if (!dnftContract) throw new Error();
+
+		const [key, token] = params;
+		if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+			await tryApproveBusd(false);
+		}
+		return await dnftContract.rescueUsingKey(key, false);
+	};
+
+	const tryBNBRescue = async (...params: Parameters<typeof tryRescue>) => {
+		if (!dnftContract) throw new Error();
+
+		const rescuePriceBUSD = await fetchRescuePriceBUSD(dnftContract);
+		if (!rescuePriceBUSD) {
+			throw new Error();
+		}
+
+		const rescuePriceBNB = await getBusb2Bnb(
+			keyNftContract,
+			rescuePriceBUSD.times(1e18)
+		);
+
+		if (!rescuePriceBNB) {
+			throw new Error();
+		}
+
+		const [key, token] = params;
+		if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+			await tryApproveBusd(false);
+		}
+
+		return await dnftContract.rescueUsingKey(key, true, {
+			value: rescuePriceBNB?.toString(),
+		});
 	};
 
 	const reloadData = async () => {

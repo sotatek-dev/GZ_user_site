@@ -1,14 +1,14 @@
 import React from 'react';
 import { Table, TableProps } from 'antd';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface MyTableProps extends TableProps<any> {
+interface MyTableProps<RecordType> extends TableProps<RecordType> {
 	isHaveBorderTop?: boolean;
-
 	customClass?: string;
 }
 
-const MyTable: React.FC<MyTableProps> = (props: MyTableProps) => {
+const MyTable = <RecordType extends { _id: string }>(
+	props: MyTableProps<RecordType>
+) => {
 	const {
 		columns,
 		dataSource,
@@ -21,9 +21,11 @@ const MyTable: React.FC<MyTableProps> = (props: MyTableProps) => {
 	return (
 		<Table
 			onRow={onRow}
-			className={`${isHaveBorderTop ? 'table-border-top' : ''} ${customClass}`}
+			className={`app-table ${
+				isHaveBorderTop ? 'table-border-top' : ''
+			} ${customClass}`}
 			columns={columns}
-			rowKey={(record) => record.id}
+			rowKey={(record) => record._id}
 			dataSource={dataSource}
 			pagination={pagination ? pagination : false}
 			{...props}

@@ -227,7 +227,6 @@ const MergeDNFT = () => {
 			mergeTax,
 			NEXT_PUBLIC_DNFT
 		);
-		console.log('isUserApproved', isUserApproved);
 		if (!isUserApproved) {
 			const [, error] = await handleUserApproveERC20(
 				NEXT_PUBLIC_BUSD,
@@ -301,7 +300,6 @@ const MergeDNFT = () => {
 				mergeTax,
 				NEXT_PUBLIC_DNFT
 			);
-			console.log('isUserApproved', isUserApproved);
 			if (!isUserApproved) {
 				const [, error] = await handleUserApproveERC20(
 					NEXT_PUBLIC_BUSD,
