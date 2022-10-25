@@ -5,50 +5,47 @@
 	border: none;
 	background-color: #0e1a2b !important;
 	padding: 20px 40px;
-}
-
-.table-border-top {
-	.ant-table-thead > tr > th {
-		// border: none;
-	}
-}
-
-.ant-table table {
+	font-weight: 600;
 }
 
 .ant-table-thead > tr > th {
 	background: transparent !important;
 	color: #ffffff;
 	border-bottom: none;
-	font-weight: 400;
-	padding: 10px 0 !important;
+	padding: 0 0 10px;
 	font-size: 14px;
 	line-height: 24px;
 	font-family: 'Avenir Next LT Pro';
 	border-color: #ffffff12;
 }
 
-.ant-table-tbody > tr > td {
-	border-bottom: none;
-	padding: 10px 0 !important;
-	border-top: 1px solid #2f3041 !important;
-	color: white !important;
-	&:hover {
-		background-color: #121327;
+.ant-table-tbody {
+	font-size: 1rem;
+
+	> tr {
+		&:hover,
+		&:focus,
+		&:active {
+			> td {
+				background: none !important;
+				color: #d47af5 !important;
+			}
+		}
+
+		> td {
+			padding: 22px 0;
+			border-bottom: none;
+			border-top: 1px solid #2f3041 !important;
+			color: white !important;
+		}
 	}
 }
-
 .ant-table-row {
 	cursor: pointer;
-	// border-top: 1px solid #2f3041 !important;
-}
-
-.ant-table-row:hover {
-	background: #121327 !important;
 }
 
 .ant-table-cell-row-hover {
-	background: #121327 !important;
+	background: none !important;
 }
 
 .table-sale-round {

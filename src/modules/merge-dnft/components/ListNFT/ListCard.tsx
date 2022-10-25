@@ -97,6 +97,7 @@ const ListCard: FC<IListCardProps> = ({ filter, setDNFTSelected }) => {
 				<Pagination
 					className='flex items-center justify-center desktop:justify-end mt-8'
 					defaultCurrent={1}
+					current={page}
 					pageSize={LIMIT_12}
 					total={totalDNFT}
 					onChange={handleChangePage}
