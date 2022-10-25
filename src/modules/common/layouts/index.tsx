@@ -138,9 +138,7 @@ const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 			</Sider>
 			<Layout>
 				<LayoutHeader />
-				<Content
-					className={'p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'}
-				>
+				<Content className='p-4 desktop:p-8 !bg-gray desktop:!bg-background-dark'>
 					<Component {...pageProps} />
 				</Content>
 				<Footer />

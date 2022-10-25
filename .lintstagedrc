@@ -1,8 +1,8 @@
 {
-  "./src/**/*.{ts,tsx}": [
-    "yarn lint"
-  ],
-  "./src/**": [
-    "yarn format"
-  ]
+	"./src/**/*.{ts,tsx}": [
+		"eslint --fix"
+	],
+	"./src/**": [
+		"yarn format"
+	]
 }
