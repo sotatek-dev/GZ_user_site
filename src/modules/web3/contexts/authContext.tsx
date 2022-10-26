@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useWeb3React } from '@web3-react/core';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import React, { useEffect } from 'react';

@@ -4,7 +4,7 @@ import styles from '../style/roadmap.module.scss';
 
 interface Timeline {
 	imgSrc: string;
-	imgStyle?: any;
+	imgStyle?: object;
 	title: string;
 	width: number;
 	height: number;

@@ -49,12 +49,14 @@ const MergeMaterialModal: FC<IModalChooseMetarialToMergeProps> = ({
 		} else {
 			setListDNFTToMerge([]);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [page, isLogin, dNFTSelected]);
 
 	useEffect(() => {
 		return () => {
 			handleResetData();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleAddCheckBoxListDNFT = (listDNFT: Array<IDFNT>) => {
@@ -118,6 +120,7 @@ const MergeMaterialModal: FC<IModalChooseMetarialToMergeProps> = ({
 			handleGetListTokenId(newListDNFT);
 			setListDNFTToMerge(newListDNFT);
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[listDNFTToMerge]
 	);
 

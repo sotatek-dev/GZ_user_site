@@ -14,7 +14,6 @@ import DocumentHead from 'common/components/head';
 import BigNumber from 'bignumber.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 function getLibrary(provider: any) {
 	const library = new providers.Web3Provider(provider);
 	library.pollingInterval = 15000;

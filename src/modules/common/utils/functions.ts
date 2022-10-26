@@ -216,6 +216,7 @@ export const fromWei = (value: string | number | BigNumber) => {
 	return JSON.parse(result);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatNumber(value: any) {
 	if (!value) return '';
 	value = value.toString().replace(/,/g, '');

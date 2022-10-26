@@ -27,8 +27,10 @@ export default function PersonalInfo() {
 		if (isLogin) {
 			dispatch(getMyProfileRD(keynftContract));
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLogin, keynftContract]);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => form.resetFields(), [userInfo]);
 
 	const handleUpdateMyProfile = async (email: string) => {

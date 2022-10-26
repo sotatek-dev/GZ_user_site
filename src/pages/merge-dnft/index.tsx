@@ -161,6 +161,7 @@ const MergeDNFT = () => {
 		setDefaultImages(initListImage);
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onChangeValue = (event: any, propertyName: string) => {
 		const { key } = event;
 		const initImagesClone = cloneDeep(initImages);
@@ -260,7 +261,6 @@ const MergeDNFT = () => {
 			return messageAntd.error('Transaction Rejected');
 		}
 		if (responsePushContract) {
-			console.log('responsePushContract', responsePushContract);
 			messageAntd.success('You can claim your NFT in My Profile');
 			setTimeout(() => {
 				router.push(`/merge-dnft/detail/${sessionId}`);

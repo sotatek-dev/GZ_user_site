@@ -74,6 +74,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			form.setFieldValue('amountGXC', '');
 			form.setFieldValue('amount', '');
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isShow, form]);
 
 	useEffect(() => {

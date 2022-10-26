@@ -104,6 +104,7 @@ const RescueDNFT = () => {
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
 		dispatch(fetchPoolRemaining({ dnftContract }));
 		dispatch(fetchRate({ dnftContract }));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnftContract]);
 
 	useEffect(() => {
@@ -114,6 +115,7 @@ const RescueDNFT = () => {
 				walletAddress: addressWallet,
 			})
 		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnftContract, keyNftContract, addressWallet]);
 
 	const getMessage = () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorCode } from '@ethersproject/logger';
 import { ErrorMessage } from 'common/constants/error';
 import { handleCommonError, showError } from 'common/helpers/toast';

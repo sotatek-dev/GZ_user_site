@@ -100,6 +100,7 @@ const TokenPresaleRound = () => {
 						};
 					}}
 					pagination={{
+						showSizeChanger: false,
 						current: payloadPaging.page,
 						position: ['bottomCenter'],
 						total: data?.pagination?.total,
