@@ -107,6 +107,7 @@ const ListCard: FC<IListCardProps> = ({
 					total={totalDNFT}
 					onChange={handleChangePage}
 					responsive={true}
+					showSizeChanger={false}
 				/>
 			)}
 		</div>
