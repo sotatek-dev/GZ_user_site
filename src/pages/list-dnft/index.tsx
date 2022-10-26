@@ -59,9 +59,7 @@ const ListDNFT = () => {
 						</div>
 					</div>
 				</div>
-
 				<ListNFT filter={filter} setDNFTSelected={setDNFTSelected} />
-
 				{isShowMergeMaterialModal && dNFTSelected && (
 					<MergeMaterialModal
 						onCancel={() => setIsShowMergeMaterialModal(false)}

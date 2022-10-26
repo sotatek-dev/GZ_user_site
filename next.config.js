@@ -22,6 +22,7 @@ const nextConfig = {
 			'api.galactix.sotatek.works',
 			'52.78.146.69',
 			'galactix-uat.s3.ap-northeast-2.amazonaws.com',
+			'galactix-uat.s3.amazonaws.com',
 		],
 		dangerouslyAllowSVG: true,
 		// disableStaticImages: true,

@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/router';
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep, get, isEmpty } from 'lodash';
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import Button from 'common/components/button';
 import { LIMIT_8, STATUS_LIST_DNFT } from 'common/constants/constants';
@@ -77,20 +77,32 @@ const MergeMaterialModal: FC<IModalChooseMetarialToMergeProps> = ({
 	const handleResetData = () => {
 		setPage(1);
 		setListDNFTToMerge([]);
-		setListDNFTToMergeSelected([]);
+		setListDNFTToMergeSelected([dNFTSelected]);
 	};
 
-	const handleGetListTokenId = (listDNFTSelectd: Array<IDFNT>) => {
-		// listDNFTSelectd = listDNFTSelectd.concat([dNFTSelected])
-		const listDNFTToMergeSelected = listDNFTSelectd
-			.map((DFNT: IDFNT) => {
-				if (DFNT?.token_id === dNFTSelected?.token_id) {
-					return { ...DFNT, isChecked: dNFTSelected.isChecked };
-				}
-				return { ...DFNT };
-			})
-			.filter((DNFT: IDFNT) => DNFT.isChecked);
-		setListDNFTToMergeSelected(listDNFTToMergeSelected);
+	const handleGetListTokenId = (listDNFTSelected: Array<IDFNT>) => {
+		if (
+			!isEmpty(
+				listDNFTSelected.find(
+					(DFNT: IDFNT) => DFNT?.token_id === dNFTSelected?.token_id
+				)
+			)
+		) {
+			const listDNFTToMergeSelected = listDNFTSelected
+				.map((DFNT: IDFNT) => {
+					if (DFNT?.token_id === dNFTSelected?.token_id) {
+						return { ...DFNT, isChecked: dNFTSelected.isChecked };
+					}
+					return { ...DFNT };
+				})
+				.filter((DNFT: IDFNT) => DNFT.isChecked);
+			setListDNFTToMergeSelected(listDNFTToMergeSelected);
+		} else {
+			const listDNFTToMergeSelected = listDNFTSelected
+				.concat(dNFTSelected)
+				.filter((DNFT: IDFNT) => DNFT.isChecked);
+			setListDNFTToMergeSelected(listDNFTToMergeSelected);
+		}
 	};
 
 	const SelectNft = useCallback(
