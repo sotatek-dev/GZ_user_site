@@ -6,9 +6,8 @@ import { useRouter } from 'next/router';
 import { ROUTES } from 'common/constants/constants';
 import type { MenuProps } from 'antd';
 import type { AppProps } from 'next/app';
-import Footer from './Footer';
 import ImageBase from 'common/components/imageBase';
-import LayoutHeader from './Header';
+import LayoutHeader from './components/Header';
 import { useAppSelector } from 'stores';
 
 const { Sider, Content } = Layout;
@@ -141,7 +140,6 @@ const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 				<Content className='p-4 desktop:px-12 !bg-gray desktop:!bg-background-dark'>
 					<Component {...pageProps} />
 				</Content>
-				<Footer />
 			</Layout>
 		</Layout>
 	);

@@ -5,7 +5,7 @@ import ModalSignin from 'common/components/modals/SignIn';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import { get } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from 'stores';
 import { setStatusModalConnectWallet } from 'stores/modal';
 import { setStatusConnect } from 'stores/wallet';
 import { NETWORK_LIST } from 'web3/constants/networks';
@@ -22,11 +22,11 @@ interface WalletType {
 export default function ConnectWallet() {
 	const { deactivate, account, library } = useActiveWeb3React();
 	const { connectWallet, handleLogin } = useConnectWallet();
-	const { modalConnectWallet, stepModalConnectWallet } = useSelector(
-		(state) => state?.modal
+	const { modalConnectWallet, stepModalConnectWallet } = useAppSelector(
+		(state) => state.modal
 	);
-	const { isLogin } = useSelector((state) => state.user);
-	const { isConnect } = useSelector((state) => state.wallet);
+	const { isLogin } = useAppSelector((state) => state.user);
+	const { isConnect } = useAppSelector((state) => state.wallet);
 	const [selectedNetwork, setSelectedNetwork] = useState(NETWORK_LIST[0]);
 	const [connector, setConnector] = useState<any>();
 
@@ -82,7 +82,6 @@ export default function ConnectWallet() {
 
 	const renderWalletBox = (wallet: WalletType) => {
 		const { icon, walletName } = wallet;
-		// const { icon, walletName, connector, isDisabled } = wallet;
 		const isActive = get(connector, 'walletName', '') === walletName;
 		return (
 			<div
@@ -120,7 +119,7 @@ export default function ConnectWallet() {
 			case STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET:
 				return (
 					<div>
-						<h5 className='font-bold text-h4 desktop:text-h3 text-lg text-white text-center pb-6'>
+						<h5 className='font-bold desktop:text-h3 text-lg text-white text-center pb-6'>
 							Connect Wallet
 						</h5>
 						<div
@@ -161,10 +160,10 @@ export default function ConnectWallet() {
 		}
 	};
 
-	return (
+	return modalConnectWallet ? (
 		<div className='wallet'>
 			<ModalCustom
-				isShow={modalConnectWallet}
+				isShow
 				customClass={'!max-w-[calc(100%_-_2rem)]'}
 				onOk={handleCloseModalConnectWallet}
 				onCancel={handleCloseModalConnectWallet}
@@ -172,5 +171,5 @@ export default function ConnectWallet() {
 				<div className='w-full'>{renderStepModal()}</div>
 			</ModalCustom>
 		</div>
-	);
+	) : null;
 }

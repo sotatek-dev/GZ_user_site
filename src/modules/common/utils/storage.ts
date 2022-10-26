@@ -20,16 +20,19 @@ interface DataStorage {
 
 const StorageUtils = {
 	setItem: (key: string, value: string) => {
+		if (typeof window == 'undefined') return;
 		window.localStorage.setItem(key, value);
 	},
 
 	getItem: (key: string, defaultValue?: string) => {
+		if (typeof window == 'undefined') return;
 		const result = window.localStorage.getItem(key);
 		if (result === null || result === undefined) return defaultValue;
 		return result;
 	},
 
 	removeItem: (key: string) => {
+		if (typeof window == 'undefined') return;
 		window.localStorage.removeItem(key);
 	},
 
@@ -50,19 +53,23 @@ const StorageUtils = {
 	},
 
 	removeSessionStorageItem: (key: string) => {
-		sessionStorage.removeItem(key);
+		if (typeof window == 'undefined') return;
+		window.sessionStorage.removeItem(key);
 	},
 
 	setSectionStorageItem: (key: string, value: string) => {
+		if (typeof window == 'undefined') return;
 		window.sessionStorage.setItem(key, value);
 	},
 
 	getSectionStorageItem: (key: string) => {
-		const result = sessionStorage.getItem(key);
+		if (typeof window == 'undefined') return;
+		const result = window.sessionStorage.getItem(key);
 		return result || '';
 	},
 
 	removeSectionStorageItem: (key: string) => {
+		if (typeof window == 'undefined') return;
 		window.sessionStorage.removeItem(key);
 	},
 
