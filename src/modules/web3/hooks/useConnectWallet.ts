@@ -17,6 +17,7 @@ import { SIGN_MESSAGE } from 'web3/constants/envs';
 import { BSC_NETWORK } from 'web3/constants/networks';
 import { message } from 'antd';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
+import { MESSAGES } from 'common/constants/messages';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -137,6 +138,7 @@ export const useConnectWallet = () => {
 					setAccessToken(token);
 					setAddressWallet(wallet_address);
 				}
+				message.success({ content: MESSAGES.MSC1 });
 			}
 		} catch (error: any) {
 			if (error?.code === 'ACTION_REJECTED') {

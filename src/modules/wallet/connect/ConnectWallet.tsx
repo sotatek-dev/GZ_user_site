@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from 'stores';
 import { setStatusModalConnectWallet } from 'stores/modal';
 import { setStatusConnect } from 'stores/wallet';
-import { NETWORK_LIST } from 'web3/constants/networks';
+import { INetworkList, NETWORK_LIST } from 'web3/constants/networks';
 import { SUPPORTED_WALLETS } from 'web3/constants/wallets';
 import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
 
@@ -52,7 +52,7 @@ export default function ConnectWallet() {
 		deactivate();
 	};
 
-	const renderNetworkBox = (network: any) => {
+	const renderNetworkBox = (network: INetworkList) => {
 		const { icon, networkName } = network;
 		// const { icon, networkName, isDisabled, supportedNetwork } = network;
 		const isActive = get(selectedNetwork, 'networkName', '') === networkName;
