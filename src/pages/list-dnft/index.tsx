@@ -24,6 +24,7 @@ const ListDNFT = () => {
 	const [isShowMergeMaterialModal, setIsShowMergeMaterialModal] =
 		useState<boolean>(false);
 	const [filter, setFilter] = useState<Filter>({});
+	const [page, setPage] = useState<Pick<IPagination, 'page'>['page']>(1);
 
 	const [listDNFTToMergeSelected, setListDNFTToMergeSelected] = useState<
 		Array<IDFNT>
@@ -31,6 +32,7 @@ const ListDNFT = () => {
 
 	const handleChangeFilter = (field: keyof Filter, filterValue: string) => {
 		setFilter({ ...filter, [field]: filterValue });
+		setPage(1);
 	};
 
 	const handleShowModal = async () => {
@@ -59,7 +61,12 @@ const ListDNFT = () => {
 						</div>
 					</div>
 				</div>
-				<ListNFT filter={filter} setDNFTSelected={setDNFTSelected} />
+				<ListNFT
+					filter={filter}
+					setDNFTSelected={setDNFTSelected}
+					page={page}
+					setPage={setPage}
+				/>
 				{isShowMergeMaterialModal && dNFTSelected && (
 					<MergeMaterialModal
 						onCancel={() => setIsShowMergeMaterialModal(false)}

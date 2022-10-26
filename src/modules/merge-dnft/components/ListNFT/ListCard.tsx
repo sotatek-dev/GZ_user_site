@@ -6,21 +6,26 @@ import { cloneDeep, get } from 'lodash';
 import { Filter } from 'pages/list-dnft';
 import { useAppSelector } from 'stores';
 import { IDFNT } from 'types/dnft';
-import { IPagination } from 'types/pagination';
 import CardNft from '../NFTCard/NFTCard';
 import Loading from 'common/components/loading';
 
 interface IListCardProps {
 	filter: Filter;
 	setDNFTSelected: (val: IDFNT | undefined) => void;
+	page: number;
+	setPage: (page: number) => void;
 }
 
-const ListCard: FC<IListCardProps> = ({ filter, setDNFTSelected }) => {
+const ListCard: FC<IListCardProps> = ({
+	filter,
+	setDNFTSelected,
+	page,
+	setPage,
+}) => {
 	const { isLogin } = useAppSelector((state) => state.user);
 	const [listDNFT, setListDNFT] = useState<Array<IDFNT>>([]);
 	const [isGetListDNFT, setIsGetListDNFT] = useState<boolean | undefined>();
 
-	const [page, setPage] = useState<Pick<IPagination, 'page'>['page']>(1);
 	const [totalDNFT, setTotalDNFT] = useState<number>(0);
 
 	const handleSelectNFT = (listDNFT: Array<IDFNT>) => {
@@ -49,10 +54,6 @@ const ListCard: FC<IListCardProps> = ({ filter, setDNFTSelected }) => {
 		},
 		[listDNFT, setDNFTSelected]
 	);
-
-	useEffect(() => {
-		setPage(1);
-	}, [filter]);
 
 	useEffect(() => {
 		const { rarity, species } = filter;
