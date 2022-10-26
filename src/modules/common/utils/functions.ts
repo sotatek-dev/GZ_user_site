@@ -217,7 +217,7 @@ export const fromWei = (value: string | number | BigNumber) => {
 };
 
 export function formatNumber(value: any) {
-	if (!value) return '';
+	if (!value) return '0';
 	value = value.toString().replace(/,/g, '');
 	if (Math.round(value).toString().length > 9) {
 		if (Math.round(value).toString().length === 12)
