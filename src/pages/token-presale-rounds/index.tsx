@@ -161,6 +161,7 @@ const TokenPresaleRound = () => {
 					{data && data?.list?.length > 0 && (
 						<Pagination
 							size={'small'}
+							showSizeChanger={false}
 							current={payloadPaging.page}
 							total={data?.pagination.total}
 							showSizeChanger={false}
