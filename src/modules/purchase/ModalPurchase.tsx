@@ -12,7 +12,7 @@ import {
 import { formatNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import NumericInput from './NumericInput';
 import { useSelector } from 'react-redux';
 import {
@@ -55,22 +55,20 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 }) => {
 	const [form] = Form.useForm();
 	const { addressWallet, balance } = useSelector((state) => state.wallet);
-	const [amountGXC, setAmountGXC] = useState<string>('0');
-	const [amount, setAmount] = useState<string>('0');
+	const [amountGXC, setAmountGXC] = useState<string>('');
+	const [amount, setAmount] = useState<string>('');
 	const [isLoading, setLoading] = useState<boolean>(false);
-	const amountBUSDRef = useRef<HTMLInputElement>(null);
+	// const amountBUSDRef = useRef<HTMLInputElement>(null);
 	let checkValidate = true;
 
 	useEffect(() => {
-		if (isShow) {
-			setTimeout(() => {
-				amountBUSDRef?.current?.focus();
-				handleChangeBUSD(amount);
-			}, 300);
-		}
+		// if (isShow) {
+		// 	setTimeout(() => {
+		// 		amountBUSDRef?.current?.focus();
+		// 	}, 300);
+		// }
 
 		if (!isShow) {
-			setAmount('0');
 			form.setFieldValue('amountGXC', '');
 			form.setFieldValue('amount', '');
 		}
@@ -82,7 +80,12 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	}, [amount]);
 
 	const handleChangeBUSD = async (value: string | null) => {
-		if (!value) value = '0';
+		if (!value) {
+			value = '0';
+			form.setFieldValue('amountGXC', '');
+			setAmountGXC('');
+			return;
+		}
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 
 		setAmount(newValue.toString());
@@ -294,7 +297,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									value={amount}
 								/> */}
 								<NumericInput
-									ref={amountBUSDRef}
 									className='custom-input-wrapper'
 									placeholder='1,000.1234'
 									onChange={setAmount}
