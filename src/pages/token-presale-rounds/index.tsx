@@ -1,6 +1,6 @@
 import { IPramsTokenSaleRounds } from 'apis/tokenSaleRounds';
 import MyTable from 'common/components/table';
-import { CURRENCY, LIMIT_20 } from 'common/constants/constants';
+import { CURRENCY, LIMIT_10 } from 'common/constants/constants';
 import { formatNumber, fromWei } from 'common/utils/functions';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -46,7 +46,7 @@ export interface ITokenSaleRoundState {
 const TokenPresaleRound = () => {
 	const router = useRouter();
 	const [payloadPaging, setPayloadPaging] = useState<IPramsTokenSaleRounds>({
-		limit: LIMIT_20,
+		limit: LIMIT_10,
 		page: 1,
 	});
 	const { addressWallet } = useAppSelector((state) => state.wallet);
@@ -102,8 +102,8 @@ const TokenPresaleRound = () => {
 					pagination={{
 						current: payloadPaging.page,
 						position: ['bottomCenter'],
+						showSizeChanger: false,
 						total: data?.pagination?.total,
-						defaultPageSize: payloadPaging.limit,
 						onChange: handleChangePage,
 					}}
 				/>
@@ -163,7 +163,7 @@ const TokenPresaleRound = () => {
 							size={'small'}
 							current={payloadPaging.page}
 							total={data?.pagination.total}
-							defaultPageSize={payloadPaging.limit}
+							showSizeChanger={false}
 							onChange={handleChangePage}
 							className='flex wrap gap-x-2'
 						/>

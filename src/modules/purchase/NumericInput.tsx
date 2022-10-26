@@ -2,9 +2,13 @@ import { Input } from 'antd';
 import { ReactNode } from 'react';
 
 interface NumericInputProps {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	ref?: any;
 	className?: string;
+	placeholder?: string;
 	disabled?: boolean;
 	suffix?: ReactNode | string;
+	addonAfter?: ReactNode | string;
 	value: string;
 	onChange: (value: string) => void;
 }

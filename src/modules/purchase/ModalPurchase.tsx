@@ -294,8 +294,11 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									value={amount}
 								/> */}
 								<NumericInput
+									ref={amountBUSDRef}
 									className='custom-input-wrapper'
+									placeholder='1,000.1234'
 									onChange={setAmount}
+									addonAfter={<div>{currency}</div>}
 									value={amount}
 								/>
 							</Form.Item>
