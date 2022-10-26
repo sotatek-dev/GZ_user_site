@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, providers, utils } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Injected } from 'web3/connectors/injected';
@@ -39,8 +40,6 @@ export const convertBigNumberValueToNumber = (
 	weiBalance: any,
 	decimal: number
 ) => {
-	console.log('weiBalance', weiBalance);
-
 	const res = ethers.utils.formatUnits(weiBalance, decimal).toString();
 	return res;
 };

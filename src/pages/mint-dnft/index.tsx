@@ -137,16 +137,19 @@ const MintDNFT: React.FC = () => {
 	useEffect(() => {
 		dispatch(fetchListPhase({ dnftContract }));
 		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnftContract]);
 
 	useEffect(() => {
 		dispatch(fetchRate({ dnftContract }));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [runningPhaseId, runningPhase, dnftContract]);
 
 	useEffect(() => {
 		dispatch(
 			fetchIsWhitelisted({ runningPhase, walletAddress: addressWallet })
 		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [runningPhaseId, runningPhase, addressWallet]);
 
 	const mint = async () => {

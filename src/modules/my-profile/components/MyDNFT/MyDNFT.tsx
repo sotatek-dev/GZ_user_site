@@ -56,11 +56,13 @@ export default function MyDNFT() {
 		if (isLogin) {
 			handleGetDNFTs();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLogin, type, status, page]);
 
 	useEffect(() => {
 		handleGetClaimableTime();
 		handleGetBalanceOf();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnftContract, account]);
 
 	const mutantDNFTs = useMemo(() => {
@@ -102,6 +104,7 @@ export default function MyDNFT() {
 				},
 			};
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnfts, claimableTime]);
 
 	const handleUnmerge = async (sessionId: string) => {
@@ -220,6 +223,7 @@ export default function MyDNFT() {
 
 	useEffect(() => {
 		handleGetClaimableNFTsCount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnfts?.pagination.total]);
 
 	const handleGetClaimableNFTsCount = async () => {
@@ -260,6 +264,7 @@ export default function MyDNFT() {
 			width: '30%',
 		},
 		{
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			render: (record: any) => {
 				const statusMap = get(DNFTStatusMap, record.status);
 				const isLoading = get(loadingMap, record._id);

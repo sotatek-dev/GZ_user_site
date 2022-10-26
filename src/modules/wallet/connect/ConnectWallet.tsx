@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';

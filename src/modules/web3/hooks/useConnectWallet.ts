@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { checkEmailUser, IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
@@ -27,7 +28,7 @@ export const useConnectWallet = () => {
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
-	const dispatch = useDispatch<any>();
+	const dispatch = useDispatch();
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		if (!ethereum?.isMetaMask)

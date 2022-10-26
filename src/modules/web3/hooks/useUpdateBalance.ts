@@ -15,6 +15,7 @@ export const useUpdateBalance = () => {
 	const handleGetBalance = useCallback(async () => {
 		if (!accessToken || !library || !account) return;
 		try {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const provider = ethers.getDefaultProvider(RPC_CHAIN[chainId as any]);
 			const temptNativeCoinBalance = await provider.getBalance(account);
 			const temptBUSDBalance = await getERC20AmountBalance(
@@ -39,7 +40,7 @@ export const useUpdateBalance = () => {
 				bnbBalance: JSON.parse(numberNativeBalance),
 			});
 		} catch (error) {
-			console.log('Error getBalance', error);
+			//
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [library, account, accessToken, chainId]);

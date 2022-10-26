@@ -148,6 +148,7 @@ const TokenSaleRoundDetail = () => {
 		setTokenClaimTime(startTimeClaim);
 		setTimeCountDow(timeCountDown);
 		setLoading(false);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [index, isLoading]);
 
 	const handleClaimToken = async () => {

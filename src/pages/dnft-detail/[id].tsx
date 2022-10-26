@@ -20,6 +20,7 @@ const NFTDetail = () => {
 		if (router.query.id) {
 			dispatch(getDNFTDetailRD(toString(router.query.id)));
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.query.id]);
 
 	function getProperty(property: string) {
@@ -277,7 +278,9 @@ export default NFTDetail;
 interface PropertyInputProps {
 	label?: string;
 	placeholder?: string;
-	onChange?: (e: any) => void;
+	onChange?: (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => void;
 	value?: string;
 	name?: string;
 }
