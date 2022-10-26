@@ -119,10 +119,10 @@ const MergeDNFT = () => {
 			// init property fur và gloves
 			const value = property === PROPERTY.GLOVESDEFAULT ? valueDefault : '';
 			const result = {
-				zIndex: orderLayer ? orderLayer + 2 : orderLayer,
-				orderLayer: orderLayer ? orderLayer + 2 : orderLayer,
+				zIndex: orderLayer ? (orderLayer + 10) * 10 : orderLayer,
+				orderLayer: orderLayer ? (orderLayer + 10) * 10 : orderLayer,
 				specialOrderLayer: specialOrderLayer
-					? Math.round(specialOrderLayer)
+					? (specialOrderLayer + 10) * 10
 					: 0,
 				assetBase: asset,
 				extension,
@@ -260,6 +260,7 @@ const MergeDNFT = () => {
 			return messageAntd.error('Transaction Rejected');
 		}
 		if (responsePushContract) {
+			console.log('responsePushContract', responsePushContract);
 			messageAntd.success('You can claim your NFT in My Profile');
 			setTimeout(() => {
 				router.push(`/merge-dnft/detail/${sessionId}`);

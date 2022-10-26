@@ -51,6 +51,10 @@ const ListCard: FC<IListCardProps> = ({ filter, setDNFTSelected }) => {
 	);
 
 	useEffect(() => {
+		setPage(1);
+	}, [filter]);
+
+	useEffect(() => {
 		const { rarity, species } = filter;
 		const params = {
 			limit: LIMIT_12,
