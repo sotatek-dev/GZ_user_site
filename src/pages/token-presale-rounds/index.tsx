@@ -103,7 +103,6 @@ const TokenPresaleRound = () => {
 						showSizeChanger: false,
 						current: payloadPaging.page,
 						position: ['bottomCenter'],
-						showSizeChanger: false,
 						total: data?.pagination?.total,
 						onChange: handleChangePage,
 					}}
@@ -165,7 +164,6 @@ const TokenPresaleRound = () => {
 							showSizeChanger={false}
 							current={payloadPaging.page}
 							total={data?.pagination.total}
-							showSizeChanger={false}
 							onChange={handleChangePage}
 							className='flex wrap gap-x-2'
 						/>
