@@ -317,14 +317,14 @@ export default function MyDNFT() {
 						}
 					>
 						<Dropdown
-							emptyOption='All statuses'
+							emptyOption='All status'
 							onClick={(value) => {
 								setPage(1);
 								setStatus(value.key);
 							}}
 							customStyle={'!w-1/2 desktop:!w-[160px]'}
 							list={RARITY_DNFT}
-							title='All statuses'
+							title='All status'
 							label={status}
 						/>
 						<Dropdown
@@ -351,6 +351,7 @@ export default function MyDNFT() {
 				</div>
 
 				<MyTable
+					id='my-dnft-table'
 					locale={{
 						emptyText: () => {
 							if (loading) {

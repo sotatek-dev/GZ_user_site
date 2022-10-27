@@ -7,12 +7,13 @@ import { AbiKeynft } from 'web3/abis/types';
 import { useContract } from 'web3/contracts/useContract';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
 import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
-import Image from 'next/image';
 import type { Rule } from 'antd/lib/form';
 import { isValidEmail } from 'common/helpers/email';
 import { useEffect, useState } from 'react';
 import myProfileConstants from 'modules/my-profile/constant';
-import { copyToClipboard } from 'modules/my-profile/services';
+import { Typography } from 'antd';
+
+const { Paragraph } = Typography;
 
 export default function PersonalInfo() {
 	const form = Form.useForm()[0];
@@ -94,18 +95,7 @@ export default function PersonalInfo() {
 					className='mt-[22px]'
 				>
 					<Input
-						suffix={
-							<button
-								type='button'
-								className='px-[10px]'
-								onClick={(e) => {
-									e.stopPropagation();
-									copyToClipboard(userInfo?.wallet_address || '');
-								}}
-							>
-								<Image src='/icons/copy.svg' width='20' height='20' alt='' />
-							</button>
-						}
+						suffix={<Paragraph copyable={{ text: userInfo?.wallet_address }} />}
 						placeholder='My wallet address'
 						className='custom-input-wrapper'
 						disabled

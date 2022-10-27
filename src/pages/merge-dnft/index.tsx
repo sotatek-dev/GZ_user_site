@@ -209,6 +209,7 @@ const MergeDNFT = () => {
 		} as IParamsDnftMerge;
 		// push value merge
 		const [data, error] = await dnftPermanentMerge(params);
+
 		if (error) {
 			const { message } = error;
 			setLoadingPermanentlyMerge(false);
@@ -262,7 +263,7 @@ const MergeDNFT = () => {
 		}
 		if (responsePushContract) {
 			messageAntd.success({
-				content: 'You can claim your NFT in My Profile',
+				content: redirectToBSCScan(responsePushContract?.transactionHash),
 				duration: 4,
 			});
 			setTimeout(() => {
@@ -270,6 +271,17 @@ const MergeDNFT = () => {
 			}, 4500);
 		}
 	};
+	const redirectToBSCScan = (tx: string) => (
+		<span>
+			<a
+				target={'_blank'}
+				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
+				rel='noreferrer'
+			>
+				You can claim your NFT in My Profile
+			</a>
+		</span>
+	);
 
 	const handleTemporaryMerge = async () => {
 		setLoadingTemporaryMerge(true);
