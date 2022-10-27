@@ -18,6 +18,7 @@ import { SIGN_MESSAGE } from 'web3/constants/envs';
 import { BSC_NETWORK } from 'web3/constants/networks';
 import { message } from 'antd';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
+import { MESSAGES } from 'common/constants/messages';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -33,22 +34,24 @@ export const useConnectWallet = () => {
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		if (!ethereum?.isMetaMask)
 			return message.error('Please install or unlock MetaMask');
-		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
-		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 		activateInjectedProvider(walletName);
-		setStorageWallet(walletName);
-		setStorageNetwork(networkConnected);
 
-		// activate connect wallet via metamask
 		await activate(connector, undefined, true)
 			.then(async () => {
+				setStorageWallet(walletName);
+				setStorageNetwork(networkConnected);
+
 				const addressWallet = await connector.getAccount();
 				checkLogin(addressWallet);
 			})
 			.catch(async (error: Error) => {
 				if (error instanceof UnsupportedChainIdError) {
-					await changeNetwork(connector);
+					const changedSuccess = await changeNetwork();
+
+					if (changedSuccess) {
+						return await connectWallet(walletSelected, networkConnected);
+					}
 				}
 
 				if (error && error.message.includes('user rejected')) {
@@ -74,14 +77,13 @@ export const useConnectWallet = () => {
 		);
 	}
 
-	const changeNetwork = async (connector: any) => {
-		const addressWallet = await connector.getAccount();
+	const changeNetwork = async () => {
 		try {
 			await ethereum?.request({
 				method: 'wallet_switchEthereumChain',
 				params: [{ chainId: BSC_NETWORK.CHAIN_ID_HEX }],
 			});
-			await checkLogin(addressWallet);
+			return true;
 		} catch (switchError: any) {
 			if (switchError.code === 4902) {
 				try {
@@ -101,15 +103,20 @@ export const useConnectWallet = () => {
 							},
 						],
 					});
-					checkLogin(addressWallet);
-					return;
+					return true;
 				} catch (addError) {
+					console.log('///');
+
 					deactivate();
+					setStatusModalConnectWallet(false);
+					return false;
 				}
 			} else {
+				console.log('///');
 				deactivate();
+				setStatusModalConnectWallet(false);
+				return false;
 			}
-			setStatusModalConnectWallet(false);
 		}
 	};
 
@@ -138,17 +145,14 @@ export const useConnectWallet = () => {
 					setAccessToken(token);
 					setAddressWallet(wallet_address);
 				}
+				message.success({ content: MESSAGES.MSC1 });
 			}
 		} catch (error: any) {
 			if (error?.code === 'ACTION_REJECTED') {
 				message.warning('User rejected to sign');
 			}
-			removeStorageWallet();
 		} finally {
 			setStatusModalConnectWallet(false);
-			setStepModalConnectWallet(
-				STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
-			);
 		}
 	}
 
