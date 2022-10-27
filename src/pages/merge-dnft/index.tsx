@@ -261,10 +261,13 @@ const MergeDNFT = () => {
 			return messageAntd.error('Transaction Rejected');
 		}
 		if (responsePushContract) {
-			messageAntd.success('You can claim your NFT in My Profile');
+			messageAntd.success({
+				content: 'You can claim your NFT in My Profile',
+				duration: 4,
+			});
 			setTimeout(() => {
 				router.push(`/merge-dnft/detail/${sessionId}`);
-			}, 1500);
+			}, 4500);
 		}
 	};
 
@@ -335,10 +338,13 @@ const MergeDNFT = () => {
 			}
 
 			if (responsePushContract) {
-				messageAntd.success('Your NFT will be locked in 30 days');
+				messageAntd.success({
+					content: 'Your NFT will be locked in 30 days',
+					duration: 4,
+				});
 				setTimeout(() => {
 					router.push(ROUTES.MY_PROFILE);
-				}, 1500);
+				}, 4500);
 			}
 		}
 	};
