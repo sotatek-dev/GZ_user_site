@@ -100,6 +100,7 @@ const ListCard: FC<IListCardProps> = ({
 			</div>
 			{!!listDNFT.length && (
 				<Pagination
+					showSizeChanger={false}
 					className='flex items-center justify-center desktop:justify-end mt-8'
 					defaultCurrent={1}
 					current={page}
@@ -107,7 +108,6 @@ const ListCard: FC<IListCardProps> = ({
 					total={totalDNFT}
 					onChange={handleChangePage}
 					responsive={true}
-					showSizeChanger={false}
 				/>
 			)}
 		</div>
