@@ -165,7 +165,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				setLoading(false);
 				onCancel();
 				handleGetUserPurchasedAmount(saleRoundId);
-				message.success('Transaction Completed');
+				message.success(redirectToBSCScan(resBuyWithBUSD?.transactionHash));
 				getDetailSaleRound();
 			}
 			if (errorBuyWithBUSD) {
@@ -186,7 +186,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				setLoading(false);
 				onCancel();
 				handleGetUserPurchasedAmount(saleRoundId);
-				message.success('Transaction Completed');
+				message.success(redirectToBSCScan(resBuyWithBNB?.transactionHash));
 				getDetailSaleRound();
 			}
 			if (errorBuyWithBNB) {
@@ -198,6 +198,18 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 		}
 	};
+
+	const redirectToBSCScan = (tx: string) => (
+		<span>
+			<a
+				target={'_blank'}
+				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
+				rel='noreferrer'
+			>
+				Transaction Completed
+			</a>
+		</span>
+	);
 
 	const validateToken = async (_: unknown, value: string) => {
 		const amount = new BigNumber(value);
