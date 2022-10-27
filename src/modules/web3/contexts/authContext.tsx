@@ -3,12 +3,12 @@ import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import React, { useEffect } from 'react';
 import { ROUTES } from 'common/constants/constants';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
 import { setAccessToken, setLogin } from 'stores/user';
 import { setAddressWallet, setNetwork } from 'stores/wallet';
 import { BSC_CHAIN_ID_HEX } from 'web3/constants/envs';
 import { useConnectWallet, useEagerConnect } from 'web3/hooks';
 import { useUpdateBalance } from 'web3/hooks/useUpdateBalance';
+import { useAppSelector } from 'stores';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const { disconnectWallet } = useConnectWallet();
 	const { updateBalance } = useUpdateBalance();
-	const { isLogin, accessToken } = useSelector((state) => state.user);
+	const { isLogin, accessToken } = useAppSelector((state) => state.user);
 
 	useEffect(() => {
 		const accountConnected = StorageUtils.getSectionStorageItem(
@@ -54,13 +54,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		if (!library && !library?.provider && !account) return;
 
 		const onChangeAccount = () => {
-			disconnectWallet();
+			if (account) {
+				disconnectWallet();
+			}
 		};
 
 		const onChangeNetwork = (chainId: string | number) => {
 			router.push(ROUTES.TOKEN_PRESALE_ROUNDS);
-			if (chainId !== BSC_CHAIN_ID_HEX) return;
-			disconnectWallet();
+			if (chainId !== BSC_CHAIN_ID_HEX) return disconnectWallet();
 		};
 
 		if (library?.provider && library.provider?.on) {
