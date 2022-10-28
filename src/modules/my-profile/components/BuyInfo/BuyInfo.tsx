@@ -19,6 +19,7 @@ import { useBalance } from 'web3/queries';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
+import { message } from 'antd';
 
 export default function BuyInfo() {
 	const { userInfo, dnft_holding_count } = useAppSelector(
@@ -37,12 +38,29 @@ export default function BuyInfo() {
 	const dispatch = useAppDispatch();
 
 	const handleBuyKey = async () => {
-		await buyDKeyNFT({
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+		const [tx, _]: any = await buyDKeyNFT({
 			keyPrice: keyPriceBusd?.toNumber(),
 			token2Buy: tokenCode,
 		});
+		if (tx) {
+			message.success(redirectToBSCScan(tx && tx?.transactionHash));
+		}
+
 		dispatch(getMyProfileRD(keynftContract));
 	};
+
+	const redirectToBSCScan = (tx: string) => (
+		<span>
+			<a
+				target={'_blank'}
+				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
+				rel='noreferrer'
+			>
+				{myProfileConstants.TRANSACTION_COMPLETED}
+			</a>
+		</span>
+	);
 
 	const buyKeyState = useMemo(() => {
 		if (!userInfo || !systemSetting) {

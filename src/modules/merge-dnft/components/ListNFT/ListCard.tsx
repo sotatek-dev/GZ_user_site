@@ -60,7 +60,7 @@ const ListCard: FC<IListCardProps> = ({
 		const params = {
 			limit: LIMIT_12,
 			page: page,
-			status: `${STATUS_LIST_DNFT.NORMAL}`, // tạm thời chờ BE sửa
+			status: `${STATUS_LIST_DNFT.NORMAL}`, // tạm thời chờ BE fix
 		} as IParamsListDFNT;
 
 		const handleGetListDFNT = async (params: IParamsListDFNT) => {
