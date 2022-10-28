@@ -1,5 +1,5 @@
 import { FC, memo, useCallback, useEffect, useState } from 'react';
-import { Col, Pagination } from 'antd';
+import { Col, Pagination, Empty } from 'antd';
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import { LIMIT_12, STATUS_LIST_DNFT } from 'common/constants/constants';
 import { cloneDeep, get } from 'lodash';
@@ -98,6 +98,7 @@ const ListCard: FC<IListCardProps> = ({
 					);
 				})}
 			</div>
+			{listDNFT && listDNFT.length === 0 && <Empty />}
 			{!!listDNFT.length && (
 				<Pagination
 					showSizeChanger={false}
