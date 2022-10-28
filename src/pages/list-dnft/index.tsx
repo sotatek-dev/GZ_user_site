@@ -41,7 +41,7 @@ const ListDNFT = () => {
 
 	return (
 		<>
-			<div className='flex flex-col'>
+			<div className='flex flex-col h-full'>
 				<div className='flex mb-8 justify-between items-center'>
 					<h3 className='hidden desktop:inline-block'>
 						Select the first NFT to merge

@@ -60,7 +60,7 @@ const ListCard: FC<IListCardProps> = ({
 		const params = {
 			limit: LIMIT_12,
 			page: page,
-			status: `${STATUS_LIST_DNFT.NORMAL}`, // tạm thời chờ BE sửa
+			status: `${STATUS_LIST_DNFT.NORMAL}`, // tạm thời chờ BE fix
 		} as IParamsListDFNT;
 
 		const handleGetListDFNT = async (params: IParamsListDFNT) => {
@@ -88,7 +88,7 @@ const ListCard: FC<IListCardProps> = ({
 	}
 
 	return (
-		<div className='flex flex-col'>
+		<div className='flex flex-col h-full'>
 			<div className='grid grid-cols-2 desktop:grid-cols-4 gap-4 desktop:gap-8'>
 				{listDNFT.map((data: IDFNT, index: number) => {
 					return (
@@ -98,7 +98,9 @@ const ListCard: FC<IListCardProps> = ({
 					);
 				})}
 			</div>
-			{listDNFT && listDNFT.length === 0 && <Empty />}
+			<div className='flex h-full justify-center items-center'>
+				{listDNFT && listDNFT.length === 0 && <Empty />}
+			</div>
 			{!!listDNFT.length && (
 				<Pagination
 					showSizeChanger={false}
