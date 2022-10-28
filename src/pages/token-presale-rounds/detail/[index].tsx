@@ -156,7 +156,7 @@ const TokenSaleRoundDetail = () => {
 		const [resClamin, errorClaim] = await claimPurchasedToken(saleRoundId);
 		if (resClamin) {
 			getDetailSaleRound();
-			message.success('Transaction Completed');
+			message.success(redirectToBSCScan(resClamin?.transactionHash));
 			setOpenClaimPopup(false);
 		}
 		if (errorClaim) {
@@ -167,6 +167,17 @@ const TokenSaleRoundDetail = () => {
 			return message.error('Transaction Rejected');
 		}
 	};
+	const redirectToBSCScan = (tx: string) => (
+		<span>
+			<a
+				target={'_blank'}
+				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
+				rel='noreferrer'
+			>
+				Transaction Completed
+			</a>
+		</span>
+	);
 
 	useEffect(() => {
 		if (index && !prevLoading) {
