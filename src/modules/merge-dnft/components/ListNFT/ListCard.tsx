@@ -99,7 +99,9 @@ const ListCard: FC<IListCardProps> = ({
 				})}
 			</div>
 			<div className='flex h-full justify-center items-center'>
-				{listDNFT && listDNFT.length === 0 && <Empty />}
+				{listDNFT && listDNFT.length === 0 && (
+					<Empty className='absolute top-[45%]' />
+				)}
 			</div>
 			{!!listDNFT.length && (
 				<Pagination
