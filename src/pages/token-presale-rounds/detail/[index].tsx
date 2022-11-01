@@ -351,7 +351,7 @@ const TokenSaleRoundDetail = () => {
 		return (
 			<>
 				<div>
-					<div className='flex gap-x-2'>
+					<div className='flex gap-x-2 items-center'>
 						Price
 						<CustomRadio
 							onChange={handleSelectCurrency}
@@ -359,16 +359,16 @@ const TokenSaleRoundDetail = () => {
 							options={selectList}
 						/>
 					</div>
-					<div className='text-base font-semibold mt-2'>{`${formatNumber(
+					<div className='text-base font-semibold desktop:pt-[0rem] desktop:pb-0 pb-4 pt-[0.625rem]'>{`${formatNumber(
 						price
 					)} ${currency}`}</div>
 				</div>
 				{youBought > 0 && (
-					<div className='border-x-[1px] border-gray-30 px-8 '>
-						<div className='text-sm font-normal text-gray-40 mb-2'>
+					<div className='desktop:border-x-[1px] desktop:border-y-[0px] border-y-[1px] border-gray-30 desktop:px-8'>
+						<div className='text-sm font-normal text-gray-40 mb-2 whitespace-nowrap desktop:pt-0 pt-4'>
 							You bought
 						</div>
-						<div className='text-base font-semibold'>{`${formatNumber(
+						<div className='text-base font-semibold desktop:pb-0 pb-4'>{`${formatNumber(
 							youBought
 						)} ${GXZ_CURRENCY}`}</div>
 					</div>
@@ -385,17 +385,17 @@ const TokenSaleRoundDetail = () => {
 						<div className='text-sm font-normal text-gray-40 mb-2'>
 							You bought
 						</div>
-						<div className='text-base font-semibold'>{`${formatNumber(
+						<div className='text-base font-semibold desktop:pb-0 pb-4'>{`${formatNumber(
 							youBought
 						)} ${GXZ_CURRENCY}`}</div>
 					</div>
 				)}
 				{youCanClaimAmount > 0 && (
-					<div className='border-x-[1px] border-gray-30 px-8'>
-						<div className='text-sm font-normal text-gray-40 mb-2 '>
+					<div className='desktop:border-x-[1px] desktop:border-y-[0px] border-y-[1px] border-gray-30 desktop:px-8'>
+						<div className='text-sm font-normal text-gray-40 mb-2 whitespace-nowrap desktop:pt-0 pt-4'>
 							You can claim
 						</div>
-						<div className='text-base font-semibold'>{`${formatNumber(
+						<div className='text-base font-semibold desktop:pb-0 pb-4'>{`${formatNumber(
 							youCanClaimAmount
 						)} ${GXZ_CURRENCY}`}</div>
 					</div>
@@ -406,7 +406,7 @@ const TokenSaleRoundDetail = () => {
 
 	const renderPriceBuyInfoEnd = () => {
 		return (
-			<div className='border-x-[1px] border-gray-30 px-8'>
+			<div>
 				<div className='text-sm font-normal text-gray-40 mb-2 '>
 					You can claim
 				</div>
@@ -421,7 +421,7 @@ const TokenSaleRoundDetail = () => {
 		const buyProgess = Math.floor((totalSoldAmount / maxPreSaleAmount) * 100);
 		return (
 			<>
-				<div className='text-sm text font-normal'>Buy Progress:</div>
+				<div className='text-sm text font-normal pb-2'>Buy Progress:</div>
 				<Progress
 					strokeColor={{
 						'0%': '#40bbfd',
@@ -435,8 +435,10 @@ const TokenSaleRoundDetail = () => {
 					showInfo={false}
 					status='active'
 				/>
-				<div className='flex justify-between'>
-					<div>{`${buyProgess > 0 ? buyProgess : 0}%`}</div>
+				<div className='flex justify-between pt-[0.313rem]'>
+					<div className='text-[#36C1FF]'>{`${
+						buyProgess > 0 ? buyProgess : 0
+					}%`}</div>
 					<div>{`${formatNumber(totalSoldAmount)}/${formatNumber(
 						maxPreSaleAmount
 					)}`}</div>
@@ -451,7 +453,7 @@ const TokenSaleRoundDetail = () => {
 
 		return (
 			<>
-				<div className='text-sm text font-normal'>Claim Progress:</div>
+				<div className='text-sm text font-normal pb-2'>Claim Progress:</div>
 				<Progress
 					strokeColor={{
 						'0%': '#40bbfd',
@@ -465,8 +467,10 @@ const TokenSaleRoundDetail = () => {
 					showInfo={false}
 					status='active'
 				/>
-				<div className='flex justify-between'>
-					<div>{`${claimProgess > 0 ? claimProgess : 0}%`}</div>
+				<div className='flex justify-between pt-[0.313rem]'>
+					<div className='text-[#36C1FF]'>{`${
+						claimProgess > 0 ? claimProgess : 0
+					}%`}</div>
 					<div>{`${formatNumber(totalClaimed)}/${formatNumber(
 						youBought
 					)}`}</div>
@@ -495,29 +499,37 @@ const TokenSaleRoundDetail = () => {
 					title='Buy Info'
 					customClass='desktop:w-[50%] flex flex-col bg-gray-50'
 				>
-					<div className='pt-6 flex'>
-						<div className='flex justify-between w-full'>
+					<div className='pt-[1.688rem]'>
+						<div className='flex justify-between w-full desktop:flex-row flex-col'>
 							{(statusTimeLine === UPCOMING || statusTimeLine === BUY) &&
 								renderPriceBuyInfoUpComing()}
 							{statusTimeLine === CLAIMABLE && renderPriceBuyInfoClaimable()}
 							{statusTimeLine === END && renderPriceBuyInfoEnd()}
-							{isShowButtonBuy && (
-								<Button
-									onClick={() => setOpenTokenPurchase(true)}
-									label='Buy'
-									classCustom='buy-token'
-								/>
-							)}
-							{isShowButtonClaim && (
-								<Button
-									onClick={handleClaimToken}
-									label='Claim'
-									classCustom='buy-token'
-								/>
+							{(isShowButtonBuy || isShowButtonClaim) && (
+								<div className='flex desktop:py-0 py-[1.563rem] desktop:items-center desktop:justify-center justify-end'>
+									{isShowButtonBuy && (
+										<Button
+											onClick={() => setOpenTokenPurchase(true)}
+											label='Buy'
+											classCustom='buy-token'
+										/>
+									)}
+									{isShowButtonClaim && (
+										<Button
+											onClick={handleClaimToken}
+											label='Claim'
+											classCustom='buy-token'
+										/>
+									)}
+								</div>
 							)}
 						</div>
 					</div>
-					<div className='mt-auto'>
+					<div
+						className={`mt-auto desktop:pt-0 ${
+							!isShowButtonBuy && !isShowButtonClaim && 'pt-[0.563rem]'
+						}`}
+					>
 						{statusTimeLine === BUY && renderInprogessBuy()}
 						{statusTimeLine === CLAIMABLE && renderInprogessClaim()}
 					</div>

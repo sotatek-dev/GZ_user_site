@@ -1,4 +1,4 @@
-import { Radio, RadioChangeEvent } from 'antd';
+import { Radio, RadioChangeEvent, Space } from 'antd';
 import { FC } from 'react';
 
 interface ICustomRadioProps {
@@ -15,7 +15,15 @@ const CustomRadio: FC<ICustomRadioProps> = ({
 }) => {
 	return (
 		<div className='card-radio'>
-			<Radio.Group options={options} onChange={onChange} value={defaultValue} />
+			<Radio.Group onChange={onChange} value={defaultValue}>
+				<Space direction='horizontal'>
+					{options.map((el) => (
+						<Radio key={el.value} value={el.value}>
+							{el.label}
+						</Radio>
+					))}
+				</Space>
+			</Radio.Group>
 		</div>
 	);
 };
