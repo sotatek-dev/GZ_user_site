@@ -26,7 +26,7 @@ export const buyStatusConfigs: {
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[5px] bg-[#f0272733] px-[15px] py-[13px] w-[100%] mb-2 leading-[20px]',
-		messageStyle: 'text-[#F02727]  text-[0.875rem]',
+		messageStyle: 'text-[#F02727]',
 		canBuy: false,
 	},
 	[BuyStatus.NFTRequired]: {
@@ -34,23 +34,15 @@ export const buyStatusConfigs: {
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[0.3125rem] bg-[#f0272733] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
-		messageStyle: 'text-[#F02727]  text-[0.875rem]',
+		messageStyle: 'text-[#F02727]',
 		canBuy: false,
-	},
-	[BuyStatus.Available]: {
-		message: myProfileConstants.BUYINFO_MESSAGE_AVAILABLE,
-		icon: '/icons/check-circle.svg',
-		boxStyle:
-			'flex items-center gap-3 rounded-[0.3125rem] bg-[#00d26133] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
-		messageStyle: 'text-[#00D261]  text-[0.875rem]',
-		canBuy: true,
 	},
 	[BuyStatus.NotEnoughBalance]: {
 		message: myProfileConstants.BUYINFO_MESSAGE_NOT_ENOUGH_BALANCE,
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[0.3125rem] bg-[#f0272733] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
-		messageStyle: 'text-[#F02727]  text-[0.875rem]',
+		messageStyle: 'text-[#F02727]',
 		canBuy: false,
 	},
 	[BuyStatus.NotEnoughRoyalty]: {
@@ -58,8 +50,16 @@ export const buyStatusConfigs: {
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[0.3125rem] bg-[#f0272733] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
-		messageStyle: 'text-[#F02727]  text-[0.875rem]',
+		messageStyle: 'text-[#F02727]',
 		canBuy: false,
+	},
+	[BuyStatus.Available]: {
+		message: myProfileConstants.BUYINFO_MESSAGE_AVAILABLE,
+		icon: '/icons/check-circle.svg',
+		boxStyle:
+			'flex items-center gap-3 rounded-[0.3125rem] bg-[#00d26133] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
+		messageStyle: 'text-[#00D261]',
+		canBuy: true,
 	},
 };
 
