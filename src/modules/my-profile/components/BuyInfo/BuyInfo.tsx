@@ -7,7 +7,7 @@ import { get } from 'lodash';
 import myProfileConstants from 'modules/my-profile/constant';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/my-profile';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
@@ -50,19 +50,23 @@ export default function BuyInfo() {
 		dispatch(getMyProfileRD(keynftContract));
 	};
 
-	const redirectToBSCScan = (tx: string) => (
-		<span>
-			<a
-				target={'_blank'}
-				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
-				rel='noreferrer'
-			>
-				{myProfileConstants.TRANSACTION_COMPLETED}
-			</a>
-		</span>
-	);
+	const isEnoughRoyalty = () => {
+		let isEnoughRoyalty = false;
 
-	const buyKeyState = useMemo(() => {
+		if (tokenCode === Token2Buy.BUSD) {
+			isEnoughRoyalty =
+				!!keyPriceBusd && keyPriceBusd.times(1.08).lte(busdBalance);
+		}
+
+		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
+			isEnoughRoyalty =
+				!!keyPriceBusd && keyPriceBusd.times(0.08).lte(busdBalance);
+		}
+
+		return isEnoughRoyalty;
+	};
+
+	const getBuyKeyState = () => {
 		if (!userInfo || !systemSetting) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
 		}
@@ -76,19 +80,7 @@ export default function BuyInfo() {
 			return buyStatusConfigs[BuyStatus.NFTRequired];
 		}
 
-		let isEnoughRoyalty = false;
-
-		if (tokenCode === Token2Buy.BUSD) {
-			isEnoughRoyalty =
-				!!keyPriceBusd && keyPriceBusd.times(1.08).lte(busdBalance);
-		}
-
-		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
-			isEnoughRoyalty =
-				!!keyPriceBusd && keyPriceBusd.times(0.08).lte(busdBalance);
-		}
-
-		if (!isEnoughRoyalty) {
+		if (!isEnoughRoyalty()) {
 			return buyStatusConfigs[BuyStatus.NotEnoughRoyalty];
 		}
 
@@ -107,41 +99,41 @@ export default function BuyInfo() {
 		}
 
 		return buyStatusConfigs[BuyStatus.Available];
-	}, [
-		userInfo,
-		systemSetting,
-		tokenCode,
-		busdBalance,
-		busd2Bnb,
-		dnft_holding_count,
-		bnbBalance,
-		keyPriceBusd,
-	]);
+	};
 
-	const { inTimeBuyKey, secondsRemain } = useMemo(() => {
+	const getBuyKeyTimeRemain = () => {
 		if (!systemSetting) {
 			return {
-				inTimeBuyKey: false,
+				onBuyKeyTime: false,
 				secondsRemain: 0,
 			};
 		}
-		const currentDate = dayjs().date();
-		if (currentDate > systemSetting.mint_days) {
-			const secondsRemain = dayjs().endOf('month').diff(dayjs(), 'second');
+		const currentDayInMonth = dayjs().date();
+
+		if (currentDayInMonth > systemSetting.mint_days) {
+			const timeTillBuyTime = dayjs()
+				.add(1, 'month')
+				.startOf('month')
+				.diff(dayjs(), 'second');
+
 			return {
-				inTimeBuyKey: false,
-				secondsRemain,
+				onBuyKeyTime: false,
+				secondsRemain: timeTillBuyTime,
 			};
 		}
-		const secondsRemain = dayjs(
-			`${dayjs().format('YYYY-MM')}-${systemSetting.mint_days} 00:00:00`
-		).diff(dayjs(), 'second');
+
+		const endBuyKeyTime = dayjs()
+			.startOf('month')
+			.add(systemSetting.mint_days - 1, 'day')
+			.endOf('day');
+
+		const buyKeyTimeRemain = endBuyKeyTime.diff(dayjs(), 'second');
 
 		return {
-			inTimeBuyKey: true,
-			secondsRemain,
+			onBuyKeyTime: true,
+			secondsRemain: buyKeyTimeRemain,
 		};
-	}, [systemSetting]);
+	};
 
 	const getPrice = () => {
 		if (tokenCode === Token2Buy.BUSD) {
@@ -152,6 +144,8 @@ export default function BuyInfo() {
 	};
 
 	const price = getPrice()?.toNumber();
+	const buyKeyState = getBuyKeyState();
+	const { onBuyKeyTime, secondsRemain } = getBuyKeyTimeRemain();
 
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>
@@ -161,7 +155,9 @@ export default function BuyInfo() {
 			{buyKeyState && (
 				<div className={buyKeyState.boxStyle}>
 					<Image src={buyKeyState.icon} width='20' height='20' alt='' />
-					<p className={buyKeyState.messageStyle}>{buyKeyState.message}</p>
+					<p className={`${buyKeyState.messageStyle} text-[0.875rem]`}>
+						{buyKeyState.message}
+					</p>
 				</div>
 			)}
 
@@ -187,14 +183,14 @@ export default function BuyInfo() {
 				titleStyle='!font-normal !text-[#ffffff80]'
 				customClass='mt-[20px] '
 				title={
-					inTimeBuyKey
-						? myProfileConstants.COUNTDOWN_INTIME
-						: myProfileConstants.COUNTDOWN_OUTTIME
+					onBuyKeyTime
+						? myProfileConstants.ON_BUY_KEY_TIME
+						: myProfileConstants.NOT_ON_BUY_KEY_TIME
 				}
 				millisecondsRemain={secondsRemain}
 			/>
 
-			{get(buyKeyState, 'canBuy') && inTimeBuyKey && (
+			{get(buyKeyState, 'canBuy') && onBuyKeyTime && (
 				<Button loading={isBuyDNFT} onClick={handleBuyKey} className={``}>
 					Buy
 				</Button>
@@ -213,3 +209,15 @@ export const token2BuyOptions = [
 		value: Token2Buy.BNB,
 	},
 ];
+
+const redirectToBSCScan = (tx: string) => (
+	<span>
+		<a
+			target={'_blank'}
+			href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
+			rel='noreferrer'
+		>
+			{myProfileConstants.TRANSACTION_COMPLETED}
+		</a>
+	</span>
+);

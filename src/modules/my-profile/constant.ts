@@ -12,8 +12,8 @@ const myProfileConstants = {
 	BUYINFO_MESSAGE_NOT_ENOUGH_ROYALTY: "You don't have enough BUSD for royalty",
 	BUYINFO_MESSAGE_NOT_ENOUGH_BALANCE: "You don't have enough BNB/BUSD",
 
-	COUNTDOWN_INTIME: 'You can not buy key in',
-	COUNTDOWN_OUTTIME: 'You can buy key in',
+	NOT_ON_BUY_KEY_TIME: 'You can not buy key in',
+	ON_BUY_KEY_TIME: 'You can buy key in',
 
 	DNFT_NO_ARMOR: 'No Armor',
 	DNFT_NO_SHOES: 'No Shoes',
