@@ -66,6 +66,20 @@ export default function BuyInfo() {
 		return isEnoughRoyalty;
 	};
 
+	const isEnoughBalance = () => {
+		let isEnoughBalance = false;
+		if (tokenCode === Token2Buy.BUSD) {
+			isEnoughBalance = !!keyPriceBusd && keyPriceBusd.lte(busdBalance);
+		}
+
+		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
+			isEnoughBalance =
+				!!keyPriceBusd && busd2Bnb.times(keyPriceBusd).lte(bnbBalance);
+		}
+
+		return isEnoughBalance;
+	};
+
 	const getBuyKeyState = () => {
 		if (!userInfo || !systemSetting) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
@@ -84,17 +98,7 @@ export default function BuyInfo() {
 			return buyStatusConfigs[BuyStatus.NotEnoughRoyalty];
 		}
 
-		let isEnoughBalance = false;
-		if (tokenCode === Token2Buy.BUSD) {
-			isEnoughBalance = !!keyPriceBusd && keyPriceBusd.lte(busdBalance);
-		}
-
-		if (tokenCode === Token2Buy.BNB && busd2Bnb) {
-			isEnoughBalance =
-				!!keyPriceBusd && busd2Bnb.times(keyPriceBusd).lte(bnbBalance);
-		}
-
-		if (!isEnoughBalance) {
+		if (!isEnoughBalance()) {
 			return buyStatusConfigs[BuyStatus.NotEnoughBalance];
 		}
 
@@ -146,6 +150,7 @@ export default function BuyInfo() {
 	const price = getPrice()?.toNumber();
 	const buyKeyState = getBuyKeyState();
 	const { onBuyKeyTime, secondsRemain } = getBuyKeyTimeRemain();
+	const isEnableBuyKey = isEnoughRoyalty() && isEnoughBalance();
 
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>
@@ -191,7 +196,11 @@ export default function BuyInfo() {
 			/>
 
 			{get(buyKeyState, 'canBuy') && onBuyKeyTime && (
-				<Button loading={isBuyDNFT} onClick={handleBuyKey} className={``}>
+				<Button
+					loading={isBuyDNFT}
+					onClick={handleBuyKey}
+					disabled={!isEnableBuyKey}
+				>
 					Buy
 				</Button>
 			)}
