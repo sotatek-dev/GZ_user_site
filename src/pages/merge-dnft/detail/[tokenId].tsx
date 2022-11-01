@@ -54,7 +54,7 @@ const MergeDNFTDetail = () => {
 					Congratulation, you got a new NFT
 				</div>
 			</div>
-			<div className='flex flex-col desktop:flex-row desktop:justify-start justify-center gap-x-12 mt-8'>
+			<div className='flex flex-col desktop:flex-row desktop:justify-center justify-center gap-x-12 mt-8'>
 				<div className='mb-6 !w-full !h-[312px] desktop:!w-[345px] desktop:!h-[345px] desktop:mb-0 flex !justify-center !items-center'>
 					<Image
 						src={imageDNFT}

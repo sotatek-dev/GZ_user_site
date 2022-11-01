@@ -15,7 +15,6 @@ import myProfileConstants from 'modules/my-profile/constant';
 import { handleClaimError } from 'modules/my-profile/helpers/handleError';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useAppDispatch, useAppSelector } from 'stores';
 import {
 	getMyClaimableDNFTsCountRD,
@@ -33,7 +32,7 @@ import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
 import DNFTABI from '../../../web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
-	const { dnfts, dnft_claimable_count, loading } = useSelector(
+	const { dnfts, dnft_claimable_count, loading } = useAppSelector(
 		(state) => state.myProfile
 	);
 	const { isLogin } = useAppSelector((state) => state.user);
