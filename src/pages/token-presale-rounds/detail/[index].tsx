@@ -539,7 +539,9 @@ const TokenSaleRoundDetail = () => {
 				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
 					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
 						<div className='flex gap-x-2 mb-4'>
-							<div className='text-dim-gray font-normal'>Token Buy Time:</div>
+							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
+								Token Buy Time:
+							</div>
 							<div className='font-medium'>
 								{start_time && end_time
 									? renderTokenBuyTime(start_time, end_time)
@@ -549,7 +551,7 @@ const TokenSaleRoundDetail = () => {
 						<div className='flex gap-x-2'>
 							{tokenClaimTime > 0 && (
 								<>
-									<div className='text-dim-gray font-normal'>
+									<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
 										Token Claim Time:
 									</div>
 									<div className='font-medium'>
@@ -561,7 +563,9 @@ const TokenSaleRoundDetail = () => {
 					</div>
 					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
 						<div className='flex gap-x-2 mb-4'>
-							<div className='text-dim-gray font-normal'>Total Raise:</div>
+							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
+								Total Raise:
+							</div>
 							<div className='font-medium'>
 								{formatNumber(
 									fromWei(get(detailSaleRound, 'token_info.total_sold_coin', 0))
@@ -570,7 +574,9 @@ const TokenSaleRoundDetail = () => {
 							</div>
 						</div>
 						<div className='flex gap-x-2'>
-							<div className='text-dim-gray font-normal'>Buy Limit:</div>
+							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
+								Buy Limit:
+							</div>
 							<div className='font-medium'>
 								{buyLimit > 0
 									? `${formatBignumberToNumber(buyLimit)} ${BUSD_CURRENCY}`
@@ -583,7 +589,7 @@ const TokenSaleRoundDetail = () => {
 				<div className='flex gap-x-2'>
 					{detailSaleRound?.description && (
 						<>
-							<div className='text-dim-gray font-normal whitespace-pre'>
+							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-pre whitespace-nowrap'>
 								Round Information:
 							</div>
 							<div className='font-medium'>{detailSaleRound?.description}</div>
