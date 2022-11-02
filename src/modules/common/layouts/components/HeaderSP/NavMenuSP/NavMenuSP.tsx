@@ -29,10 +29,11 @@ export default function NavMenuSP({ openMobileNav, setOpenMobileNav }: Props) {
 	}, [router.pathname]);
 
 	return (
+		// display merge image contents has z-index 160, so z-index navbar must 161
 		<div
 			className={`${
 				openMobileNav ? 'block' : 'hidden'
-			} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-50 leading-5`}
+			} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-[161] leading-5`}
 		>
 			{/* spacer*/}
 			<div className={'w-14'} />
