@@ -23,17 +23,20 @@ const NFTDetail = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router.query.id]);
 
-	function getProperty(property: string) {
-		return get(
-			dnftDetail.dnftDetail,
-			`metadata.properties.${property}.value`,
-			''
-		);
+	function getProperties() {
+		return get(dnftDetail.dnftDetail, `metadata.properties`) as {
+			[prop: string]: {
+				value: string | null;
+				displayName: string;
+			};
+		};
 	}
 
 	function getAttribute(attribute: string) {
 		return get(dnftDetail.dnftDetail, `metadata.attribute.${attribute}`, '');
 	}
+
+	const properties = getProperties();
 
 	return (
 		<>
@@ -87,114 +90,22 @@ const NFTDetail = () => {
 
 						<div className={styles['nft-detail_point']}>
 							{!tab ? (
-								<div className='flex flex-col desktop:flex-row justify-between gap-x-[50px]  w-[100%]'>
-									<div className='flex flex-col gap-y-[20px] flex-grow'>
-										<CustomDropdown
-											disabled
-											label='Armor'
-											list={[]}
-											value={getProperty('armor')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Shoes'
-											list={[]}
-											value={getProperty('shoes')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Gloves'
-											list={[]}
-											value={getProperty('gloves')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Fur'
-											list={[]}
-											value={getProperty('fur')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Eyes'
-											list={[]}
-											value={getProperty('eyes')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Unique Eyes'
-											list={[]}
-											value={getProperty('uniqueEyes')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Cosmic Power #1'
-											list={[]}
-											value={getProperty('cosmicPower1')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Cosmic Power #2'
-											list={[]}
-											value={getProperty('cosmicPower2')}
-										/>
-									</div>
+								<div className='grid desktop:grid-cols-2 w-full gap-y-5 gap-x-16'>
+									{Object.keys(properties).map((propId, id) => {
+										const { value, displayName } = properties[propId];
 
-									<div className='flex flex-col gap-y-[20px] flex-grow'>
-										<CustomDropdown
-											disabled
-											label='Helmet'
-											list={[]}
-											value={getProperty('helmet')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Hairstyle'
-											list={[]}
-											value={getProperty('hairStyle')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Unique Hairstyle'
-											list={[]}
-											value={getProperty('uniqueHairStyles')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Weapons/Accessory	'
-											list={[]}
-											value={getProperty('weaponsAccessory')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Background'
-											list={[]}
-											value={getProperty('background')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Forcefield'
-											list={[]}
-											value={getProperty('forcefield')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Nature Power #1'
-											list={[]}
-											value={getProperty('naturePower')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Nature Power #2'
-											list={[]}
-											value={getProperty('naturePower2')}
-										/>
-										<CustomDropdown
-											disabled
-											label='Summoning Mask'
-											list={[]}
-											value={getProperty('summoningMask')}
-										/>
-									</div>
+										return (
+											<div key={id} className=''>
+												<CustomDropdown
+													disabled
+													label={displayName}
+													list={[]}
+													value={value ?? ''}
+													customStyle=''
+												/>
+											</div>
+										);
+									})}
 								</div>
 							) : (
 								<div className='flex flex-col desktop:flex-row justify-between gap-0 desktop:gap-x-[50px]  w-[100%]'>
