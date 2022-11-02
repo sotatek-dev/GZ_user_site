@@ -9,7 +9,7 @@ import NFTSelectedOutline from '../NFTSelectedOutline';
 interface ICardNftProps {
 	dataDNFT: IDFNT;
 	index: number;
-	isChecked: boolean;
+	isChecked?: boolean;
 	SelectNft: (event: React.MouseEvent<HTMLElement>, index: number) => void;
 }
 
