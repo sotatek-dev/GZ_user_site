@@ -1,6 +1,7 @@
 import { Input } from 'antd';
 import CustomDropdown from 'common/components/dropdown/custom-dropdown';
 import Loading from 'common/components/loading';
+import { PROPERTY } from 'common/constants/mergeDNFT';
 import { get, map, toString } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -92,6 +93,8 @@ const NFTDetail = () => {
 							{!tab ? (
 								<div className='grid desktop:grid-cols-2 w-full gap-y-5 gap-x-16'>
 									{Object.keys(properties).map((propId, id) => {
+										// GLOVESDEFAULT: Follow merge dNFT logic
+										if (propId === PROPERTY.GLOVESDEFAULT) return null;
 										const { value, displayName } = properties[propId];
 
 										return (
