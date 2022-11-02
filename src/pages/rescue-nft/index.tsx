@@ -92,7 +92,7 @@ const RescueDNFT = () => {
 		// } else if (new BigNumber(price).eq(0)) {
 		// 	return busdBalance.gte(lp.times(0.12));
 		// }
-		// return false;
+		// return false; nono
 
 		return busdBalance.gte(lp.times(0.12));
 	};
