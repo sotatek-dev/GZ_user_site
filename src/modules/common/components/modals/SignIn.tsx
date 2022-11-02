@@ -8,7 +8,7 @@ interface IFormRule {
 	email: string;
 }
 const EMAIL_REGEX =
-	/^([\w]([.-][\w])*){1,64}@[a-zA-Z0-9][a-zA-Z0-9-.]*[a-zA-Z0-9]?\.[^(\s\\@)]+$/;
+	/^.{1,64}@([A-Za-z0-9]+([+.-]*[A-Za-z0-9])*){1,253}\.(com|org|net)$/;
 
 export default function ModalSignin() {
 	const { handleLogin } = useConnectWallet();
