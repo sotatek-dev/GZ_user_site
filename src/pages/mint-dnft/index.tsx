@@ -84,8 +84,6 @@ const MintDNFT: React.FC = () => {
 		startTime,
 	} = runningPhase || {};
 	// price of selected token
-	console.log('priceInBUSD', priceInBUSD);
-
 	const price =
 		token === TOKENS.BUSD ? priceInBUSD : new BigNumber(priceInBUSD).div(rate);
 
