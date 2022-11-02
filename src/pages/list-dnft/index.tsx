@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import Button from 'common/components/button';
 import {
@@ -32,12 +32,15 @@ const ListDNFT = () => {
 
 	const handleChangeFilter = (field: keyof Filter, filterValue: string) => {
 		setFilter({ ...filter, [field]: filterValue });
+		setDNFTSelected(undefined);
 		setPage(1);
 	};
 
 	const handleShowModal = async () => {
 		setIsShowMergeMaterialModal(true);
 	};
+
+	const isDisableChoise = useMemo(() => isEmpty(dNFTSelected), [dNFTSelected]);
 
 	return (
 		<>
@@ -56,7 +59,7 @@ const ListDNFT = () => {
 								onClick={handleShowModal}
 								classCustom='buy-token rounded-[50px] !min-w-20 mb-6 ml-8 desktop:mb-0'
 								label='Choose'
-								isDisabled={isEmpty(dNFTSelected)}
+								isDisabled={isDisableChoise}
 							/>
 						</div>
 					</div>
@@ -64,6 +67,7 @@ const ListDNFT = () => {
 				<ListNFT
 					filter={filter}
 					setDNFTSelected={setDNFTSelected}
+					DFNTSelected={dNFTSelected}
 					page={page}
 					setPage={setPage}
 				/>
