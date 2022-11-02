@@ -92,7 +92,7 @@ const RescueDNFT = () => {
 		// } else if (new BigNumber(price).eq(0)) {
 		// 	return busdBalance.gte(lp.times(0.12));
 		// }
-		// return false;
+		// return false; nono
 
 		return busdBalance.gte(lp.times(0.12));
 	};
@@ -153,7 +153,7 @@ const RescueDNFT = () => {
 				}
 			}
 		} else {
-			return <>{Message.NOT_ELIGIBLE_TO_MINT}</>;
+			return <>{Message.ELIGIBLE_TO_RESCUE}</>;
 		}
 	};
 
@@ -234,12 +234,13 @@ const RescueDNFT = () => {
 						</div>
 						<CustomRadio
 							onChange={(e) => {
-								const item = e.target.value;
-								const selectedToken = selectTokensList.find((i) => i == item);
-								selectedToken && setToken(selectedToken);
+								setToken(e.target.value);
 							}}
 							defaultValue={token}
-							options={selectTokensList}
+							options={selectTokensList.map((el) => ({
+								value: el,
+								label: el,
+							}))}
 						/>
 					</div>
 

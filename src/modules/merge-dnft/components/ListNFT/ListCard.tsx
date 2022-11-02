@@ -11,6 +11,7 @@ import Loading from 'common/components/loading';
 
 interface IListCardProps {
 	filter: Filter;
+	DFNTSelected: IDFNT | undefined;
 	setDNFTSelected: (val: IDFNT | undefined) => void;
 	page: number;
 	setPage: (page: number) => void;
@@ -18,6 +19,7 @@ interface IListCardProps {
 
 const ListCard: FC<IListCardProps> = ({
 	filter,
+	DFNTSelected,
 	setDNFTSelected,
 	page,
 	setPage,
@@ -93,7 +95,12 @@ const ListCard: FC<IListCardProps> = ({
 				{listDNFT.map((data: IDFNT, index: number) => {
 					return (
 						<Col key={index}>
-							<CardNft dataDNFT={data} index={index} SelectNft={SelectNft} />
+							<CardNft
+								dataDNFT={data}
+								isChecked={DFNTSelected?._id === data._id}
+								index={index}
+								SelectNft={SelectNft}
+							/>
 						</Col>
 					);
 				})}
