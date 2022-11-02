@@ -138,10 +138,10 @@ const TokenPresaleRound = () => {
 										)} ${CURRENCY}`}</div>
 										<hr className={'border-t border-blue-20/[0.1] mb-5'} />
 										<div className={'flex justify-between items-center mb-5'}>
-											<div className={'text-h8 font-medium text-blue-20'}>
+											<div className={'text-h8 font-medium text-blue-20 pr-3'}>
 												Rounds
 											</div>
-											<div className={'text-h8 font-bold text-white'}>
+											<div className={'text-h8 font-bold text-white break-all'}>
 												{item.name}
 											</div>
 										</div>
