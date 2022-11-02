@@ -237,7 +237,7 @@ const MintDNFT: React.FC = () => {
 							</>
 						);
 					}
-					return <></>;
+					return <>{Message.ELIGIBLE_TO_MINT}</>;
 				}
 				return <>{Message.ELIGIBLE_TO_MINT}</>;
 			}
@@ -336,12 +336,13 @@ const MintDNFT: React.FC = () => {
 						</div>
 						<CustomRadio
 							onChange={(e) => {
-								const item = e.target.value;
-								const selectedToken = selectTokensList.find((i) => i == item);
-								selectedToken && setToken(selectedToken);
+								setToken(e.target.value);
 							}}
 							defaultValue={token}
-							options={selectTokensList}
+							options={selectTokensList.map((el) => ({
+								value: el,
+								label: el,
+							}))}
 						/>
 					</div>
 
@@ -476,15 +477,13 @@ const MintDNFT: React.FC = () => {
 								'flex flex-col items-center desktop:items-end rounded-[10px] text-h8'
 							}
 						>
-							{!isPublicSaleEndAfter7Days && (
-								<div
-									className={
-										'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
-									}
-								>
-									{getMessage()}
-								</div>
-							)}
+							<div
+								className={
+									'bg-blue-to-pink-102deg text-center text-h8 px-4 py-1 rounded-[40px] select-none'
+								}
+							>
+								{getMessage()}
+							</div>
 							<div className={'text-h8 mt-4'}>
 								Notice: to mint this dNFT requires{' '}
 								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
