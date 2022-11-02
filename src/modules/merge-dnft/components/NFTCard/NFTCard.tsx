@@ -9,17 +9,17 @@ import NFTSelectedOutline from '../NFTSelectedOutline';
 interface ICardNftProps {
 	dataDNFT: IDFNT;
 	index: number;
-	isChecked?: boolean;
+	isCheckedDisplayList?: boolean;
 	SelectNft: (event: React.MouseEvent<HTMLElement>, index: number) => void;
 }
 
 const NFTCard: FC<ICardNftProps> = ({
 	dataDNFT,
 	index,
-	isChecked,
+	isCheckedDisplayList,
 	SelectNft,
 }) => {
-	const { is_locked } = dataDNFT;
+	const { isChecked, is_locked } = dataDNFT;
 	const imageDNFT = get(dataDNFT, 'metadata.image', '');
 	const clns = classNames(
 		{ 'outer-card-nft': isChecked },
@@ -46,7 +46,7 @@ const NFTCard: FC<ICardNftProps> = ({
 				/>
 			</div>
 			{is_locked && <LockedMask />}
-			{isChecked && <NFTSelectedOutline />}
+			{(isChecked || isCheckedDisplayList) && <NFTSelectedOutline />}
 		</div>
 	);
 };

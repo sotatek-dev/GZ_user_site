@@ -33,7 +33,7 @@ export default function NavMenuSP({ openMobileNav, setOpenMobileNav }: Props) {
 		<div
 			className={`${
 				openMobileNav ? 'block' : 'hidden'
-			} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-[161] leading-5`}
+			} desktop:hidden flex fixed top-0 left-0 h-screen w-screen bg-gray z-[500] leading-5`}
 		>
 			{/* spacer*/}
 			<div className={'w-14'} />

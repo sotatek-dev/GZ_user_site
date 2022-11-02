@@ -97,7 +97,7 @@ const ListCard: FC<IListCardProps> = ({
 						<Col key={index}>
 							<CardNft
 								dataDNFT={data}
-								isChecked={DFNTSelected?._id === data._id}
+								isCheckedDisplayList={DFNTSelected?._id === data._id}
 								index={index}
 								SelectNft={SelectNft}
 							/>
