@@ -19,11 +19,11 @@ import {
 	fetchListKey,
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
-} from 'modules/rescue-dnft/helpers/fetch';
+} from 'modules/rescueDnft/helpers/fetch';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
 import Image from 'next/image';
 import NftGroupImg from 'assets/imgs/nft-group.png';
-import { useRescueMutation } from 'modules/rescue-dnft/services/useRescueMutation';
+import { useRescueMutation } from 'modules/rescueDnft/services/useRescueMutation';
 
 const RescueDNFT = () => {
 	const router = useRouter();

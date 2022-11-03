@@ -1,4 +1,4 @@
-import myProfileConstants from 'modules/my-profile/constant';
+import myProfileConstants from 'modules/myProfile/constant';
 
 export enum BuyStatus {
 	Unavailable,

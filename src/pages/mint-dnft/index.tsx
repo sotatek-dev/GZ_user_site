@@ -35,7 +35,7 @@ import {
 	fetchRate,
 } from 'modules/mintDnft/helpers/fetch';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { setIsLoadingMint } from 'stores/mint-dnft';
+import { setIsLoadingMint } from 'stores/mintDnft';
 import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
 import NftGroupImg from 'assets/imgs/nft-group.png';
 import Image from 'next/image';

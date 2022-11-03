@@ -4,15 +4,15 @@ import {
 	PayloadAction,
 	Store,
 } from '@reduxjs/toolkit';
-import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/my-profile';
+import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/myProfile';
 import { get } from 'lodash';
-import { IDNFT } from 'modules/my-profile/interfaces';
-import { getBusb2Bnb, getKeyPriceBusd } from 'modules/my-profile/services';
+import { IDNFT } from 'modules/myProfile/interfaces';
+import { getBusb2Bnb, getKeyPriceBusd } from 'modules/myProfile/services';
 import {
 	setSystemSettings,
 	setBusd2BnbRate,
 	setKeyPriceBusd,
-} from 'stores/system-setting';
+} from 'stores/systemSetting';
 import { AbiKeynft } from 'web3/abis/types';
 
 let customStore: Store | undefined;

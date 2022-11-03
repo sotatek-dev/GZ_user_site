@@ -9,8 +9,8 @@ import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
 } from 'stores/modal';
-import { cleanDNFTs, setUserInfo } from 'stores/my-profile';
-import { setSystemSettings } from 'stores/system-setting';
+import { cleanDNFTs, setUserInfo } from 'stores/myProfile';
+import { setSystemSettings } from 'stores/systemSetting';
 import { setAccessToken, setLogin } from 'stores/user';
 import { setAddressWallet, setStatusConnect } from 'stores/wallet';
 import { ConnectorKey } from 'web3/connectors';

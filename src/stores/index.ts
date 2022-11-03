@@ -10,13 +10,13 @@ import { modalStore, setModalStore } from './modal';
 import {
 	setSystemSettingStore,
 	systemSettingStore,
-} from 'stores/system-setting';
-import { myProfileStore } from 'stores/my-profile';
+} from 'stores/systemSetting';
+import { myProfileStore } from 'stores/myProfile';
 import thunkMiddleware from 'redux-thunk';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { dnftDetailStore } from 'stores/dnft/dnft-detail';
-import mintDnftReducer from 'stores/mint-dnft';
-import rescueDnftReducer from 'stores/rescue-dnft';
+import mintDnftReducer from 'stores/mintDnft';
+import rescueDnftReducer from 'stores/rescueDnft';
 
 let customStore: Store | undefined;
 

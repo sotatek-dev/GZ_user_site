@@ -1,6 +1,6 @@
-import BuyInfo from 'modules/my-profile/components/BuyInfo';
-import MyDNFT from 'modules/my-profile/components/MyDNFT';
-import PersonalInfo from 'modules/my-profile/components/PersonalInfo';
+import BuyInfo from 'modules/myProfile/components/BuyInfo';
+import MyDNFT from 'modules/myProfile/components/MyDNFT';
+import PersonalInfo from 'modules/myProfile/components/PersonalInfo';
 
 export default function MyProfile() {
 	return (
