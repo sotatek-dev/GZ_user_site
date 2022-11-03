@@ -10,21 +10,23 @@ interface IWalletState {
 	isNetworkValid: boolean;
 	addressWallet: string;
 	isConnect: boolean;
-	network: INetworkList | null;
+	network?: INetworkList;
 	balance: {
 		[key: string]: string;
 	};
+	wallerConnected: string;
 }
 
 const initialState: IWalletState = {
 	isNetworkValid: false,
 	addressWallet: '',
 	isConnect: false,
-	network: null,
+	network: undefined,
 	balance: {
 		busdBalance: '0',
 		bnbBalance: '0',
 	},
+	wallerConnected: '',
 };
 
 const storeWallet = createSlice({
@@ -43,13 +45,17 @@ const storeWallet = createSlice({
 			...state,
 			isConnect: action.payload,
 		}),
-		setNetwork: (state, action: PayloadAction<INetworkList | null>) => ({
+		setNetworkConnected: (state, action: PayloadAction<INetworkList>) => ({
 			...state,
 			network: action.payload,
 		}),
 		setBalance: (state, action: PayloadAction<{ [key: string]: string }>) => ({
 			...state,
 			balance: action.payload,
+		}),
+		setWallerConnected: (state, action: PayloadAction<string>) => ({
+			...state,
+			wallerConnected: action.payload,
 		}),
 	},
 });
@@ -69,12 +75,20 @@ export const setStatusConnect = (isConnect: boolean) => {
 		customStore.dispatch(storeWallet.actions.setStatusConnect(isConnect));
 };
 
-export const setNetwork = (network: INetworkList | null) => {
-	customStore && customStore.dispatch(storeWallet.actions.setNetwork(network));
+export const setNetworkConnected = (network: INetworkList) => {
+	customStore &&
+		customStore.dispatch(storeWallet.actions.setNetworkConnected(network));
 };
 
 export const setBalance = (balance: { [key: string]: string }) => {
 	customStore && customStore.dispatch(storeWallet.actions.setBalance(balance));
+};
+
+export const setWallerConnected = (wallerConnected: string) => {
+	customStore &&
+		customStore.dispatch(
+			storeWallet.actions.setWallerConnected(wallerConnected)
+		);
 };
 
 export { storeWallet };

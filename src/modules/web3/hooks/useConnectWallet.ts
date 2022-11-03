@@ -4,7 +4,7 @@ import { checkEmailUser, IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { get } from 'lodash';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
@@ -12,13 +12,20 @@ import {
 import { cleanDNFTs, setUserInfo } from 'stores/myProfile';
 import { setSystemSettings } from 'stores/systemSetting';
 import { setAccessToken, setLogin } from 'stores/user';
-import { setAddressWallet, setStatusConnect } from 'stores/wallet';
+import {
+	setAddressWallet,
+	setNetworkConnected,
+	setStatusConnect,
+	setWallerConnected,
+} from 'stores/wallet';
 import { ConnectorKey } from 'web3/connectors';
 import { SIGN_MESSAGE } from 'web3/constants/envs';
-import { BSC_NETWORK } from 'web3/constants/networks';
+import { BSC_NETWORK, INetworkList } from 'web3/constants/networks';
 import { message } from 'antd';
 import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 import { MESSAGES } from 'common/constants/messages';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { isMobile } from 'react-device-detect';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -30,18 +37,25 @@ export const useConnectWallet = () => {
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
 	const dispatch = useDispatch();
+	const { network, wallerConnected } = useSelector((state) => state.wallet);
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		if (!ethereum?.isMetaMask)
 			return message.error('Please install or unlock MetaMask');
+		await deactivate();
 		const { walletName, connector } = walletSelected;
 		activateInjectedProvider(walletName);
-
+		StorageUtils.removeItem(STORAGE_KEYS.WALLET_CONNECT);
+		if (isMobile && walletName === ConnectorKey.walletConnect) {
+			// window.open(DEEP_LINK_METAMASK);
+		}
+		if (connector instanceof WalletConnectConnector) {
+			connector.walletConnectProvider = undefined;
+		}
 		await activate(connector, undefined, true)
 			.then(async () => {
-				setStorageWallet(walletName);
-				setStorageNetwork(networkConnected);
-
+				setWallerConnected(walletName);
+				setNetworkConnected(networkConnected);
 				const addressWallet = await connector.getAccount();
 				checkLogin(addressWallet);
 			})
@@ -105,14 +119,11 @@ export const useConnectWallet = () => {
 					});
 					return true;
 				} catch (addError) {
-					console.log('///');
-
 					deactivate();
 					setStatusModalConnectWallet(false);
 					return false;
 				}
 			} else {
-				console.log('///');
 				deactivate();
 				setStatusModalConnectWallet(false);
 				return false;
@@ -133,7 +144,7 @@ export const useConnectWallet = () => {
 				} as IPramsLogin;
 				if (email) params.email = email;
 				const [response] = await login(params);
-				if (response) {
+				if (response && network && wallerConnected) {
 					const {
 						auth: { expire_in, token },
 						wallet_address,
@@ -144,6 +155,8 @@ export const useConnectWallet = () => {
 					setLogin(true);
 					setAccessToken(token);
 					setAddressWallet(wallet_address);
+					setStorageWallet(wallerConnected);
+					setStorageNetwork(network);
 				}
 				message.success({ content: MESSAGES.MSC1 });
 			}
@@ -170,11 +183,11 @@ export const useConnectWallet = () => {
 	return { connectWallet, disconnectWallet, handleLogin };
 };
 
-function setStorageWallet(connector: ConnectorKey) {
+function setStorageWallet(connector: string) {
 	StorageUtils.setSectionStorageItem(STORAGE_KEYS.WALLET_CONNECTED, connector);
 }
 
-function setStorageNetwork(networkConnected: any) {
+function setStorageNetwork(networkConnected: INetworkList) {
 	StorageUtils.setItemObject(STORAGE_KEYS.NETWORK, networkConnected);
 }
 

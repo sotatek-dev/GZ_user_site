@@ -8,6 +8,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
 	dnftPermanentMerge,
 	dnftTempoaryMerge,
+	getDetailDNFT,
 	getSignatureMerge,
 	IParamsDnftMerge,
 	IParamsMergeRuleDFNT,
@@ -28,6 +29,7 @@ import {
 } from 'web3/contracts/useErc20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useAppSelector } from 'stores';
+
 interface IInitImage {
 	assetBase: string;
 	extension: string;
@@ -78,6 +80,8 @@ const MergeDNFT = () => {
 	const [isLoadingTemporaryMerge, setLoadingTemporaryMerge] =
 		useState<boolean>(false);
 	const [isDisableMerge, setDisableMerge] = useState<boolean>(false);
+	const [sessionId, setSessionId] = useState<string>('');
+	const [transactionHash, setTransactionHash] = useState<string>('');
 
 	//state store
 	const { isLogin } = useAppSelector((state) => state.user);
@@ -196,6 +200,38 @@ const MergeDNFT = () => {
 		}, {});
 	};
 
+	useEffect(() => {
+		const handleGetDetailDNFT = async (tokenId: string | string[]) => {
+			const [response, error] = await getDetailDNFT(tokenId);
+			if (error) {
+				return message.error('Merge failed');
+			}
+
+			if (response) {
+				const metadata = get(response, 'data.metadata', {});
+				const { image, attribute } = metadata;
+				if (image && attribute) {
+					messageAntd.success({
+						content: redirectToBSCScan(transactionHash),
+						duration: 4,
+					});
+					router.push(`/merge-dnft/detail/${sessionId}`);
+					setLoadingPermanentlyMerge(false);
+				}
+			}
+		};
+
+		const intervalCheckMerge = setInterval(() => {
+			handleGetDetailDNFT(sessionId);
+		}, 5000);
+
+		return () => {
+			clearInterval(intervalCheckMerge);
+		};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sessionId]);
+
 	const handlePermanentlyMerge = async () => {
 		setLoadingPermanentlyMerge(true);
 		const properties = handleConvertPropertyWhenPush(initImages);
@@ -254,23 +290,19 @@ const MergeDNFT = () => {
 			session_id,
 			signature
 		);
-		setLoadingPermanentlyMerge(false);
 		if (errorPushContract) {
+			setLoadingPermanentlyMerge(false);
 			if (errorPushContract?.error?.code === -32603) {
 				return messageAntd.error('Network Error!');
 			}
 			return messageAntd.error('Transaction Rejected');
 		}
 		if (responsePushContract) {
-			messageAntd.success({
-				content: redirectToBSCScan(responsePushContract?.transactionHash),
-				duration: 4,
-			});
-			setTimeout(() => {
-				router.push(`/merge-dnft/detail/${sessionId}`);
-			}, 4500);
+			setTransactionHash(responsePushContract?.transactionHash);
+			setSessionId(sessionId);
 		}
 	};
+
 	const redirectToBSCScan = (tx: string) => (
 		<span>
 			<a
