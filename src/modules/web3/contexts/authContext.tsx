@@ -5,11 +5,12 @@ import React, { useEffect } from 'react';
 import { ROUTES } from 'common/constants/constants';
 import { useRouter } from 'next/router';
 import { setAccessToken, setLogin } from 'stores/user';
-import { setAddressWallet, setNetwork } from 'stores/wallet';
+import { setAddressWallet, setNetworkConnected } from 'stores/wallet';
 import { BSC_CHAIN_ID_HEX } from 'web3/constants/envs';
 import { useConnectWallet, useEagerConnect } from 'web3/hooks';
 import { useUpdateBalance } from 'web3/hooks/useUpdateBalance';
 import { useAppSelector } from 'stores';
+import { useInactiveListener } from 'web3/hooks/useEagerConnect';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setLogin(true);
 			setAccessToken(accessToken);
 			setAddressWallet(account);
-			setNetwork(networkConnected);
+			setNetworkConnected(networkConnected);
 		}
 	}, [account, chainId, isLogin]);
 
@@ -54,8 +55,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 		if (!library && !library?.provider && !account) return;
 
-		const onChangeAccount = () => {
-			if (account) {
+		const onChangeAccount = ([accountConnected]: Array<string>) => {
+			if (
+				!accountConnected ||
+				accountConnected?.toLowerCase() !== account?.toLowerCase()
+			) {
 				disconnectWallet();
 			}
 		};
@@ -77,12 +81,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	}, [account, library]);
 
 	useEffect(() => {
-		if (accessToken) {
+		if (accessToken && account) {
 			updateBalance();
 		}
-	}, [accessToken]);
+	}, [accessToken, account]);
 
-	triedEagerConnect;
+	useInactiveListener(!triedEagerConnect);
 
 	return (
 		<div

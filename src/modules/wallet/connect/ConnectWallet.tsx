@@ -35,10 +35,10 @@ export default function ConnectWallet() {
 	const [connector, setConnector] = useState<any>();
 
 	useEffect(() => {
-		return () => {
+		if (!modalConnectWallet) {
 			setConnector({});
-		};
-	}, []);
+		}
+	}, [modalConnectWallet]);
 
 	useEffect(() => {
 		if (!isLogin && account && library && isConnect) {
@@ -54,6 +54,7 @@ export default function ConnectWallet() {
 
 	const handleCloseModalConnectWallet = () => {
 		setStatusModalConnectWallet(false);
+		setConnector({});
 		deactivate();
 	};
 
@@ -96,10 +97,10 @@ export default function ConnectWallet() {
 					setConnector(wallet);
 				}}
 				className={`p-4 bg-[#ffffff0d] shadow-[
-					0px 3px 50px rgba(0, 0, 0, 0.078)
-				] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer ${
-					isActive ? 'chosse-active' : 'chosse-disable'
-				}`}
+						0px 3px 50px rgba(0, 0, 0, 0.078)
+					] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer ${
+						isActive ? 'chosse-active' : 'chosse-disable'
+					}`}
 			>
 				{isActive && (
 					<IconDynamic
@@ -140,9 +141,11 @@ export default function ConnectWallet() {
 							</div>
 							<div className='pt-6'>
 								<p className='font-bold text-h7 pb-4'>2. Choose Wallet</p>
-								{SUPPORTED_WALLETS.map((wallet) => {
-									return renderWalletBox(wallet);
-								})}
+								<div className='grid grid-cols-2 gap-8'>
+									{SUPPORTED_WALLETS.map((wallet) => {
+										return renderWalletBox(wallet);
+									})}
+								</div>
 							</div>
 						</div>
 					</div>

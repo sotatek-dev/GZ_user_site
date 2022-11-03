@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, providers, utils } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { Injected } from 'web3/connectors/injected';
+import { Injected, walletConnect } from 'web3/connectors/injected';
 
 export const getProvider = async () => {
 	// TODO: find a better to detect what user connect by
 	// hint: redux
-	const provider = await Injected.getProvider();
+	const isWc = 'walletconnect' in localStorage;
+
+	const provider = await (isWc ? walletConnect : Injected).getProvider();
 	return new providers.Web3Provider(provider);
 };
 

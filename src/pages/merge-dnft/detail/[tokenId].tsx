@@ -40,6 +40,7 @@ const MergeDNFTDetail = () => {
 			setImageDNFT(imageDNFT);
 		}
 	};
+
 	return (
 		<div>
 			<div className='bg-[#00d26133] px-4 py-3 flex items-center rounded-[5px]'>
