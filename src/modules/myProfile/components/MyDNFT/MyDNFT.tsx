@@ -10,9 +10,9 @@ import {
 } from 'common/constants/constants';
 import dayjs from 'dayjs';
 import { cloneDeep, get, includes } from 'lodash';
-import { DNFTStatusMap } from 'modules/my-profile/components/MyDNFT/MyDNFT.constant';
-import myProfileConstants from 'modules/my-profile/constant';
-import { handleClaimError } from 'modules/my-profile/helpers/handleError';
+import { DNFTStatusMap } from 'modules/myProfile/components/MyDNFT/MyDNFT.constant';
+import myProfileConstants from 'modules/myProfile/constant';
+import { handleClaimError } from 'modules/myProfile/helpers/handleError';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'stores';
@@ -20,7 +20,7 @@ import {
 	getMyClaimableDNFTsCountRD,
 	getMyDNFTsRD,
 	setDNFTsCount,
-} from 'stores/my-profile';
+} from 'stores/myProfile';
 import { AbiDnft } from 'web3/abis/types';
 import {
 	NEXT_PUBLIC_BUSD,

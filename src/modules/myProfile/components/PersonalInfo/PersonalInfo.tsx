@@ -1,8 +1,8 @@
 import { Form, Input, message } from 'antd';
-import { updateMyProfile } from 'apis/my-profile';
+import { updateMyProfile } from 'apis/myProfile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { getMyProfileRD } from 'stores/my-profile';
+import { getMyProfileRD } from 'stores/myProfile';
 import { AbiKeynft } from 'web3/abis/types';
 import { useContract } from 'web3/contracts/useContract';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
@@ -10,7 +10,7 @@ import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import type { Rule } from 'antd/lib/form';
 import { isValidEmail } from 'common/helpers/email';
 import { useEffect, useState } from 'react';
-import myProfileConstants from 'modules/my-profile/constant';
+import myProfileConstants from 'modules/myProfile/constant';
 import { Typography } from 'antd';
 
 const { Paragraph } = Typography;

@@ -1,4 +1,4 @@
-import { handleBuyInfoError } from 'modules/my-profile/helpers/handleError';
+import { handleBuyInfoError } from 'modules/myProfile/helpers/handleError';
 import { useState } from 'react';
 import { getSignature } from '.';
 import { Token2Buy } from '../components/BuyInfo/BuyInfo.constants';

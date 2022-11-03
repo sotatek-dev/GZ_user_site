@@ -3,9 +3,9 @@ import { useContract } from 'web3/contracts/useContract';
 import KeyNFTABI from 'web3/abis/abi-keynft.json';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
-import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
+import { Token2Buy } from 'modules/myProfile/components/BuyInfo/BuyInfo.constants';
 import { message } from 'antd';
-import myProfileConstants from 'modules/my-profile/constant';
+import myProfileConstants from 'modules/myProfile/constant';
 import { getBusb2Bnb, getKeyPriceBusd } from '.';
 // import { BigNumber as EthersBigNumber } from 'ethers';
 
