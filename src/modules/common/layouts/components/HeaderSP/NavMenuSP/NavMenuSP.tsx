@@ -25,6 +25,8 @@ export default function NavMenuSP({ openMobileNav, setOpenMobileNav }: Props) {
 	const isActivateSideBar: string[] = useMemo((): string[] => {
 		if (router.pathname.includes(ROUTES.MERGE_DNFT)) return [ROUTES.LIST_DNFT];
 		if (router.pathname.includes(ROUTES.NFT_DETAIL)) return [ROUTES.MY_PROFILE];
+		if (router.pathname.includes(ROUTES.TOKEN_PRESALE_ROUNDS))
+			return [ROUTES.TOKEN_PRESALE_ROUNDS];
 		return [router.pathname];
 	}, [router.pathname]);
 
