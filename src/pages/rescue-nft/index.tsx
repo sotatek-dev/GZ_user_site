@@ -212,7 +212,7 @@ const RescueDNFT = () => {
 						'w-full desktop:w-auto desktop:grow bg-black-10 p-8 rounded-[10px]'
 					}
 				>
-					<h6 className={'text-h3 font-semibold mb-4'}>Rescue</h6>
+					<h6 className={'text-h3 font-semibold mb-4'}>Cosmic Void Rescue</h6>
 
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />
