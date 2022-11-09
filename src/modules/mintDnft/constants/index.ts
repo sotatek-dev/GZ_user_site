@@ -21,7 +21,7 @@ export enum MINT_PHASE_LABEL {
 	WHITE_LIST = 'Whitelist',
 	PRESALE_1 = 'Presale 1',
 	PRESALE_2 = 'Presale 2',
-	PUBLIC = 'Public',
+	PUBLIC = 'Launch',
 }
 
 export enum MINT_PHASE_ID {
