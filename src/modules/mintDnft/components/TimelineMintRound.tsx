@@ -1,7 +1,10 @@
 import React, { FC } from 'react';
 import { CheckCircleFilled, CheckCircleOutlined } from '@ant-design/icons';
 import { ITimelineMintNftState } from 'modules/mintDnft/interfaces';
-import { MINT_PHASE_STATUS } from 'modules/mintDnft/constants';
+import {
+	MINT_PHASE_LABEL,
+	MINT_PHASE_STATUS,
+} from 'modules/mintDnft/constants';
 import { convertMiliSecondTimestampToDate } from 'common/utils/functions';
 
 interface ITimelineMintRoundProps {
@@ -78,13 +81,15 @@ const TimelineMintRound: FC<ITimelineMintRoundProps> = ({
 												dateFormat
 											)}
 										</div>
-										<div>
-											End in:{' '}
-											{convertMiliSecondTimestampToDate(
-												endMintTime,
-												dateFormat
-											)}
-										</div>
+										{phaseInfo.label !== MINT_PHASE_LABEL.LAUNCH && (
+											<div>
+												End in:{' '}
+												{convertMiliSecondTimestampToDate(
+													endMintTime,
+													dateFormat
+												)}
+											</div>
+										)}
 									</div>
 								);
 							}
@@ -134,13 +139,15 @@ const TimelineMintRound: FC<ITimelineMintRoundProps> = ({
 													dateFormat
 												)}
 											</div>
-											<div>
-												End in:{' '}
-												{convertMiliSecondTimestampToDate(
-													endMintTime,
-													dateFormat
-												)}
-											</div>
+											{phaseInfo.label !== MINT_PHASE_LABEL.LAUNCH && (
+												<div>
+													End in:{' '}
+													{convertMiliSecondTimestampToDate(
+														endMintTime,
+														dateFormat
+													)}
+												</div>
+											)}
 										</div>
 
 										<hr className={'border-t border-white/[.07] mb-4'} />

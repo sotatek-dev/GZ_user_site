@@ -123,7 +123,7 @@ export const getMintPhaseLabel = (
 	if (id === MINT_PHASE_ID.WHITE_LIST) return MINT_PHASE_LABEL.WHITE_LIST;
 	if (id === MINT_PHASE_ID.PRESALE_1) return MINT_PHASE_LABEL.PRESALE_1;
 	if (id === MINT_PHASE_ID.PRESALE_2) return MINT_PHASE_LABEL.PRESALE_2;
-	if (id === MINT_PHASE_ID.PUBLIC) return MINT_PHASE_LABEL.PUBLIC;
+	if (id === MINT_PHASE_ID.PUBLIC) return MINT_PHASE_LABEL.LAUNCH;
 };
 
 export const getMintPhaseStatus = (
