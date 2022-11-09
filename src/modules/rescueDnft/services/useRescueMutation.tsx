@@ -9,7 +9,11 @@ import { TOKENS } from 'modules/mintDnft/constants';
 import RescueSuccessToast from '../components/RescueSuccessToast';
 import { message } from 'antd';
 import { handleWriteMethodError } from 'common/helpers/handleError';
-import { fetchListPhase, fetchRate } from 'modules/mintDnft/helpers/fetch';
+import {
+	fetchClaimableTime,
+	fetchListPhase,
+	fetchRate,
+} from 'modules/mintDnft/helpers/fetch';
 import {
 	fetchLaunchPriceInBUSD,
 	fetchListKey,
@@ -106,6 +110,7 @@ export const useRescueMutation = () => {
 
 	const reloadData = async () => {
 		dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchClaimableTime({ dnftContract }));
 
 		dispatch(fetchPriceInBUSD({ dnftContract }));
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));

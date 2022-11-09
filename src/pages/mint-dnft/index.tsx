@@ -2,7 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mintDnft/components/TimelineMintRound';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
 	formatBigNumber,
 	getMintPhaseLabel,
@@ -14,6 +14,7 @@ import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
 import BigNumber from 'bignumber.js';
 import {
 	Message,
+	MINT_PHASE,
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
@@ -29,6 +30,7 @@ import { ContractTransaction } from 'ethers';
 import { useRouter } from 'next/router';
 import { showError } from 'common/helpers/toast';
 import {
+	fetchClaimableTime,
 	fetchIsWhitelisted,
 	fetchListPhase,
 	fetchMinimumGXZBalanceRequired,
@@ -36,7 +38,7 @@ import {
 } from 'modules/mintDnft/helpers/fetch';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { setIsLoadingMint } from 'stores/mintDnft';
-import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
+import isNftClaimable from 'common/helpers/isNftClaimable';
 import NftGroupImg from 'assets/imgs/nft-group.png';
 import Image from 'next/image';
 import dayjs from 'dayjs';
@@ -56,6 +58,7 @@ const MintDNFT: React.FC = () => {
 		rate,
 		minimumGXZBalanceRequired,
 		isLoadingMint,
+		claimableTime,
 	} = useAppSelector((state) => state.mintDnft);
 
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
@@ -96,11 +99,19 @@ const MintDNFT: React.FC = () => {
 		startTime && dayjs().isAfter(dayjs.unix(startTime / 1000).add(1, 'day'))
 			? priceAfter
 			: price;
-	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
+
+	// CR: claim start after end presale-2 7 days
+	const isClaimable = isNftClaimable(claimableTime);
 
 	// mint validation
 	const isConnectWallet = !!addressWallet;
-	const haveEnoughGXZBalance = gxzBalance.gte(minimumGXZBalanceRequired);
+	// CR: don't check common rule in launch phase (public phase)
+	const haveEnoughGXZBalance = useMemo(() => {
+		if (runningPhase?.type === MINT_PHASE.PUBLIC) {
+			return true;
+		}
+		return gxzBalance.gte(minimumGXZBalanceRequired);
+	}, [minimumGXZBalanceRequired]);
 	const haveEnoughBalance = () => {
 		if (token === TOKENS.BNB) {
 			return nativeBalance.gte(currentPrice);
@@ -132,11 +143,13 @@ const MintDNFT: React.FC = () => {
 			fetchIsWhitelisted({ runningPhase, walletAddress: addressWallet })
 		);
 		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
+		dispatch(fetchClaimableTime({ dnftContract }));
 	};
 
 	useEffect(() => {
 		dispatch(fetchListPhase({ dnftContract }));
 		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
+		dispatch(fetchClaimableTime({ dnftContract }));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnftContract]);
 
@@ -219,7 +232,7 @@ const MintDNFT: React.FC = () => {
 			} else if (!isRoyalty()) {
 				return <>{Message.NOT_ROYALTY}</>;
 			} else {
-				if (isPublicSaleEndAfter7Days) {
+				if (isClaimable) {
 					if (isMinted) {
 						return (
 							<>
