@@ -5,6 +5,7 @@ import {
 } from 'modules/mintDnft/interfaces';
 import { MINT_PHASE, MINT_PHASE_ID } from 'modules/mintDnft/constants';
 import {
+	fetchClaimableTime,
 	fetchIsWhitelisted,
 	fetchListPhase,
 	fetchMinimumGXZBalanceRequired,
@@ -30,6 +31,8 @@ interface InitialState {
 	minimumGXZBalanceRequired: BigNumber.Value;
 
 	isLoadingMint: boolean;
+
+	claimableTime: BigNumber.Value;
 }
 
 const initialState: InitialState = {
@@ -43,6 +46,8 @@ const initialState: InitialState = {
 	minimumGXZBalanceRequired: new BigNumber(0),
 
 	isLoadingMint: false,
+
+	claimableTime: Number.MAX_SAFE_INTEGER,
 };
 
 const mintDnftSlice = createSlice({
@@ -71,7 +76,9 @@ const mintDnftSlice = createSlice({
 				return item.id === runningPhaseId && item.startTime > now();
 			});
 			state.publicPhase = listPhase.find((item: IPhaseStatistic) => {
-				return item.type === MINT_PHASE.PUBLIC;
+				// return item.type === MINT_PHASE.PUBLIC;
+				//	CR: the last phase is presale 2
+				return item.type === MINT_PHASE.PRESALE_2;
 			});
 
 			// timeline
@@ -127,6 +134,14 @@ const mintDnftSlice = createSlice({
 				handleCallMethodError(action.payload);
 			}
 		);
+
+		builder.addCase(fetchClaimableTime.fulfilled, (state, action) => {
+			state.claimableTime = action.payload;
+		});
+		builder.addCase(fetchClaimableTime.rejected, (state, action) => {
+			state.claimableTime = initialState.claimableTime;
+			handleCallMethodError(action.payload);
+		});
 	},
 });
 
