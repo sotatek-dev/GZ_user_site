@@ -13,14 +13,18 @@ import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { useNativeBalance } from 'web3/hooks';
 import { Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { fetchListPhase, fetchRate } from 'modules/mintDnft/helpers/fetch';
+import {
+	fetchClaimableTime,
+	fetchListPhase,
+	fetchRate,
+} from 'modules/mintDnft/helpers/fetch';
 import {
 	fetchLaunchPriceInBUSD,
 	fetchListKey,
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
 } from 'modules/rescueDnft/helpers/fetch';
-import isPublicSaleEnd from 'common/helpers/isPublicSaleEnd';
+import isNftClaimable from 'common/helpers/isNftClaimable';
 import Image from 'next/image';
 import NftGroupImg from 'assets/imgs/nft-group.png';
 import { useRescueMutation } from 'modules/rescueDnft/services/useRescueMutation';
@@ -28,7 +32,7 @@ import { useRescueMutation } from 'modules/rescueDnft/services/useRescueMutation
 const RescueDNFT = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
-	const { publicPhase, rate } = useAppSelector((state) => state.mintDnft);
+	const { claimableTime, rate } = useAppSelector((state) => state.mintDnft);
 	const { listKey, poolRemaining, priceInBUSD, launchPriceInBUSD } =
 		useAppSelector((state) => state.rescueDnft);
 	const { tryRescue, isDoingRescue } = useRescueMutation();
@@ -57,7 +61,8 @@ const RescueDNFT = () => {
 	const isConnectWallet = !!addressWallet;
 	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
 	const haveEnoughKey = listKey.length > 0;
-	const isPublicSaleEndAfter7Days = isPublicSaleEnd(publicPhase?.endTime);
+	// CR: claim start after end presale-2 7 days
+	const isClaimable = isNftClaimable(claimableTime);
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
@@ -99,6 +104,7 @@ const RescueDNFT = () => {
 
 	useEffect(() => {
 		dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchClaimableTime({ dnftContract }));
 
 		dispatch(fetchPriceInBUSD({ dnftContract }));
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
@@ -119,7 +125,7 @@ const RescueDNFT = () => {
 	}, [dnftContract, keyNftContract, addressWallet]);
 
 	const getMessage = () => {
-		if (isConnectWallet && isPublicSaleEndAfter7Days) {
+		if (isConnectWallet && isClaimable) {
 			if (!haveEnoughBalance()) {
 				if (token === TOKENS.BNB) {
 					return <>{Message.NOT_HAVE_ENOUGH_BNB_BALANCE}</>;
@@ -184,7 +190,7 @@ const RescueDNFT = () => {
 					isRoyalty() &&
 					haveEnoughNft &&
 					haveEnoughKey &&
-					isPublicSaleEndAfter7Days ? (
+					isClaimable ? (
 						<div
 							onClick={() => {
 								if (!listKey.length) return;

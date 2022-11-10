@@ -22,7 +22,6 @@ export const fetchListPhase = createAsyncThunk(
 		try {
 			if (dnftContract) {
 				const runningPhaseId = await dnftContract.currentSalePhase();
-
 				const listPhase = await Promise.all(
 					listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
 						const res = await dnftContract.salePhaseStatistics(salephaseid);
@@ -164,6 +163,27 @@ export const fetchUserBoughtAmount = createAsyncThunk(
 				return new BigNumber(boughtAmount._hex);
 			}
 			return new BigNumber(0);
+		} catch (e) {
+			return rejectWithValue(e);
+		}
+	}
+);
+
+interface FetchClaimableTimeParams {
+	dnftContract?: AbiDnft | null;
+}
+export const fetchClaimableTime = createAsyncThunk(
+	'mintDnft/fetchClaimableTime',
+	async (params: FetchClaimableTimeParams, { rejectWithValue }) => {
+		const { dnftContract } = params;
+
+		try {
+			if (dnftContract) {
+				const claimableTime = await dnftContract.claimableTime();
+
+				return new BigNumber(claimableTime._hex);
+			}
+			return Number.MAX_SAFE_INTEGER;
 		} catch (e) {
 			return rejectWithValue(e);
 		}
