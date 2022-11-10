@@ -66,7 +66,7 @@ export const LIST_SIDER = [
 	{
 		router: ROUTES.RESCUE_NFT,
 		icon: '/icons/rescue-nft.svg',
-		title: 'Rescue NFT',
+		title: 'Cosmic Void Rescue',
 	},
 ];
 
@@ -74,7 +74,6 @@ const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 	const { isLogin } = useAppSelector((state) => state.user);
 	const [collapsed, setCollapsed] = useState(false);
 	const router = useRouter();
-	console.log('router', router);
 	const isActivateSideBar: string[] = useMemo((): string[] => {
 		if (router.pathname.includes(ROUTES.MERGE_DNFT)) return [ROUTES.LIST_DNFT];
 		if (router.pathname.includes(ROUTES.NFT_DETAIL)) return [ROUTES.MY_PROFILE];
