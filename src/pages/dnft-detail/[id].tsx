@@ -25,7 +25,8 @@ const NFTDetail = () => {
 	}, [router.query.id]);
 
 	function getProperties() {
-		return get(dnftDetail.dnftDetail, `metadata.properties`) as {
+		if (!dnftDetail?.dnftDetail) return;
+		return get(dnftDetail?.dnftDetail, `metadata.properties`) as {
 			[prop: string]: {
 				value: string | null;
 				displayName: string;
