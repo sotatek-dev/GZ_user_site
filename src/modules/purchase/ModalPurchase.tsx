@@ -125,6 +125,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 
 	const handleBuyToken = async () => {
 		const saleRoundId = get(detailSaleRound, 'sale_round');
+		if (!saleRoundId) return;
 		const params = {
 			amount: amount,
 			sale_round_id: saleRoundId,
