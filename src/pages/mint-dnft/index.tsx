@@ -497,10 +497,14 @@ const MintDNFT: React.FC = () => {
 							>
 								{getMessage()}
 							</div>
-							<div className={'text-h8 mt-4'}>
-								Notice: to mint this dNFT requires{' '}
-								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
-							</div>
+							{runningPhase?.type !== MINT_PHASE.PUBLIC && (
+								<>
+									<div className={'text-h8 mt-4'}>
+										Notice: to mint this dNFT requires{' '}
+										{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
