@@ -430,59 +430,63 @@ const MintDNFT: React.FC = () => {
 
 					<div
 						className={
-							'flex flex-col items-center desktop:flex-row desktop:items-end gap-6 desktop:gap-0'
+							'flex flex-col justify-end items-center desktop:flex-row desktop:items-end gap-6 desktop:gap-0'
 						}
 					>
-						{runningPhase &&
-						runningPhase.endTime > now() &&
-						runningPhase.startTime < now() ? (
+						{runningPhase?.type !== MINT_PHASE.PUBLIC && (
 							<>
-								<Countdown
-									customClass={
-										'grow flex flex-col items-center desktop:items-start'
-									}
-									title={`Minting phase for ${getMintPhaseLabel(
-										runningPhase.id
-									)} end in`}
-									millisecondsRemain={
-										new BigNumber(runningPhase.endTime)
-											.minus(now())
-											.div(second)
-											.toNumber() || 0
-									}
-								/>
+								{runningPhase &&
+								runningPhase.endTime > now() &&
+								runningPhase.startTime < now() ? (
+									<>
+										<Countdown
+											customClass={
+												'grow flex flex-col items-center desktop:items-start'
+											}
+											title={`Minting phase for ${getMintPhaseLabel(
+												runningPhase.id
+											)} end in`}
+											millisecondsRemain={
+												new BigNumber(runningPhase.endTime)
+													.minus(now())
+													.div(second)
+													.toNumber() || 0
+											}
+										/>
+									</>
+								) : upcomingPhase && upcomingPhase.startTime > now() ? (
+									<>
+										<Countdown
+											customClass={
+												'grow flex flex-col items-center desktop:items-start'
+											}
+											title={'You can mint dNFT in'}
+											millisecondsRemain={
+												new BigNumber(upcomingPhase.startTime)
+													.minus(now())
+													.div(second)
+													.toNumber() || 0
+											}
+										/>
+									</>
+								) : publicPhase && publicPhase.endTime < now() ? (
+									<Countdown
+										customClass={
+											'grow flex flex-col items-center desktop:items-start'
+										}
+										title={'Presale for dNFT is ended'}
+										millisecondsRemain={0}
+									/>
+								) : (
+									<Countdown
+										customClass={
+											'grow flex flex-col items-center desktop:items-start'
+										}
+										title={'Presale for dNFT is ended'}
+										millisecondsRemain={0}
+									/>
+								)}
 							</>
-						) : upcomingPhase && upcomingPhase.startTime > now() ? (
-							<>
-								<Countdown
-									customClass={
-										'grow flex flex-col items-center desktop:items-start'
-									}
-									title={'You can mint dNFT in'}
-									millisecondsRemain={
-										new BigNumber(upcomingPhase.startTime)
-											.minus(now())
-											.div(second)
-											.toNumber() || 0
-									}
-								/>
-							</>
-						) : publicPhase && publicPhase.endTime < now() ? (
-							<Countdown
-								customClass={
-									'grow flex flex-col items-center desktop:items-start'
-								}
-								title={'Presale for dNFT is ended'}
-								millisecondsRemain={0}
-							/>
-						) : (
-							<Countdown
-								customClass={
-									'grow flex flex-col items-center desktop:items-start'
-								}
-								title={'Presale for dNFT is ended'}
-								millisecondsRemain={0}
-							/>
 						)}
 
 						<div
@@ -497,10 +501,14 @@ const MintDNFT: React.FC = () => {
 							>
 								{getMessage()}
 							</div>
-							<div className={'text-h8 mt-4'}>
-								Notice: to mint this dNFT requires{' '}
-								{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
-							</div>
+							{runningPhase?.type !== MINT_PHASE.PUBLIC && (
+								<>
+									<div className={'text-h8 mt-4'}>
+										Notice: to mint this dNFT requires{' '}
+										{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
