@@ -10,7 +10,6 @@ import ScrollContainer from 'react-indiana-drag-scroll';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getDNFTDetailRD } from 'stores/dnft/dnft-detail';
 import styles from './nft-detail.module.scss';
-import { IProperties } from 'modules/myProfile/interfaces';
 
 const NFTDetail = () => {
 	const [tab, setTab] = useState(false);
