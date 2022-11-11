@@ -26,14 +26,12 @@ const NFTDetail = () => {
 
 	function getProperties() {
 		if (!dnftDetail?.dnftDetail) return;
-		return get(dnftDetail?.dnftDetail, `metadata.properties`) as
-			| {
-					[prop: string]: {
-						value: string | null;
-						displayName: string;
-					};
-			  }
-			| any;
+		return get(dnftDetail?.dnftDetail, `metadata.properties`) as {
+			[prop: string]: {
+				value: string | null;
+				displayName: string;
+			};
+		};
 	}
 
 	function getAttribute(attribute: string) {
