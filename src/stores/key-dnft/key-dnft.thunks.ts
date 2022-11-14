@@ -6,7 +6,6 @@ export const fetchStartBuyKeyTime = createAsyncThunk<number, AbiKeynft>(
 	async (keyNftContract, { rejectWithValue }) => {
 		try {
 			const startBuyKeyTime = await keyNftContract.buyTime();
-			console.log(startBuyKeyTime.toNumber());
 
 			return startBuyKeyTime.toNumber();
 		} catch (error) {
