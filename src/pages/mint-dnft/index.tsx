@@ -3,11 +3,7 @@ import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
 import TimelineMintRound from 'modules/mintDnft/components/TimelineMintRound';
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-	formatBigNumber,
-	getMintPhaseLabel,
-	isApproved,
-} from 'common/utils/functions';
+import { formatBigNumber, isApproved } from 'common/utils/functions';
 import { useBalance } from 'web3/queries';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
@@ -19,8 +15,7 @@ import {
 	TOKEN_DECIMAL,
 	TOKENS,
 } from 'modules/mintDnft/constants';
-import Countdown from 'common/components/countdown';
-import { now, ROUTES, second } from 'common/constants/constants';
+import { ROUTES } from 'common/constants/constants';
 import { useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft } from 'web3/abis/types';
 import { getMintDnftSignature } from 'modules/mintDnft/services';
@@ -42,6 +37,8 @@ import isNftClaimable from 'common/helpers/isNftClaimable';
 import NftGroupImg from 'assets/imgs/nft-group.png';
 import Image from 'next/image';
 import dayjs from 'dayjs';
+import CountDownMint from 'modules/mintDnft/components/CountDownMint';
+import PoolDetailMint from 'modules/mintDnft/components/PoolDetailMint';
 
 const MintDNFT: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -50,8 +47,6 @@ const MintDNFT: React.FC = () => {
 		// listPhase,
 		runningPhaseId,
 		runningPhase,
-		upcomingPhase,
-		publicPhase,
 		timelineMintNft,
 		isWhitelisted,
 		userBoughtAmount,
@@ -365,63 +360,7 @@ const MintDNFT: React.FC = () => {
 					<div className={'text-h8 font-medium mb-6 desktop:mb-4'}>
 						Pool remaining
 					</div>
-					<div
-						className={
-							'flex flex-col desktop:flex-row desktop:items-center gap-6 mb-5 font-medium text-[13px] h-fit'
-						}
-					>
-						<div
-							className={'flex justify-between items-center desktop:w-[33%]'}
-						>
-							<div className={'flex items-center'}>
-								<div
-									className={
-										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
-									}
-								/>
-								Total NFT
-							</div>
-							<div>{formatBigNumber(maxSaleAmount)}</div>
-						</div>
-						<div
-							className={
-								'hidden desktop:block border border-white/[.07] h-full min-h-[1.25em]'
-							}
-						/>
-						<div
-							className={'flex justify-between items-center desktop:w-[33%]'}
-						>
-							<div className={'flex items-center'}>
-								<div
-									className={
-										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
-									}
-								/>
-								Remaining
-							</div>
-							<div>
-								{formatBigNumber(new BigNumber(maxSaleAmount).minus(totalSold))}
-							</div>
-						</div>
-						<div
-							className={
-								'hidden desktop:block border border-white/[.07] h-full min-h-[1.25em]'
-							}
-						/>
-						<div
-							className={'flex justify-between items-center desktop:w-[33%]'}
-						>
-							<div className={'flex items-center'}>
-								<div
-									className={
-										'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'
-									}
-								/>
-								NFT Minted
-							</div>
-							<div>{formatBigNumber(totalSold)}</div>
-						</div>
-					</div>
+					<PoolDetailMint maxSaleAmount={maxSaleAmount} totalSold={totalSold} />
 
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />
@@ -433,61 +372,7 @@ const MintDNFT: React.FC = () => {
 							'flex flex-col justify-end items-center desktop:flex-row desktop:items-end gap-6 desktop:gap-0'
 						}
 					>
-						{runningPhase?.type !== MINT_PHASE.PUBLIC && (
-							<>
-								{runningPhase &&
-								runningPhase.endTime > now() &&
-								runningPhase.startTime < now() ? (
-									<>
-										<Countdown
-											customClass={
-												'grow flex flex-col items-center desktop:items-start'
-											}
-											title={`Minting phase for ${getMintPhaseLabel(
-												runningPhase.id
-											)} end in`}
-											millisecondsRemain={
-												new BigNumber(runningPhase.endTime)
-													.minus(now())
-													.div(second)
-													.toNumber() || 0
-											}
-										/>
-									</>
-								) : upcomingPhase && upcomingPhase.startTime > now() ? (
-									<>
-										<Countdown
-											customClass={
-												'grow flex flex-col items-center desktop:items-start'
-											}
-											title={'You can mint dNFT in'}
-											millisecondsRemain={
-												new BigNumber(upcomingPhase.startTime)
-													.minus(now())
-													.div(second)
-													.toNumber() || 0
-											}
-										/>
-									</>
-								) : publicPhase && publicPhase.endTime < now() ? (
-									<Countdown
-										customClass={
-											'grow flex flex-col items-center desktop:items-start'
-										}
-										title={'Presale for dNFT is ended'}
-										millisecondsRemain={0}
-									/>
-								) : (
-									<Countdown
-										customClass={
-											'grow flex flex-col items-center desktop:items-start'
-										}
-										title={'Presale for dNFT is ended'}
-										millisecondsRemain={0}
-									/>
-								)}
-							</>
-						)}
+						<CountDownMint />
 
 						<div
 							className={
