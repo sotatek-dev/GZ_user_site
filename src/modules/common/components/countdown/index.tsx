@@ -52,7 +52,7 @@ const Countdown: FC<ICountdownProps> = ({
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setSecCountDown((seconds: number) => {
-				if (seconds !== 0) return seconds - 1;
+				if (seconds > 0) return seconds - 1;
 				clearInterval(intervalId);
 				return seconds;
 			});
