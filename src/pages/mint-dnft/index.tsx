@@ -325,22 +325,23 @@ const MintDNFT: React.FC = () => {
 							>
 								{formatBigNumber(currentPrice)} {token}
 							</div>
-							{new BigNumber(priceAfter).gt(0) && (
-								<Tooltip
-									className={'ml-2 text-blue-20'}
-									placement={'bottom'}
-									title={
-										<>
-											<div>
-												First 24h: {formatBigNumber(price)} {token} then{' '}
-												{formatBigNumber(priceAfter)} {token}
-											</div>
-										</>
-									}
-								>
-									<ExclamationCircleOutlined />
-								</Tooltip>
-							)}
+							{new BigNumber(priceAfter).gt(0) &&
+								runningPhase?.type !== MINT_PHASE.PUBLIC && (
+									<Tooltip
+										className={'ml-2 text-blue-20'}
+										placement={'bottom'}
+										title={
+											<>
+												<div>
+													First 24h: {formatBigNumber(price)} {token} then{' '}
+													{formatBigNumber(priceAfter)} {token}
+												</div>
+											</>
+										}
+									>
+										<ExclamationCircleOutlined />
+									</Tooltip>
+								)}
 						</div>
 						<CustomRadio
 							onChange={(e) => {
