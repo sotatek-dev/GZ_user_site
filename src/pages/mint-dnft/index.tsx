@@ -222,7 +222,7 @@ const MintDNFT: React.FC = () => {
 	const getMessage = () => {
 		const isMinted = new BigNumber(userBoughtAmount).gt(0);
 
-		if (isConnectWallet) {
+		if (isConnectWallet && haveEnoughGXZBalance) {
 			if (!haveEnoughBalance()) {
 				if (token === TOKENS.BNB) {
 					return <>{Message.NOT_HAVE_ENOUGH_BNB_BALANCE}</>;
