@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { DECIMALS, ERC20_ADDRESS, RPC_CHAIN } from 'common/constants/constants';
 import { getERC20AmountBalance } from 'web3/contracts/useErc20Contract';
 import { convertBigNumberValueToNumber } from 'web3/contracts/ether';
 import { setBalance } from 'stores/wallet';
 import { ethers } from 'ethers';
+import { useAppSelector } from 'stores';
 
 export const useUpdateBalance = () => {
 	const { library, account, chainId } = useWeb3React();
 	const [refresh, setRefresh] = useState<number>(0);
-	const accessToken = useSelector((state) => state.user.accessToken);
+	const accessToken = useAppSelector((state) => state.user.accessToken);
 
 	const handleGetBalance = useCallback(async () => {
 		if (!accessToken || !library || !account) return;

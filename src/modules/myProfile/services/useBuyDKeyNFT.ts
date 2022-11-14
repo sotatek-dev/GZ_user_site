@@ -1,6 +1,6 @@
 import { handleBuyInfoError } from 'modules/myProfile/helpers/handleError';
 import { useState } from 'react';
-import { getSignature } from '.';
+import { getSignature } from './apis';
 import { Token2Buy } from '../components/BuyInfo/BuyInfo.constants';
 import { useMintDKeyNFT } from './useMintDKeyNFT';
 
@@ -15,13 +15,12 @@ export const useBuyDKeyNFT = () => {
 		keyPrice?: number;
 		token2Buy: Token2Buy;
 	}) => {
-		let results = [null, null];
+		let results = [null, null] as [unknown | null, null | Error];
 		try {
 			setIsBuyDNFT(true);
 			const [signature] = await getSignature();
 			await mintDKeyNFT({ keyPrice, token2Buy, signature })
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				.then((data: any) => {
+				.then((data) => {
 					results = [data, null];
 				})
 				.catch((err) => {

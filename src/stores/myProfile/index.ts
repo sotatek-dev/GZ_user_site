@@ -7,7 +7,7 @@ import {
 import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/myProfile';
 import { get } from 'lodash';
 import { IDNFT } from 'modules/myProfile/interfaces';
-import { getBusb2Bnb, getKeyPriceBusd } from 'modules/myProfile/services';
+import { getBusb2Bnb, getKeyPriceBusd } from 'modules/myProfile/services/apis';
 import {
 	setSystemSettings,
 	setBusd2BnbRate,

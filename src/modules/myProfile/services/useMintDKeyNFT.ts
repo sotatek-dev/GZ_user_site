@@ -6,8 +6,7 @@ import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
 import { Token2Buy } from 'modules/myProfile/components/BuyInfo/BuyInfo.constants';
 import { message } from 'antd';
 import myProfileConstants from 'modules/myProfile/constant';
-import { getBusb2Bnb, getKeyPriceBusd } from '.';
-// import { BigNumber as EthersBigNumber } from 'ethers';
+import { getBusb2Bnb, getKeyPriceBusd } from './apis';
 
 export const useMintDKeyNFT = () => {
 	const { account } = useActiveWeb3React();
@@ -40,8 +39,6 @@ export const useMintDKeyNFT = () => {
 		}
 
 		return tx;
-
-		// window.open(`${bscscanUrl}/tx/${tx.transactionHash}`, '_blank');
 	};
 
 	const busdBuy = async (signature: string) => {

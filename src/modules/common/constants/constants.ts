@@ -110,11 +110,7 @@ export const DECIMALS = {
 };
 
 export const RPC_CHAIN: { [key: number]: string } = {
-	97: 'https://data-seed-prebsc-1-s1.binance.org:8545/', // bsc testnet
-	5: 'goerli', // goerli
-	3: 'ropsten', // ropsten
-	137: 'https://polygonapi.terminet.io/rpc', // polygon mainnet
-	80001: 'https://rpc-mumbai.maticvigil.com', // mumbai - polygon testnet
+	97: process.env.NEXT_PUBLIC_BSC_RPC_URL as string, // bsc testnet
 };
 
 export const STATUS_CODE = {

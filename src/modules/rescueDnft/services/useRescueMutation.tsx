@@ -22,7 +22,7 @@ import {
 } from '../helpers/fetch';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { fetchRescuePriceBUSD } from './api/fetchRescuePrice';
-import { getBusb2Bnb } from 'modules/myProfile/services';
+import { getBusb2Bnb } from 'modules/myProfile/services/apis';
 import { ContractTransaction } from 'ethers';
 
 export const useRescueMutation = () => {

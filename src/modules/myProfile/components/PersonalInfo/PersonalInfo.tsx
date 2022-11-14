@@ -1,4 +1,6 @@
-import { Form, Input, message } from 'antd';
+import { useEffect, useState } from 'react';
+import { Form, Input, message, Typography } from 'antd';
+import type { Rule } from 'antd/lib/form';
 import { updateMyProfile } from 'apis/myProfile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
@@ -7,11 +9,8 @@ import { AbiKeynft } from 'web3/abis/types';
 import { useContract } from 'web3/contracts/useContract';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
 import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
-import type { Rule } from 'antd/lib/form';
 import { isValidEmail } from 'common/helpers/email';
-import { useEffect, useState } from 'react';
 import myProfileConstants from 'modules/myProfile/constant';
-import { Typography } from 'antd';
 
 const { Paragraph } = Typography;
 
@@ -28,11 +27,7 @@ export default function PersonalInfo() {
 		if (isLogin) {
 			dispatch(getMyProfileRD(keynftContract));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isLogin, keynftContract]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(() => form.resetFields(), [userInfo]);
+	}, [isLogin, keynftContract, dispatch]);
 
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
@@ -113,15 +108,7 @@ export default function PersonalInfo() {
 				>
 					<Input placeholder='Email address' className='custom-input-wrapper' />
 				</Form.Item>
-				<Form.Item
-					label='Number of key(s): '
-					name='key_holding_count'
-					rules={
-						[
-							// { required: true, message: 'This field cannot be empty.' },
-						]
-					}
-				>
+				<Form.Item label='Number of key(s): ' name='key_holding_count'>
 					<Input
 						placeholder='Number of key'
 						className='custom-input-wrapper'
