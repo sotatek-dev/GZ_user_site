@@ -1,6 +1,6 @@
 {
 	"./src/**/*.{ts,tsx}": [
-		"eslint --fix"
+		"yarn lint"
 	],
 	"./src/**": [
 		"yarn format"

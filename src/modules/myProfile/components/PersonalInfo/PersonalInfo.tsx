@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form, Input, message, Typography } from 'antd';
+import { Form, Input, message, Skeleton, Typography } from 'antd';
 import type { Rule } from 'antd/lib/form';
 import { updateMyProfile } from 'apis/myProfile';
 import BoxPool from 'common/components/boxPool';
@@ -60,6 +60,50 @@ export default function PersonalInfo() {
 		}
 		setCanSave(false);
 	};
+
+	if (userInfo == undefined) {
+		return (
+			<BoxPool customClass='desktop:w-[50%]'>
+				<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
+					<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
+					<Form.Item shouldUpdate className='submit'>
+						<button
+							className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
+							disabled={!canSave}
+						>
+							Save
+						</button>
+					</Form.Item>
+				</div>
+				<Skeleton
+					title={true}
+					paragraph={false}
+					active
+					style={{ marginTop: '2rem' }}
+				/>
+				<br />
+				<Skeleton.Input active block />
+
+				<Skeleton
+					title={true}
+					paragraph={false}
+					active
+					style={{ marginTop: '2rem' }}
+				/>
+				<br />
+				<Skeleton.Input active block />
+
+				<Skeleton
+					title={true}
+					paragraph={false}
+					active
+					style={{ marginTop: '2rem' }}
+				/>
+				<br />
+				<Skeleton.Input active block />
+			</BoxPool>
+		);
+	}
 
 	return (
 		<BoxPool customClass='desktop:w-[50%]'>

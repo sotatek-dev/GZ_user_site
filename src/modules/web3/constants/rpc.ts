@@ -1,7 +1,7 @@
 // import { NETWORK_RPC_URL } from 'constants/envs';
 
 const RPC = {
-	97: process.env.NEXT_PUBLIC_BSC_RPC_URL,
+	97: process.env.NEXT_PUBLIC_BSC_RPC_URL as string,
 };
 
 export default RPC;
