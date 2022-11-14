@@ -1,9 +1,7 @@
 // import { NETWORK_RPC_URL } from 'constants/envs';
 
 const RPC = {
-	// 4: `${NETWORK_RPC_URL}`,
-	// 1: `${NETWORK_RPC_URL}`,
-	97: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+	97: process.env.NEXT_PUBLIC_BSC_RPC_URL,
 };
 
 export default RPC;

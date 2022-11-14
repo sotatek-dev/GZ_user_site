@@ -17,6 +17,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { dnftDetailStore } from 'stores/dnft/dnft-detail';
 import mintDnftReducer from 'stores/mintDnft';
 import rescueDnftReducer from 'stores/rescueDnft';
+import keyDnftReducer from './key-dnft/buy-key-time.slice';
 
 let customStore: Store | undefined;
 
@@ -40,6 +41,7 @@ const appReducer = combineReducers({
 	dnftDetail: dnftDetailStore.reducer,
 	mintDnft: mintDnftReducer,
 	rescueDnft: rescueDnftReducer,
+	keyDnft: keyDnftReducer,
 });
 
 const rootReducer = (state: any, action: any) => appReducer(state, action);

@@ -37,3 +37,12 @@ export const getKeyPriceBusd = async (dKeyNFTContract: AbiKeynft | null) => {
 	const bnbAmount = await dKeyNFTContract.keyPrice();
 	return new BigNumber(formatEther(bnbAmount));
 };
+
+export const getStartBuyKeyTime = async (dKeyNFTContract: AbiKeynft | null) => {
+	if (!dKeyNFTContract) {
+		return null;
+	}
+
+	const startBuyKeyTime = await dKeyNFTContract.buyTime();
+	return startBuyKeyTime.toNumber();
+};

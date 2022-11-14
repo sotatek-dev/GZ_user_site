@@ -48,7 +48,7 @@ export const BSC_NETWORK = {
 	CHAIN_ID_HEX: BSC_CHAIN_ID_HEX,
 	CHAIN_ID_DECIMAL: 97,
 	CHAIN_NAME: 'Binance Smart Chain Testnet',
-	RPC_URLS: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+	RPC_URLS: process.env.NEXT_PUBLIC_BSC_RPC_URL as string,
 	BLOCK_EXPLORER_URLS: 'https://testnet.bscscan.com/',
 	NATIVE_CURRENCY: {
 		NAME: 'Binance Smart Chain Testnet',
