@@ -103,7 +103,8 @@ const RescueDNFT = () => {
 	};
 
 	useEffect(() => {
-		dispatch(fetchListPhase({ dnftContract }));
+		// dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchListPhase());
 		dispatch(fetchClaimableTime({ dnftContract }));
 
 		dispatch(fetchPriceInBUSD({ dnftContract }));

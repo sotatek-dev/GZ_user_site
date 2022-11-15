@@ -1,69 +1,119 @@
-import {
-	listPhaseId,
-	MINT_PHASE_ID,
-	TOKEN_DECIMAL,
-} from 'modules/mintDnft/constants';
+import { MINT_PHASE_ID, TOKEN_DECIMAL } from 'modules/mintDnft/constants';
 import { IPhaseStatistic } from 'modules/mintDnft/interfaces';
-import { geMintPhaseType } from 'common/utils/functions';
 import BigNumber from 'bignumber.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AbiDnft } from 'web3/abis/types';
 import { ROUND_TYPE } from 'common/constants/constants';
 import axiosInstance from 'apis/config';
+import { getListPhase } from 'modules/mintDnft/services';
 
-interface ParamsFetchListPhase {
-	dnftContract?: AbiDnft | null;
-}
+// interface ParamsFetchListPhase {
+// 	dnftContract?: AbiDnft | null;
+// }
+// export const fetchListPhase = createAsyncThunk(
+// 	'mintDnft/fetchListPhase',
+// 	async (params: ParamsFetchListPhase, { rejectWithValue }) => {
+// 		const { dnftContract } = params;
+//
+// 		try {
+// 			if (dnftContract) {
+// 				const runningPhaseId = await dnftContract.currentSalePhase();
+// 				const listPhase = await Promise.all(
+// 					listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
+// 						const res = await dnftContract.salePhaseStatistics(salephaseid);
+// 						const {
+// 							endTime,
+// 							maxAmountUserCanBuy,
+// 							maxSaleAmount,
+// 							priceAfter24Hours,
+// 							priceInBUSD,
+// 							startTime,
+// 							totalSold,
+// 						} = res;
+// 						const phase: IPhaseStatistic = {
+// 							id: salephaseid,
+// 							type: geMintPhaseType(salephaseid) || '',
+// 							startTime: new BigNumber(startTime._hex).times(1000).toNumber(),
+// 							endTime: new BigNumber(endTime._hex).times(1000).toNumber(),
+// 							priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
+// 								.div(TOKEN_DECIMAL)
+// 								.toString(10),
+// 							priceInBUSD: new BigNumber(priceInBUSD._hex)
+// 								.div(TOKEN_DECIMAL)
+// 								.toString(10),
+// 							maxAmountUserCanBuy: new BigNumber(
+// 								maxAmountUserCanBuy._hex
+// 							).toString(10),
+// 							maxSaleAmount: new BigNumber(maxSaleAmount._hex).toString(10),
+// 							totalSold: new BigNumber(totalSold._hex).toString(10),
+// 						};
+// 						return phase;
+// 					})
+// 				);
+// 				return {
+// 					runningPhaseId,
+// 					listPhase,
+// 				};
+// 			}
+// 		} catch (e) {
+// 			return rejectWithValue(e);
+// 		}
+//
+// 		// return default value
+// 		return {
+// 			runningPhaseId: 0,
+// 			listPhase: [],
+// 		};
+// 	}
+// );
+
 export const fetchListPhase = createAsyncThunk(
 	'mintDnft/fetchListPhase',
-	async (params: ParamsFetchListPhase, { rejectWithValue }) => {
-		const { dnftContract } = params;
-
+	async (params, { rejectWithValue }) => {
 		try {
-			if (dnftContract) {
-				const runningPhaseId = await dnftContract.currentSalePhase();
-				const listPhase = await Promise.all(
-					listPhaseId.map(async (salephaseid: MINT_PHASE_ID) => {
-						const res = await dnftContract.salePhaseStatistics(salephaseid);
-						const {
-							endTime,
-							maxAmountUserCanBuy,
-							maxSaleAmount,
-							priceAfter24Hours,
-							priceInBUSD,
-							startTime,
-							totalSold,
-						} = res;
-						const phase: IPhaseStatistic = {
-							id: salephaseid,
-							type: geMintPhaseType(salephaseid) || '',
-							startTime: new BigNumber(startTime._hex).times(1000).toNumber(),
-							endTime: new BigNumber(endTime._hex).times(1000).toNumber(),
-							priceAfter24Hours: new BigNumber(priceAfter24Hours._hex)
-								.div(TOKEN_DECIMAL)
-								.toString(10),
-							priceInBUSD: new BigNumber(priceInBUSD._hex)
-								.div(TOKEN_DECIMAL)
-								.toString(10),
-							maxAmountUserCanBuy: new BigNumber(
-								maxAmountUserCanBuy._hex
-							).toString(10),
-							maxSaleAmount: new BigNumber(maxSaleAmount._hex).toString(10),
-							totalSold: new BigNumber(totalSold._hex).toString(10),
-						};
-						return phase;
-					})
-				);
-				return {
-					runningPhaseId,
-					listPhase,
+			const res = await getListPhase();
+			const runningPhaseId: number =
+				res.find((value) => {
+					return value.is_current_phase;
+				})?.order || 0;
+			const listPhase = res.map((value) => {
+				const {
+					order,
+					type,
+					start_mint_time,
+					end_mint_time,
+					price_after_24h,
+					price,
+					nft_mint_limit,
+					sale_amount,
+					total_sold,
+					status,
+				} = value;
+				const phase: IPhaseStatistic = {
+					id: order,
+					type: type,
+					startTime: new BigNumber(start_mint_time).times(1000).toNumber(),
+					endTime: new BigNumber(end_mint_time).times(1000).toNumber(),
+					priceAfter24Hours: new BigNumber(price_after_24h)
+						.div(TOKEN_DECIMAL)
+						.toString(10),
+					priceInBUSD: new BigNumber(price).div(TOKEN_DECIMAL).toString(10),
+					maxAmountUserCanBuy: new BigNumber(nft_mint_limit).toString(10),
+					maxSaleAmount: new BigNumber(sale_amount).toString(10),
+					totalSold: new BigNumber(total_sold).toString(10),
+					status,
 				};
-			}
+				return phase;
+			});
+
+			return {
+				runningPhaseId,
+				listPhase,
+			};
 		} catch (e) {
-			return rejectWithValue(e);
+			rejectWithValue(e);
 		}
 
-		// return default value
 		return {
 			runningPhaseId: 0,
 			listPhase: [],

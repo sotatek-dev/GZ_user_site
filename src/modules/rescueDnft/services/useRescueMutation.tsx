@@ -109,7 +109,8 @@ export const useRescueMutation = () => {
 	};
 
 	const reloadData = async () => {
-		dispatch(fetchListPhase({ dnftContract }));
+		// dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchListPhase());
 		dispatch(fetchClaimableTime({ dnftContract }));
 
 		dispatch(fetchPriceInBUSD({ dnftContract }));
