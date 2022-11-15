@@ -92,8 +92,8 @@ export const fetchListPhase = createAsyncThunk(
 				const phase: IPhaseStatistic = {
 					id: order,
 					type: type,
-					startTime: new BigNumber(start_mint_time).times(1000).toNumber(),
-					endTime: new BigNumber(end_mint_time).times(1000).toNumber(),
+					startTime: new BigNumber(start_mint_time || 0).times(1000).toNumber(),
+					endTime: new BigNumber(end_mint_time || 0).times(1000).toNumber(),
 					priceAfter24Hours: new BigNumber(price_after_24h)
 						.div(TOKEN_DECIMAL)
 						.toString(10),
