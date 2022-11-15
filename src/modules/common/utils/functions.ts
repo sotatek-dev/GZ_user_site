@@ -145,7 +145,7 @@ export const convertTimelineMintNft = (
 		const { id, startTime, endTime } = phase;
 		return {
 			label: getMintPhaseLabel(id) || '',
-			status: getMintPhaseStatus(phase),
+			status: phase?.status || getMintPhaseStatus(phase),
 			startMintTime: startTime,
 			endMintTime: endTime,
 		};

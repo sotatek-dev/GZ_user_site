@@ -37,4 +37,22 @@ export interface IPhaseStatistic {
 	maxAmountUserCanBuy: BigNumber.Value;
 	maxSaleAmount: BigNumber.Value;
 	totalSold: BigNumber.Value;
+	status?: MINT_PHASE_STATUS;
+}
+
+export interface SettingMint {
+	price: string;
+	tax: number;
+	network: string;
+	order: number;
+	price_after_24h: string;
+	is_current_phase: boolean;
+	is_deploy: boolean;
+	nft_mint_limit: number;
+	total_sold: number;
+	sale_amount: number;
+	start_mint_time: number;
+	end_mint_time: number;
+	type: MINT_PHASE;
+	status?: MINT_PHASE_STATUS;
 }

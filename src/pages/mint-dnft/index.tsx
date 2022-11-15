@@ -132,7 +132,8 @@ const MintDNFT: React.FC = () => {
 	};
 
 	const reloadData = async () => {
-		dispatch(fetchListPhase({ dnftContract }));
+		// dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchListPhase());
 		dispatch(fetchRate({ dnftContract }));
 		dispatch(
 			fetchIsWhitelisted({ runningPhase, walletAddress: addressWallet })
@@ -142,7 +143,8 @@ const MintDNFT: React.FC = () => {
 	};
 
 	useEffect(() => {
-		dispatch(fetchListPhase({ dnftContract }));
+		// dispatch(fetchListPhase({ dnftContract }));
+		dispatch(fetchListPhase());
 		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
 		dispatch(fetchClaimableTime({ dnftContract }));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -364,7 +366,7 @@ const MintDNFT: React.FC = () => {
 					<PoolDetailMint maxSaleAmount={maxSaleAmount} totalSold={totalSold} />
 
 					{/* divider*/}
-					<hr className={'border-t border-white/[.07] mb-4'} />
+					<hr className={'border-t border-white/[.07] mb-8'} />
 
 					<TimelineMintRound timelineMintNft={timelineMintNft} />
 
