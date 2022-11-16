@@ -47,7 +47,7 @@ export function useEagerConnect() {
 				setTried(true);
 				disconnectWallet();
 			});
-			// }, 500);
+			// }, 1000);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active]);
