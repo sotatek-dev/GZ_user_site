@@ -308,9 +308,6 @@ const getTimeLeftToBuyKey = (
 
 	return {
 		buyKeyStatus: BuyKeyState.Available,
-		timeLeft: now
-			.startOf('month')
-			.add(mintKeyDays - 1, 'days')
-			.diff(now, 'second'),
+		timeLeft: now.startOf('month').add(mintKeyDays, 'days').diff(now, 'second'),
 	};
 };
