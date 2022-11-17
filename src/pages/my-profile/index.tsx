@@ -1,8 +1,21 @@
 import BuyInfo from 'modules/myProfile/components/BuyInfo';
 import MyDNFT from 'modules/myProfile/components/MyDNFT';
 import PersonalInfo from 'modules/myProfile/components/PersonalInfo';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useAppSelector } from 'stores';
 
 export default function MyProfile() {
+	const router = useRouter();
+	const { isLogin } = useAppSelector((store) => store.user);
+
+	useEffect(() => {
+		const accessToken = window.sessionStorage.getItem('accessToken');
+		if (!accessToken) {
+			router.replace('/');
+		}
+	}, [router, isLogin]);
+
 	return (
 		<>
 			<div className='flex flex-col gap-2.5 desktop:gap-y-6'>
