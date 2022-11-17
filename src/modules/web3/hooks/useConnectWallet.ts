@@ -68,6 +68,8 @@ export const useConnectWallet = () => {
 						}
 					} else {
 						message.error('You have to switch to BSC Network');
+						setStatusModalConnectWallet(false);
+						setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 					}
 				}
 
