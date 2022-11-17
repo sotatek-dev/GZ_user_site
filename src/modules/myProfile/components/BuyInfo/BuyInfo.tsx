@@ -20,7 +20,10 @@ import { useBalance } from 'web3/queries';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
-import { fetchStartBuyKeyTime } from 'stores/key-dnft/key-dnft.thunks';
+import {
+	fetchMinDnftToBuyKey,
+	fetchStartBuyKeyTime,
+} from 'stores/key-dnft/key-dnft.thunks';
 
 export default function BuyInfo() {
 	const dispatch = useAppDispatch();
@@ -34,13 +37,13 @@ export default function BuyInfo() {
 	const {
 		startBuyKeyTime: startBuyKeyUnixTime,
 		loading: isGetStartBuyKeyTime,
+		minDnftToBuyKey,
 	} = useAppSelector((state) => state.keyDnft);
 
 	useEffect(() => {
-		if (!keynftContract) {
-			return;
-		}
+		if (!keynftContract) return;
 
+		dispatch(fetchMinDnftToBuyKey(keynftContract));
 		dispatch(fetchStartBuyKeyTime(keynftContract));
 	}, [dispatch, keynftContract]);
 
@@ -107,7 +110,12 @@ export default function BuyInfo() {
 	const isOnBuyKeyTime = buyKeyStatus === BuyKeyState.Available;
 
 	const getBuyKeyState = () => {
-		if (!userInfo || !systemSetting || !startBuyKeyUnixTime) {
+		if (
+			!userInfo ||
+			!systemSetting ||
+			!startBuyKeyUnixTime ||
+			minDnftToBuyKey == undefined
+		) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
 		}
 
@@ -115,7 +123,7 @@ export default function BuyInfo() {
 			return buyStatusConfigs[BuyStatus.Upcomming];
 		}
 
-		if (dnft_holding_count <= 0) {
+		if (dnft_holding_count < minDnftToBuyKey) {
 			return buyStatusConfigs[BuyStatus.NFTRequired];
 		}
 
