@@ -61,10 +61,13 @@ export const useConnectWallet = () => {
 			})
 			.catch(async (error: Error) => {
 				if (error instanceof UnsupportedChainIdError) {
-					const changedSuccess = await changeNetwork();
-
-					if (changedSuccess) {
-						return await connectWallet(walletSelected, networkConnected);
+					if (walletSelected.walletName === ConnectorKey.injected) {
+						const changedSuccess = await changeNetwork();
+						if (changedSuccess) {
+							return await connectWallet(walletSelected, networkConnected);
+						}
+					} else {
+						message.error('You have to switch to BSC Network');
 					}
 				}
 

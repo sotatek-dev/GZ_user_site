@@ -8,7 +8,8 @@ const METAMASK_SP_REJECTED_ERROR_CODE = 4001;
 export const handleWriteMethodError = (e?: any) => {
 	if (
 		e?.code === ErrorCode.ACTION_REJECTED ||
-		e.code === METAMASK_SP_REJECTED_ERROR_CODE
+		e.code === METAMASK_SP_REJECTED_ERROR_CODE ||
+		e?.message === 'User rejected the transaction'
 	) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
@@ -23,7 +24,10 @@ export const handleWriteMethodError = (e?: any) => {
 };
 
 export const handleCallMethodError = (e?: any) => {
-	if (e?.code === ErrorCode.ACTION_REJECTED) {
+	if (
+		e?.code === ErrorCode.ACTION_REJECTED ||
+		e?.message === 'User rejected the transaction'
+	) {
 		showError(ErrorMessage.TRANSACTION_REJECTED);
 	} else if (
 		e?.code === ErrorCode.SERVER_ERROR ||
