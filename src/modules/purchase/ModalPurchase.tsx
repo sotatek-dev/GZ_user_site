@@ -144,7 +144,8 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			if (!isUserApproved) {
 				const [, error] = await handleUserApproveERC20(
 					NEXT_PUBLIC_BUSD,
-					NEXT_PUBLIC_PRESALE_POOL
+					NEXT_PUBLIC_PRESALE_POOL,
+					amount
 				);
 				if (error) {
 					setLoading(false);

@@ -201,36 +201,49 @@ const MergeDNFT = () => {
 	};
 
 	useEffect(() => {
-		const handleGetDetailDNFT = async (tokenId: string | string[]) => {
-			const [response, error] = await getDetailDNFT(tokenId);
-			if (error) {
-				return message.error('Merge failed');
-			}
-
-			if (response) {
-				const metadata = get(response, 'data.metadata', {});
-				const { image, attribute } = metadata;
-				if (image && attribute) {
-					messageAntd.success({
-						content: redirectToBSCScan(transactionHash),
-						duration: 4,
-					});
-					router.push(`/merge-dnft/detail/${sessionId}`);
-					setLoadingPermanentlyMerge(false);
+		if (sessionId) {
+			const handleGetDetailDNFT = async (tokenId: string | string[]) => {
+				const [response, error] = await getDetailDNFT(tokenId);
+				if (error) {
+					return message.error('Merge failed');
 				}
-			}
-		};
 
-		const intervalCheckMerge = setInterval(() => {
-			handleGetDetailDNFT(sessionId);
-		}, 5000);
+				if (response) {
+					const metadata = get(response, 'data.metadata', {});
+					const { image, attribute } = metadata;
+					if (image && attribute) {
+						messageAntd.success({
+							content: redirectToBSCScan(transactionHash),
+							duration: 4,
+						});
+						router.push(`/merge-dnft/detail/${sessionId}`);
+						setLoadingPermanentlyMerge(false);
+					}
+				}
+			};
 
-		return () => {
-			clearInterval(intervalCheckMerge);
-		};
+			const intervalCheckMerge = setInterval(() => {
+				handleGetDetailDNFT(sessionId);
+			}, 5000);
 
+			return () => {
+				clearInterval(intervalCheckMerge);
+			};
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sessionId]);
+
+	const redirectToBSCScan = (tx: string) => (
+		<span>
+			<a
+				target={'_blank'}
+				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
+				rel='noreferrer'
+			>
+				You can claim your NFT in My Profile
+			</a>
+		</span>
+	);
 
 	const handlePermanentlyMerge = async () => {
 		setLoadingPermanentlyMerge(true);
@@ -268,7 +281,8 @@ const MergeDNFT = () => {
 		if (!isUserApproved) {
 			const [, error] = await handleUserApproveERC20(
 				NEXT_PUBLIC_BUSD,
-				NEXT_PUBLIC_DNFT
+				NEXT_PUBLIC_DNFT,
+				mergeTax
 			);
 			if (error) {
 				setLoadingPermanentlyMerge(false);
@@ -302,18 +316,6 @@ const MergeDNFT = () => {
 			setSessionId(sessionId);
 		}
 	};
-
-	const redirectToBSCScan = (tx: string) => (
-		<span>
-			<a
-				target={'_blank'}
-				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
-				rel='noreferrer'
-			>
-				You can claim your NFT in My Profile
-			</a>
-		</span>
-	);
 
 	const handleTemporaryMerge = async () => {
 		setLoadingTemporaryMerge(true);
@@ -351,7 +353,8 @@ const MergeDNFT = () => {
 			if (!isUserApproved) {
 				const [, error] = await handleUserApproveERC20(
 					NEXT_PUBLIC_BUSD,
-					NEXT_PUBLIC_DNFT
+					NEXT_PUBLIC_DNFT,
+					mergeTax
 				);
 				if (error) {
 					setLoadingTemporaryMerge(false);
