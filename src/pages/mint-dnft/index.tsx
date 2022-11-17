@@ -30,6 +30,7 @@ import {
 	fetchListPhase,
 	fetchMinimumGXZBalanceRequired,
 	fetchRate,
+	fetchUserBoughtAmount,
 } from 'modules/mintDnft/helpers/fetch';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { setIsLoadingMint } from 'stores/mintDnft';
@@ -140,6 +141,13 @@ const MintDNFT: React.FC = () => {
 		);
 		dispatch(fetchMinimumGXZBalanceRequired({ dnftContract }));
 		dispatch(fetchClaimableTime({ dnftContract }));
+		dispatch(
+			fetchUserBoughtAmount({
+				dnftContract,
+				runningPhaseId,
+				walletAddress: addressWallet,
+			})
+		);
 	};
 
 	useEffect(() => {
@@ -152,6 +160,13 @@ const MintDNFT: React.FC = () => {
 
 	useEffect(() => {
 		dispatch(fetchRate({ dnftContract }));
+		dispatch(
+			fetchUserBoughtAmount({
+				dnftContract,
+				runningPhaseId,
+				walletAddress: addressWallet,
+			})
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [runningPhaseId, runningPhase, dnftContract]);
 
