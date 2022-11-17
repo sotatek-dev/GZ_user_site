@@ -13,3 +13,16 @@ export const fetchStartBuyKeyTime = createAsyncThunk<number, AbiKeynft>(
 		}
 	}
 );
+
+export const fetchMinDnftToBuyKey = createAsyncThunk<number, AbiKeynft>(
+	'keyDnft/fetchMinDnftToBuyKey',
+	async (keyNftContract, { rejectWithValue }) => {
+		try {
+			const minDnftRequired = await keyNftContract.minimumDNFTTokenRequire();
+
+			return minDnftRequired.toNumber();
+		} catch (error) {
+			return rejectWithValue(error);
+		}
+	}
+);
