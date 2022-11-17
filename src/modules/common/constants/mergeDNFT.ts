@@ -42,7 +42,7 @@ export const PROPERTY = {
 	GLOVESDEFAULT: 'glovesDefault',
 };
 
-export const ATTRIBUTES: { [key: string]: string | number } = {
+export const ATTRIBUTES: { [key: string]: string } = {
 	strength: 'Strength',
 	speed: 'Speed',
 	agility: 'Agility',
