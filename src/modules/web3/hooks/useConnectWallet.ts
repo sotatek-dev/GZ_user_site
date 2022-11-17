@@ -75,7 +75,7 @@ export const useConnectWallet = () => {
 				if (error && error.message.includes('user rejected')) {
 					setStatusModalConnectWallet(false);
 					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
-					message.info('User rejected to sign')
+					message.info('User rejected to sign');
 				}
 			});
 	}

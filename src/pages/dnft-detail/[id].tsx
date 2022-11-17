@@ -1,7 +1,7 @@
 import { Input } from 'antd';
 import CustomDropdown from 'common/components/dropdown/custom-dropdown';
 import Loading from 'common/components/loading';
-import { PROPERTY } from 'common/constants/mergeDNFT';
+import { ATTRIBUTES, PROPERTY } from 'common/constants/mergeDNFT';
 import { get, map, toString } from 'lodash';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -25,7 +25,6 @@ const NFTDetail = () => {
 	}, [router.query.id]);
 
 	function getProperties() {
-		if (!dnftDetail?.dnftDetail) return;
 		return get(dnftDetail?.dnftDetail, `metadata.properties`) as {
 			[prop: string]: {
 				value: string | null;
@@ -34,11 +33,14 @@ const NFTDetail = () => {
 		};
 	}
 
-	function getAttribute(attribute: string) {
-		return get(dnftDetail.dnftDetail, `metadata.attribute.${attribute}`, '');
+	function getAttribute() {
+		return get(dnftDetail.dnftDetail, `metadata.attribute`) as {
+			[prop: string]: string | number;
+		};
 	}
 
 	const properties = getProperties();
+	const attributes = getAttribute();
 
 	return (
 		<>
@@ -112,37 +114,21 @@ const NFTDetail = () => {
 									})}
 								</div>
 							) : (
-								<div className='flex flex-col desktop:flex-row justify-between gap-0 desktop:gap-x-[50px]  w-[100%]'>
-									<div className='flex flex-col gap-y-[20px] flex-grow'>
-										<PropertyInput
-											placeholder='00000'
-											label='Strength'
-											value={getAttribute('strength')}
-										/>
-										<PropertyInput
-											placeholder='00000'
-											label='Speed'
-											value={getAttribute('speed')}
-										/>
-										<PropertyInput
-											placeholder='00000'
-											label='Agility'
-											value={getAttribute('agility')}
-										/>
-									</div>
+								<div className='grid desktop:grid-cols-2 w-full gap-y-5 gap-x-16'>
+									{Object.keys(attributes).map((attrId, id) => {
+										if (attributes[attrId] === 0) {
+											return null;
+										}
 
-									<div className='flex flex-col gap-y-[20px] flex-grow'>
-										<PropertyInput
-											placeholder='00000'
-											label='Durability'
-											value={getAttribute('durability')}
-										/>
-										<PropertyInput
-											placeholder='00000'
-											label='Intelligence'
-											value={getAttribute('intelligence')}
-										/>
-									</div>
+										return (
+											<PropertyInput
+												key={id}
+												placeholder='00000'
+												label={ATTRIBUTES[attrId]}
+												value={attributes[attrId].toString()}
+											/>
+										);
+									})}
 								</div>
 							)}
 						</div>
