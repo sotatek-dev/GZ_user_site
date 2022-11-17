@@ -72,8 +72,8 @@ const Countdown: FC<ICountdownProps> = ({
 		<div className={customClass}>
 			{title && <div className={`font-bold pb-4 ${titleStyle}`}>{title}</div>}
 			<div className='countdown'>
-				{map(keys(timeRemain), (key: string) => (
-					<div className={`box ${boxStyle}`}>
+				{map(keys(timeRemain), (key: string, index) => (
+					<div className={`box ${boxStyle}`} key={index}>
 						{addZeroToHead(get(timeRemain, key) || 0)}
 						<div className={`description ${descriptionStyle}`}>
 							{capitalize(key)}
