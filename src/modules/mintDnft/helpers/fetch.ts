@@ -231,7 +231,7 @@ export const fetchClaimableTime = createAsyncThunk(
 			if (dnftContract) {
 				const claimableTime = await dnftContract.claimableTime();
 
-				return new BigNumber(claimableTime._hex);
+				return new BigNumber(claimableTime._hex).times(1000);
 			}
 			return Number.MAX_SAFE_INTEGER;
 		} catch (e) {
