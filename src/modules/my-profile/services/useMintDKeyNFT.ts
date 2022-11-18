@@ -34,7 +34,7 @@ export const useMintDKeyNFT = () => {
 		keyPrice?: number;
 		signature: string;
 	}) => {
-		if (!keyNFTContract || !keyPrice) return;
+		if (!keyNFTContract || keyPrice == undefined) return;
 
 		let tx;
 		if (token2Buy === Token2Buy.BUSD) {
@@ -52,6 +52,7 @@ export const useMintDKeyNFT = () => {
 
 	const busdBuy = async (signature: string) => {
 		if (!keyNFTContract || !account) return;
+
 		const tx = await keyNFTContract.buyUsingBUSD(account, signature);
 		return await tx.wait();
 	};

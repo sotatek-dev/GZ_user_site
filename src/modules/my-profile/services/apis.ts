@@ -10,9 +10,11 @@ export async function copyToClipboard(text: string) {
 }
 
 const API_GET_SIGNATURE = '/setting-mint/signature/key';
-export const getSignature = async () => {
+export const getSignature = async (params: { nonce: string }) => {
 	return await axiosInstance()
-		.get<null, { data: { data: { signature: string } } }>(API_GET_SIGNATURE)
+		.get<null, { data: { data: { signature: string } } }>(API_GET_SIGNATURE, {
+			params,
+		})
 		.then((res) => [res.data.data.signature, null])
 		.catch((error) => [null, error]);
 };

@@ -121,7 +121,7 @@ export default function BuyInfo() {
 		if (
 			!userInfo ||
 			!systemSetting ||
-			!startBuyKeyUnixTime ||
+			!startBuyKeyUnixTime == undefined ||
 			minDnftToBuyKey == undefined
 		) {
 			return buyStatusConfigs[BuyStatus.Unavailable];

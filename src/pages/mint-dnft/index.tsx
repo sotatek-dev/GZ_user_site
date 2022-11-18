@@ -18,9 +18,9 @@ import {
 	TOKENS,
 } from 'modules/mint-dnft/constants';
 import { ROUTES } from 'common/constants/constants';
-import { useApproval, useNativeBalance } from 'web3/hooks';
+import { useActiveWeb3React, useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft, AbiPresalepool } from 'web3/abis/types';
-import { getMintDnftSignature } from 'modules/mint-dnft/services';
+import { getMintDnftSignature, getNonces } from 'modules/mint-dnft/services';
 import { handleWriteMethodError } from 'common/helpers/handleError';
 import MintSuccessToast from 'modules/mint-dnft/components/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
@@ -44,6 +44,7 @@ import CountDownMint from 'modules/mint-dnft/components/CountDownMint';
 import PoolDetailMint from 'modules/mint-dnft/components/PoolDetailMint';
 
 const MintDNFT: React.FC = () => {
+	const { account } = useActiveWeb3React();
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const {
@@ -184,6 +185,8 @@ const MintDNFT: React.FC = () => {
 	}, [runningPhaseId, runningPhase, addressWallet]);
 
 	const mint = async () => {
+		if (!account) return;
+
 		try {
 			dispatch(setIsLoadingMint(true));
 			if (
@@ -199,7 +202,8 @@ const MintDNFT: React.FC = () => {
 				}
 
 				// set up signature
-				const signature = await getMintDnftSignature();
+				const dnftNonces = await getNonces(dnftContract, account);
+				const signature = await getMintDnftSignature({ nonce: dnftNonces });
 				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
 					await tryApproveBusd(true);
 				}
