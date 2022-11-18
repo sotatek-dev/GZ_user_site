@@ -14,7 +14,6 @@ import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
 import { FC, useEffect, useState } from 'react';
 import NumericInput from './NumericInput';
-import { useSelector } from 'react-redux';
 import {
 	NEXT_PUBLIC_BUSD,
 	NEXT_PUBLIC_PRESALE_POOL,
@@ -29,6 +28,12 @@ import {
 	handleUserApproveERC20,
 	isUserApprovedERC20,
 } from 'web3/contracts/useErc20Contract';
+import { getNonces } from 'modules/mint-dnft/services';
+import { useAppSelector } from 'stores';
+import { useContract } from 'web3/contracts/useContract';
+import { AbiPresalepool } from 'web3/abis/types';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+import { useActiveWeb3React } from 'web3/hooks';
 
 interface IModalPurchaseProps {
 	isShow: boolean;
@@ -54,12 +59,17 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	getDetailSaleRound,
 }) => {
 	const [form] = Form.useForm();
-	const { addressWallet, balance } = useSelector((state) => state.wallet);
+	const { addressWallet, balance } = useAppSelector((state) => state.wallet);
 	const [amountGXC, setAmountGXC] = useState<string>('');
 	const [amount, setAmount] = useState<string>('');
 	const [isLoading, setLoading] = useState<boolean>(false);
 	// const amountBUSDRef = useRef<HTMLInputElement>(null);
 	let checkValidate = true;
+	const presaleContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		NEXT_PUBLIC_PRESALE_POOL
+	);
+	const { account } = useActiveWeb3React();
 
 	useEffect(() => {
 		// if (isShow) {
@@ -125,10 +135,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 
 	const handleBuyToken = async () => {
 		const saleRoundId = get(detailSaleRound, 'sale_round');
-		if (!saleRoundId) return;
+		if (!saleRoundId || !account || !presaleContract) return;
+
+		const presaleNonces = await getNonces(presaleContract, account);
 		const params = {
 			amount: amount,
 			sale_round_id: saleRoundId,
+			nonce: presaleNonces,
 		};
 		const [dataSignature] = await getSignatureTokenSaleRound(params);
 		const signature = get(dataSignature, 'data.signature', '');

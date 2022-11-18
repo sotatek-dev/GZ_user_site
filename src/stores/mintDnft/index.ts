@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
-} from 'modules/mintDnft/interfaces';
-import { MINT_PHASE, MINT_PHASE_ID } from 'modules/mintDnft/constants';
+} from 'modules/mint-dnft/interfaces';
+import { MINT_PHASE, MINT_PHASE_ID } from 'modules/mint-dnft/constants';
 import {
 	fetchClaimableTime,
 	fetchIsWhitelisted,
@@ -11,7 +11,7 @@ import {
 	fetchMinimumGXZBalanceRequired,
 	fetchRate,
 	fetchUserBoughtAmount,
-} from 'modules/mintDnft/helpers/fetch';
+} from 'modules/mint-dnft/helpers/fetch';
 import { now } from 'common/constants/constants';
 import { convertTimelineMintNft } from 'common/utils/functions';
 import BigNumber from 'bignumber.js';

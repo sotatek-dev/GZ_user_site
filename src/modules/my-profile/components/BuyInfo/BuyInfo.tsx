@@ -7,13 +7,17 @@ import BoxPool from 'common/components/boxPool';
 import Countdown from 'common/components/countdown';
 import CustomRadio from 'common/components/radio';
 import { formatCurrency } from 'common/helpers/number';
-import myProfileConstants from 'modules/myProfile/constant';
-import { useBuyDKeyNFT } from 'modules/myProfile/services/useBuyDKeyNFT';
+import myProfileConstants from 'modules/my-profile/constant';
+import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/myProfile';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
-import { AbiKeynft } from 'web3/abis/types';
-import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
+import {
+	NEXT_PUBLIC_KEYNFT,
+	NEXT_PUBLIC_PRESALE_POOL,
+} from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
 import { useNativeBalance } from 'web3/hooks';
 import { useBalance } from 'web3/queries';
@@ -27,7 +31,11 @@ import {
 
 export default function BuyInfo() {
 	const dispatch = useAppDispatch();
-	const keynftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
+	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		NEXT_PUBLIC_PRESALE_POOL
+	);
 	const { userInfo, dnft_holding_count } = useAppSelector(
 		(state) => state.myProfile
 	);
@@ -41,11 +49,11 @@ export default function BuyInfo() {
 	} = useAppSelector((state) => state.keyDnft);
 
 	useEffect(() => {
-		if (!keynftContract) return;
+		if (!keyNftContract) return;
 
-		dispatch(fetchMinDnftToBuyKey(keynftContract));
-		dispatch(fetchStartBuyKeyTime(keynftContract));
-	}, [dispatch, keynftContract]);
+		dispatch(fetchMinDnftToBuyKey(keyNftContract));
+		dispatch(fetchStartBuyKeyTime(keyNftContract));
+	}, [dispatch, keyNftContract]);
 
 	// BUSD balance
 	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
@@ -64,7 +72,7 @@ export default function BuyInfo() {
 			message.success(redirectToBSCScan(tx && tx?.transactionHash));
 		}
 
-		dispatch(getMyProfileRD(keynftContract));
+		dispatch(getMyProfileRD({ presalePoolContract, keyNftContract }));
 	};
 
 	const isEnoughRoyalty = () => {
@@ -113,7 +121,7 @@ export default function BuyInfo() {
 		if (
 			!userInfo ||
 			!systemSetting ||
-			!startBuyKeyUnixTime ||
+			!startBuyKeyUnixTime == undefined ||
 			minDnftToBuyKey == undefined
 		) {
 			return buyStatusConfigs[BuyStatus.Unavailable];

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getDNFTDetail } from 'apis/dnft';
 import { get } from 'lodash';
-import { IDNFT } from 'modules/myProfile/interfaces';
+import { IDNFT } from 'modules/my-profile/interfaces';
 
 interface initialStateProps {
 	dnftDetail?: IDNFT;

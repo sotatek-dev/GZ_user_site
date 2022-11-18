@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { AbiDnft, AbiKeynft } from 'web3/abis/types';
+import { AbiDnft, AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 import DNFTABI from 'web3/abis/abi-dnft.json';
 import DKEYNFTABI from 'web3/abis/abi-keynft.json';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 import { useContract } from 'web3/contracts/useContract';
 import { useApproval } from 'web3/hooks';
 import { isApproved } from 'common/utils/functions';
-import { TOKENS } from 'modules/mintDnft/constants';
+import { TOKENS } from 'modules/mint-dnft/constants';
 import RescueSuccessToast from '../components/RescueSuccessToast';
 import { message } from 'antd';
 import { handleWriteMethodError } from 'common/helpers/handleError';
@@ -13,24 +14,28 @@ import {
 	fetchClaimableTime,
 	fetchListPhase,
 	fetchRate,
-} from 'modules/mintDnft/helpers/fetch';
+} from 'modules/mint-dnft/helpers/fetch';
+
+import { useAppDispatch, useAppSelector } from 'stores';
+import { getBusb2Bnb } from 'modules/my-profile/services/apis';
+import { ContractTransaction } from 'ethers';
 import {
 	fetchLaunchPriceInBUSD,
 	fetchListKey,
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
-} from '../helpers/fetch';
-import { useAppDispatch, useAppSelector } from 'stores';
-import { fetchRescuePriceBUSD } from './api/fetchRescuePrice';
-import { getBusb2Bnb } from 'modules/myProfile/services/apis';
-import { ContractTransaction } from 'ethers';
+	fetchRescuePriceBUSD,
+} from './apis';
 
 export const useRescueMutation = () => {
 	const dispatch = useAppDispatch();
 	const { addressWallet } = useAppSelector((state) => state.wallet);
-	const [isDoingRescue, setIsDoingRescue] = useState<boolean>(false);
 	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
+		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+	);
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
 
@@ -38,6 +43,7 @@ export const useRescueMutation = () => {
 		DKEYNFTABI,
 		process.env.NEXT_PUBLIC_KEYNFT_ADDRESS || ''
 	);
+	const [isDoingRescue, setIsDoingRescue] = useState<boolean>(false);
 
 	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
 		useApproval(
@@ -90,7 +96,7 @@ export const useRescueMutation = () => {
 		}
 
 		const rescuePriceBNB = await getBusb2Bnb(
-			keyNftContract,
+			presalePoolContract,
 			rescuePriceBUSD.times(1e18)
 		);
 
@@ -116,7 +122,7 @@ export const useRescueMutation = () => {
 		dispatch(fetchPriceInBUSD({ dnftContract }));
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
 		dispatch(fetchPoolRemaining({ dnftContract }));
-		dispatch(fetchRate({ dnftContract }));
+		dispatch(fetchRate({ presalePoolContract }));
 		dispatch(
 			fetchListKey({
 				dnftContract,

@@ -3,7 +3,7 @@ import {
 	MINT_PHASE,
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
-} from 'modules/mintDnft/constants';
+} from 'modules/mint-dnft/constants';
 
 export interface ITimelineMintNftState {
 	label: MINT_PHASE_LABEL | string;

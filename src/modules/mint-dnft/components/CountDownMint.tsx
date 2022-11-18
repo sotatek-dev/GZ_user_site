@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { MINT_PHASE } from 'modules/mintDnft/constants';
+import { MINT_PHASE } from 'modules/mint-dnft/constants';
 import { now, second } from 'common/constants/constants';
 import Countdown from 'common/components/countdown';
 import { getMintPhaseLabel } from 'common/utils/functions';

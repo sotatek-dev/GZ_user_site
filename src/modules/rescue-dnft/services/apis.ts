@@ -1,8 +1,10 @@
-import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-import { now, second } from 'common/constants/constants';
-import { TOKEN_DECIMAL } from 'modules/mintDnft/constants';
+import { second } from 'common/constants/constants';
+import dayjs from 'dayjs';
+import { formatEther } from 'ethers/lib/utils';
+import { TOKEN_DECIMAL } from 'modules/mint-dnft/constants';
+import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 
 interface FetchListKeyParams {
 	dnftContract?: AbiDnft | null;
@@ -25,7 +27,11 @@ export const fetchListKey = createAsyncThunk(
 				await Promise.all(
 					allKeys.map(async (item) => {
 						const nextTimeUsingKey = await dnftContract.nextTimeUsingKey(item);
-						if (new BigNumber(nextTimeUsingKey._hex).times(second).lt(now())) {
+						if (
+							new BigNumber(nextTimeUsingKey._hex)
+								.times(second)
+								.lt(dayjs().unix())
+						) {
 							usableKeys.push(item);
 						}
 					})
@@ -42,6 +48,9 @@ export const fetchListKey = createAsyncThunk(
 interface FetchPoolRemainingParams {
 	dnftContract?: AbiDnft | null;
 }
+
+const PECENT_TOKEN_LEFT_TO_RESCUE = 1 / 2; // 50%
+
 export const fetchPoolRemaining = createAsyncThunk(
 	'rescueDnft/fetchPoolRemaining',
 	async (params: FetchPoolRemainingParams, { rejectWithValue }) => {
@@ -50,9 +59,12 @@ export const fetchPoolRemaining = createAsyncThunk(
 		try {
 			if (dnftContract) {
 				const unSoldTokenOfAllPhase =
-					await dnftContract.getUnSoldTokenOfAllPhase();
-				const totalRescued = await dnftContract.totalRescued();
-				const theRest = new BigNumber(unSoldTokenOfAllPhase._hex).minus(
+					await dnftContract.getNumberOfTokenInCosmicVoid();
+				const numberOfTokenInCosmicVoid = unSoldTokenOfAllPhase.mul(
+					PECENT_TOKEN_LEFT_TO_RESCUE
+				);
+				const totalRescued = await dnftContract.totalUserRescued();
+				const theRest = new BigNumber(numberOfTokenInCosmicVoid._hex).minus(
 					totalRescued._hex
 				);
 				return theRest;
@@ -103,3 +115,12 @@ export const fetchPriceInBUSD = createAsyncThunk(
 		}
 	}
 );
+
+export const fetchRescuePriceBUSD = async (dKeyNFTContract: AbiDnft | null) => {
+	if (!dKeyNFTContract) {
+		return null;
+	}
+
+	const busdAmount = await dKeyNFTContract.rescuePrice();
+	return new BigNumber(formatEther(busdAmount));
+};

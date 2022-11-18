@@ -6,14 +6,14 @@ import {
 } from '@reduxjs/toolkit';
 import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/myProfile';
 import { get } from 'lodash';
-import { IDNFT } from 'modules/myProfile/interfaces';
-import { getBusb2Bnb, getKeyPriceBusd } from 'modules/myProfile/services/apis';
+import { IDNFT } from 'modules/my-profile/interfaces';
+import { getBusb2Bnb, getKeyPriceBusd } from 'modules/my-profile/services/apis';
 import {
 	setSystemSettings,
 	setBusd2BnbRate,
 	setKeyPriceBusd,
 } from 'stores/systemSetting';
-import { AbiKeynft } from 'web3/abis/types';
+import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 
 let customStore: Store | undefined;
 
@@ -164,11 +164,20 @@ export const getMyClaimableDNFTsCountRD = createAsyncThunk(
 
 export const getMyProfileRD = createAsyncThunk(
 	'profile/getMyProfile',
-	async (keyNftContract: AbiKeynft | null, { rejectWithValue, dispatch }) => {
+	async (
+		{
+			keyNftContract,
+			presalePoolContract,
+		}: {
+			presalePoolContract: AbiPresalepool | null;
+			keyNftContract: AbiKeynft | null;
+		},
+		{ rejectWithValue, dispatch }
+	) => {
 		try {
 			const [profileRes, rate, keyPrice] = await Promise.all([
 				getMyProfile(),
-				getBusb2Bnb(keyNftContract, 1e18),
+				getBusb2Bnb(presalePoolContract, 1e18),
 				getKeyPriceBusd(keyNftContract),
 			]);
 

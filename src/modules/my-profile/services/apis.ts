@@ -2,7 +2,7 @@ import { message } from 'antd';
 import axiosInstance from 'apis/config';
 import BigNumber from 'bignumber.js';
 import { formatEther } from 'ethers/lib/utils';
-import { AbiKeynft } from 'web3/abis/types';
+import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 
 export async function copyToClipboard(text: string) {
 	await navigator.clipboard.writeText(text);
@@ -10,22 +10,26 @@ export async function copyToClipboard(text: string) {
 }
 
 const API_GET_SIGNATURE = '/setting-mint/signature/key';
-export const getSignature = async () => {
+export const getSignature = async (params: { nonce: string }) => {
 	return await axiosInstance()
-		.get<null, { data: { data: { signature: string } } }>(API_GET_SIGNATURE)
+		.get<null, { data: { data: { signature: string } } }>(API_GET_SIGNATURE, {
+			params,
+		})
 		.then((res) => [res.data.data.signature, null])
 		.catch((error) => [null, error]);
 };
 
 export const getBusb2Bnb = async (
-	dKeyNFTContract: AbiKeynft | null,
+	presalePoolContract: AbiPresalepool | null,
 	busdVal: BigNumber.Value
 ) => {
-	if (!dKeyNFTContract) {
+	if (!presalePoolContract) {
 		return null;
 	}
 
-	const bnbAmount = await dKeyNFTContract.convertBUSDToBNB(busdVal.toString());
+	const bnbAmount = await presalePoolContract.convertBUSDToBNB(
+		busdVal.toString()
+	);
 	return new BigNumber(bnbAmount.toString());
 };
 

@@ -1,12 +1,14 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Spin, Tooltip } from 'antd';
 import CustomRadio from 'common/components/radio';
-import TimelineMintRound from 'modules/mintDnft/components/TimelineMintRound';
+import TimelineMintRound from 'modules/mint-dnft/components/TimelineMintRound';
 import React, { useEffect, useMemo, useState } from 'react';
 import { formatBigNumber, isApproved } from 'common/utils/functions';
 import { useBalance } from 'web3/queries';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from '../../modules/web3/abis/abi-dnft.json';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+
 import BigNumber from 'bignumber.js';
 import {
 	Message,
@@ -14,13 +16,13 @@ import {
 	selectTokensList,
 	TOKEN_DECIMAL,
 	TOKENS,
-} from 'modules/mintDnft/constants';
+} from 'modules/mint-dnft/constants';
 import { ROUTES } from 'common/constants/constants';
-import { useApproval, useNativeBalance } from 'web3/hooks';
-import { AbiDnft } from 'web3/abis/types';
-import { getMintDnftSignature } from 'modules/mintDnft/services';
+import { useActiveWeb3React, useApproval, useNativeBalance } from 'web3/hooks';
+import { AbiDnft, AbiPresalepool } from 'web3/abis/types';
+import { getMintDnftSignature, getNonces } from 'modules/mint-dnft/services';
 import { handleWriteMethodError } from 'common/helpers/handleError';
-import MintSuccessToast from 'modules/mintDnft/components/MintSuccessToast';
+import MintSuccessToast from 'modules/mint-dnft/components/MintSuccessToast';
 import { ContractTransaction } from 'ethers';
 import { useRouter } from 'next/router';
 import { showError } from 'common/helpers/toast';
@@ -31,17 +33,18 @@ import {
 	fetchMinimumGXZBalanceRequired,
 	fetchRate,
 	fetchUserBoughtAmount,
-} from 'modules/mintDnft/helpers/fetch';
+} from 'modules/mint-dnft/helpers/fetch';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { setIsLoadingMint } from 'stores/mintDnft';
 import isNftClaimable from 'common/helpers/isNftClaimable';
 import NftGroupImg from 'assets/imgs/nft-group.png';
 import Image from 'next/image';
 import dayjs from 'dayjs';
-import CountDownMint from 'modules/mintDnft/components/CountDownMint';
-import PoolDetailMint from 'modules/mintDnft/components/PoolDetailMint';
+import CountDownMint from 'modules/mint-dnft/components/CountDownMint';
+import PoolDetailMint from 'modules/mint-dnft/components/PoolDetailMint';
 
 const MintDNFT: React.FC = () => {
+	const { account } = useActiveWeb3React();
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const {
@@ -71,6 +74,10 @@ const MintDNFT: React.FC = () => {
 		);
 	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
+		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+	);
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
 		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
 	const { addressWallet } = useAppSelector((state) => state.wallet);
@@ -135,7 +142,7 @@ const MintDNFT: React.FC = () => {
 	const reloadData = async () => {
 		// dispatch(fetchListPhase({ dnftContract }));
 		dispatch(fetchListPhase());
-		dispatch(fetchRate({ dnftContract }));
+		dispatch(fetchRate({ presalePoolContract }));
 		dispatch(
 			fetchIsWhitelisted({ runningPhase, walletAddress: addressWallet })
 		);
@@ -159,7 +166,7 @@ const MintDNFT: React.FC = () => {
 	}, [dnftContract]);
 
 	useEffect(() => {
-		dispatch(fetchRate({ dnftContract }));
+		dispatch(fetchRate({ presalePoolContract }));
 		dispatch(
 			fetchUserBoughtAmount({
 				dnftContract,
@@ -178,6 +185,8 @@ const MintDNFT: React.FC = () => {
 	}, [runningPhaseId, runningPhase, addressWallet]);
 
 	const mint = async () => {
+		if (!account) return;
+
 		try {
 			dispatch(setIsLoadingMint(true));
 			if (
@@ -193,7 +202,8 @@ const MintDNFT: React.FC = () => {
 				}
 
 				// set up signature
-				const signature = await getMintDnftSignature();
+				const dnftNonces = await getNonces(dnftContract, account);
+				const signature = await getMintDnftSignature({ nonce: dnftNonces });
 				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
 					await tryApproveBusd(true);
 				}

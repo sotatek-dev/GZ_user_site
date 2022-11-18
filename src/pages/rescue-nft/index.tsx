@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
-import { Message, selectTokensList, TOKENS } from 'modules/mintDnft/constants';
+import { Message, selectTokensList, TOKENS } from 'modules/mint-dnft/constants';
 import { useBalance } from 'web3/queries';
 import { useContract } from 'web3/contracts/useContract';
 import DNFTABI from 'web3/abis/abi-dnft.json';
 import DKEYNFTABI from 'web3/abis/abi-keynft.json';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+
 import CustomRadio from 'common/components/radio';
 import { formatBigNumber } from 'common/utils/functions';
 import { ROUTES } from 'common/constants/constants';
 import { useRouter } from 'next/router';
-import { AbiDnft, AbiKeynft } from 'web3/abis/types';
+import { AbiDnft, AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 import { useNativeBalance } from 'web3/hooks';
 import { Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from 'stores';
@@ -17,17 +19,18 @@ import {
 	fetchClaimableTime,
 	fetchListPhase,
 	fetchRate,
-} from 'modules/mintDnft/helpers/fetch';
+} from 'modules/mint-dnft/helpers/fetch';
+
+import isNftClaimable from 'common/helpers/isNftClaimable';
+import Image from 'next/image';
+import NftGroupImg from 'assets/imgs/nft-group.png';
+import { useRescueMutation } from 'modules/rescue-dnft/services/useRescueMutation';
 import {
 	fetchLaunchPriceInBUSD,
 	fetchListKey,
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
-} from 'modules/rescueDnft/helpers/fetch';
-import isNftClaimable from 'common/helpers/isNftClaimable';
-import Image from 'next/image';
-import NftGroupImg from 'assets/imgs/nft-group.png';
-import { useRescueMutation } from 'modules/rescueDnft/services/useRescueMutation';
+} from 'modules/rescue-dnft/services/apis';
 
 const RescueDNFT = () => {
 	const router = useRouter();
@@ -44,6 +47,10 @@ const RescueDNFT = () => {
 	const keyNftContract = useContract<AbiKeynft>(
 		DKEYNFTABI,
 		process.env.NEXT_PUBLIC_KEYNFT_ADDRESS || ''
+	);
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
 	);
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
@@ -110,7 +117,7 @@ const RescueDNFT = () => {
 		dispatch(fetchPriceInBUSD({ dnftContract }));
 		dispatch(fetchLaunchPriceInBUSD({ dnftContract }));
 		dispatch(fetchPoolRemaining({ dnftContract }));
-		dispatch(fetchRate({ dnftContract }));
+		dispatch(fetchRate({ presalePoolContract }));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnftContract]);
 

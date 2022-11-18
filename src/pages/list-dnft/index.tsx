@@ -5,7 +5,7 @@ import {
 	NFTFilter,
 	MergeMaterialModal,
 	ListNFT,
-} from 'modules/mergeDnft/components';
+} from 'modules/merge-dnft/components';
 import { IDFNT } from 'types/dnft';
 import { IPagination } from 'types/pagination';
 

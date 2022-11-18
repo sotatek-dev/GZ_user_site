@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { CheckCircleFilled, CheckCircleOutlined } from '@ant-design/icons';
-import { ITimelineMintNftState } from 'modules/mintDnft/interfaces';
+import { ITimelineMintNftState } from 'modules/mint-dnft/interfaces';
 import {
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
-} from 'modules/mintDnft/constants';
+} from 'modules/mint-dnft/constants';
 import { convertMiliSecondTimestampToDate } from 'common/utils/functions';
 
 interface ITimelineMintRoundProps {

@@ -8,6 +8,7 @@ export interface IPramsTokenSaleRounds {
 export interface IPramsSignatureTokenSaleRound {
 	amount: number | string;
 	sale_round_id: number;
+	nonce: string;
 }
 
 export interface IPramsCheckUserWhitelist {
