@@ -1,11 +1,11 @@
 import React from 'react';
-import { Message } from 'modules/mintDnft/constants';
+import { Message } from 'modules/mint-dnft/constants';
 
 interface Props {
 	txHash?: string;
 }
 
-const RescueSuccessToast = ({ txHash }: Props) => {
+const MintSuccessToast = ({ txHash }: Props) => {
 	const openTxDetail = () => {
 		window.open(
 			`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}tx/${txHash}`
@@ -14,9 +14,9 @@ const RescueSuccessToast = ({ txHash }: Props) => {
 
 	return (
 		<div className={'cursor-pointer'} onClick={openTxDetail}>
-			{Message.RESCUE_SUCCESS}
+			{Message.MINT_SUCCESS}
 		</div>
 	);
 };
 
-export default RescueSuccessToast;
+export default MintSuccessToast;

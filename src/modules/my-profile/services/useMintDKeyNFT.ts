@@ -1,16 +1,25 @@
-import { AbiKeynft } from 'web3/abis/types';
+import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 import { useContract } from 'web3/contracts/useContract';
-import KeyNFTABI from 'web3/abis/abi-keynft.json';
-import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
+import KeyNFTAbi from 'web3/abis/abi-keynft.json';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+import {
+	NEXT_PUBLIC_BUSD,
+	NEXT_PUBLIC_KEYNFT,
+	NEXT_PUBLIC_PRESALE_POOL,
+} from 'web3/contracts/instance';
 import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
-import { Token2Buy } from 'modules/myProfile/components/BuyInfo/BuyInfo.constants';
+import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
 import { message } from 'antd';
-import myProfileConstants from 'modules/myProfile/constant';
+import myProfileConstants from 'modules/my-profile/constant';
 import { getBusb2Bnb, getKeyPriceBusd } from './apis';
 
 export const useMintDKeyNFT = () => {
 	const { account } = useActiveWeb3React();
-	const keyNFTContract = useContract<AbiKeynft>(KeyNFTABI, NEXT_PUBLIC_KEYNFT);
+	const keyNFTContract = useContract<AbiKeynft>(KeyNFTAbi, NEXT_PUBLIC_KEYNFT);
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		NEXT_PUBLIC_PRESALE_POOL
+	);
 	const { tryApproval, allowanceAmount } = useApprovalBusd(
 		NEXT_PUBLIC_BUSD,
 		NEXT_PUBLIC_KEYNFT
@@ -54,7 +63,7 @@ export const useMintDKeyNFT = () => {
 
 		if (!keyPriceBusd) return;
 		const keyPriceBnb = await getBusb2Bnb(
-			keyNFTContract,
+			presalePoolContract,
 			keyPriceBusd.times(1e18)
 		);
 

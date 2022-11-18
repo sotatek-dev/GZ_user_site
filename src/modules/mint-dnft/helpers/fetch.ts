@@ -1,11 +1,11 @@
-import { MINT_PHASE_ID, TOKEN_DECIMAL } from 'modules/mintDnft/constants';
-import { IPhaseStatistic } from 'modules/mintDnft/interfaces';
+import { MINT_PHASE_ID, TOKEN_DECIMAL } from 'modules/mint-dnft/constants';
+import { IPhaseStatistic } from 'modules/mint-dnft/interfaces';
 import BigNumber from 'bignumber.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AbiDnft } from 'web3/abis/types';
+import { AbiDnft, AbiPresalepool } from 'web3/abis/types';
 import { ROUND_TYPE } from 'common/constants/constants';
 import axiosInstance from 'apis/config';
-import { getListPhase } from 'modules/mintDnft/services';
+import { getListPhase } from 'modules/mint-dnft/services';
 
 // interface ParamsFetchListPhase {
 // 	dnftContract?: AbiDnft | null;
@@ -122,17 +122,17 @@ export const fetchListPhase = createAsyncThunk(
 );
 
 interface FetchRateParams {
-	dnftContract?: AbiDnft | null;
+	presalePoolContract?: AbiPresalepool | null;
 }
 export const fetchRate = createAsyncThunk(
 	'mintDnft/fetchRate',
 	async (params: FetchRateParams, { rejectWithValue }) => {
-		const { dnftContract } = params;
+		const { presalePoolContract } = params;
 
 		try {
-			if (dnftContract) {
+			if (presalePoolContract) {
 				// get rate
-				const res = await dnftContract.convertBNBToBUSD(
+				const res = await presalePoolContract.convertBNBToBUSD(
 					TOKEN_DECIMAL.toString(10)
 				);
 				const rate = new BigNumber(res._hex).toString(10);

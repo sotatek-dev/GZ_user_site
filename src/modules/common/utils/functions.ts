@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import {
 	IPhaseStatistic,
 	ITimelineMintNftState,
-} from 'modules/mintDnft/interfaces';
+} from 'modules/mint-dnft/interfaces';
 import {
 	DECIMAL_PLACED,
 	MINT_PHASE,
@@ -23,7 +23,7 @@ import {
 	MINT_PHASE_LABEL,
 	MINT_PHASE_STATUS,
 	TOKEN_DECIMAL,
-} from 'modules/mintDnft/constants';
+} from 'modules/mint-dnft/constants';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { getRemainingClaimableAmount } from 'web3/contracts/useContractTokenSale';

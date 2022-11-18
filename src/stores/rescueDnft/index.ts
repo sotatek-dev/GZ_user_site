@@ -5,7 +5,7 @@ import {
 	fetchListKey,
 	fetchPoolRemaining,
 	fetchPriceInBUSD,
-} from 'modules/rescueDnft/helpers/fetch';
+} from 'modules/rescue-dnft/services/apis';
 import { handleCallMethodError } from 'common/helpers/handleError';
 
 interface InitialState {

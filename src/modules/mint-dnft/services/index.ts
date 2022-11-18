@@ -1,5 +1,5 @@
 import axiosInstance from 'apis/config';
-import { SettingMint } from 'modules/mintDnft/interfaces';
+import { SettingMint } from 'modules/mint-dnft/interfaces';
 
 export const getMintDnftSignature = async (): Promise<string> => {
 	const res = await axiosInstance().get('/setting-mint/signature');

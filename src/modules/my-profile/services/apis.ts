@@ -2,7 +2,7 @@ import { message } from 'antd';
 import axiosInstance from 'apis/config';
 import BigNumber from 'bignumber.js';
 import { formatEther } from 'ethers/lib/utils';
-import { AbiKeynft } from 'web3/abis/types';
+import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 
 export async function copyToClipboard(text: string) {
 	await navigator.clipboard.writeText(text);
@@ -18,14 +18,16 @@ export const getSignature = async () => {
 };
 
 export const getBusb2Bnb = async (
-	dKeyNFTContract: AbiKeynft | null,
+	presalePoolContract: AbiPresalepool | null,
 	busdVal: BigNumber.Value
 ) => {
-	if (!dKeyNFTContract) {
+	if (!presalePoolContract) {
 		return null;
 	}
 
-	const bnbAmount = await dKeyNFTContract.convertBUSDToBNB(busdVal.toString());
+	const bnbAmount = await presalePoolContract.convertBUSDToBNB(
+		busdVal.toString()
+	);
 	return new BigNumber(bnbAmount.toString());
 };
 

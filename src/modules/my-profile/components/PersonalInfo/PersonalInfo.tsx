@@ -5,12 +5,16 @@ import { updateMyProfile } from 'apis/myProfile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/myProfile';
-import { AbiKeynft } from 'web3/abis/types';
+import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 import { useContract } from 'web3/contracts/useContract';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
-import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+import {
+	NEXT_PUBLIC_KEYNFT,
+	NEXT_PUBLIC_PRESALE_POOL,
+} from 'web3/contracts/instance';
 import { isValidEmail } from 'common/helpers/email';
-import myProfileConstants from 'modules/myProfile/constant';
+import myProfileConstants from 'modules/my-profile/constant';
 
 const { Paragraph } = Typography;
 
@@ -18,16 +22,20 @@ export default function PersonalInfo() {
 	const form = Form.useForm()[0];
 	const dispatch = useAppDispatch();
 	const { userInfo } = useAppSelector((state) => state.myProfile);
-	const keynftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
+	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		NEXT_PUBLIC_PRESALE_POOL
+	);
 	const [canSave, setCanSave] = useState(false);
 
 	const { isLogin } = useAppSelector((state) => state.user);
 
 	useEffect(() => {
 		if (isLogin) {
-			dispatch(getMyProfileRD(keynftContract));
+			dispatch(getMyProfileRD({ keyNftContract, presalePoolContract }));
 		}
-	}, [isLogin, keynftContract, dispatch]);
+	}, [isLogin, keyNftContract, dispatch]);
 
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
@@ -35,7 +43,7 @@ export default function PersonalInfo() {
 			() => {
 				message.success('Update profile successfully');
 				setCanSave(false);
-				dispatch(getMyProfileRD(keynftContract));
+				dispatch(getMyProfileRD({ keyNftContract, presalePoolContract }));
 			},
 			(err) => {
 				message.error(JSON.stringify(err));
