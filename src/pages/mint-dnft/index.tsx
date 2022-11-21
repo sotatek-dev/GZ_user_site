@@ -104,7 +104,7 @@ const MintDNFT: React.FC = () => {
 			: price;
 
 	// CR: claim start after end presale-2 7 days
-	const isClaimable = isNftClaimable(claimableTime);
+	const isClaimable = isNftClaimable(claimableTime, runningPhaseId);
 
 	// mint validation
 	const isConnectWallet = !!addressWallet;

@@ -189,6 +189,10 @@ export const formatBigNumber = (
 };
 
 export const isApproved = (allowance?: BigNumber.Value): boolean => {
+	if (new BigNumber(allowance || '').isNaN()) {
+		throw new Error();
+	}
+
 	return (
 		!!allowance &&
 		new BigNumber(allowance).gt(
