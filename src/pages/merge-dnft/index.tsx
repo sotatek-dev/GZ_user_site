@@ -26,7 +26,7 @@ import DropdownMegeDnft from 'common/components/dropdown/DropdownMegeDnft';
 import {
 	handleUserApproveERC20,
 	isUserApprovedERC20,
-} from 'web3/contracts/useErc20Contract';
+} from 'web3/contracts/useBep20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useAppSelector } from 'stores';
 

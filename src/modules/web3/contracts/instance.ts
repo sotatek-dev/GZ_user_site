@@ -4,9 +4,8 @@
 import DNFTABI from '../abis/abi-dnft.json';
 import KeyNFTABI from '../abis/abi-keynft.json';
 import PreSalePoolABI from '../abis/abi-presalepool.json';
-import ERC20ABI from '../abis/erc20.json';
 
-import BUSDABI from '../abis/abi-busd.json';
+import BEP20ABI from '../abis/bep20.json';
 import { getContractInstanceEther } from './ether';
 
 export const NEXT_PUBLIC_BUSD = process.env.NEXT_PUBLIC_BUSD_ADDRESS!;
@@ -33,8 +32,8 @@ export const genPresalePoolContractEther = () => {
 };
 
 export const genERC20PaymentContract = (contractAddress: string) => {
-	return getContractInstanceEther(ERC20ABI, contractAddress);
+	return getContractInstanceEther(BEP20ABI, contractAddress);
 };
 export const genBUSDContractEther = () => {
-	return getContractInstanceEther(BUSDABI, NEXT_PUBLIC_BUSD);
+	return getContractInstanceEther(BEP20ABI, NEXT_PUBLIC_BUSD);
 };

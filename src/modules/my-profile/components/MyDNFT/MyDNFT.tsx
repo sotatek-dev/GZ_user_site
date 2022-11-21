@@ -28,7 +28,7 @@ import {
 	NEXT_PUBLIC_KEYNFT,
 } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
+import { useActiveWeb3React, useApproval } from 'web3/hooks';
 import DNFTABI from '../../../web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
@@ -41,9 +41,9 @@ export default function MyDNFT() {
 	const [page, setPage] = useState<number>(1);
 	const dispatch = useAppDispatch();
 	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
-	const [claimableTime, setClaimableTime] = useState(0);
+	const [claimableTime, setClaimableTime] = useState<number | undefined>();
 	const { account } = useActiveWeb3React();
-	const { tryApproval, allowanceAmount } = useApprovalBusd(
+	const { tryApproval, allowanceAmount } = useApproval(
 		NEXT_PUBLIC_BUSD,
 		NEXT_PUBLIC_KEYNFT
 	);
@@ -67,7 +67,7 @@ export default function MyDNFT() {
 	const mutantDNFTs = useMemo(() => {
 		let canClaimTime = false;
 		const currentDate = dayjs().unix();
-		if (currentDate > claimableTime) {
+		if (!!claimableTime && currentDate > claimableTime) {
 			canClaimTime = true;
 		}
 
@@ -93,7 +93,9 @@ export default function MyDNFT() {
 
 			return {
 				...cloneItem,
-				claimable_date: dayjs.unix(claimable_date).format('DD-MMMM-YYYY HH:mm'),
+				claimable_date: !claimable_date
+					? '-'
+					: dayjs.unix(claimable_date).format('DD-MMMM-YYYY HH:mm'),
 				onClick: () => {
 					if (cloneItem.status === 'claimable') {
 						handleClaim(cloneItem._id);
@@ -295,7 +297,7 @@ export default function MyDNFT() {
 
 	let canClaimTime = false;
 	const currentDate = dayjs().unix();
-	if (currentDate > claimableTime) {
+	if (!!claimableTime && currentDate > claimableTime) {
 		canClaimTime = true;
 	}
 

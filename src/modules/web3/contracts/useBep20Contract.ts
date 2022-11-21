@@ -1,16 +1,16 @@
 import { HEX_ZERO } from 'common/constants/constants';
 import { convertHexToNumber, fromWei, toWei } from 'common/utils/functions';
 import { get } from 'lodash';
-import Erc20ABI from 'web3/abis/erc20.json';
-import { Erc20 } from '../abis/types';
+import Bep20ABI from 'web3/abis/bep20.json';
+import { Bep20 } from '../abis/types';
 import { genERC20PaymentContract } from './instance';
 import { useContract } from './useContract';
-// const MAX_INT =
-// 	'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
-export const useErc20Contract = (address: string): Erc20 | null => {
-	return useContract<Erc20>(Erc20ABI, address);
+export const useBep20Contract = (address: string): Bep20 | null => {
+	return useContract<Bep20>(Bep20ABI, address);
 };
+
+//
 
 export const isUserApprovedERC20 = async (
 	tokenApproveAddress: string,

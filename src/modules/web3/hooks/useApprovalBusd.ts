@@ -13,7 +13,7 @@ import { useActiveWeb3React } from './useActiveWeb3React';
  * @param spender which contract address want to use your token
  * @returns approval state and trying approve function
  */
-export const useApprovalBusd = (tokenAddress: string, spender: string) => {
+export const useApproval = (tokenAddress: string, spender: string) => {
 	const queryClient = useQueryClient();
 	const tokenContract = useBusdContract(tokenAddress);
 	const { account } = useActiveWeb3React();
@@ -52,7 +52,7 @@ export const useApprovalBusd = (tokenAddress: string, spender: string) => {
 		approve,
 		{
 			onSuccess() {
-				queryClient.invalidateQueries(['getAllowanceAmount']);
+				return queryClient.invalidateQueries(['getAllowance']);
 			},
 		}
 	);
