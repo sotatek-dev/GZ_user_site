@@ -78,7 +78,7 @@ const MintDNFT: React.FC = () => {
 	);
 	const presalePoolContract = useContract<AbiPresalepool>(
 		PresalePoolAbi,
-		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+		process.env.NEXT_PUBLIC_PRESALE_POOL_ADDRESS || ''
 	);
 	const { addressWallet } = useAppSelector((state) => state.wallet);
 	const {
