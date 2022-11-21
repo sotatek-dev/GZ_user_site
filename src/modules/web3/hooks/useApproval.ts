@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { useErc20Contract } from '../contracts/useErc20Contract';
+import { useBep20Contract } from '../contracts/useBep20Contract';
 import { useActiveWeb3React } from './useActiveWeb3React';
 
 /**
@@ -13,7 +13,7 @@ import { useActiveWeb3React } from './useActiveWeb3React';
  */
 export const useApproval = (tokenAddress: string, spender: string) => {
 	const queryClient = useQueryClient();
-	const tokenContract = useErc20Contract(tokenAddress);
+	const tokenContract = useBep20Contract(tokenAddress);
 	const { account } = useActiveWeb3React();
 
 	const getAllowance = async () => {
@@ -53,7 +53,7 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		approve,
 		{
 			onSuccess() {
-				queryClient.invalidateQueries(['getAllowanceAmount']);
+				queryClient.invalidateQueries(['getAllowance']);
 			},
 		}
 	);

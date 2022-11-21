@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { DECIMALS, ERC20_ADDRESS, RPC_CHAIN } from 'common/constants/constants';
-import { getERC20AmountBalance } from 'web3/contracts/useErc20Contract';
+import { getERC20AmountBalance } from 'web3/contracts/useBep20Contract';
 import { convertBigNumberValueToNumber } from 'web3/contracts/ether';
 import { setBalance } from 'stores/wallet';
 import { ethers } from 'ethers';

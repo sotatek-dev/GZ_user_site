@@ -7,7 +7,7 @@ import {
 	NEXT_PUBLIC_KEYNFT,
 	NEXT_PUBLIC_PRESALE_POOL,
 } from 'web3/contracts/instance';
-import { useActiveWeb3React, useApprovalBusd } from 'web3/hooks';
+import { useActiveWeb3React, useApproval } from 'web3/hooks';
 import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
 import { message } from 'antd';
 import myProfileConstants from 'modules/my-profile/constant';
@@ -20,7 +20,7 @@ export const useMintDKeyNFT = () => {
 		PresalePoolAbi,
 		NEXT_PUBLIC_PRESALE_POOL
 	);
-	const { tryApproval, allowanceAmount } = useApprovalBusd(
+	const { tryApproval, allowanceAmount } = useApproval(
 		NEXT_PUBLIC_BUSD,
 		NEXT_PUBLIC_KEYNFT
 	);

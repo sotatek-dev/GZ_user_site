@@ -27,7 +27,7 @@ import {
 import {
 	handleUserApproveERC20,
 	isUserApprovedERC20,
-} from 'web3/contracts/useErc20Contract';
+} from 'web3/contracts/useBep20Contract';
 import { getNonces } from 'modules/mint-dnft/services';
 import { useAppSelector } from 'stores';
 import { useContract } from 'web3/contracts/useContract';
