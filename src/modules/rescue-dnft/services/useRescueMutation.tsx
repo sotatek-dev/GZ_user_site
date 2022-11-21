@@ -6,7 +6,7 @@ import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 import { useContract } from 'web3/contracts/useContract';
 import { useApproval } from 'web3/hooks';
 import { isApproved } from 'common/utils/functions';
-import { TOKENS } from 'modules/mint-dnft/constants';
+import { TOKEN_DECIMAL, TOKENS } from 'modules/mint-dnft/constants';
 import RescueSuccessToast from '../components/RescueSuccessToast';
 import { message } from 'antd';
 import { handleWriteMethodError } from 'common/helpers/handleError';
@@ -26,9 +26,11 @@ import {
 	fetchPriceInBUSD,
 	fetchRescuePriceBUSD,
 } from './apis';
+import BigNumber from 'bignumber.js';
 
 export const useRescueMutation = () => {
 	const dispatch = useAppDispatch();
+	const { rate } = useAppSelector((state) => state.mintDnft);
 	const { addressWallet } = useAppSelector((state) => state.wallet);
 	const dnftContract = useContract<AbiDnft>(
 		DNFTABI,
@@ -36,7 +38,7 @@ export const useRescueMutation = () => {
 	);
 	const presalePoolContract = useContract<AbiPresalepool>(
 		PresalePoolAbi,
-		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+		process.env.NEXT_PUBLIC_PRESALE_POOL_ADDRESS || ''
 	);
 
 	const keyNftContract = useContract<AbiKeynft>(
@@ -56,15 +58,15 @@ export const useRescueMutation = () => {
 			setIsDoingRescue(true);
 
 			const isBnbRescue = token === TOKENS.BNB;
-			let tx: ContractTransaction;
+			let tx: ContractTransaction | null;
 
 			if (isBnbRescue) {
-				tx = await tryBNBRescue(key, token);
+				tx = (await tryBNBRescue(key, token)) || null;
 			} else {
-				tx = await tryBUSDRescue(key, token);
+				tx = (await tryBUSDRescue(key, token)) || null;
 			}
 
-			await tx.wait();
+			await tx?.wait();
 			const hash: string = tx ? tx.hash : '';
 			if (hash) {
 				message.success(<RescueSuccessToast txHash={hash} />);
@@ -78,40 +80,38 @@ export const useRescueMutation = () => {
 	};
 
 	const tryBUSDRescue = async (...params: Parameters<typeof tryRescue>) => {
-		if (!dnftContract) throw new Error();
-
 		const [key, token] = params;
-		if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
-			await tryApproveBusd(false);
+
+		if (dnftContract) {
+			if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+				await tryApproveBusd(true);
+			}
+			return await dnftContract.rescueUsingKey(key, false);
+		} else {
+			throw new Error();
 		}
-		return await dnftContract.rescueUsingKey(key, false);
 	};
 
 	const tryBNBRescue = async (...params: Parameters<typeof tryRescue>) => {
-		if (!dnftContract) throw new Error();
-
-		const rescuePriceBUSD = await fetchRescuePriceBUSD(dnftContract);
-		if (!rescuePriceBUSD) {
-			throw new Error();
-		}
-
-		const rescuePriceBNB = await getBusb2Bnb(
-			presalePoolContract,
-			rescuePriceBUSD.times(1e18)
-		);
-
-		if (!rescuePriceBNB) {
-			throw new Error();
-		}
-
 		const [key, token] = params;
-		if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
-			await tryApproveBusd(false);
-		}
+		if (dnftContract) {
+			const priceInBUSD = await fetchRescuePriceBUSD(dnftContract);
 
-		return await dnftContract.rescueUsingKey(key, true, {
-			value: rescuePriceBNB?.toString(),
-		});
+			const price = new BigNumber(priceInBUSD || 0)
+				.times(rate)
+				.times(TOKEN_DECIMAL)
+				.dp(0)
+				.toString(10);
+			if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+				await tryApproveBusd(true);
+			}
+
+			return await dnftContract.rescueUsingKey(key, true, {
+				value: price,
+			});
+		} else {
+			throw new Error();
+		}
 	};
 
 	const reloadData = async () => {
