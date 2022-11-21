@@ -108,6 +108,19 @@ export const getTokenAmountFromBUSD = async (
 	}
 };
 
+export const getNonces = async (
+	address: string,
+) => {
+	try {
+		const contract = await genPresalePoolContractEther();
+		const res = await contract.nonces(address);
+		const nonce = convertHexToNumber(get(res, '_hex', HEX_ZERO));
+		return [nonce, null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
 export const buyTokenWithExactlyBUSD = async (
 	saleRoundId: number,
 	address: string,
@@ -154,6 +167,17 @@ export const claimPurchasedToken = async (saleRoundId: number | undefined) => {
 	try {
 		const contract = await genPresalePoolContractEther();
 		const res = await contract.claimPurchasedToken(saleRoundId);
+		const result = await res.wait(1);
+		return [result, null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
+export const buyTokenWithoutFee = async (saleRoundId: number, address: string, numberOfCandidate: number, signature: string  ) => {
+	try {
+		const contract = await genPresalePoolContractEther();
+		const res = await contract.buyTokenWithoutFee(saleRoundId, address, numberOfCandidate, signature);
 		const result = await res.wait(1);
 		return [result, null];
 	} catch (error) {
