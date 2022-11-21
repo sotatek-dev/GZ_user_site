@@ -49,7 +49,7 @@ interface FetchPoolRemainingParams {
 	dnftContract?: AbiDnft | null;
 }
 
-const PECENT_TOKEN_LEFT_TO_RESCUE = 1 / 2; // 50%
+const PERCENT_TOKEN_LEFT_TO_RESCUE = 1 / 2; // 50%
 
 export const fetchPoolRemaining = createAsyncThunk(
 	'rescueDnft/fetchPoolRemaining',
@@ -60,11 +60,11 @@ export const fetchPoolRemaining = createAsyncThunk(
 			if (dnftContract) {
 				const unSoldTokenOfAllPhase =
 					await dnftContract.getNumberOfTokenInCosmicVoid();
-				const numberOfTokenInCosmicVoid = unSoldTokenOfAllPhase.mul(
-					PECENT_TOKEN_LEFT_TO_RESCUE
-				);
+				const numberOfTokenInCosmicVoid = new BigNumber(
+					unSoldTokenOfAllPhase._hex
+				).times(PERCENT_TOKEN_LEFT_TO_RESCUE);
 				const totalRescued = await dnftContract.totalUserRescued();
-				const theRest = new BigNumber(numberOfTokenInCosmicVoid._hex).minus(
+				const theRest = new BigNumber(numberOfTokenInCosmicVoid).minus(
 					totalRescued._hex
 				);
 				return theRest;

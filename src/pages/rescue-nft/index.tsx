@@ -50,7 +50,7 @@ const RescueDNFT = () => {
 	);
 	const presalePoolContract = useContract<AbiPresalepool>(
 		PresalePoolAbi,
-		process.env.NEXT_PUBLIC_DNFT_ADDRESS || ''
+		process.env.NEXT_PUBLIC_PRESALE_POOL_ADDRESS || ''
 	);
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
