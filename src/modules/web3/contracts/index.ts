@@ -1,1 +1,1 @@
-export { useErc20Contract } from './useBep20Contract';
+export { useBep20Contract } from './useBep20Contract';

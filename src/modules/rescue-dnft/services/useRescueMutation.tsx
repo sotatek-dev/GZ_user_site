@@ -17,7 +17,6 @@ import {
 } from 'modules/mint-dnft/helpers/fetch';
 
 import { useAppDispatch, useAppSelector } from 'stores';
-import { getBusb2Bnb } from 'modules/my-profile/services/apis';
 import { ContractTransaction } from 'ethers';
 import {
 	fetchLaunchPriceInBUSD,
