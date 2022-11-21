@@ -10,11 +10,20 @@ export const permanentMerge = async (
 ) => {
 	try {
 		const contract = await genDNFTContractEther();
-		const res = await contract.permanentMerge(
+		const estimatedGas = await contract.estimateGas.permanentMerge(
 			listTokenId,
 			timesTamp,
 			sessionId,
 			signature
+		);
+		const res = await contract.permanentMerge(
+			listTokenId,
+			timesTamp,
+			sessionId,
+			signature,
+			{
+				gasLimit: estimatedGas.toString(),
+			}
 		);
 		const result = await res.wait(1);
 		return [result, null];
@@ -31,11 +40,20 @@ export const temporaryMerge = async (
 ) => {
 	try {
 		const contract = await genDNFTContractEther();
-		const res = await contract.temporaryMerge(
+		const estimatedGas = await contract.estimateGas.temporaryMerge(
 			listTokenId,
 			timesTamp,
 			sessionId,
 			signature
+		);
+		const res = await contract.temporaryMerge(
+			listTokenId,
+			timesTamp,
+			sessionId,
+			signature,
+			{
+				gasLimit: estimatedGas.toString(),
+			}
 		);
 		const result = await res.wait(1);
 		return [result, null];

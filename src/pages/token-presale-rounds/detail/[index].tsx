@@ -2,6 +2,7 @@ import { Divider, message, Progress, RadioChangeEvent } from 'antd';
 import {
 	checkUserWhitelist,
 	getDetailTokenSaleRound,
+	getSignatureTokenSaleRoundSpecial,
 } from 'apis/tokenSaleRounds';
 import BoxPool from 'common/components/boxPool';
 import Button from 'common/components/button';
@@ -37,8 +38,10 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import {
+	buyTokenWithoutFee,
 	claimPurchasedToken,
 	convertBUSDtoBNB,
+	getNonces,
 	getRemainingClaimableAmount,
 	getSalePhaseInfo,
 	getUserClaimedAmount,
@@ -105,7 +108,7 @@ const TokenSaleRoundDetail = () => {
 	);
 	const saleRoundId = get(detailSaleRound, 'sale_round');
 	const prevLoading = usePrevious(isLoading);
-
+		
 	const isShowButtonBuy =
 		statusTimeLine === BUY &&
 		isLogin &&
@@ -347,6 +350,41 @@ const TokenSaleRoundDetail = () => {
 		setTitleTimeCountDown(title);
 	};
 
+	const handleBuyToken = async () => {
+		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
+		if (!saleRoundId) return;
+		if (exchangeRateBUSD === 0) {
+			const [nonce] = await getNonces(addressWallet);
+			const params = {
+				amount: 0,
+				sale_round_id: saleRoundId,
+				nonce: nonce
+			};
+			const [dataSignature] = await getSignatureTokenSaleRoundSpecial(params);
+			const signature = get(dataSignature, 'data._signature', '');
+			const numberOfCandidate = get(dataSignature, 'data._numberOfCandidate', '');
+			const [resBuyWithFee, errorBuyWithFee] = await buyTokenWithoutFee(
+				saleRoundId,
+				addressWallet,
+				numberOfCandidate,
+				signature
+			);
+			if (resBuyWithFee) {
+				message.success(redirectToBSCScan(resBuyWithFee?.transactionHash));
+				getDetailSaleRound();
+				return;
+			}
+			if (errorBuyWithFee) {
+				if (errorBuyWithFee?.error?.code === -32603) {
+					return message.error('Network Error!');
+				}
+				return message.error('Transaction Rejected');
+			}
+		} else {
+			setOpenTokenPurchase(true)
+		}
+	}
+
 	const renderPriceBuyInfoUpComing = () => {
 		return (
 			<>
@@ -509,7 +547,7 @@ const TokenSaleRoundDetail = () => {
 								<div className='flex desktop:py-0 py-[1.563rem] desktop:items-center desktop:justify-center justify-end'>
 									{isShowButtonBuy && (
 										<Button
-											onClick={() => setOpenTokenPurchase(true)}
+											onClick={handleBuyToken}
 											label='Buy'
 											classCustom='buy-token'
 										/>

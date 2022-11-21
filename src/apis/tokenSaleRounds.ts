@@ -43,6 +43,16 @@ export const getSignatureTokenSaleRound = async (
 		.catch((error) => [null, error]);
 };
 
+export const getSignatureTokenSaleRoundSpecial = async (
+	params: IPramsSignatureTokenSaleRound
+) => {
+	const queryString = `/sale-round/signature/special`;
+	return await axiosInstance()
+		.post(queryString, { ...params })
+		.then((data) => [data.data, null])
+		.catch((error) => [null, error]);
+};
+
 export const checkUserWhitelist = async (params: IPramsCheckUserWhitelist) => {
 	const queryString = `/whitelisted-user/check`;
 	return await axiosInstance()

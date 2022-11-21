@@ -12,7 +12,7 @@ export default function HeaderPC() {
 	const { account } = useActiveWeb3React();
 	const isLogin = useAppSelector((state) => state.user.isLogin);
 	const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
-
+	
 	return (
 		<div className='hidden desktop:flex justify-end w-full'>
 			{isLogin ? (

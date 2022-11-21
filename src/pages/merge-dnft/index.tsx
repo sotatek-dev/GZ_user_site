@@ -29,6 +29,7 @@ import {
 } from 'web3/contracts/useBep20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useAppSelector } from 'stores';
+import { getNonces } from 'web3/contracts/useContractTokenSale';
 
 interface IInitImage {
 	assetBase: string;
@@ -293,8 +294,10 @@ const MergeDNFT = () => {
 			}
 		}
 		const sessionId = get(data, 'data._id', '');
+		const [nonce] = await getNonces(addressWallet);
 		const paramsSignature = {
 			session_id: sessionId,
+			nonce
 		};
 		const [dataSignature] = await getSignatureMerge(paramsSignature);
 		const { session_id, signature, time_stamp, token_ids } = dataSignature;
@@ -365,8 +368,10 @@ const MergeDNFT = () => {
 				}
 			}
 			const sessionId = get(data, 'data._id', '');
+			const [nonce] = await getNonces(addressWallet);
 			const paramsSignature = {
 				session_id: sessionId,
+				nonce
 			};
 			const [dataSignature] = await getSignatureMerge(paramsSignature);
 			const { session_id, signature, time_stamp, token_ids } = dataSignature;

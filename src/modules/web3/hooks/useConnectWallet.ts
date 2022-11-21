@@ -140,7 +140,6 @@ export const useConnectWallet = () => {
 		try {
 			const signer = (library as any).getSigner();
 			const signature = await signer.signMessage(`${SIGN_MESSAGE}`, address);
-
 			if (signature) {
 				const params = {
 					wallet_address: address,
@@ -176,7 +175,6 @@ export const useConnectWallet = () => {
 
 	async function checkLogin(addressWallet: string) {
 		const [dataCheckUser] = await checkEmailUser(addressWallet);
-
 		// check user đăng nhập lần đầu.
 		if (dataCheckUser?.is_user_exist) {
 			setStatusConnect(true);
