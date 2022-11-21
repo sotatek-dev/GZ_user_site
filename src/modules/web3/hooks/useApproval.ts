@@ -53,7 +53,7 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		approve,
 		{
 			onSuccess() {
-				queryClient.invalidateQueries(['getAllowance']);
+				return queryClient.invalidateQueries(['getAllowance']);
 			},
 		}
 	);
