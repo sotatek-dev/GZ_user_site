@@ -19,6 +19,7 @@ import { PROPERTY } from 'common/constants/mergeDNFT';
 import Button from 'common/components/button';
 import {
 	getMergeTax,
+	getNonces,
 	permanentMerge,
 	temporaryMerge,
 } from 'web3/contracts/useContractDNFT';
@@ -29,7 +30,6 @@ import {
 } from 'web3/contracts/useBep20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useAppSelector } from 'stores';
-import { getNonces } from 'web3/contracts/useContractTokenSale';
 
 interface IInitImage {
 	assetBase: string;

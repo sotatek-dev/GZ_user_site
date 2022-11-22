@@ -24,7 +24,7 @@ export const isUserApprovedERC20 = async (
 		const allowance = fromWei(
 			convertHexToNumber(get(result, '_hex', HEX_ZERO))
 		);
-		if (allowance > amount) return true;
+		if (allowance >= amount) return true;
 	} catch (error) {
 		return false;
 	}
