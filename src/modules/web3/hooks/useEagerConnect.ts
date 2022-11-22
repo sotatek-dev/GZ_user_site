@@ -20,7 +20,7 @@ export function useEagerConnect() {
 		const walletSelected = StorageUtils.getSectionStorageItem(
 			STORAGE_KEYS.WALLET_CONNECTED
 		);
-		const isWalletConnect = StorageUtils.getItem(STORAGE_KEYS.WALLET_CONNECT)
+		const isWalletConnect = StorageUtils.getItem(STORAGE_KEYS.WALLET_CONNECT);
 		if (!walletSelected) return;
 		if (walletSelected === ConnectorKey.injected) {
 			Injected.isAuthorized().then((isAuthorized: boolean) => {
@@ -41,8 +41,12 @@ export function useEagerConnect() {
 				}
 			});
 		}
-		
-		if (walletSelected === ConnectorKey.walletConnect && isWalletConnect &&  !library) {
+
+		if (
+			walletSelected === ConnectorKey.walletConnect &&
+			isWalletConnect &&
+			!library
+		) {
 			// setTimeout(() => {
 			activate(walletConnect).catch(() => {
 				setTried(true);

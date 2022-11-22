@@ -10,32 +10,25 @@ import { formatCurrency } from 'common/helpers/number';
 import myProfileConstants from 'modules/my-profile/constant';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { getMyProfileRD } from 'stores/myProfile';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
-import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
-import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
-import {
-	NEXT_PUBLIC_KEYNFT,
-	NEXT_PUBLIC_PRESALE_POOL,
-} from 'web3/contracts/instance';
+import { AbiKeynft } from 'web3/abis/types';
+import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useNativeBalance } from 'web3/hooks';
+import { useActiveWeb3React, useNativeBalance } from 'web3/hooks';
 import { useBalance } from 'web3/queries';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
 import {
+	fetchKeyBalance,
 	fetchMinDnftToBuyKey,
 	fetchStartBuyKeyTime,
 } from 'stores/key-dnft/key-dnft.thunks';
 
 export default function BuyInfo() {
+	const { account } = useActiveWeb3React();
 	const dispatch = useAppDispatch();
 	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
-	const presalePoolContract = useContract<AbiPresalepool>(
-		PresalePoolAbi,
-		NEXT_PUBLIC_PRESALE_POOL
-	);
 	const { userInfo, dnft_holding_count } = useAppSelector(
 		(state) => state.myProfile
 	);
@@ -63,6 +56,7 @@ export default function BuyInfo() {
 	const [tokenCode, setTokenCode] = useState(Token2Buy.BUSD);
 
 	const handleBuyKey = async () => {
+		if (!keyNftContract || !account) return;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 		const [tx, _]: any = await buyDKeyNFT({
 			keyPrice: keyPriceBusd?.toNumber(),
@@ -72,7 +66,7 @@ export default function BuyInfo() {
 			message.success(redirectToBSCScan(tx && tx?.transactionHash));
 		}
 
-		dispatch(getMyProfileRD({ presalePoolContract, keyNftContract }));
+		dispatch(fetchKeyBalance({ keyNftContract, account }));
 	};
 
 	const isEnoughRoyalty = () => {

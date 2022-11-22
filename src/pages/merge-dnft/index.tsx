@@ -297,7 +297,7 @@ const MergeDNFT = () => {
 		const [nonce] = await getNonces(addressWallet);
 		const paramsSignature = {
 			session_id: sessionId,
-			nonce
+			nonce,
 		};
 		const [dataSignature] = await getSignatureMerge(paramsSignature);
 		const { session_id, signature, time_stamp, token_ids } = dataSignature;
@@ -371,7 +371,7 @@ const MergeDNFT = () => {
 			const [nonce] = await getNonces(addressWallet);
 			const paramsSignature = {
 				session_id: sessionId,
-				nonce
+				nonce,
 			};
 			const [dataSignature] = await getSignatureMerge(paramsSignature);
 			const { session_id, signature, time_stamp, token_ids } = dataSignature;
