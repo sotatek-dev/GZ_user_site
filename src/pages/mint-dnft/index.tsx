@@ -204,7 +204,7 @@ const MintDNFT: React.FC = () => {
 				// set up signature
 				const dnftNonces = await getNonces(dnftContract, account);
 				const signature = await getMintDnftSignature({ nonce: dnftNonces });
-				if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+				if (!isApproved(allowanceBusdAmount)) {
 					await tryApproveBusd(true);
 				}
 				const amount =
