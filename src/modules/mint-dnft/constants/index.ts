@@ -45,7 +45,7 @@ export const listPhaseId = [
 ];
 
 export enum Message {
-	MINT_SUCCESS = 'You can collect your dNFT 7 days after the end of Public Sale',
+	MINT_SUCCESS = 'You can collect your dNFT 7 days after the end of Launch phase',
 	RESCUE_SUCCESS = 'Transaction completed',
 
 	REACH_LIMIT = 'You have reach the limitation of minting',
