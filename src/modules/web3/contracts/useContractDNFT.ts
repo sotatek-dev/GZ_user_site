@@ -1,3 +1,4 @@
+import { HEX_ZERO } from 'common/constants/constants';
 import { convertHexToNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { genDNFTContractEther } from './instance';
@@ -68,6 +69,19 @@ export const getMergeTax = async () => {
 		const res = await contract.getMergeTax();
 		const mergeTax = fromWei(convertHexToNumber(get(res, '_hex')));
 		return [mergeTax, null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
+export const getNonces = async (
+	address: string,
+) => {
+	try {
+		const contract = await genDNFTContractEther();
+		const res = await contract.nonces(address);
+		const nonce = convertHexToNumber(get(res, '_hex', HEX_ZERO));
+		return [nonce, null];
 	} catch (error) {
 		return [null, error];
 	}

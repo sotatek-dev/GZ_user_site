@@ -124,37 +124,34 @@ const TokenPresaleRound = () => {
 							} = item;
 
 							return (
-								<>
-									{/*card container*/}
-									<div
-										className={'flex flex-col bg-black-10 p-4 rounded-[4px]'}
-										key={index}
-										onClick={() => {
-											router.push(`/token-presale-rounds/detail/${_id}`);
-										}}
-									>
-										<div className={'text-h6 font-bold mb-4'}>{`${formatNumber(
-											fromWei(exchangeRate)
-										)} ${CURRENCY}`}</div>
-										<hr className={'border-t border-blue-20/[0.1] mb-5'} />
-										<div className={'flex justify-between items-center mb-5'}>
-											<div className={'text-h8 font-medium text-blue-20 pr-3'}>
-												Rounds
-											</div>
-											<div className={'text-h8 font-bold text-white break-all'}>
-												{item.name}
-											</div>
+								<div
+									className={'flex flex-col bg-black-10 p-4 rounded-[4px]'}
+									key={index}
+									onClick={() => {
+										router.push(`/token-presale-rounds/detail/${_id}`);
+									}}
+								>
+									<div className={'text-h6 font-bold mb-4'}>{`${formatNumber(
+										fromWei(exchangeRate)
+									)} ${CURRENCY}`}</div>
+									<hr className={'border-t border-blue-20/[0.1] mb-5'} />
+									<div className={'flex justify-between items-center mb-5'}>
+										<div className={'text-h8 font-medium text-blue-20 pr-3'}>
+											Rounds
 										</div>
-										<div className={'flex justify-between items-center'}>
-											<div className={'text-h8 font-medium text-blue-20'}>
-												Status
-											</div>
-											<div className={'text-h8 font-bold text-white'}>
-												{statusListSaleRound}
-											</div>
+										<div className={'text-h8 font-bold text-white break-all'}>
+											{item.name}
 										</div>
 									</div>
-								</>
+									<div className={'flex justify-between items-center'}>
+										<div className={'text-h8 font-medium text-blue-20'}>
+											Status
+										</div>
+										<div className={'text-h8 font-bold text-white'}>
+											{statusListSaleRound}
+										</div>
+									</div>
+								</div>
 							);
 						})}
 					</div>
