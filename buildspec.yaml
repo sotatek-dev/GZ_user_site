@@ -15,7 +15,7 @@ phases:
     - helm version
     - kubectl version --client
     - aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER} --role-arn ${ROLE_ARN}
-    - kubectl config use-context arn:aws:eks:${AWS_REGION}:720664412221:cluster/${EKS_CLUSTER}
+    - kubectl config use-context arn:aws:eks:${AWS_REGION}:983383401906:cluster/${EKS_CLUSTER}
     - kubectl get ns
   build:
     on-failure: ABORT
