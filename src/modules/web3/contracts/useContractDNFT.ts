@@ -74,9 +74,7 @@ export const getMergeTax = async () => {
 	}
 };
 
-export const getNonces = async (
-	address: string,
-) => {
+export const getNonces = async (address: string) => {
 	try {
 		const contract = await genDNFTContractEther();
 		const res = await contract.nonces(address);

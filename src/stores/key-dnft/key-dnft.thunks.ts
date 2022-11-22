@@ -26,3 +26,18 @@ export const fetchMinDnftToBuyKey = createAsyncThunk<number, AbiKeynft>(
 		}
 	}
 );
+
+export const fetchKeyBalance = createAsyncThunk<
+	number,
+	{ keyNftContract: AbiKeynft; account: string }
+>(
+	'keyDnft/fetchKeyBalance',
+	async ({ keyNftContract, account }, { rejectWithValue }) => {
+		try {
+			const keyBalance = await keyNftContract.balanceOf(account);
+			return keyBalance.toNumber();
+		} catch (error) {
+			return rejectWithValue(error);
+		}
+	}
+);

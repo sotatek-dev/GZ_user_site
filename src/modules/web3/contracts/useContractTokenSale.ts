@@ -108,9 +108,7 @@ export const getTokenAmountFromBUSD = async (
 	}
 };
 
-export const getNonces = async (
-	address: string,
-) => {
+export const getNonces = async (address: string) => {
 	try {
 		const contract = await genPresalePoolContractEther();
 		const res = await contract.nonces(address);
@@ -174,10 +172,20 @@ export const claimPurchasedToken = async (saleRoundId: number | undefined) => {
 	}
 };
 
-export const buyTokenWithoutFee = async (saleRoundId: number, address: string, numberOfCandidate: number, signature: string  ) => {
+export const buyTokenWithoutFee = async (
+	saleRoundId: number,
+	address: string,
+	numberOfCandidate: number,
+	signature: string
+) => {
 	try {
 		const contract = await genPresalePoolContractEther();
-		const res = await contract.buyTokenWithoutFee(saleRoundId, address, numberOfCandidate, signature);
+		const res = await contract.buyTokenWithoutFee(
+			saleRoundId,
+			address,
+			numberOfCandidate,
+			signature
+		);
 		const result = await res.wait(1);
 		return [result, null];
 	} catch (error) {

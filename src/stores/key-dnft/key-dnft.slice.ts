@@ -1,5 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchMinDnftToBuyKey, fetchStartBuyKeyTime } from './key-dnft.thunks';
+import {
+	fetchKeyBalance,
+	fetchMinDnftToBuyKey,
+	fetchStartBuyKeyTime,
+} from './key-dnft.thunks';
 
 type RequestState = 'idle' | 'pending' | 'succeeded' | 'failed';
 
@@ -8,6 +12,8 @@ interface State {
 	loading: RequestState;
 	minDnftToBuyKey: number | undefined;
 	isLoadingMinDnftToBuyKey: boolean;
+	keyBalance: number | undefined;
+	isLoadKeyBalance: boolean;
 	error: unknown | undefined;
 }
 
@@ -16,6 +22,8 @@ const initialState: State = {
 	loading: 'idle',
 	minDnftToBuyKey: undefined,
 	isLoadingMinDnftToBuyKey: false,
+	keyBalance: undefined,
+	isLoadKeyBalance: false,
 	error: undefined,
 };
 
@@ -45,6 +53,17 @@ const keyDnftSlice = createSlice({
 		});
 		builder.addCase(fetchMinDnftToBuyKey.pending, (state) => {
 			state.isLoadingMinDnftToBuyKey = true;
+		});
+
+		builder.addCase(fetchKeyBalance.fulfilled, (state, action) => {
+			state.keyBalance = action.payload;
+			state.isLoadKeyBalance = false;
+		});
+		builder.addCase(fetchKeyBalance.rejected, (state) => {
+			state.isLoadKeyBalance = false;
+		});
+		builder.addCase(fetchKeyBalance.pending, (state) => {
+			state.isLoadKeyBalance = true;
 		});
 	},
 });

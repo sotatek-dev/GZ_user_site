@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start -p 3003",
 		"lint": "next lint",
-		"format": "prettier --write .",
+		"format": "prettier --write --ignore-unknown",
 		"postinstall": "yarn run typechain",
 		"typechain": "typechain --out-dir src/modules/web3/abis/types --target=ethers-v5 \"src/modules/web3/abis/*.json\"",
 		"prepare": "husky install"

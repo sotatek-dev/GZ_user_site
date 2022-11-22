@@ -15,13 +15,19 @@ import {
 } from 'web3/contracts/instance';
 import { isValidEmail } from 'common/helpers/email';
 import myProfileConstants from 'modules/my-profile/constant';
+import { fetchKeyBalance } from 'stores/key-dnft/key-dnft.thunks';
+import { useActiveWeb3React } from 'web3/hooks';
 
 const { Paragraph } = Typography;
 
 export default function PersonalInfo() {
+	const { account } = useActiveWeb3React();
 	const form = Form.useForm()[0];
 	const dispatch = useAppDispatch();
 	const { userInfo } = useAppSelector((state) => state.myProfile);
+	const { keyBalance, isLoadKeyBalance } = useAppSelector(
+		(state) => state.keyDnft
+	);
 	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
 	const presalePoolContract = useContract<AbiPresalepool>(
 		PresalePoolAbi,
@@ -29,13 +35,16 @@ export default function PersonalInfo() {
 	);
 	const [canSave, setCanSave] = useState(false);
 
-	const { isLogin } = useAppSelector((state) => state.user);
+	useEffect(() => {
+		if (!keyNftContract || !account) return;
+
+		dispatch(getMyProfileRD({ keyNftContract, presalePoolContract }));
+		dispatch(fetchKeyBalance({ keyNftContract, account }));
+	}, [keyNftContract, presalePoolContract, dispatch, account]);
 
 	useEffect(() => {
-		if (isLogin) {
-			dispatch(getMyProfileRD({ keyNftContract, presalePoolContract }));
-		}
-	}, [isLogin, keyNftContract, dispatch]);
+		form.setFieldValue('key_holding_count', keyBalance);
+	}, [form, keyBalance]);
 
 	const handleUpdateMyProfile = async (email: string) => {
 		await updateMyProfile(
@@ -69,7 +78,7 @@ export default function PersonalInfo() {
 		setCanSave(false);
 	};
 
-	if (userInfo == undefined) {
+	if (userInfo == undefined || (keyBalance == undefined && isLoadKeyBalance)) {
 		return (
 			<BoxPool customClass='desktop:w-[50%]'>
 				<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
@@ -120,7 +129,7 @@ export default function PersonalInfo() {
 				layout='vertical'
 				onFinish={onFinish}
 				autoComplete='off'
-				initialValues={userInfo}
+				initialValues={{ ...userInfo, key_holding_count: keyBalance }}
 				form={form}
 				onFieldsChange={onFieldChanged}
 			>
@@ -162,6 +171,7 @@ export default function PersonalInfo() {
 				</Form.Item>
 				<Form.Item label='Number of key(s): ' name='key_holding_count'>
 					<Input
+						value={keyBalance}
 						placeholder='Number of key'
 						className='custom-input-wrapper'
 						disabled

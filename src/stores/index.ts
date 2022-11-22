@@ -17,7 +17,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { dnftDetailStore } from 'stores/dnft/dnft-detail';
 import mintDnftReducer from 'stores/mintDnft';
 import rescueDnftReducer from 'stores/rescueDnft';
-import keyDnftReducer from './key-dnft/buy-key-time.slice';
+import keyDnftReducer from './key-dnft/key-dnft.slice';
 
 let customStore: Store | undefined;
 

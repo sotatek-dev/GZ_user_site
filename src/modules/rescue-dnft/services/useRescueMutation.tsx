@@ -79,10 +79,10 @@ export const useRescueMutation = () => {
 	};
 
 	const tryBUSDRescue = async (...params: Parameters<typeof tryRescue>) => {
-		const [key, token] = params;
+		const [key] = params;
 
 		if (dnftContract) {
-			if (!isApproved(allowanceBusdAmount) && token === TOKENS.BUSD) {
+			if (!isApproved(allowanceBusdAmount)) {
 				await tryApproveBusd(true);
 			}
 			return await dnftContract.rescueUsingKey(key, false);
@@ -101,6 +101,10 @@ export const useRescueMutation = () => {
 				.times(TOKEN_DECIMAL)
 				.dp(0)
 				.toString(10);
+
+			if (!isApproved(allowanceBusdAmount)) {
+				await tryApproveBusd(true);
+			}
 
 			return await dnftContract.rescueUsingKey(key, true, {
 				value: price,
