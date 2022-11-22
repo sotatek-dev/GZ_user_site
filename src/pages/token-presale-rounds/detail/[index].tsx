@@ -108,7 +108,6 @@ const TokenSaleRoundDetail = () => {
 	);
 	const saleRoundId = get(detailSaleRound, 'sale_round');
 	const prevLoading = usePrevious(isLoading);
-		
 	const isShowButtonBuy =
 		statusTimeLine === BUY &&
 		isLogin &&
@@ -358,11 +357,16 @@ const TokenSaleRoundDetail = () => {
 			const params = {
 				amount: 0,
 				sale_round_id: saleRoundId,
-				nonce: nonce
+				nonce: nonce,
 			};
+
 			const [dataSignature] = await getSignatureTokenSaleRoundSpecial(params);
 			const signature = get(dataSignature, 'data._signature', '');
-			const numberOfCandidate = get(dataSignature, 'data._numberOfCandidate', '');
+			const numberOfCandidate = get(
+				dataSignature,
+				'data._numberOfCandidate',
+				''
+			);
 			const [resBuyWithFee, errorBuyWithFee] = await buyTokenWithoutFee(
 				saleRoundId,
 				addressWallet,
@@ -381,9 +385,9 @@ const TokenSaleRoundDetail = () => {
 				return message.error('Transaction Rejected');
 			}
 		} else {
-			setOpenTokenPurchase(true)
+			setOpenTokenPurchase(true);
 		}
-	}
+	};
 
 	const renderPriceBuyInfoUpComing = () => {
 		return (
