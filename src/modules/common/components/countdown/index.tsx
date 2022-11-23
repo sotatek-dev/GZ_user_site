@@ -3,7 +3,7 @@ import { capitalize, get, keys, map } from 'lodash';
 import { FC, memo, useEffect, useState } from 'react';
 
 interface ICountdownProps {
-	millisecondsRemain?: number;
+	millisecondsRemain: number;
 	title?: string;
 	customClass?: string;
 	boxStyle?: string;
@@ -12,22 +12,8 @@ interface ICountdownProps {
 	callBackApi?: () => void;
 }
 
-interface ITimeRemain {
-	days: number | undefined;
-	hours: number | undefined;
-	minutes: number | undefined;
-	seconds: number | undefined;
-}
-
-const timeRemainDefault = {
-	days: 0,
-	hours: 0,
-	minutes: 0,
-	seconds: 0,
-};
-
 const Countdown: FC<ICountdownProps> = ({
-	millisecondsRemain = -1,
+	millisecondsRemain,
 	title = 'You can buy tokens in',
 	customClass,
 	boxStyle,
@@ -36,7 +22,6 @@ const Countdown: FC<ICountdownProps> = ({
 	callBackApi,
 }) => {
 	const [secCountDown, setSecCountDown] = useState<number>(millisecondsRemain);
-	const [timeRemain, settimeRemain] = useState<ITimeRemain>(timeRemainDefault);
 
 	useEffect(() => {
 		if (millisecondsRemain > 0) {
@@ -44,10 +29,7 @@ const Countdown: FC<ICountdownProps> = ({
 		}
 	}, [millisecondsRemain]);
 
-	useEffect(() => {
-		const timeRemain = secondsToTime(secCountDown > 0 ? secCountDown : 0);
-		settimeRemain(timeRemain);
-	}, [secCountDown]);
+	const timeRemain = secondsToTime(secCountDown > 0 ? secCountDown : 0);
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
@@ -74,7 +56,7 @@ const Countdown: FC<ICountdownProps> = ({
 			<div className='countdown'>
 				{map(keys(timeRemain), (key: string, index) => (
 					<div className={`box ${boxStyle}`} key={index}>
-						{addZeroToHead(get(timeRemain, key) || 0)}
+						{addZeroToHead(get(timeRemain, key))}
 						<div className={`description ${descriptionStyle}`}>
 							{capitalize(key)}
 						</div>
