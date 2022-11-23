@@ -95,9 +95,12 @@ export const useRescueMutation = () => {
 		const [key] = params;
 		if (dnftContract) {
 			const priceInBUSD = await fetchRescuePriceBUSD(dnftContract);
+			if (priceInBUSD == null) {
+				throw new Error('Can not get price');
+			}
 
-			const price = new BigNumber(priceInBUSD || 0)
-				.times(rate)
+			const price = new BigNumber(priceInBUSD)
+				.div(rate)
 				.times(TOKEN_DECIMAL)
 				.dp(0)
 				.toString(10);
