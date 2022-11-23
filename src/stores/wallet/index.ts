@@ -12,7 +12,7 @@ interface IWalletState {
 	isConnect: boolean;
 	network?: INetworkList;
 	balance: {
-		[key: string]: string;
+		[key in 'busdBalance' | 'bnbBalance']: string;
 	};
 	wallerConnected: string;
 }
@@ -49,7 +49,10 @@ const storeWallet = createSlice({
 			...state,
 			network: action.payload,
 		}),
-		setBalance: (state, action: PayloadAction<{ [key: string]: string }>) => ({
+		setBalance: (
+			state,
+			action: PayloadAction<{ [key in 'busdBalance' | 'bnbBalance']: string }>
+		) => ({
 			...state,
 			balance: action.payload,
 		}),
@@ -80,7 +83,9 @@ export const setNetworkConnected = (network: INetworkList) => {
 		customStore.dispatch(storeWallet.actions.setNetworkConnected(network));
 };
 
-export const setBalance = (balance: { [key: string]: string }) => {
+export const setBalance = (balance: {
+	[key in 'busdBalance' | 'bnbBalance']: string;
+}) => {
 	customStore && customStore.dispatch(storeWallet.actions.setBalance(balance));
 };
 

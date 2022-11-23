@@ -9,7 +9,7 @@ export enum BuyStatus {
 	NotEnoughRoyalty,
 }
 
-interface BuyStatusConfig {
+export interface BuyStatusConfig {
 	message: string;
 	icon: string;
 	boxStyle: string;
