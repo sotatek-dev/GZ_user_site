@@ -96,11 +96,9 @@ export default function ConnectWallet() {
 					handleConnect(wallet);
 					setConnector(wallet);
 				}}
-				className={`p-4 bg-[#ffffff0d] shadow-[
-						0px 3px 50px rgba(0, 0, 0, 0.078)
-					] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer ${
-						isActive ? 'chosse-active' : 'chosse-disable'
-					}`}
+				className={`p-4 bg-[#ffffff0d] shadow-[0px 3px 50px rgba(0, 0, 0, 0.078)] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer border-2 border-solid border-[#36c1ff] border-opacity-0 hover:border-opacity-100 transition ease-in-out duration-200 opacity-60 hover:opacity-100 ${
+					isActive ? 'chosse-active' : 'chosse-disable'
+				}`}
 			>
 				{isActive && (
 					<IconDynamic
@@ -153,7 +151,7 @@ export default function ConnectWallet() {
 			case STEP_MODAL_CONNECTWALLET.CONNECT_WALLET:
 				return (
 					<div>
-						<h5 className='font-bold text-h4 desktop:text-h3 text-white text-center border-solid border-b border-ebony pb-6'>
+						<h5 className='font-bold text-h4 desktop:text-h3 text-white text-center pb-6'>
 							Connect Wallet
 						</h5>
 						<div>

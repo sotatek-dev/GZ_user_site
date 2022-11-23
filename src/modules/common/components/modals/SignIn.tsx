@@ -1,4 +1,5 @@
 import { Form, Input } from 'antd';
+import classNames from 'classnames';
 import { useState } from 'react';
 import { useActiveWeb3React } from 'web3/hooks';
 import { useConnectWallet } from 'web3/hooks/useConnectWallet';
@@ -14,6 +15,8 @@ export default function ModalSignin() {
 	const { handleLogin } = useConnectWallet();
 	const { account } = useActiveWeb3React();
 	const [isDisabledConfirm, setDisableConfirm] = useState<boolean>(true);
+	const [isDoingFinish, setIsDoingFinish] = useState(false);
+
 	const handlerEmailChange = (values: { email: string }) => {
 		if (values?.email && !EMAIL_REGEX.test(values?.email)) {
 			return setDisableConfirm(true);
@@ -34,12 +37,13 @@ export default function ModalSignin() {
 	const onFinish = (values: IFormRule) => {
 		const { email } = values;
 		if (!account) return;
-		handleLogin(account, email);
+		setIsDoingFinish(true);
+		handleLogin(account, email).finally(() => setIsDoingFinish(false));
 	};
 
 	return (
 		<div className={'px-4'}>
-			<h5 className='font-bold text-white text-center  text-[32px] leading-10 font-semibold'>
+			<h5 className='text-white text-center  text-[32px] leading-10 font-semibold'>
 				Enter your email
 			</h5>
 			<div className='pt-[35px]'>
@@ -70,8 +74,12 @@ export default function ModalSignin() {
 						/>
 					</Form.Item>
 					<Button
+						isLoading={isDoingFinish}
 						isDisabled={isDisabledConfirm}
-						classCustom='bg-charcoal-purple !rounded-[40px] !mt-[30px] mx-auto !px-[45px] !py-[11px] text-[#777] !font-semibold'
+						classCustom={classNames(
+							'bg-purple-30 hover:bg-purple-30 text-white !rounded-[40px] !mt-[30px] mx-auto !px-[45px] !py-[11px] !font-semibold',
+							{ 'bg-charcoal-purple': isDisabledConfirm }
+						)}
 						htmlType='submit'
 						label='Confirm'
 					/>

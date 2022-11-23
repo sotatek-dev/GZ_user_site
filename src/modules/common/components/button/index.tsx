@@ -1,5 +1,4 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { Button as AntButton, Spin } from 'antd';
+import { Button as AntButton } from 'antd';
 import { ButtonType } from 'antd/lib/button';
 import { ButtonHTMLType } from 'antd/lib/button/button';
 
@@ -27,25 +26,13 @@ const Button = (props: Props) => {
 		isLoading = false,
 		classCustom,
 		styles,
-		colorIconLoading = '#212325',
 	} = props;
-
-	const antIcon = (
-		<LoadingOutlined
-			style={{
-				fontSize: 18,
-				fontWeight: 900,
-				color: colorIconLoading,
-				marginRight: '10px',
-			}}
-			spin
-		/>
-	);
 
 	return (
 		<AntButton
 			type={type}
 			className={`common-normal-button ${classCustom}`}
+			loading={isLoading}
 			disabled={isDisabled}
 			onClick={() => {
 				if (onClick) onClick();
@@ -54,7 +41,6 @@ const Button = (props: Props) => {
 			block
 			style={styles}
 		>
-			{isLoading && <Spin indicator={antIcon} />}
 			{label}
 		</AntButton>
 	);
