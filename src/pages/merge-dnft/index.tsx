@@ -276,14 +276,13 @@ const MergeDNFT = () => {
 		const isUserApproved = await isUserApprovedERC20(
 			NEXT_PUBLIC_BUSD,
 			addressWallet,
-			mergeTax,
+			Number(mergeTax),
 			NEXT_PUBLIC_DNFT
 		);
 		if (!isUserApproved) {
 			const [, error] = await handleUserApproveERC20(
 				NEXT_PUBLIC_BUSD,
-				NEXT_PUBLIC_DNFT,
-				mergeTax
+				NEXT_PUBLIC_DNFT
 			);
 			if (error) {
 				setLoadingPermanentlyMerge(false);
@@ -350,14 +349,13 @@ const MergeDNFT = () => {
 			const isUserApproved = await isUserApprovedERC20(
 				NEXT_PUBLIC_BUSD,
 				addressWallet,
-				mergeTax,
+				Number(mergeTax),
 				NEXT_PUBLIC_DNFT
 			);
 			if (!isUserApproved) {
 				const [, error] = await handleUserApproveERC20(
 					NEXT_PUBLIC_BUSD,
-					NEXT_PUBLIC_DNFT,
-					mergeTax
+					NEXT_PUBLIC_DNFT
 				);
 				if (error) {
 					setLoadingTemporaryMerge(false);

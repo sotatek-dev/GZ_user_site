@@ -19,9 +19,9 @@ export const convertBNBtoBUSD = async (price: number) => {
 		const contract = await genPresalePoolContractEther();
 		const res = await contract.convertBNBToBUSD(toWei(price));
 		const priceBUSD = fromWei(convertHexToNumber(get(res, '_hex', HEX_ZERO)));
-		return [JSON.parse(priceBUSD), null];
+		return [priceBUSD, null];
 	} catch (error) {
-		return [null, error];
+		return [0, error];
 	}
 };
 
@@ -31,7 +31,7 @@ export const convertBUSDtoBNB = async (price: number | string) => {
 		const res = await contract.convertBUSDToBNB(toWei(price));
 		const priceBNBBignumber = convertHexToNumber(get(res, '_hex', HEX_ZERO));
 		const priceBNB = fromWei(priceBNBBignumber);
-		return [JSON.parse(priceBNB), null];
+		return [priceBNB, null];
 	} catch (error) {
 		return [null, error];
 	}
@@ -45,7 +45,7 @@ export const getUserPurchasedAmount = async (
 		const contract = await genPresalePoolContractEther();
 		const res = await contract.getUserPurchasedAmount(address, saleRoundId);
 		const amount = fromWei(convertHexToNumber(get(res, '_hex', HEX_ZERO)));
-		return [JSON.parse(amount), null];
+		return [Number(amount), null];
 	} catch (error) {
 		return [null, error];
 	}
@@ -62,7 +62,7 @@ export const getRemainingClaimableAmount = async (
 			saleRoundId
 		);
 		const amount = fromWei(convertHexToNumber(get(res, '_hex', HEX_ZERO)));
-		return [JSON.parse(amount), null];
+		return [Number(amount), null];
 	} catch (error) {
 		return [null, error];
 	}
@@ -102,9 +102,9 @@ export const getTokenAmountFromBUSD = async (
 			toWei(tokenPriceInBUSD)
 		);
 		const amountGXC = fromWei(convertHexToNumber(get(res, '_hex', HEX_ZERO)));
-		return [JSON.parse(amountGXC), null];
+		return [amountGXC, null];
 	} catch (error) {
-		return [null, error];
+		return [0, error];
 	}
 };
 
@@ -188,6 +188,17 @@ export const buyTokenWithoutFee = async (
 		);
 		const result = await res.wait(1);
 		return [result, null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
+export const getPresaleTokenTax = async (BUSDAmount: number) => {
+	try {
+		const contract = await genPresalePoolContractEther();
+		const res = await contract.getTaxAmount(toWei(BUSDAmount));
+		const resaleTokenTax = fromWei(convertHexToNumber(get(res, '_hex')));
+		return [Number(resaleTokenTax), null];
 	} catch (error) {
 		return [null, error];
 	}
