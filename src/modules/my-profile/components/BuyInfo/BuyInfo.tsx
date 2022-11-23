@@ -15,7 +15,6 @@ import { AbiKeynft } from 'web3/abis/types';
 import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
 import { useActiveWeb3React, useNativeBalance } from 'web3/hooks';
-import { useBalance } from 'web3/queries';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
@@ -49,7 +48,9 @@ export default function BuyInfo() {
 	}, [dispatch, keyNftContract]);
 
 	// BUSD balance
-	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
+	const busdBalance = useAppSelector(
+		(state) => state.wallet.balance.busdBalance
+	);
 	const bnbBalance = useNativeBalance();
 
 	const { buyDKeyNFT, isBuyDNFT } = useBuyDKeyNFT();
@@ -113,9 +114,9 @@ export default function BuyInfo() {
 
 	const getBuyKeyState = () => {
 		if (
-			!userInfo ||
-			!systemSetting ||
-			!startBuyKeyUnixTime == undefined ||
+			userInfo == undefined ||
+			systemSetting == undefined ||
+			startBuyKeyUnixTime == undefined ||
 			minDnftToBuyKey == undefined
 		) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
@@ -154,7 +155,10 @@ export default function BuyInfo() {
 	const isEnableBuyKey = isEnoughRoyalty() && isEnoughBalance();
 
 	const renderCountdown = () => {
-		if (isGetStartBuyKeyTime === 'pending') {
+		const isFetchStartBuyTime =
+			isGetStartBuyKeyTime === 'pending' && startBuyKeyUnixTime == undefined;
+
+		if (isFetchStartBuyTime) {
 			return (
 				<>
 					<Skeleton title={false} active style={{ marginTop: '1rem' }} />
