@@ -9,6 +9,8 @@ import type { AppProps } from 'next/app';
 import ImageBase from 'common/components/imageBase';
 import LayoutHeader from './components/Header';
 import { useAppSelector } from 'stores';
+import PageLoadIndicator from 'common/components/pageLoadIndicator';
+import { usePageNavigateIndicator } from 'common/hooks/usePageNavigateIndicator';
 
 const { Sider, Content } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -73,6 +75,7 @@ export const LIST_SIDER = [
 const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 	const { isLogin } = useAppSelector((state) => state.user);
 	const [collapsed, setCollapsed] = useState(false);
+	const isRouterChange = usePageNavigateIndicator();
 	const router = useRouter();
 	const isActivateSideBar: string[] = useMemo((): string[] => {
 		if (router.pathname.includes(ROUTES.MERGE_DNFT)) return [ROUTES.LIST_DNFT];
@@ -103,47 +106,52 @@ const DefaultLayout = ({ Component, pageProps }: AppProps) => {
 	}, [isLogin, router]);
 
 	return (
-		<Layout className='!bg-[#353945] desktop:!bg-background-dark min-h-[100vh]'>
-			<Sider
-				id='siderbar-desktop'
-				collapsed={collapsed}
-				onCollapse={(value) => setCollapsed(value)}
-				width={260}
-				className={'hidden desktop:block !bg-[#0E1A2B] min-h-screen !flex-auto'}
-			>
-				<div className='flex items-center justify-center py-4 px-[10px] border-b-[1px] border-[#36c1ff0d] relative'>
-					<ImageBase
-						url='/images/logo.svg'
-						width={80}
-						height={80}
-						style={{
-							objectFit: 'contain',
-						}}
-						className='w-[5.0625rem] h-[5.0625rem] mt-[1.25rem]'
-					/>
-					<div
-						className='absolute btn-collapsed-sidebar'
-						onClick={() => setCollapsed(!collapsed)}
-					>
-						<BtnCollapsed collapsedStatus={collapsed} />
+		<>
+			<PageLoadIndicator isRouterChange={isRouterChange} />
+			<Layout className='!bg-[#353945] desktop:!bg-background-dark min-h-[100vh]'>
+				<Sider
+					id='siderbar-desktop'
+					collapsed={collapsed}
+					onCollapse={(value) => setCollapsed(value)}
+					width={260}
+					className={
+						'hidden desktop:block !bg-[#0E1A2B] min-h-screen !flex-auto'
+					}
+				>
+					<div className='flex items-center justify-center py-4 px-[10px] border-b-[1px] border-[#36c1ff0d] relative'>
+						<ImageBase
+							url='/images/logo.svg'
+							width={80}
+							height={80}
+							style={{
+								objectFit: 'contain',
+							}}
+							className='w-[5.0625rem] h-[5.0625rem] mt-[1.25rem]'
+						/>
+						<div
+							className='absolute btn-collapsed-sidebar'
+							onClick={() => setCollapsed(!collapsed)}
+						>
+							<BtnCollapsed collapsedStatus={collapsed} />
+						</div>
 					</div>
-				</div>
-				<Menu
-					theme='dark'
-					className='!bg-[#0E1A2B]  mt-[1.5625rem]'
-					mode='inline'
-					selectedKeys={isActivateSideBar}
-					defaultSelectedKeys={['4']}
-					items={itemsMenuSide || [null]}
-				/>
-			</Sider>
-			<Layout>
-				<LayoutHeader />
-				<Content className='p-4 desktop:px-12 !bg-gray desktop:!bg-background-dark'>
-					<Component {...pageProps} />
-				</Content>
+					<Menu
+						theme='dark'
+						className='!bg-[#0E1A2B]  mt-[1.5625rem]'
+						mode='inline'
+						selectedKeys={isActivateSideBar}
+						defaultSelectedKeys={['4']}
+						items={itemsMenuSide || [null]}
+					/>
+				</Sider>
+				<Layout>
+					<LayoutHeader />
+					<Content className='p-4 desktop:px-12 !bg-gray desktop:!bg-background-dark'>
+						<Component {...pageProps} />
+					</Content>
+				</Layout>
 			</Layout>
-		</Layout>
+		</>
 	);
 };
 
