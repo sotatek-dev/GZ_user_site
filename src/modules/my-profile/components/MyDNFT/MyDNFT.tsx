@@ -302,7 +302,7 @@ export default function MyDNFT() {
 	}
 
 	const canClaimAll =
-		canClaimTime && dnft_claimable_count && get(loadingMap, 'claimAll');
+		canClaimTime && dnft_claimable_count && !get(loadingMap, 'claimAll');
 
 	return (
 		<BoxPool>
@@ -311,8 +311,8 @@ export default function MyDNFT() {
 				<button
 					disabled={!canClaimAll}
 					onClick={() => handleClaimAll(dnft_claimable_count)}
-					className={`desktop:hidden text-h8 text-white rounded-[40px] py-2 border-[2px] border-white/[0.3] min-w-[7.125rem]  ${
-						!canClaimAll ? 'text-white/[0.3]' : ''
+					className={`desktop:hidden text-h8 font-semibold rounded-[40px] py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
+						!canClaimAll ? 'text-white/[0.3]' : 'text-white'
 					}`}
 				>
 					{get(loadingMap, 'claimAll') ? <Spin size='small' /> : 'Claim all'}
@@ -353,8 +353,8 @@ export default function MyDNFT() {
 					<button
 						disabled={!canClaimAll}
 						onClick={() => handleClaimAll(dnft_claimable_count)}
-						className={`hidden desktop:block text-h8 text-white rounded-[40px]  py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
-							!canClaimTime ? 'text-white/[0.3]' : ''
+						className={`hidden desktop:block text-h8 rounded-[40px] font-semibold py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
+							!canClaimAll ? 'text-white/[0.3]' : 'text-white'
 						}
 						`}
 					>

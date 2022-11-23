@@ -217,6 +217,12 @@
 	.ant-input-number {
 		border: none;
 	}
+
+	&:hover,
+	&:active,
+	&:focus {
+		border-width: 2px !important;
+	}
 }
 
 .card-radio {
