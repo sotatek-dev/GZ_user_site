@@ -301,24 +301,24 @@ export default function MyDNFT() {
 		canClaimTime = true;
 	}
 
+	const canClaimAll =
+		canClaimTime && dnft_claimable_count && get(loadingMap, 'claimAll');
+
 	return (
 		<BoxPool>
 			<div className={'flex justify-between items-start mb-3'}>
 				<h5 className={`text-h6 font-semibold text-white`}>My dNFT</h5>
 				<button
-					disabled={
-						!canClaimTime ||
-						!dnft_claimable_count ||
-						get(loadingMap, 'claimAll')
-					}
+					disabled={!canClaimAll}
 					onClick={() => handleClaimAll(dnft_claimable_count)}
 					className={`desktop:hidden text-h8 text-white rounded-[40px] py-2 border-[2px] border-white/[0.3] min-w-[7.125rem]  ${
-						!canClaimTime ? 'text-white/[0.3]' : ''
+						!canClaimAll ? 'text-white/[0.3]' : ''
 					}`}
 				>
 					{get(loadingMap, 'claimAll') ? <Spin size='small' /> : 'Claim all'}
 				</button>
 			</div>
+
 			<hr className={'border-t border-blue-20/[0.1]'} />
 			<div className='mt-6'>
 				<div className='flex gap-x-2 mb-6 justify-between'>
@@ -351,11 +351,7 @@ export default function MyDNFT() {
 						/>
 					</div>
 					<button
-						disabled={
-							!canClaimTime ||
-							!dnft_claimable_count ||
-							get(loadingMap, 'claimAll')
-						}
+						disabled={!canClaimAll}
 						onClick={() => handleClaimAll(dnft_claimable_count)}
 						className={`hidden desktop:block text-h8 text-white rounded-[40px]  py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
 							!canClaimTime ? 'text-white/[0.3]' : ''
