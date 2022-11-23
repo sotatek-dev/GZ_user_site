@@ -155,10 +155,13 @@ export const convertTimelineMintNft = (
 export const formatBigNumber = (
 	number: BigNumber.Value,
 	decimalPlaced = DECIMAL_PLACED,
-	noDataString = '-'
+	noDataString = '-',
+	tooSmallValueString = `${new BigNumber(10).pow(-decimalPlaced)}`
 ): string => {
 	const n = new BigNumber(number);
 	const nabs = n.abs();
+	const isNegative = n.lt(0);
+	const negative = n.lt(0) ? '-' : '';
 
 	if (n.isNaN()) {
 		return noDataString;
@@ -166,8 +169,9 @@ export const formatBigNumber = (
 	if (n.eq(0)) {
 		return '0';
 	}
-
-	const negative = n.lt(0) ? '-' : '';
+	if (nabs.dp(decimalPlaced).eq(0)) {
+		return `${isNegative ? '>' : '<'} ${negative}${tooSmallValueString}`;
+	}
 
 	if (nabs.gte(billion)) {
 		return `${negative}${nabs.div(billion).dp(decimalPlaced).toFormat({
