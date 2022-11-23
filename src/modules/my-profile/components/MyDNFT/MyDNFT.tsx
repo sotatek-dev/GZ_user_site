@@ -10,6 +10,7 @@ import {
 } from 'common/constants/constants';
 import dayjs from 'dayjs';
 import { cloneDeep, get, includes } from 'lodash';
+import { getNonces } from 'modules/mint-dnft/services';
 import { DNFTStatusMap } from 'modules/my-profile/components/MyDNFT/MyDNFT.constant';
 import myProfileConstants from 'modules/my-profile/constant';
 import { handleClaimError } from 'modules/my-profile/helpers/handleError';
@@ -108,23 +109,20 @@ export default function MyDNFT() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dnfts, claimableTime]);
 
-	const handleUnmerge = async (sessionId: string) => {
+	const handleUnmerge = async (session_id: string) => {
+		if (!dnftContract || !account) {
+			return;
+		}
+
 		try {
-			setLoadingMap({ [sessionId]: true });
+			setLoadingMap({ [session_id]: true });
 			if (!allowanceAmount) {
-				await tryApproval(true)
-					.then(() => {
-						message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
-					})
-					.catch(() => {
-						message.error(myProfileConstants.TRANSACTION_REJECTED);
-					});
+				await tryApproval(true);
 			}
-			const res = await getDNFTSignature(sessionId);
-			const { session_id, signature, token_ids, time_stamp } = get(
-				res,
-				'data.data'
-			);
+
+			const nonce = await getNonces(dnftContract, account);
+			const res = await getDNFTSignature({ session_id, nonce });
+			const { signature, token_ids, time_stamp } = get(res, 'data.data');
 
 			await dnftContract
 				?.cancelTemporaryMerge(token_ids, time_stamp, session_id, signature)
