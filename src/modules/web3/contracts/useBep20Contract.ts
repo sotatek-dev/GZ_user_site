@@ -1,5 +1,6 @@
 import { HEX_ZERO } from 'common/constants/constants';
-import { convertHexToNumber, fromWei, toWei } from 'common/utils/functions';
+import { convertHexToNumber, fromWei } from 'common/utils/functions';
+import { ethers } from 'ethers';
 import { get } from 'lodash';
 import Bep20ABI from 'web3/abis/bep20.json';
 import { Bep20 } from '../abis/types';
@@ -24,7 +25,7 @@ export const isUserApprovedERC20 = async (
 		const allowance = fromWei(
 			convertHexToNumber(get(result, '_hex', HEX_ZERO))
 		);
-		if (allowance >= amount) return true;
+		return Number(allowance) >= amount;
 	} catch (error) {
 		return false;
 	}
@@ -32,15 +33,13 @@ export const isUserApprovedERC20 = async (
 
 export const handleUserApproveERC20 = async (
 	addressToken: string,
-	contractAddress: string,
-	mergeTax: number | string
+	contractAddress: string
 ) => {
 	try {
 		const contract = await genERC20PaymentContract(addressToken);
-		const decimal = await contract.decimals();
 		const approve = await contract.approve(
 			contractAddress,
-			toWei(mergeTax, decimal)
+			ethers.constants.MaxUint256
 		);
 		const result = await approve.wait(1);
 		return [result, null];

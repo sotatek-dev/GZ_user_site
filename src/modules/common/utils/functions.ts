@@ -71,7 +71,7 @@ export const convertTimeLine = async (
 			saleRoundId
 		);
 		// console.log('youCanClaimAmount', youCanClaimAmount);
-		if (youCanClaimAmount > 0) {
+		if (Number(youCanClaimAmount) > 0) {
 			status = CLAIMABLE;
 			statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
 			for (let index = 0; index < claimConfigs?.length; index++) {
@@ -205,10 +205,11 @@ export const isApproved = (allowance?: BigNumber.Value): boolean => {
 };
 
 export const convertHexToNumber = (data: string) => {
-	return new BigNumber(data).toNumber();
+	return new BigNumber(data).toString();
 };
 
-export const toWei = (value: number | string, decimal = BSC_DECIMAL) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const toWei = (value: number | string | any, decimal = BSC_DECIMAL) => {
 	BigNumber.config({ EXPONENTIAL_AT: 50 });
 	return new BigNumber(value).multipliedBy(Math.pow(10, decimal)).toString();
 };
@@ -217,7 +218,7 @@ export const fromWei = (value: string | number | BigNumber) => {
 	const result = new BigNumber(value)
 		.div(new BigNumber(10).exponentiatedBy(BSC_DECIMAL))
 		.toString(); // divide by token decimal
-	return JSON.parse(result);
+	return result;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, message } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
@@ -9,7 +10,7 @@ import {
 	BUSD_CURRENCY,
 	ROYALTY_FEE_PURCHASE,
 } from 'common/constants/constants';
-import { formatNumber, fromWei } from 'common/utils/functions';
+import { formatNumber, fromWei, toWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
 import { FC, useEffect, useState } from 'react';
@@ -21,7 +22,9 @@ import {
 import {
 	buyTokenWithExactlyBNB,
 	buyTokenWithExactlyBUSD,
+	convertBNBtoBUSD,
 	convertBUSDtoBNB,
+	getPresaleTokenTax,
 	getTokenAmountFromBUSD,
 } from 'web3/contracts/useContractTokenSale';
 import {
@@ -60,7 +63,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 }) => {
 	const [form] = Form.useForm();
 	const { addressWallet, balance } = useAppSelector((state) => state.wallet);
-	const [amountGXC, setAmountGXC] = useState<string>('');
+	const [amountGXC, setAmountGXC] = useState<string | any>('');
 	const [amount, setAmount] = useState<string>('');
 	const [isLoading, setLoading] = useState<boolean>(false);
 	// const amountBUSDRef = useRef<HTMLInputElement>(null);
@@ -72,12 +75,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const { account } = useActiveWeb3React();
 
 	useEffect(() => {
-		// if (isShow) {
-		// 	setTimeout(() => {
-		// 		amountBUSDRef?.current?.focus();
-		// 	}, 300);
-		// }
-
 		if (!isShow) {
 			form.setFieldValue('amountGXC', '');
 			form.setFieldValue('amount', '');
@@ -86,7 +83,11 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	}, [isShow, form]);
 
 	useEffect(() => {
-		handleChangeBUSD(amount);
+		if (currency === BNB_CURRENCY) {
+			handleChangeBNB(amount);
+		} else {
+			handleChangeBUSD(amount);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [amount]);
 
@@ -98,17 +99,53 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			return;
 		}
 		const newValue = new BigNumber(value.replace(/,/g, ''));
-
 		setAmount(newValue.toString());
 		const [amountGXC] = await getTokenAmountFromBUSD(
 			newValue.toNumber(),
 			exchangeRate
 		);
-
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
 		if (
-			new BigNumber(amountGXC).gt(
+			new BigNumber(amountGXC as any).gt(
+				new BigNumber(maxPreSaleAmount).minus(youBought)
+			)
+		) {
+			checkValidate = false;
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [
+						`The round only have ${formatNumber(
+							new BigNumber(maxPreSaleAmount).minus(new BigNumber(youBought))
+						)} Galactix tokens left to be purchased`,
+					],
+				},
+			]);
+		} else {
+			checkValidate = true;
+		}
+	};
+
+	const handleChangeBNB = async (value: string | null) => {
+		if (!value) {
+			value = '0';
+			form.setFieldValue('amountGXC', '');
+			setAmountGXC('');
+			return;
+		}
+		const newValue = new BigNumber(value.replace(/,/g, ''));
+		setAmount(newValue.toString());
+		const [amountBUSD] = await convertBNBtoBUSD(newValue.toNumber());
+		const [exchangeRateBUSD] = await convertBNBtoBUSD(exchangeRate);
+		const [amountGXC] = await getTokenAmountFromBUSD(
+			Number(amountBUSD),
+			Number(exchangeRateBUSD)
+		);
+		form.setFieldValue('amountGXC', formatNumber(amountGXC));
+		setAmountGXC(amountGXC);
+		if (
+			new BigNumber(amountGXC as any).gt(
 				new BigNumber(maxPreSaleAmount).minus(youBought)
 			)
 		) {
@@ -136,29 +173,27 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const handleBuyToken = async () => {
 		const saleRoundId = get(detailSaleRound, 'sale_round');
 		if (!saleRoundId || !account || !presaleContract) return;
-
-		const presaleNonces = await getNonces(presaleContract, account);
-		const params = {
-			amount: amount,
-			sale_round_id: saleRoundId,
-			nonce: presaleNonces,
-		};
-		const [dataSignature] = await getSignatureTokenSaleRound(params);
-		const signature = get(dataSignature, 'data.signature', '');
 		setLoading(true);
+		const presaleNonces = await getNonces(presaleContract, account);
+		const [presaleTokenTax] = await getPresaleTokenTax(Number(amount));
 		if (currency === BUSD_CURRENCY) {
+			const params = {
+				amount: toWei(amount),
+				sale_round_id: saleRoundId,
+				nonce: presaleNonces,
+			};
+			const [dataSignature] = await getSignatureTokenSaleRound(params);
+			const signature = get(dataSignature, 'data.signature', '');
 			const isUserApproved = await isUserApprovedERC20(
 				NEXT_PUBLIC_BUSD,
 				addressWallet,
-				Number(amount),
+				Number(amount) + Number(presaleTokenTax),
 				NEXT_PUBLIC_PRESALE_POOL
 			);
-
 			if (!isUserApproved) {
 				const [, error] = await handleUserApproveERC20(
 					NEXT_PUBLIC_BUSD,
-					NEXT_PUBLIC_PRESALE_POOL,
-					amount
+					NEXT_PUBLIC_PRESALE_POOL
 				);
 				if (error) {
 					setLoading(false);
@@ -168,14 +203,12 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					return message.error('Transaction Rejected');
 				}
 			}
-
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
 				saleRoundId,
 				addressWallet,
 				Number(amount),
 				signature
 			);
-
 			if (resBuyWithBUSD) {
 				setLoading(false);
 				onCancel();
@@ -191,12 +224,41 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				return message.error('Transaction Rejected');
 			}
 		} else {
+			//convert BNB sang BUSD
+			const isUserApproved = await isUserApprovedERC20(
+				NEXT_PUBLIC_BUSD,
+				addressWallet,
+				Number(presaleTokenTax),
+				NEXT_PUBLIC_PRESALE_POOL
+			);
+			if (!isUserApproved) {
+				const [, error] = await handleUserApproveERC20(
+					NEXT_PUBLIC_BUSD,
+					NEXT_PUBLIC_PRESALE_POOL
+				);
+				if (error) {
+					setLoading(false);
+					if (error?.error?.code === -32603) {
+						return message.error('Network Error!');
+					}
+					return message.error('Transaction Rejected');
+				}
+			}
+			const [amountToBUSD] = await convertBNBtoBUSD(Number(amount));
+			const params = {
+				amount: toWei(amountToBUSD),
+				sale_round_id: saleRoundId,
+				nonce: presaleNonces,
+			};
+			const [dataSignature] = await getSignatureTokenSaleRound(params);
+			const signature = get(dataSignature, 'data.signature', '');
 			const [resBuyWithBNB, errorBuyWithBNB] = await buyTokenWithExactlyBNB(
 				saleRoundId,
 				addressWallet,
 				signature,
 				Number(amount)
 			);
+			3;
 			if (resBuyWithBNB) {
 				setLoading(false);
 				onCancel();
@@ -237,7 +299,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		);
 		if (currency === BNB_CURRENCY) {
 			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
-			buyLimit = buyLimitBNB;
+			buyLimit = Number(buyLimitBNB) as any;
 		}
 
 		if (currency === BUSD_CURRENCY && amount.gt(new BigNumber(busdBalance))) {
@@ -256,7 +318,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				new Error(`You don't have enough ${currency} in wallet for royalty fee`)
 			);
 		} else if (
-			buyLimit !== 0 &&
+			Number(buyLimit) !== 0 &&
 			amount.gt(new BigNumber(buyLimit).minus(amountOfTokensPurchased))
 		) {
 			return Promise.reject(

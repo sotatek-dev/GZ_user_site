@@ -31,6 +31,7 @@ import {
 	formatBignumberToNumber,
 	formatNumber,
 	fromWei,
+	toWei,
 } from 'common/utils/functions';
 import { get, isEmpty } from 'lodash';
 import ModalPurchase from 'modules/purchase/ModalPurchase';
@@ -250,7 +251,7 @@ const TokenSaleRoundDetail = () => {
 			}
 		}
 		const claimedAmount =
-			youBought * (claimableRate / 10000) - totalClaimedAmount;
+			youBought * (claimableRate / 10000) - Number(totalClaimedAmount);
 		setClaimedAmount(claimedAmount);
 	};
 
@@ -260,7 +261,7 @@ const TokenSaleRoundDetail = () => {
 			saleRoundId
 		);
 		if (error) return setYouBought(0);
-		setYouBought(youBought);
+		setYouBought(Number(youBought));
 	};
 
 	const handleGetUserClaimedAmount = async (saleRoundId: number) => {
@@ -271,7 +272,7 @@ const TokenSaleRoundDetail = () => {
 		if (error) {
 			return setYouCanClaimAmount(0);
 		}
-		setYouCanClaimAmount(youCanClaimAmount);
+		setYouCanClaimAmount(Number(youCanClaimAmount));
 	};
 
 	const handleCheckUserWhitelist = async (address: string, index: string) => {
@@ -312,10 +313,10 @@ const TokenSaleRoundDetail = () => {
 	const calculatorCurrency = async (val: string) => {
 		if (val === BNB_CURRENCY) {
 			const [priceBNB] = await convertBUSDtoBNB(price);
-			setPrice(priceBNB);
+			setPrice(Number(priceBNB));
 		} else {
 			const priceBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
-			setPrice(priceBUSD);
+			setPrice(Number(priceBUSD));
 		}
 	};
 
@@ -352,10 +353,10 @@ const TokenSaleRoundDetail = () => {
 	const handleBuyToken = async () => {
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
 		if (!saleRoundId) return;
-		if (exchangeRateBUSD === 0) {
+		if (Number(exchangeRateBUSD) === 0) {
 			const [nonce] = await getNonces(addressWallet);
 			const params = {
-				amount: 0,
+				amount: toWei(0),
 				sale_round_id: saleRoundId,
 				nonce: nonce,
 			};
