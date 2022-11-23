@@ -169,7 +169,7 @@ const RescueDNFT = () => {
 				}
 			}
 		} else {
-			return <>{Message.ELIGIBLE_TO_RESCUE}</>;
+			return <>{Message.NOT_ELIGIBLE_TO_MINT}</>;
 		}
 	};
 
