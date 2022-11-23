@@ -9,8 +9,6 @@ import {
 } from 'web3/contracts/instance';
 import { useActiveWeb3React, useApproval } from 'web3/hooks';
 import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
-import { message } from 'antd';
-import myProfileConstants from 'modules/my-profile/constant';
 import { getBusb2Bnb, getKeyPriceBusd } from './apis';
 
 export const useMintDKeyNFT = () => {
@@ -40,7 +38,6 @@ export const useMintDKeyNFT = () => {
 		if (token2Buy === Token2Buy.BUSD) {
 			if (allowanceAmount && allowanceAmount.lt(keyPrice)) {
 				await tryApproval(true);
-				message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
 			}
 			tx = await busdBuy(signature);
 		} else {

@@ -6,10 +6,11 @@ export const getDNFTDetail = async (tokenId: string) => {
 	return await axiosInstance().get(queryString);
 };
 
-export const getDNFTSignature = async (session_id: string) => {
+export const getDNFTSignature = async (params: {
+	session_id: string;
+	nonce: string;
+}) => {
 	const queryString = `dnft/signature`;
 
-	return await axiosInstance().post(queryString, {
-		session_id,
-	});
+	return await axiosInstance().post(queryString, params);
 };

@@ -1,6 +1,8 @@
+import { message } from 'antd';
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
+import myProfileConstants from 'modules/my-profile/constant';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useBep20Contract } from '../contracts/useBep20Contract';
 import { useActiveWeb3React } from './useActiveWeb3React';
@@ -53,7 +55,11 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		approve,
 		{
 			onSuccess() {
+				message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
 				return queryClient.invalidateQueries(['getAllowance']);
+			},
+			onError(err) {
+				return handleTxError(err);
 			},
 		}
 	);
@@ -63,4 +69,29 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		tryApproval,
 		isApproving,
 	};
+};
+
+export const TX_ERROR_CODE = {
+	REJECTED: 'ACTION_REJECTED',
+	WALLET_CONNECT_REJECTED: -32000,
+};
+
+/**
+ * Handle Smart Contract interaction error
+ * @param err error object from try-catch or promise block
+ * @param callback callback handler with tx error state, (updating Tx state usually)
+ * @returns void
+ */
+export const handleTxError = (err: unknown) => {
+	const { code } = err as { code: string | number };
+
+	if (
+		code === TX_ERROR_CODE.REJECTED ||
+		code === TX_ERROR_CODE.WALLET_CONNECT_REJECTED
+	) {
+		message.error(myProfileConstants.TRANSACTION_REJECTED);
+		return;
+	}
+
+	throw err;
 };
