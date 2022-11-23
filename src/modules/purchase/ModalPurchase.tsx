@@ -125,6 +125,12 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			]);
 		} else {
 			checkValidate = true;
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [],
+				},
+			]);
 		}
 	};
 
@@ -253,7 +259,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			(currency === BNB_CURRENCY && new BigNumber(busdBalance).lt(royaltyFee))
 		) {
 			return Promise.reject(
-				new Error(`You don't have enough ${currency} in wallet for royalty fee`)
+				new Error(`You don't have enough ${currency} in wallet for Tax fee`)
 			);
 		} else if (
 			buyLimit !== 0 &&
