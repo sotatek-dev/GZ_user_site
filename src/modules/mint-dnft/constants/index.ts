@@ -51,7 +51,7 @@ export enum Message {
 	REACH_LIMIT = 'You have reach the limitation of minting',
 	NOT_HAVE_ENOUGH_BNB_BALANCE = "You don't have enough BNB",
 	NOT_HAVE_ENOUGH_BUSD_BALANCE = "You don't have enough BUSD",
-	NOT_ROYALTY = "You don't have enough BUSD for royalty",
+	NOT_ROYALTY = "You don't have enough BUSD for tax",
 	ELIGIBLE_TO_MINT = 'You are eligible to mint this NFT',
 	ELIGIBLE_TO_CLAIM = 'You are eligible to claim this NFT',
 	ELIGIBLE_TO_RESCUE = 'You are eligible to rescue this NFT',
