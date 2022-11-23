@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Divider, message, Progress, RadioChangeEvent } from 'antd';
 import {
 	checkUserWhitelist,
@@ -145,7 +146,7 @@ const TokenSaleRoundDetail = () => {
 		);
 		const exchangeRateBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
 
-		setPrice(exchangeRateBUSD);
+		setPrice(Number(exchangeRateBUSD));
 		setStatusTimeLine(status);
 		setDetailSaleRound(detailSaleRound);
 		setTokenClaimTime(startTimeClaim);
@@ -294,8 +295,8 @@ const TokenSaleRoundDetail = () => {
 			get(resSalePhaseInfo, 'maxPreSaleAmount._hex', HEX_ZERO)
 		);
 
-		setTotalSoldAmount(fromWei(totalSoldAmount));
-		setMaxPreSaleAmount(fromWei(maxPreSaleAmount));
+		setTotalSoldAmount(fromWei(totalSoldAmount) as any);
+		setMaxPreSaleAmount(fromWei(maxPreSaleAmount) as any);
 	};
 
 	const renderTokenBuyTime = (startTime: number, endTime: number) => {
