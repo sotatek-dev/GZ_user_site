@@ -89,6 +89,7 @@ const TokenSaleRoundDetail = () => {
 	const [maxPreSaleAmount, setMaxPreSaleAmount] = useState<number>(0);
 	const [currency, setCurrency] = useState<string>(BUSD_CURRENCY);
 	const [price, setPrice] = useState<number>(0);
+	const [priceRender, setPriceRender] = useState<string>('0');
 	const [youBought, setYouBought] = useState<number>(0);
 	const [youCanClaimAmount, setYouCanClaimAmount] = useState<number>(0);
 	const [isOpenTokenPurchase, setOpenTokenPurchase] = useState<boolean>(false);
@@ -153,7 +154,7 @@ const TokenSaleRoundDetail = () => {
 		setTimeCountDow(timeCountDown);
 		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [index, isLoading]);
+	}, [index, isLoading, addressWallet]);
 
 	const handleClaimToken = async () => {
 		setOpenClaimPopup(true);
@@ -314,10 +315,14 @@ const TokenSaleRoundDetail = () => {
 	const calculatorCurrency = async (val: string) => {
 		if (val === BNB_CURRENCY) {
 			const [priceBNB] = await convertBUSDtoBNB(price);
-			setPrice(Number(priceBNB));
+			if (Number(priceBNB) < 0.0001) {
+				setPriceRender('< 0.0001');
+			} else {
+				setPriceRender(formatNumber(Number(priceBNB)));
+			}
 		} else {
 			const priceBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
-			setPrice(Number(priceBUSD));
+			setPriceRender(formatNumber(Number(priceBUSD)));
 		}
 	};
 
@@ -403,9 +408,7 @@ const TokenSaleRoundDetail = () => {
 							options={selectList}
 						/>
 					</div>
-					<div className='text-base font-semibold desktop:pt-[0rem] desktop:pb-0 pb-4 pt-[0.625rem]'>{`${formatNumber(
-						price
-					)} ${currency}`}</div>
+					<div className='text-base font-semibold desktop:pt-[0rem] desktop:pb-0 pb-4 pt-[0.625rem]'>{`${priceRender} ${currency}`}</div>
 				</div>
 				{youBought > 0 && (
 					<div className='desktop:border-x-[1px] desktop:border-y-[0px] border-y-[1px] border-gray-30 desktop:px-8'>

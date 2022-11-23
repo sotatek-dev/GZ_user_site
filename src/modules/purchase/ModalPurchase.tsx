@@ -137,10 +137,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 		setAmount(newValue.toString());
 		const [amountBUSD] = await convertBNBtoBUSD(newValue.toNumber());
-		const [exchangeRateBUSD] = await convertBNBtoBUSD(exchangeRate);
 		const [amountGXC] = await getTokenAmountFromBUSD(
 			Number(amountBUSD),
-			Number(exchangeRateBUSD)
+			exchangeRate
 		);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
