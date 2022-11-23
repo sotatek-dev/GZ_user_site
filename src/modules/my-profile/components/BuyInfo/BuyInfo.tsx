@@ -3,7 +3,6 @@ import { get } from 'lodash';
 import { message } from 'antd';
 import BoxPool from 'common/components/boxPool';
 import CustomRadio from 'common/components/radio';
-import { formatCurrency } from 'common/helpers/number';
 import myProfileConstants from 'modules/my-profile/constant';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppDispatch, useAppSelector } from 'stores';
@@ -27,6 +26,7 @@ import {
 	getTimeLeftToBuyKey,
 } from './BuyInfo.helpers';
 import BuyTimeCountdown from './BuyTimeCountdown';
+import { formatBigNumber } from 'common/utils/functions';
 
 export default function BuyInfo() {
 	const { account } = useActiveWeb3React();
@@ -174,7 +174,7 @@ export default function BuyInfo() {
 
 				{price && (
 					<div className='text-[16px] text-[white] font-semibold'>
-						{formatCurrency(price)} {tokenCode}
+						{formatBigNumber(price)} {tokenCode}
 					</div>
 				)}
 			</div>
