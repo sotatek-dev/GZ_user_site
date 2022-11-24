@@ -60,7 +60,7 @@ export default function MyDNFT() {
 	const mutantDNFTs = useMemo(() => {
 		let canClaimTime = false;
 		const currentDate = dayjs().unix();
-		if (!!claimableTime && currentDate > claimableTime) {
+		if (!!claimableTime && currentDate >= claimableTime) {
 			canClaimTime = true;
 		}
 
@@ -71,10 +71,10 @@ export default function MyDNFT() {
 		return dnfts.data.map((item) => {
 			const cloneItem = cloneDeep(item);
 			const canClaim =
-				!canClaimTime ||
+				canClaimTime &&
 				['claimable', 'wait-to-claim'].includes(cloneItem.status);
 
-			if (canClaim) {
+			if (!canClaim) {
 				cloneItem.species = 'TBA';
 				cloneItem.rank_level = 'TBA';
 			}
@@ -254,12 +254,13 @@ export default function MyDNFT() {
 		{
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			render: (record: any) => {
-				const statusMap = get(DNFTStatusMap, record.status);
+				const canClaim = get(DNFTStatusMap, record.canClaim);
+				const dnftStatus = get(DNFTStatusMap, record.status);
 				const isLoading = get(loadingMap, record._id);
 				const isClaimingAll = get(loadingMap, 'claimAll');
 				return (
 					<button
-						disabled={get(statusMap, 'disabled') || isLoading || isClaimingAll}
+						disabled={!canClaim || isLoading || isClaimingAll}
 						onClick={(e) => {
 							e.stopPropagation();
 							record.onClick();
@@ -274,7 +275,7 @@ export default function MyDNFT() {
 								}}
 							/>
 						) : (
-							get(statusMap, `title`)
+							get(dnftStatus, `title`)
 						)}
 					</button>
 				);
@@ -284,7 +285,7 @@ export default function MyDNFT() {
 
 	let canClaimTime = false;
 	const currentDate = dayjs().unix();
-	if (!!claimableTime && currentDate > claimableTime) {
+	if (!!claimableTime && currentDate >= claimableTime) {
 		canClaimTime = true;
 	}
 
