@@ -23,16 +23,13 @@ import {
 	setDNFTsCount,
 } from 'stores/myProfile';
 import { AbiDnft } from 'web3/abis/types';
-import {
-	NEXT_PUBLIC_BUSD,
-	NEXT_PUBLIC_DNFT,
-	NEXT_PUBLIC_KEYNFT,
-} from 'web3/contracts/instance';
+import { NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useActiveWeb3React, useApproval } from 'web3/hooks';
-import DNFTABI from '../../../web3/abis/abi-dnft.json';
+import { useActiveWeb3React } from 'web3/hooks';
+import DNFTABI from 'modules/web3/abis/abi-dnft.json';
 
 export default function MyDNFT() {
+	const router = useRouter();
 	const { dnfts, dnft_claimable_count, loading } = useAppSelector(
 		(state) => state.myProfile
 	);
@@ -44,11 +41,6 @@ export default function MyDNFT() {
 	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
 	const [claimableTime, setClaimableTime] = useState<number | undefined>();
 	const { account } = useActiveWeb3React();
-	const { tryApproval, allowanceAmount } = useApproval(
-		NEXT_PUBLIC_BUSD,
-		NEXT_PUBLIC_KEYNFT
-	);
-	const router = useRouter();
 
 	const [loadingMap, setLoadingMap] = useState({});
 
@@ -116,9 +108,6 @@ export default function MyDNFT() {
 
 		try {
 			setLoadingMap({ [session_id]: true });
-			if (!allowanceAmount) {
-				await tryApproval(true);
-			}
 
 			const nonce = await getNonces(dnftContract, account);
 			const res = await getDNFTSignature({ session_id, nonce });
