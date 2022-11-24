@@ -12,6 +12,7 @@ export interface ISystemSetting {
 	treasury_address: string;
 	mint_days: number;
 	start_buy_time: number;
+	claim_date: number;
 }
 interface initialStateProps {
 	systemSetting?: ISystemSetting;

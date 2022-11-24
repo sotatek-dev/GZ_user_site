@@ -1,22 +1,30 @@
-export const DNFTStatusMap = {
-	claimable: {
+export enum DNFTStatuses {
+	WaitToMerge = 'wait-to-merge',
+	WaitToClaim = 'wait-to-claim',
+	Claimable = 'claimable',
+	Claimed = 'normal',
+	ClaimTemMerge = 'temmerge-claimable',
+}
+
+export const DNFTStatus = {
+	[DNFTStatuses.WaitToClaim]: {
+		title: 'Claim',
+		disabled: true,
+	},
+	[DNFTStatuses.Claimable]: {
 		title: 'Claim',
 		disabled: false,
 	},
-	'wait-to-merge': {
-		title: 'Unmerge',
-		disabled: false,
-	},
-	normal: {
+	[DNFTStatuses.Claimed]: {
 		title: 'Claimed',
 		disabled: true,
 	},
-	'wait-to-claim': {
-		title: 'Claim',
-		disabled: true,
+	[DNFTStatuses.WaitToMerge]: {
+		title: 'Unmerge',
+		disabled: false,
 	},
-	'wait-to-confirm': {
-		title: 'Merging',
-		disabled: true,
+	[DNFTStatuses.ClaimTemMerge]: {
+		title: 'Claim Temporary',
+		disabled: false,
 	},
 };

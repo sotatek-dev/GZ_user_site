@@ -11,7 +11,7 @@ import {
 	setSystemSettingStore,
 	systemSettingStore,
 } from 'stores/systemSetting';
-import { myProfileStore } from 'stores/myProfile';
+import { myProfileStore } from 'stores/my-profile';
 import thunkMiddleware from 'redux-thunk';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { dnftDetailStore } from 'stores/dnft/dnft-detail';
