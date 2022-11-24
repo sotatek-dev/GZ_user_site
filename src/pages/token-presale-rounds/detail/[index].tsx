@@ -116,6 +116,8 @@ const TokenSaleRoundDetail = () => {
 		isLogin &&
 		isWhitelist &&
 		isCurrentSaleRound &&
+		totalSoldAmount !== maxPreSaleAmount &&
+		totalSoldAmount <= maxPreSaleAmount &&
 		detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
 	const isShowButtonClaim =

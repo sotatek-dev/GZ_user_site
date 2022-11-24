@@ -47,12 +47,14 @@ export function useEagerConnect() {
 			isWalletConnect &&
 			!library
 		) {
-			// setTimeout(() => {
-			activate(walletConnect).catch(() => {
-				setTried(true);
-				disconnectWallet();
-			});
-			// }, 1000);
+			setTimeout(() => {
+				activate(walletConnect)
+					.then(() => {})
+					.catch(() => {
+						setTried(true);
+						disconnectWallet();
+					});
+			}, 500);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active]);
