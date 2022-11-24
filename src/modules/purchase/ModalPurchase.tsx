@@ -259,7 +259,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			(currency === BNB_CURRENCY && new BigNumber(busdBalance).lt(royaltyFee))
 		) {
 			return Promise.reject(
-				new Error(`You don't have enough ${currency} in wallet for Tax fee`)
+				new Error(`You don't have enough BUSD in wallet for Tax fee`)
 			);
 		} else if (
 			buyLimit !== 0 &&
