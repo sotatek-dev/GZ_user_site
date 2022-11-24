@@ -171,13 +171,14 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 
 	const handleBuyToken = async () => {
 		const saleRoundId = get(detailSaleRound, 'sale_round');
+		const amountTranform = amount.replace(/,/g, '');
 		if (!saleRoundId || !account || !presaleContract) return;
 		setLoading(true);
 		const presaleNonces = await getNonces(presaleContract, account);
-		const [presaleTokenTax] = await getPresaleTokenTax(Number(amount));
+		const [presaleTokenTax] = await getPresaleTokenTax(Number(amountTranform));
 		if (currency === BUSD_CURRENCY) {
 			const params = {
-				amount: toWei(amount),
+				amount: toWei(amountTranform),
 				sale_round_id: saleRoundId,
 				nonce: presaleNonces,
 			};
@@ -186,7 +187,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			const isUserApproved = await isUserApprovedERC20(
 				NEXT_PUBLIC_BUSD,
 				addressWallet,
-				Number(amount) + Number(presaleTokenTax),
+				Number(amountTranform) + Number(presaleTokenTax),
 				NEXT_PUBLIC_PRESALE_POOL
 			);
 			if (!isUserApproved) {
@@ -205,7 +206,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
 				saleRoundId,
 				addressWallet,
-				Number(amount),
+				Number(amountTranform),
 				signature
 			);
 			if (resBuyWithBUSD) {
@@ -243,7 +244,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					return message.error('Transaction Rejected');
 				}
 			}
-			const [amountToBUSD] = await convertBNBtoBUSD(Number(amount));
+			const [amountToBUSD] = await convertBNBtoBUSD(Number(amountTranform));
 			const params = {
 				amount: toWei(amountToBUSD),
 				sale_round_id: saleRoundId,
@@ -255,7 +256,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				saleRoundId,
 				addressWallet,
 				signature,
-				Number(amount)
+				Number(amountTranform)
 			);
 			3;
 			if (resBuyWithBNB) {
@@ -288,7 +289,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	);
 
 	const validateToken = async (_: unknown, value: string) => {
-		const amount = new BigNumber(value);
+		const amount = new BigNumber(value.replace(/,/g, ''));
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
 		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
