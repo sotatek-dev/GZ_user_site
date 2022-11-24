@@ -1,7 +1,9 @@
+import { DNFTStatuses } from '../components/MyDNFT/MyDNFT.constant';
+
 export interface IDNFT {
 	_id: string;
 	wallet_address: string;
-	status: string;
+	status: DNFTStatuses;
 	metadata: IDNFTMetadata;
 	type: string;
 	token_id: string;

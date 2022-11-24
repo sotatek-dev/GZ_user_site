@@ -14,6 +14,7 @@ import {
 	setKeyPriceBusd,
 } from 'stores/systemSetting';
 import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
+import { fetchDnftHolding } from './my-profile.thunks';
 
 let customStore: Store | undefined;
 
@@ -47,13 +48,13 @@ interface initialStateProps {
 		};
 	};
 	dnft_claimable_count: number;
-	dnft_holding_count: number;
+	dnft_holding_count: number | undefined;
 }
 
 const initialState: initialStateProps = {
 	loading: true,
 	dnft_claimable_count: 0,
-	dnft_holding_count: 0,
+	dnft_holding_count: undefined,
 };
 
 const myProfileStore = createSlice({
@@ -77,12 +78,6 @@ const myProfileStore = createSlice({
 			return {
 				...state,
 				loading: action.payload,
-			};
-		},
-		setDNFTsCount: (state, action: PayloadAction<number>) => {
-			return {
-				...state,
-				dnft_holding_count: action.payload,
 			};
 		},
 		cleanDNFTs: (state) => {
@@ -128,6 +123,16 @@ const myProfileStore = createSlice({
 
 		builder.addCase(getMyClaimableDNFTsCountRD.fulfilled, (state, action) => {
 			state.dnft_claimable_count = action.payload;
+		});
+
+		builder.addCase(fetchDnftHolding.rejected, (state) => {
+			state.loading = false;
+		});
+		builder.addCase(fetchDnftHolding.pending, (state) => {
+			state.loading = true;
+		});
+		builder.addCase(fetchDnftHolding.fulfilled, (state, action) => {
+			state.dnft_holding_count = action.payload;
 		});
 	},
 });
@@ -192,13 +197,8 @@ export const getMyProfileRD = createAsyncThunk(
 	}
 );
 
-export const {
-	setUserInfo,
-	setErrMessage,
-	setLoading,
-	setDNFTsCount,
-	cleanDNFTs,
-} = myProfileStore.actions;
+export const { setUserInfo, setErrMessage, setLoading, cleanDNFTs } =
+	myProfileStore.actions;
 
 export const setUserInfoRD = (userInfo?: ITypeUserInfo) => {
 	customStore &&

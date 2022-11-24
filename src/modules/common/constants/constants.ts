@@ -1,3 +1,4 @@
+import { BSC_CHAIN_ID } from 'web3/constants/envs';
 import { NEXT_PUBLIC_BUSD } from 'web3/contracts/instance';
 
 export const ROUTES = {
@@ -110,7 +111,7 @@ export const DECIMALS = {
 };
 
 export const RPC_CHAIN: { [key: number]: string } = {
-	97: process.env.NEXT_PUBLIC_BSC_RPC_URL as string, // bsc testnet
+	[Number(BSC_CHAIN_ID)]: process.env.NEXT_PUBLIC_BSC_RPC_URL as string, // bsc testnet
 };
 
 export const STATUS_CODE = {

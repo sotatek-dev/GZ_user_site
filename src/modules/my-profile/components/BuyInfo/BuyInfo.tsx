@@ -7,8 +7,9 @@ import myProfileConstants from 'modules/my-profile/constant';
 import { useBuyDKeyNFT } from 'modules/my-profile/services/useBuyDKeyNFT';
 import { useAppDispatch, useAppSelector } from 'stores';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
-import { AbiKeynft } from 'web3/abis/types';
-import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
+import DnftAbi from 'web3/abis/abi-dnft.json';
+import { AbiDnft, AbiKeynft } from 'web3/abis/types';
+import { NEXT_PUBLIC_DNFT, NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
 import { useActiveWeb3React, useNativeBalance } from 'web3/hooks';
 import Button from '../Button';
@@ -27,11 +28,14 @@ import {
 } from './BuyInfo.helpers';
 import BuyTimeCountdown from './BuyTimeCountdown';
 import { formatBigNumber } from 'common/utils/functions';
+import { fetchDnftHolding } from 'stores/my-profile/my-profile.thunks';
 
 export default function BuyInfo() {
 	const { account } = useActiveWeb3React();
 	const dispatch = useAppDispatch();
 	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
+	const dnftContract = useContract<AbiDnft>(DnftAbi, NEXT_PUBLIC_DNFT);
+
 	const { userInfo, dnft_holding_count } = useAppSelector(
 		(state) => state.myProfile
 	);
@@ -42,11 +46,12 @@ export default function BuyInfo() {
 		useAppSelector((state) => state.keyDnft);
 
 	useEffect(() => {
-		if (!keyNftContract) return;
+		if (!keyNftContract || !dnftContract || !account) return;
 
 		dispatch(fetchMinDnftToBuyKey(keyNftContract));
 		dispatch(fetchStartBuyKeyTime(keyNftContract));
-	}, [dispatch, keyNftContract]);
+		dispatch(fetchDnftHolding({ dnftContract, account }));
+	}, [dispatch, account, keyNftContract, dnftContract]);
 
 	// BUSD balance
 	const busdBalance = useAppSelector(
@@ -118,7 +123,8 @@ export default function BuyInfo() {
 			userInfo == undefined ||
 			systemSetting == undefined ||
 			startBuyKeyUnixTime == undefined ||
-			minDnftToBuyKey == undefined
+			minDnftToBuyKey == undefined ||
+			dnft_holding_count == undefined
 		) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
 		}

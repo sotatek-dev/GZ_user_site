@@ -1,7 +1,9 @@
-// import { NETWORK_RPC_URL } from 'constants/envs';
+import { BSC_CHAIN_ID } from './envs';
+
+const bsc_chain_id = Number(BSC_CHAIN_ID);
 
 const RPC = {
-	97: process.env.NEXT_PUBLIC_BSC_RPC_URL as string,
+	[bsc_chain_id]: process.env.NEXT_PUBLIC_BSC_RPC_URL as string,
 };
 
 export default RPC;

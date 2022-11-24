@@ -4,7 +4,7 @@ import type { Rule } from 'antd/lib/form';
 import { updateMyProfile } from 'apis/myProfile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
-import { getMyProfileRD } from 'stores/myProfile';
+import { getMyProfileRD } from 'stores/my-profile';
 import { AbiKeynft, AbiPresalepool } from 'web3/abis/types';
 import { useContract } from 'web3/contracts/useContract';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';

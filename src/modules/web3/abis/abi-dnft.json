@@ -2,7 +2,6 @@
 	{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
 	{ "inputs": [], "name": "ALL_TOKENS_ARE_SOLD_OR_RESCUED", "type": "error" },
 	{ "inputs": [], "name": "CANNOT_BUY", "type": "error" },
-	{ "inputs": [], "name": "CURRENT_SALE_PHASE_NOT_ENDED", "type": "error" },
 	{ "inputs": [], "name": "INSUFFICIENT_BNB", "type": "error" },
 	{ "inputs": [], "name": "INSUFFICIENT_BUSD", "type": "error" },
 	{ "inputs": [], "name": "INSUFFICIENT_CLAIMABLE_AMOUNT", "type": "error" },
@@ -20,7 +19,6 @@
 	{ "inputs": [], "name": "INVALID_ROYALTY_FEE_RATE", "type": "error" },
 	{ "inputs": [], "name": "INVALID_SALE_PHASE", "type": "error" },
 	{ "inputs": [], "name": "INVALID_SIGNATURE", "type": "error" },
-	{ "inputs": [], "name": "INVALID_START_TIME", "type": "error" },
 	{ "inputs": [], "name": "KEY_IS_USED_THIS_MONTH", "type": "error" },
 	{ "inputs": [], "name": "LAUNCH_PRICE_NOT_SET", "type": "error" },
 	{ "inputs": [], "name": "NOT_CLAIMABLE_TIME", "type": "error" },
@@ -157,31 +155,6 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "_tokenIds",
-				"type": "uint256[]"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "_newTokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "CrossSpeciesMerged",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
 				"name": "_DKEYNFTToken",
 				"type": "address"
 			}
@@ -293,6 +266,12 @@
 				"internalType": "uint256",
 				"name": "_newTokenId",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "_sessionId",
+				"type": "string"
 			}
 		],
 		"name": "PermanentMerged",
@@ -447,7 +426,7 @@
 				"type": "uint256[]"
 			},
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "string",
 				"name": "_sessionId",
 				"type": "string"
@@ -476,6 +455,12 @@
 				"internalType": "uint256",
 				"name": "_newTokenId",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "_sessionId",
+				"type": "string"
 			}
 		],
 		"name": "TemporaryMergeExecuted",
@@ -497,7 +482,7 @@
 				"type": "uint256[]"
 			},
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "string",
 				"name": "_sessionId",
 				"type": "string"
@@ -701,7 +686,8 @@
 	},
 	{
 		"inputs": [
-			{ "internalType": "uint256[]", "name": "_tokenIds", "type": "uint256[]" }
+			{ "internalType": "uint256[]", "name": "_tokenIds", "type": "uint256[]" },
+			{ "internalType": "string", "name": "_sessionId", "type": "string" }
 		],
 		"name": "executeTemporaryMerge",
 		"outputs": [],
@@ -990,6 +976,15 @@
 			{ "internalType": "string", "name": "baseURI_", "type": "string" }
 		],
 		"name": "setBaseURI",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "uint256", "name": "_claimableTime", "type": "uint256" }
+		],
+		"name": "setClaimableTime",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

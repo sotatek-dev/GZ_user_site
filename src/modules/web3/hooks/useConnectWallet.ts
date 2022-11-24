@@ -9,7 +9,7 @@ import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
 } from 'stores/modal';
-import { cleanDNFTs, setUserInfo } from 'stores/myProfile';
+import { cleanDNFTs, setUserInfo } from 'stores/my-profile';
 import { setSystemSettings } from 'stores/systemSetting';
 import { setAccessToken, setLogin } from 'stores/user';
 import {
