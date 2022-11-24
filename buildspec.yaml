@@ -14,7 +14,8 @@ phases:
     - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     - helm version
     - kubectl version --client
-    - aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER} --role-arn ${ROLE_ARN}
+    #- aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER} --role-arn ${ROLE_ARN}
+    - aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
     - kubectl config use-context arn:aws:eks:${AWS_REGION}:983383401906:cluster/${EKS_CLUSTER}
     - cat /root/.kube/config
     - kubectl get ns
