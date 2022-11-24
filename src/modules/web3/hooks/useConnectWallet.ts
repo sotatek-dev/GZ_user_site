@@ -42,7 +42,7 @@ export const useConnectWallet = () => {
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
 		if (!ethereum?.isMetaMask)
 			return message.error('Please install or unlock MetaMask');
-		await deactivate();
+		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
 		activateInjectedProvider(walletName);
 		StorageUtils.removeItem(STORAGE_KEYS.WALLET_CONNECT);
