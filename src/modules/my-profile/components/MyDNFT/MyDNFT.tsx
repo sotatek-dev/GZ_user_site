@@ -86,6 +86,7 @@ export default function MyDNFT() {
 
 			return {
 				...cloneItem,
+				canClaim,
 				claimable_date: !claimable_date
 					? '-'
 					: dayjs.unix(claimable_date).format('DD-MMMM-YYYY HH:mm'),
@@ -254,10 +255,11 @@ export default function MyDNFT() {
 		{
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			render: (record: any) => {
-				const canClaim = get(DNFTStatusMap, record.canClaim);
+				const canClaim = record.canClaim;
 				const dnftStatus = get(DNFTStatusMap, record.status);
 				const isLoading = get(loadingMap, record._id);
 				const isClaimingAll = get(loadingMap, 'claimAll');
+
 				return (
 					<button
 						disabled={!canClaim || isLoading || isClaimingAll}
