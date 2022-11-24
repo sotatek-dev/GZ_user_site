@@ -1,4 +1,4 @@
-FROM node:16.14-alpine
+FROM 983383401906.dkr.ecr.us-east-1.amazonaws.com/node:16.14
 RUN apk update && apk add bash
 WORKDIR /app
 

@@ -8,7 +8,7 @@ image:
   repository: 983383401906.dkr.ecr.us-east-1.amazonaws.com/galactix-zone-prod-frontend
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: "image_tag"
 
 imagePullSecrets:
 nameOverride: "fe-user"

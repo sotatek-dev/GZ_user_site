@@ -34,8 +34,8 @@ phases:
   post_build:
     on-failure: ABORT
     commands:
-      - sed -i -e "s+image_tag+${IMAGE_TAG}+g" cicd/k8s/api/values.yaml
-      - cat cicd/k8s/api/values.yaml | grep -A 5 "image:"
-      - helm upgrade --install api cicd/k8s/api/ --namespace ${NAME_SPACE} --wait
+      - sed -i -e "s+image_tag+${IMAGE_TAG}+g" cicd/fe-user/values.yaml
+      - cat cicd/fe-user/values.yaml | grep -A 5 "image:"
+      - helm upgrade --install fe-user  cicd/fe-user/ --namespace ${NAME_SPACE} --wait
       - wait $!
       - echo 'Helm has upgraded successfully !!!'
