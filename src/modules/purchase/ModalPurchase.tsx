@@ -161,12 +161,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			]);
 		} else {
 			checkValidate = true;
-			form.setFields([
-				{
-					name: 'amount',
-					errors: [],
-				},
-			]);
 		}
 	};
 
@@ -331,6 +325,14 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					`User can only purchase maximum ${formatNumber(buyLimit)} ${currency}`
 				)
 			);
+		} //....
+		if (checkValidate) {
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [],
+				},
+			]);
 		}
 		return Promise.resolve();
 	};
