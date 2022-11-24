@@ -10,6 +10,8 @@ import {
 import { useActiveWeb3React, useApproval } from 'web3/hooks';
 import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
 import { getBusb2Bnb, getKeyPriceBusd } from './apis';
+import { handleBuyInfoError } from '../helpers/handleError';
+import { isApproved } from 'common/utils/functions';
 
 export const useMintDKeyNFT = () => {
 	const { account } = useActiveWeb3React();
@@ -35,10 +37,11 @@ export const useMintDKeyNFT = () => {
 		if (!keyNFTContract || keyPrice == undefined) return;
 
 		let tx;
+		if (!isApproved(allowanceAmount)) {
+			await tryApproval(true);
+		}
+
 		if (token2Buy === Token2Buy.BUSD) {
-			if (allowanceAmount && allowanceAmount.lt(keyPrice)) {
-				await tryApproval(true);
-			}
 			tx = await busdBuy(signature);
 		} else {
 			tx = await bnbBuy(signature);
@@ -48,29 +51,37 @@ export const useMintDKeyNFT = () => {
 	};
 
 	const busdBuy = async (signature: string) => {
-		if (!keyNFTContract || !account) return;
+		try {
+			if (!keyNFTContract || !account) return;
 
-		const tx = await keyNFTContract.buyUsingBUSD(account, signature);
-		return await tx.wait();
+			const tx = await keyNFTContract.buyUsingBUSD(account, signature);
+			return await tx.wait();
+		} catch (err) {
+			handleBuyInfoError(err);
+		}
 	};
 
 	const bnbBuy = async (signature: string) => {
-		if (!keyNFTContract || !account) return;
+		try {
+			if (!keyNFTContract || !account) return;
 
-		const keyPriceBusd = await getKeyPriceBusd(keyNFTContract);
+			const keyPriceBusd = await getKeyPriceBusd(keyNFTContract);
 
-		if (!keyPriceBusd) return;
-		const keyPriceBnb = await getBusb2Bnb(
-			presalePoolContract,
-			keyPriceBusd.times(1e18)
-		);
+			if (!keyPriceBusd) return;
+			const keyPriceBnb = await getBusb2Bnb(
+				presalePoolContract,
+				keyPriceBusd.times(1e18)
+			);
 
-		if (!keyPriceBnb) return;
+			if (!keyPriceBnb) return;
 
-		const tx = await keyNFTContract.buyUsingBNB(account, signature, {
-			value: keyPriceBnb.toString(),
-		});
-		return await tx.wait();
+			const tx = await keyNFTContract.buyUsingBNB(account, signature, {
+				value: keyPriceBnb.toString(),
+			});
+			return await tx.wait();
+		} catch (err) {
+			handleBuyInfoError(err);
+		}
 	};
 
 	return { mintDKeyNFT };
