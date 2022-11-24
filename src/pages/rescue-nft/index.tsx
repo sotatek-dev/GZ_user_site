@@ -35,9 +35,7 @@ import {
 const RescueDNFT = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
-	const { runningPhaseId, claimableTime, rate } = useAppSelector(
-		(state) => state.mintDnft
-	);
+	const { claimableTime, rate } = useAppSelector((state) => state.mintDnft);
 	const { listKey, poolRemaining, priceInBUSD, launchPriceInBUSD } =
 		useAppSelector((state) => state.rescueDnft);
 	const { tryRescue, isDoingRescue } = useRescueMutation();
