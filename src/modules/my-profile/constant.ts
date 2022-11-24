@@ -10,7 +10,8 @@ const myProfileConstants = {
 	BUYINFO_MESSAGE_AVAILABLE: 'Great! You are eligible to buy the key',
 	BUYINFO_MESSAGE_NFT_REQUIRED: 'You are not elegible to buy this key',
 	BUYINFO_MESSAGE_NOT_ENOUGH_ROYALTY: "You don't have enough BUSD for tax",
-	BUYINFO_MESSAGE_NOT_ENOUGH_BALANCE: "You don't have enough BNB/BUSD",
+	BUYINFO_MESSAGE_NOT_ENOUGH_BUSD_BALANCE: "You don't have enough BUSD",
+	BUYINFO_MESSAGE_NOT_ENOUGH_BNB_BALANCE: "You don't have enough BNB",
 
 	NOT_ON_BUY_KEY_TIME: 'You can not buy key in',
 	ON_BUY_KEY_TIME: 'You can buy key in',
