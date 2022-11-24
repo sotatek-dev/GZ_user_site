@@ -71,7 +71,8 @@ const RescueDNFT = () => {
 	const haveEnoughNft = new BigNumber(poolRemaining).gt(0);
 	const haveEnoughKey = listKey.length > 0;
 	// CR: claim start after end presale-2 7 days
-	const isClaimable = isNftClaimable(claimableTime, runningPhaseId);
+	// const isClaimable = isNftClaimable(claimableTime, runningPhaseId);
+	const isClaimable = isNftClaimable(claimableTime);
 
 	const haveEnoughBalance = () => {
 		// If the user have lesser BNB/BUSD than total price or launch price (In case the Rescue is free)
@@ -169,6 +170,11 @@ const RescueDNFT = () => {
 			return <>{Message.NOT_ELIGIBLE_TO_MINT}</>;
 		}
 	};
+
+	console.log('haveEnoughBalance()', haveEnoughBalance());
+	console.log('isRoyalty()', isRoyalty());
+	console.log('haveEnoughNft', haveEnoughNft);
+	console.log('isClaimable', isClaimable);
 
 	return (
 		<>
