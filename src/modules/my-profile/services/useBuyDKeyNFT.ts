@@ -1,4 +1,3 @@
-import { handleBuyInfoError } from 'modules/my-profile/helpers/handleError';
 import { useState } from 'react';
 import { getSignature } from './apis';
 import { Token2Buy } from '../components/BuyInfo/BuyInfo.constants';
@@ -37,7 +36,6 @@ export const useBuyDKeyNFT = () => {
 				})
 				.catch((err) => {
 					results = [null, err];
-					handleBuyInfoError(err);
 				});
 		} finally {
 			setIsBuyDNFT(false);
