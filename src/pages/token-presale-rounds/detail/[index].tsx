@@ -315,10 +315,12 @@ const TokenSaleRoundDetail = () => {
 	const calculatorCurrency = async (val: string) => {
 		if (val === BNB_CURRENCY) {
 			const [priceBNB] = await convertBUSDtoBNB(price);
-			if (Number(priceBNB) < 0.0001) {
-				setPriceRender('< 0.0001');
+			if (Number(priceBNB) === 0) {
+				return setPriceRender('0');
+			} else if (Number(priceBNB) < 0.0001) {
+				return setPriceRender('< 0.0001');
 			} else {
-				setPriceRender(formatNumber(Number(priceBNB)));
+				return setPriceRender(formatNumber(Number(priceBNB)));
 			}
 		} else {
 			const priceBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
