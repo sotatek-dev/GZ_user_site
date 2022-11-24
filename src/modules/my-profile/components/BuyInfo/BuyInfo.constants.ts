@@ -5,7 +5,8 @@ export enum BuyStatus {
 	Upcomming,
 	NFTRequired,
 	Available,
-	NotEnoughBalance,
+	NotEnoughBUSDBalance,
+	NotEnoughBNBBalance,
 	NotEnoughRoyalty,
 }
 
@@ -37,8 +38,16 @@ export const buyStatusConfigs: {
 		messageStyle: 'text-[#F02727]',
 		canBuy: false,
 	},
-	[BuyStatus.NotEnoughBalance]: {
-		message: myProfileConstants.BUYINFO_MESSAGE_NOT_ENOUGH_BALANCE,
+	[BuyStatus.NotEnoughBUSDBalance]: {
+		message: myProfileConstants.BUYINFO_MESSAGE_NOT_ENOUGH_BUSD_BALANCE,
+		icon: '/icons/info-circle.svg',
+		boxStyle:
+			'flex items-center gap-3 rounded-[0.3125rem] bg-[#f0272733] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',
+		messageStyle: 'text-[#F02727]',
+		canBuy: false,
+	},
+	[BuyStatus.NotEnoughBNBBalance]: {
+		message: myProfileConstants.BUYINFO_MESSAGE_NOT_ENOUGH_BNB_BALANCE,
 		icon: '/icons/info-circle.svg',
 		boxStyle:
 			'flex items-center gap-3 rounded-[0.3125rem] bg-[#f0272733] px-[0.9375rem] py-[0.8125rem] w-[100%] mb-2 leading-[1.25rem]',

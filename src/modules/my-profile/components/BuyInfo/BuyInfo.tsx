@@ -131,12 +131,16 @@ export default function BuyInfo() {
 			return buyStatusConfigs[BuyStatus.NFTRequired];
 		}
 
-		if (!isEnoughRoyalty()) {
-			return buyStatusConfigs[BuyStatus.NotEnoughRoyalty];
+		if (!isEnoughBalance()) {
+			if (tokenCode === Token2Buy.BUSD) {
+				return buyStatusConfigs[BuyStatus.NotEnoughBUSDBalance];
+			} else if (tokenCode === Token2Buy.BNB) {
+				return buyStatusConfigs[BuyStatus.NotEnoughBNBBalance];
+			}
 		}
 
-		if (!isEnoughBalance()) {
-			return buyStatusConfigs[BuyStatus.NotEnoughBalance];
+		if (!isEnoughRoyalty()) {
+			return buyStatusConfigs[BuyStatus.NotEnoughRoyalty];
 		}
 
 		return buyStatusConfigs[BuyStatus.Available];
