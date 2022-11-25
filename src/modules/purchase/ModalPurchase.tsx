@@ -48,6 +48,7 @@ interface IModalPurchaseProps {
 	getDetailSaleRound: () => void;
 	maxPreSaleAmount: number;
 	youBought: number;
+	totalSoldAmount: number;
 }
 
 const ModalPurchase: FC<IModalPurchaseProps> = ({
@@ -60,6 +61,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	maxPreSaleAmount,
 	youBought,
 	getDetailSaleRound,
+	totalSoldAmount,
 }) => {
 	const [form] = Form.useForm();
 	const { addressWallet, balance } = useAppSelector((state) => state.wallet);
@@ -108,7 +110,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		setAmountGXC(amountGXC);
 		if (
 			new BigNumber(amountGXC as any).gt(
-				new BigNumber(maxPreSaleAmount).minus(youBought)
+				new BigNumber(maxPreSaleAmount).minus(totalSoldAmount)
 			)
 		) {
 			checkValidate = false;
@@ -117,7 +119,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					name: 'amount',
 					errors: [
 						`The round only have ${formatNumber(
-							new BigNumber(maxPreSaleAmount).minus(new BigNumber(youBought))
+							new BigNumber(maxPreSaleAmount).minus(
+								new BigNumber(totalSoldAmount)
+							)
 						)} Galactix tokens left to be purchased`,
 					],
 				},
@@ -145,7 +149,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		setAmountGXC(amountGXC);
 		if (
 			new BigNumber(amountGXC as any).gt(
-				new BigNumber(maxPreSaleAmount).minus(youBought)
+				new BigNumber(maxPreSaleAmount).minus(totalSoldAmount)
 			)
 		) {
 			checkValidate = false;
@@ -154,7 +158,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					name: 'amount',
 					errors: [
 						`The round only have ${formatNumber(
-							new BigNumber(maxPreSaleAmount).minus(new BigNumber(youBought))
+							new BigNumber(maxPreSaleAmount).minus(
+								new BigNumber(totalSoldAmount)
+							)
 						)} Galactix tokens left to be purchased`,
 					],
 				},

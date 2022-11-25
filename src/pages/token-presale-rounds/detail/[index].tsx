@@ -664,7 +664,8 @@ const TokenSaleRoundDetail = () => {
 				exchangeRate={price}
 				detailSaleRound={detailSaleRound}
 				maxPreSaleAmount={maxPreSaleAmount}
-				youBought={totalSoldAmount}
+				youBought={youBought}
+				totalSoldAmount={totalSoldAmount}
 				handleGetUserPurchasedAmount={handleGetUserPurchasedAmount}
 				getDetailSaleRound={getDetailSaleRound}
 			/>
