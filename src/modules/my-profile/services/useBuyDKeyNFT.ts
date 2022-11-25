@@ -8,6 +8,7 @@ import { AbiKeynft } from 'web3/abis/types';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
 import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useActiveWeb3React } from 'web3/hooks';
+import { handleBuyInfoError } from '../helpers/handleError';
 
 export const useBuyDKeyNFT = () => {
 	const { account } = useActiveWeb3React();
@@ -35,6 +36,7 @@ export const useBuyDKeyNFT = () => {
 					results = [data, null];
 				})
 				.catch((err) => {
+					handleBuyInfoError(err);
 					results = [null, err];
 				});
 		} finally {
