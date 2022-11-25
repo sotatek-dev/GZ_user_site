@@ -112,15 +112,22 @@ const TokenSaleRoundDetail = () => {
 	const saleRoundId = get(detailSaleRound, 'sale_round');
 	const prevLoading = usePrevious(isLoading);
 	const isShowButtonBuy =
-		statusTimeLine === BUY &&
-		isLogin &&
-		isWhitelist &&
-		isCurrentSaleRound &&
-		Number(totalSoldAmount) !== Number(maxPreSaleAmount) &&
-		Number(totalSoldAmount) <= Number(maxPreSaleAmount) &&
-		Number(price) === 0 &&
-		Number(youBought) === 0 && // case
-		detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
+		Number(price) === 0
+			? statusTimeLine === BUY &&
+			  isLogin &&
+			  isWhitelist &&
+			  isCurrentSaleRound &&
+			  Number(price) === 0 &&
+			  Number(youBought) === 0 &&
+			  statusTimeLine === BUY && // case
+			  detailSaleRound?.current_status_timeline !== 'claimable_upcoming'
+			: statusTimeLine === BUY &&
+			  isLogin &&
+			  isWhitelist &&
+			  isCurrentSaleRound &&
+			  Number(totalSoldAmount) !== Number(maxPreSaleAmount) &&
+			  Number(totalSoldAmount) <= Number(maxPreSaleAmount) &&
+			  detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
 	const isShowButtonClaim =
 		statusTimeLine === CLAIMABLE &&
