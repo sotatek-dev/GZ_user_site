@@ -55,11 +55,7 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		approve,
 		{
 			onSuccess() {
-				message.success(myProfileConstants.TRANSACTION_COMFIRMATION);
 				return queryClient.invalidateQueries(['getAllowance']);
-			},
-			onError(err) {
-				return handleTxError(err);
 			},
 		}
 	);
