@@ -1,0 +1,41 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+    - export COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
+    - export IMAGE_TAG=${COMMIT_HASH}
+    - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin 983383401906.dkr.ecr.${AWS_REGION}.amazonaws.com
+    - echo "Installing Helm 3.0 ..."
+    - wget https://get.helm.sh/helm-v3.5.3-linux-amd64.tar.gz
+    - tar -zxvf helm-v3.5.3-linux-amd64.tar.gz
+    - mv linux-amd64/helm /usr/local/bin/helm
+    - echo "installing kubectl client ..."
+    - curl -LO curl -LO https://dl.k8s.io/release/v1.23.6/bin/linux/amd64/kubectl
+    - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - helm version
+    - kubectl version --client
+    #- aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER} --role-arn ${ROLE_ARN}
+    - aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
+    - kubectl config use-context arn:aws:eks:${AWS_REGION}:983383401906:cluster/${EKS_CLUSTER}
+    - cat /root/.kube/config
+    - kubectl get ns
+  build:
+    on-failure: ABORT
+    commands:
+      - echo "Get env from SSM ..."
+      - aws ssm get-parameter --with-decryption --name ${SSM_ENV} --region ${AWS_REGION}| jq '.Parameter.Value'| sed 's/^"\(.*\)/\1/' |sed 's/.$//' | sed 's/\\n/\n/g' > .env
+      - echo Building image on COMMIT-ID ${COMMIT_HASH} started on `date`
+      - docker build -t $REPOSITORY_URI:latest -f Dockerfile_cicd .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - echo Build completed on `date`
+      - echo pushing to repo
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    on-failure: ABORT
+    commands:
+      - sed -i -e "s+image_tag+${IMAGE_TAG}+g" cicd/fe-user/values.yaml
+      - cat cicd/fe-user/values.yaml | grep -A 5 "image:"
+      - helm upgrade --install fe-user  cicd/fe-user/ --namespace ${NAME_SPACE} --wait
+      - wait $!
+      - echo 'Helm has upgraded successfully !!!'
