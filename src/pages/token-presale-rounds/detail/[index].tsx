@@ -116,8 +116,10 @@ const TokenSaleRoundDetail = () => {
 		isLogin &&
 		isWhitelist &&
 		isCurrentSaleRound &&
-		totalSoldAmount !== maxPreSaleAmount &&
-		totalSoldAmount <= maxPreSaleAmount &&
+		Number(totalSoldAmount) !== Number(maxPreSaleAmount) &&
+		Number(totalSoldAmount) <= Number(maxPreSaleAmount) &&
+		Number(price) === 0 &&
+		Number(youBought) === 0 && // case
 		detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
 	const isShowButtonClaim =
@@ -378,19 +380,19 @@ const TokenSaleRoundDetail = () => {
 				'data._numberOfCandidate',
 				''
 			);
-			const [resBuyWithFee, errorBuyWithFee] = await buyTokenWithoutFee(
+			const [resBuyWithFree, errorBuyWithFree] = await buyTokenWithoutFee(
 				saleRoundId,
 				addressWallet,
 				numberOfCandidate,
 				signature
 			);
-			if (resBuyWithFee) {
-				message.success(redirectToBSCScan(resBuyWithFee?.transactionHash));
+			if (resBuyWithFree) {
+				message.success(redirectToBSCScan(resBuyWithFree?.transactionHash));
 				getDetailSaleRound();
 				return;
 			}
-			if (errorBuyWithFee) {
-				if (errorBuyWithFee?.error?.code === -32603) {
+			if (errorBuyWithFree) {
+				if (errorBuyWithFree?.error?.code === -32603) {
 					return message.error('Network Error!');
 				}
 				return message.error('Transaction Rejected');
