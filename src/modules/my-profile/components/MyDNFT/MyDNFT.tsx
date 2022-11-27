@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { message, Pagination, Spin } from 'antd';
-import { getDNFTSignature } from 'apis/dnft';
+import { getDNFTDetail, getDNFTSignature } from 'apis/dnft';
 import BoxPool from 'common/components/boxPool';
 import Dropdown from 'common/components/dropdown';
 import MyTable from 'common/components/table';
@@ -18,7 +19,6 @@ import {
 } from 'modules/my-profile/components/MyDNFT/MyDNFT.constant';
 import myProfileConstants from 'modules/my-profile/constant';
 import { handleClaimError } from 'modules/my-profile/helpers/handleError';
-import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyClaimableDNFTsCountRD, getMyDNFTsRD } from 'stores/my-profile';
 import { AbiDnft } from 'web3/abis/types';
@@ -27,6 +27,7 @@ import { useContract } from 'web3/contracts/useContract';
 import { useActiveWeb3React } from 'web3/hooks';
 import DNFTABI from 'modules/web3/abis/abi-dnft.json';
 import { IDNFT } from 'modules/my-profile/interfaces';
+import RefreshDNFTList from './RefreshDNFTList';
 
 // If Presale 2 phase not active, BE set claim date to this
 const TIMESTAMP_LIMIT_VALUE = 2147483647;
@@ -34,18 +35,21 @@ const AVAI_TO_UNMERGE = 30; // days
 
 export default function MyDNFT() {
 	const router = useRouter();
-	const { dnfts, dnft_claimable_count, loading } = useAppSelector(
-		(state) => state.myProfile
-	);
+	const { account } = useActiveWeb3React();
+	const dispatch = useAppDispatch();
+	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
+	const {
+		dnfts,
+		claimableDnfts: { list: claimableDnfts },
+		loading,
+	} = useAppSelector((state) => state.myProfile);
+
 	const { systemSetting } = useAppSelector((state) => state.systemSetting);
 	const { isLogin } = useAppSelector((state) => state.user);
+
 	const [type, setType] = useState<string>('');
 	const [status, setStatus] = useState<string>('');
 	const [page, setPage] = useState<number>(1);
-	const dispatch = useAppDispatch();
-	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
-	const { account } = useActiveWeb3React();
-
 	const [loadingMap, setLoadingMap] = useState({});
 
 	useEffect(() => {
@@ -113,57 +117,54 @@ export default function MyDNFT() {
 			const res = await getDNFTSignature({ session_id, nonce });
 			const { signature, token_ids, time_stamp } = get(res, 'data.data');
 
-			await dnftContract
-				?.cancelTemporaryMerge(token_ids, time_stamp, session_id, signature)
-				.then((res) => {
-					return res.wait();
-				})
-				.then((res) => {
-					message.success({
-						content: myProfileConstants.TRANSACTION_COMPLETED,
-						onClick: () => {
-							window.open(getExploreTxLink(res.transactionHash), '_blank');
-						},
-					});
-					handleGetDNFTs();
-				})
-				.catch((err) => {
-					handleClaimError(err);
-				});
+			const tx = await dnftContract.cancelTemporaryMerge(
+				token_ids,
+				time_stamp,
+				session_id,
+				signature
+			);
+
+			const txRes = await tx.wait();
+			await triggerRefreshUnmerge(session_id);
+
+			message.success({
+				content: myProfileConstants.TRANSACTION_COMPLETED,
+				onClick: () => {
+					window.open(getExploreTxLink(txRes.transactionHash), '_blank');
+				},
+			});
+			handleGetDNFTs();
+		} catch (err) {
+			handleClaimError(err);
 		} finally {
 			setLoadingMap({});
 		}
 	};
 
-	const handleClaimTemMerge = async (session_id: string) => {
-		if (!dnftContract || !account) {
-			return;
-		}
+	const handleClaimTemMerge = async (dnftId: string) => {
+		if (!dnftContract || !account) return;
 
 		try {
-			setLoadingMap({ [session_id]: true });
+			setLoadingMap({ [dnftId]: true });
 
 			const nonce = await getNonces(dnftContract, account);
-			const res = await getDNFTSignature({ session_id, nonce });
+			const res = await getDNFTSignature({ session_id: dnftId, nonce });
 			const { token_ids } = get(res, 'data.data');
 
-			await dnftContract
-				.executeTemporaryMerge(token_ids, session_id)
-				.then((res) => {
-					return res.wait();
-				})
-				.then((res) => {
-					message.success({
-						content: myProfileConstants.TRANSACTION_COMPLETED,
-						onClick: () => {
-							window.open(getExploreTxLink(res.transactionHash), '_blank');
-						},
-					});
-					handleGetDNFTs();
-				})
-				.catch((err) => {
-					handleClaimError(err);
-				});
+			const tx = await dnftContract.executeTemporaryMerge(token_ids, dnftId);
+			const txRes = await tx.wait();
+
+			await triggerRefresh(dnftId);
+
+			message.success({
+				content: myProfileConstants.TRANSACTION_COMPLETED,
+				onClick: () => {
+					window.open(getExploreTxLink(txRes.transactionHash), '_blank');
+				},
+			});
+			handleGetDNFTs();
+		} catch (err) {
+			handleClaimError(err);
 		} finally {
 			setLoadingMap({});
 		}
@@ -173,51 +174,44 @@ export default function MyDNFT() {
 		try {
 			setLoadingMap({ [id]: true });
 			if (dnftContract) {
-				await dnftContract
-					.claimPurchasedToken(1)
-					.then((res) => {
-						return res.wait();
-					})
-					.then((res) => {
-						message.success({
-							content: myProfileConstants.TRANSACTION_COMPLETED,
-							onClick: () => {
-								window.open(getExploreTxLink(res.transactionHash));
-							},
-						});
-						Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
-					})
-					.catch((err) => {
-						handleClaimError(err);
-					});
+				const tx = await dnftContract.claimPurchasedToken(1);
+				const res = await tx.wait();
+
+				await triggerRefresh(id);
+
+				message.success({
+					content: myProfileConstants.TRANSACTION_COMPLETED,
+					onClick: () => {
+						window.open(getExploreTxLink(res.transactionHash));
+					},
+				});
+
+				Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
 			}
+		} catch (err) {
+			handleClaimError(err);
 		} finally {
 			setLoadingMap({});
 		}
 	};
 
 	const handleClaimAll = async (amount: number) => {
+		if (!dnftContract) return;
+
 		try {
 			setLoadingMap({ claimAll: true });
-			if (dnftContract) {
-				await dnftContract
-					.claimPurchasedToken(amount)
-					.then((res) => {
-						return res.wait();
-					})
-					.then((res) => {
-						message.success({
-							content: myProfileConstants.TRANSACTION_COMPLETED,
-							onClick: () => {
-								window.open(getExploreTxLink(res.transactionHash));
-							},
-						});
-						Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
-					})
-					.catch((err) => {
-						handleClaimError(err);
-					});
-			}
+			const tx = await dnftContract.claimPurchasedToken(amount);
+			const txRes = await tx.wait();
+
+			message.success({
+				content: myProfileConstants.TRANSACTION_COMPLETED,
+				onClick: () => {
+					window.open(getExploreTxLink(txRes.transactionHash));
+				},
+			});
+			Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
+		} catch (err) {
+			handleClaimError(err);
 		} finally {
 			setLoadingMap({});
 		}
@@ -233,10 +227,6 @@ export default function MyDNFT() {
 		if (dnfts && dnfts.pagination.total) {
 			dispatch(getMyClaimableDNFTsCountRD(dnfts.pagination.total));
 		}
-	};
-
-	const getExploreTxLink = (hash: string) => {
-		return `${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${hash}`;
 	};
 
 	const columns = [
@@ -304,15 +294,19 @@ export default function MyDNFT() {
 	}
 
 	const canClaimAll =
-		isAfterClaimTime && dnft_claimable_count && !get(loadingMap, 'claimAll');
+		isAfterClaimTime && claimableDnfts?.length && !get(loadingMap, 'claimAll');
 
 	return (
 		<BoxPool>
 			<div className='flex justify-between items-start mb-3'>
 				<h5 className='text-h6 font-semibold text-white'>My dNFT</h5>
+				<RefreshDNFTList handleGetDNFTs={handleGetDNFTs} />
 				<button
 					disabled={!canClaimAll}
-					onClick={() => handleClaimAll(dnft_claimable_count)}
+					onClick={() => {
+						if (!claimableDnfts) return;
+						handleClaimAll(claimableDnfts.length);
+					}}
 					className={`desktop:hidden text-h8 font-semibold rounded-[40px] py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
 						!canClaimAll ? 'text-white/[0.3]' : 'text-white'
 					}`}
@@ -350,7 +344,10 @@ export default function MyDNFT() {
 					</div>
 					<button
 						disabled={!canClaimAll}
-						onClick={() => handleClaimAll(dnft_claimable_count)}
+						onClick={() => {
+							if (!claimableDnfts) return;
+							handleClaimAll(claimableDnfts.length);
+						}}
 						className={`hidden desktop:block text-h8 rounded-[40px] font-semibold py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
 							!canClaimAll ? 'text-white/[0.3]' : 'text-white'
 						}
@@ -471,3 +468,31 @@ export default function MyDNFT() {
 		</BoxPool>
 	);
 }
+
+const getExploreTxLink = (hash: string) => {
+	return `${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${hash}`;
+};
+
+const triggerRefresh = async (id: string): Promise<void> => {
+	return await new Promise((resolve) => {
+		const interval = setInterval(() => {
+			getDNFTDetail(id).then((res) => {
+				if (res.data.data.status === DNFTStatuses.Claimed) {
+					clearInterval(interval);
+					resolve();
+				}
+			});
+		}, 3000);
+	});
+};
+
+const triggerRefreshUnmerge = async (id: string): Promise<void> => {
+	return await new Promise((resolve) => {
+		const interval = setInterval(() => {
+			getDNFTDetail(id).catch(() => {
+				clearInterval(interval);
+				resolve();
+			});
+		}, 3000);
+	});
+};

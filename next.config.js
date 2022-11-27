@@ -10,12 +10,6 @@ const nextConfig = {
 		includePaths: [path.join(__dirname, 'styles')],
 	},
 	swcMinify: true,
-	// compiler: {
-	// 	removeConsole: {
-	// 		exclude: ['error'],
-	// 	},
-	// },
-	cssModules: true,
 	images: {
 		domains: [
 			'172.16.1.217',

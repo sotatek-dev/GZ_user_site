@@ -9,24 +9,14 @@ interface MyTableProps<RecordType> extends TableProps<RecordType> {
 const MyTable = <RecordType extends { _id: string }>(
 	props: MyTableProps<RecordType>
 ) => {
-	const {
-		columns,
-		dataSource,
-		pagination,
-		isHaveBorderTop = false,
-		customClass,
-		onRow,
-	} = props;
+	const { pagination, isHaveBorderTop = false, customClass } = props;
 
 	return (
 		<Table
-			onRow={onRow}
 			className={`app-table ${
 				isHaveBorderTop ? 'table-border-top' : ''
 			} ${customClass}`}
-			columns={columns}
 			rowKey={(record) => record._id}
-			dataSource={dataSource}
 			pagination={pagination ? pagination : false}
 			{...props}
 		/>

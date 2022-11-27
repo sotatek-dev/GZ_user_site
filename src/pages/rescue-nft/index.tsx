@@ -169,11 +169,6 @@ const RescueDNFT = () => {
 		}
 	};
 
-	console.log('haveEnoughBalance()', haveEnoughBalance());
-	console.log('isRoyalty()', isRoyalty());
-	console.log('haveEnoughNft', haveEnoughNft);
-	console.log('isClaimable', isClaimable);
-
 	return (
 		<>
 			<div
