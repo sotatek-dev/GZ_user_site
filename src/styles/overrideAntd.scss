@@ -532,3 +532,12 @@
 	margin-left: 0;
 	text-overflow: unset;
 }
+
+/* Table loading spinner */
+.ant-spin-blur {
+	opacity: 0.1;
+}
+
+.ant-spin-container {
+	transition-duration: 0.3s;
+}

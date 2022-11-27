@@ -5,6 +5,7 @@ import {
 	Store,
 } from '@reduxjs/toolkit';
 import { getMyDNFTs, getMyProfile, IParamsGetDNFTs } from 'apis/myProfile';
+import dayjs from 'dayjs';
 import { get } from 'lodash';
 import { IDNFT } from 'modules/my-profile/interfaces';
 import { getBusb2Bnb, getKeyPriceBusd } from 'modules/my-profile/services/apis';
@@ -39,21 +40,27 @@ interface initialStateProps {
 	errMessage?: string;
 	loading: boolean;
 
-	dnfts?: {
-		data: IDNFT[];
-		pagination: {
-			total: number;
-			page: number;
-			limit: number;
-		};
-	};
-	dnft_claimable_count: number;
+	dnfts:
+		| {
+				data: IDNFT[];
+				pagination: {
+					total: number;
+					page: number;
+					limit: number;
+				};
+		  }
+		| undefined;
+	lastUpdated: number;
+
+	claimableDnfts: { list: IDNFT[] | undefined; isLoading: boolean };
 	dnft_holding_count: number | undefined;
 }
 
 const initialState: initialStateProps = {
-	loading: true,
-	dnft_claimable_count: 0,
+	loading: false,
+	dnfts: undefined,
+	lastUpdated: dayjs().unix(),
+	claimableDnfts: { list: undefined, isLoading: false },
 	dnft_holding_count: undefined,
 };
 
@@ -110,6 +117,7 @@ const myProfileStore = createSlice({
 				pagination: action.payload.pagination,
 			};
 			state.loading = false;
+			state.lastUpdated = dayjs().unix();
 		});
 
 		builder.addCase(getMyDNFTsRD.rejected, (state, action) => {
@@ -121,8 +129,17 @@ const myProfileStore = createSlice({
 			state.loading = true;
 		});
 
+		builder.addCase(getMyClaimableDNFTsCountRD.pending, (state) => {
+			state.claimableDnfts = { ...state.claimableDnfts, isLoading: true };
+		});
+		builder.addCase(getMyClaimableDNFTsCountRD.rejected, (state) => {
+			state.claimableDnfts = { ...state.claimableDnfts, isLoading: false };
+		});
 		builder.addCase(getMyClaimableDNFTsCountRD.fulfilled, (state, action) => {
-			state.dnft_claimable_count = action.payload;
+			state.claimableDnfts = {
+				list: action.payload,
+				isLoading: false,
+			};
 		});
 
 		builder.addCase(fetchDnftHolding.rejected, (state) => {
@@ -159,8 +176,7 @@ export const getMyClaimableDNFTsCountRD = createAsyncThunk(
 				status: 'wait-to-claim',
 				page: 1,
 			});
-			const data = get(res, 'data.data.list', []);
-			return get(data, 'length');
+			return get(res, 'data.data.list', []);
 		} catch (err) {
 			return rejectWithValue(err);
 		}
