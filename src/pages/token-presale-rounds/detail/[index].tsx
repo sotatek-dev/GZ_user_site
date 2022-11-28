@@ -412,8 +412,8 @@ const TokenSaleRoundDetail = () => {
 	const renderPriceBuyInfoUpComing = () => {
 		return (
 			<>
-				<div>
-					<div className='flex gap-x-2 items-center'>
+				<div className='flex flex-col gap-2'>
+					<div className='flex gap-x-[10px] items-center text-gray-40'>
 						Price
 						<CustomRadio
 							onChange={handleSelectCurrency}
