@@ -11,7 +11,7 @@ import {
 	SPECIES_DNFT,
 } from 'common/constants/constants';
 import dayjs from 'dayjs';
-import { cloneDeep, get, includes } from 'lodash';
+import _, { cloneDeep, get, includes } from 'lodash';
 import { getNonces } from 'modules/mint-dnft/services';
 import {
 	DNFTStatus,
@@ -51,7 +51,9 @@ export default function MyDNFT() {
 	const [type, setType] = useState<string>('');
 	const [status, setStatus] = useState<string>('');
 	const [page, setPage] = useState<number>(1);
-	const [loadingMap, setLoadingMap] = useState({});
+	const [loadingMap, setLoadingMap] = useState<{ [key in string]: boolean }>(
+		{}
+	);
 
 	useEffect(() => {
 		if (isLogin) {
@@ -106,13 +108,17 @@ export default function MyDNFT() {
 		});
 	})();
 
+	const removeLoadingState = (id: string) => {
+		setLoadingMap((prev) => _.omit(prev, id));
+	};
+
 	const handleUnmerge = async (session_id: string) => {
 		if (!dnftContract || !account) {
 			return;
 		}
 
 		try {
-			setLoadingMap({ [session_id]: true });
+			setLoadingMap((prev) => ({ ...prev, [session_id]: true }));
 
 			const nonce = await getNonces(dnftContract, account);
 			const res = await getDNFTSignature({ session_id, nonce });
@@ -138,7 +144,7 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(session_id);
 		}
 	};
 
@@ -146,7 +152,7 @@ export default function MyDNFT() {
 		if (!dnftContract || !account) return;
 
 		try {
-			setLoadingMap({ [dnftId]: true });
+			setLoadingMap((prev) => ({ ...prev, [dnftId]: true }));
 
 			const nonce = await getNonces(dnftContract, account);
 			const res = await getDNFTSignature({ session_id: dnftId, nonce });
@@ -167,13 +173,14 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(dnftId);
 		}
 	};
 
 	const handleClaim = async (id: string) => {
 		try {
-			setLoadingMap({ [id]: true });
+			setLoadingMap((prev) => ({ ...prev, [id]: true }));
+
 			if (dnftContract) {
 				const tx = await dnftContract.claimPurchasedToken(1);
 				const res = await tx.wait();
@@ -192,15 +199,16 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(id);
 		}
 	};
 
 	const handleClaimAll = async (amount: number) => {
 		if (!dnftContract || !claimableDnfts) return;
+		const CLAIM_ALL_KEY = 'claimAll';
 
 		try {
-			setLoadingMap({ claimAll: true });
+			setLoadingMap((prev) => ({ ...prev, CLAIM_ALL_KEY: true }));
 			const tx = await dnftContract.claimPurchasedToken(amount);
 			const txRes = await tx.wait();
 
@@ -216,7 +224,7 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(CLAIM_ALL_KEY);
 		}
 	};
 
