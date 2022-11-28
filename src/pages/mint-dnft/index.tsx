@@ -43,6 +43,9 @@ import dayjs from 'dayjs';
 import CountDownMint from 'modules/mint-dnft/components/CountDownMint';
 import PoolDetailMint from 'modules/mint-dnft/components/PoolDetailMint';
 
+//const TIME_APPLY_PRICE_AFTER = 1 // days
+const TIME_APPLY_PRICE_AFTER = 5 / (24 * 60); // days
+
 const MintDNFT: React.FC = () => {
 	const { account } = useActiveWeb3React();
 	const dispatch = useAppDispatch();
@@ -99,7 +102,10 @@ const MintDNFT: React.FC = () => {
 			: new BigNumber(priceAfter24Hours).div(rate);
 
 	const currentPrice =
-		startTime && dayjs().isAfter(dayjs.unix(startTime / 1000).add(1, 'day'))
+		startTime &&
+		dayjs().isAfter(
+			dayjs.unix(startTime / 1000).add(TIME_APPLY_PRICE_AFTER, 'day')
+		)
 			? priceAfter
 			: price;
 
