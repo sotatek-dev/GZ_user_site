@@ -21,8 +21,9 @@ export default function RefreshDNFTList({
 
 	return (
 		<div className='flex gap-3'>
-			<p>
-				Last updated: <LastUpdatedTime />
+			<p className='flex gap-2'>
+				<span className='hidden desktop:block'>Last updated:</span>
+				<LastUpdatedTime />
 			</p>
 			<Button
 				onClick={handleRefresh}
