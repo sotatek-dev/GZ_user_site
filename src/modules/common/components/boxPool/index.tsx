@@ -11,7 +11,7 @@ const BoxPool: FC<IBoxPoolProps> = ({ children, customClass, title }) => {
 	return (
 		<div className={`box-pool ${customClass}`}>
 			{title && (
-				<h5 className='text-lg font-medium text-white border-b border-purple-10 pb-4'>
+				<h5 className='text-lg font-semibold text-white border-b border-purple-10 pb-4'>
 					{title}
 				</h5>
 			)}

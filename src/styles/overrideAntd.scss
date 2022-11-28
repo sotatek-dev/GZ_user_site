@@ -70,6 +70,7 @@
 
 .steps-custom {
 	@apply w-full;
+
 	.ant-steps-item-icon {
 		border: none;
 		width: 40px;
@@ -77,20 +78,37 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
 		.ant-steps-icon {
 			font-weight: 600;
 			font-size: 16px;
-			line-height: 34px;
+		}
+	}
+
+	.anticon {
+		background: url('../../public/icons/completed-tick.svg') center center
+			no-repeat;
+		width: 18px;
+		height: 18px;
+
+		> svg {
+			display: none;
 		}
 	}
 
 	.ant-steps-item-tail {
 		padding: 6.5px 20px;
 		margin-left: 62px;
+
 		&::after {
+			border-radius: 0;
 			background-color: rgba(158, 144, 243, 0.5) !important;
 			height: 3px;
 		}
+	}
+
+	.ant-steps-item-finish .ant-steps-item-tail::after {
+		background-color: #d47af5 !important;
 	}
 
 	.ant-steps-item-finish {

@@ -1,5 +1,5 @@
 import { Steps } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 
 const { Step } = Steps;
 
@@ -9,19 +9,15 @@ interface IStepperProps {
 }
 
 const Stepper: FC<IStepperProps> = ({ steps, activeStep }) => {
-	const [current, setCurrent] = useState<number>(0);
+	const current = steps.findIndex((step: string) => {
+		return step === activeStep;
+	});
 
-	useEffect(() => {
-		const current = steps.findIndex((step: string) => {
-			return step === activeStep;
-		});
-		setCurrent(current);
-	}, [activeStep, steps]);
 	return (
 		<div className='steps-custom'>
 			<Steps
 				current={current}
-				direction={'horizontal'}
+				direction='horizontal'
 				responsive={false}
 				labelPlacement='vertical'
 			>
