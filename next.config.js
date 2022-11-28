@@ -11,16 +11,8 @@ const nextConfig = {
 	},
 	swcMinify: true,
 	images: {
-		domains: [
-			'172.16.1.217',
-			'api.galactix.sotatek.works',
-			'52.78.146.69',
-			'galactix-uat.s3.ap-northeast-2.amazonaws.com',
-			'galactix-uat.s3.amazonaws.com',
-		],
+		domains: [process.env.NEXT_IMAGE_DOMAIN],
 		dangerouslyAllowSVG: true,
-		// disableStaticImages: true,
-		// unoptimized: true,
 		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
 	},
 };
