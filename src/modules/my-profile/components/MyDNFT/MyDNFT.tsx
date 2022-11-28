@@ -196,12 +196,14 @@ export default function MyDNFT() {
 	};
 
 	const handleClaimAll = async (amount: number) => {
-		if (!dnftContract) return;
+		if (!dnftContract || !claimableDnfts) return;
 
 		try {
 			setLoadingMap({ claimAll: true });
 			const tx = await dnftContract.claimPurchasedToken(amount);
 			const txRes = await tx.wait();
+
+			await triggerRefresh(claimableDnfts[0]._id);
 
 			message.success({
 				content: myProfileConstants.TRANSACTION_COMPLETED,
