@@ -30,14 +30,13 @@ export default function BuyTimeCountdown() {
 		);
 	}
 
-	const { actualStartBuyKeyTime, mintKeyDays } = getActualStartBuyKeyTime(
-		startBuyKeyUnixTime,
-		systemSetting?.mint_days
-	);
+	const { available, actualStartBuyKeyTime, mintKeyDays } =
+		getActualStartBuyKeyTime(startBuyKeyUnixTime, systemSetting?.mint_days);
 
 	const { timeLeft, buyKeyStatus } = getTimeLeftToBuyKey(
-		actualStartBuyKeyTime,
-		mintKeyDays
+		available,
+		mintKeyDays,
+		actualStartBuyKeyTime
 	);
 
 	const isOnBuyKeyTime = buyKeyStatus === BuyKeyState.Available;

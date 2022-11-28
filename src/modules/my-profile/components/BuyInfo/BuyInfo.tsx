@@ -106,14 +106,17 @@ export default function BuyInfo() {
 		return isEnoughBalance;
 	};
 
-	const { actualStartBuyKeyTime, mintKeyDays } = getActualStartBuyKeyTime(
-		startBuyKeyUnixTime || 0,
-		systemSetting?.mint_days || 0
-	);
+	// TODO: not using 0 default value
+	const { available, actualStartBuyKeyTime, mintKeyDays } =
+		getActualStartBuyKeyTime(
+			startBuyKeyUnixTime || 0,
+			systemSetting?.mint_days || 0
+		);
 
 	const { buyKeyStatus } = getTimeLeftToBuyKey(
-		actualStartBuyKeyTime,
-		mintKeyDays
+		available,
+		mintKeyDays,
+		actualStartBuyKeyTime
 	);
 
 	const isOnBuyKeyTime = buyKeyStatus === BuyKeyState.Available;

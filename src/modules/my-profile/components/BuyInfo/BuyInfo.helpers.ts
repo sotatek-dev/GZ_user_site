@@ -12,55 +12,72 @@ export enum BuyKeyState {
 export const getActualStartBuyKeyTime = (
 	buyKeyStartTime: number,
 	mintKeyDays: number
-) => {
+): {
+	available: boolean;
+	actualStartBuyKeyTime?: dayjs.Dayjs;
+	mintKeyDays: number;
+} => {
+	const now = dayjs();
+
+	const currentDate = now.get('date');
 	const startBuyKeyTime = dayjs.unix(buyKeyStartTime);
 
 	const maxDayInCurrentMonth = startBuyKeyTime.daysInMonth();
-	const startBuyKeyDate = startBuyKeyTime.date();
-
+	const startBuyKeyDate = startBuyKeyTime.get('date');
 	// If set mint_days = 31, but days_in_month is 28/29/30 days
-	let maxAvaiMintKeyDays = Math.min(mintKeyDays, maxDayInCurrentMonth);
+	const maxAvaiMintKeyDays = Math.min(mintKeyDays, maxDayInCurrentMonth);
 
+	if (now.isAfter(startBuyKeyTime) || now.isSame(startBuyKeyTime)) {
+		if (currentDate > maxAvaiMintKeyDays) {
+			return {
+				available: false,
+				actualStartBuyKeyTime: now.add(1, 'month').startOf('month'),
+				mintKeyDays: maxAvaiMintKeyDays,
+			};
+		}
+
+		return {
+			available: true,
+			mintKeyDays: maxAvaiMintKeyDays,
+		};
+	}
+
+	// now < startBuyKeyTime
 	if (startBuyKeyDate <= maxAvaiMintKeyDays) {
 		return {
+			available: false,
 			actualStartBuyKeyTime: startBuyKeyTime,
 			mintKeyDays: maxAvaiMintKeyDays,
 		};
 	}
 
-	// Start buy key time will be set for start time of next month
-	const nextMonthStartTime = startBuyKeyTime.add(1, 'month').startOf('month');
-	maxAvaiMintKeyDays = Math.min(mintKeyDays, nextMonthStartTime.daysInMonth());
-
 	return {
-		actualStartBuyKeyTime: nextMonthStartTime,
+		available: false,
+		actualStartBuyKeyTime: startBuyKeyTime.add(1, 'month').startOf('month'),
 		mintKeyDays: maxAvaiMintKeyDays,
 	};
 };
 
 export const getTimeLeftToBuyKey = (
-	startBuyKeyTime: dayjs.Dayjs,
-	mintKeyDays: number
+	available: boolean,
+	mintKeyDays: number,
+	startBuyKeyTime?: dayjs.Dayjs
 ) => {
 	const now = dayjs();
 
-	if (now.isBefore(startBuyKeyTime)) {
+	if (available) {
 		return {
-			buyKeyStatus: BuyKeyState.Incomming,
-			timeLeft: startBuyKeyTime.diff(now, 'second'),
-		};
-	}
-
-	if (now.date() > mintKeyDays) {
-		const nextMintKeyStartTime = now.add(1, 'month').startOf('month');
-		return {
-			buyKeyStatus: BuyKeyState.Incomming,
-			timeLeft: nextMintKeyStartTime.diff(now),
+			buyKeyStatus: BuyKeyState.Available,
+			timeLeft: dayjs()
+				.startOf('month')
+				.set('date', mintKeyDays + 1)
+				.diff(now, 'second'),
 		};
 	}
 
 	return {
-		buyKeyStatus: BuyKeyState.Available,
-		timeLeft: now.startOf('month').add(mintKeyDays, 'days').diff(now, 'second'),
+		buyKeyStatus: BuyKeyState.Incomming,
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		timeLeft: startBuyKeyTime!.diff(now, 'second'),
 	};
 };
