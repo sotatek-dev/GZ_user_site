@@ -80,6 +80,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		if (!isShow) {
 			form.setFieldValue('amountGXC', '');
 			form.setFieldValue('amount', '');
+			setAmountGXC('');
 			setAmount('');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
