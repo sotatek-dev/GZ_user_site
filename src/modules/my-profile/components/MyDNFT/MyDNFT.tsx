@@ -299,8 +299,10 @@ export default function MyDNFT() {
 	return (
 		<BoxPool>
 			<div className='flex justify-between items-start mb-3'>
-				<h5 className='text-h6 font-semibold text-white'>My dNFT</h5>
-				<RefreshDNFTList handleGetDNFTs={handleGetDNFTs} />
+				<div className='desktop:w-full desktop:flex desktop:justify-between'>
+					<h5 className='text-h6 font-semibold text-white'>My dNFT</h5>
+					<RefreshDNFTList handleGetDNFTs={handleGetDNFTs} />
+				</div>
 				<button
 					disabled={!canClaimAll}
 					onClick={() => {
