@@ -676,6 +676,7 @@ const TokenSaleRoundDetail = () => {
 				onCancel={() => setOpenTokenPurchase(false)}
 				currency={currency}
 				exchangeRate={price}
+				exchangeRateConvert={priceRender}
 				detailSaleRound={detailSaleRound}
 				maxPreSaleAmount={maxPreSaleAmount}
 				youBought={youBought}
