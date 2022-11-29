@@ -2,7 +2,6 @@
 	{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
 	{ "inputs": [], "name": "ALL_TOKENS_ARE_SOLD_OR_RESCUED", "type": "error" },
 	{ "inputs": [], "name": "CANNOT_BUY", "type": "error" },
-	{ "inputs": [], "name": "CURRENT_SALE_PHASE_NOT_ENDED", "type": "error" },
 	{ "inputs": [], "name": "INSUFFICIENT_BNB", "type": "error" },
 	{ "inputs": [], "name": "INSUFFICIENT_BUSD", "type": "error" },
 	{ "inputs": [], "name": "INSUFFICIENT_CLAIMABLE_AMOUNT", "type": "error" },
@@ -14,13 +13,13 @@
 		"name": "INVALID_MINIMUM_GALACTIX_TOKEN_REQUIRE",
 		"type": "error"
 	},
+	{ "inputs": [], "name": "INVALID_NUMBER_OF_NFTS", "type": "error" },
 	{ "inputs": [], "name": "INVALID_PRICE", "type": "error" },
 	{ "inputs": [], "name": "INVALID_PRICE_AFTER_24_HOURS", "type": "error" },
 	{ "inputs": [], "name": "INVALID_PRICE_FROM_PRICE_FEED", "type": "error" },
 	{ "inputs": [], "name": "INVALID_ROYALTY_FEE_RATE", "type": "error" },
 	{ "inputs": [], "name": "INVALID_SALE_PHASE", "type": "error" },
 	{ "inputs": [], "name": "INVALID_SIGNATURE", "type": "error" },
-	{ "inputs": [], "name": "INVALID_START_TIME", "type": "error" },
 	{ "inputs": [], "name": "KEY_IS_USED_THIS_MONTH", "type": "error" },
 	{ "inputs": [], "name": "LAUNCH_PRICE_NOT_SET", "type": "error" },
 	{ "inputs": [], "name": "NOT_CLAIMABLE_TIME", "type": "error" },
@@ -36,6 +35,25 @@
 	{ "inputs": [], "name": "TREASURY_ADDRESS_NOT_SET", "type": "error" },
 	{ "inputs": [], "name": "WRONG_CANDIDATE", "type": "error" },
 	{ "inputs": [], "name": "ZERO_ADDRESS", "type": "error" },
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_admin",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "_tokenIds",
+				"type": "uint256[]"
+			}
+		],
+		"name": "AdminRescued",
+		"type": "event"
+	},
 	{
 		"anonymous": false,
 		"inputs": [
@@ -898,7 +916,9 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{ "internalType": "uint256", "name": "_numberOfNfts", "type": "uint256" }
+		],
 		"name": "restrictedRescue",
 		"outputs": [],
 		"stateMutability": "nonpayable",
