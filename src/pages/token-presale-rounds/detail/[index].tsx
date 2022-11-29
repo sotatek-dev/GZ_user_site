@@ -303,6 +303,7 @@ const TokenSaleRoundDetail = () => {
 		const totalSoldAmount = convertHexToNumber(
 			get(resSalePhaseInfo, 'totalSoldAmount._hex', HEX_ZERO)
 		);
+
 		const maxPreSaleAmount = convertHexToNumber(
 			get(resSalePhaseInfo, 'maxPreSaleAmount._hex', HEX_ZERO)
 		);
@@ -478,6 +479,8 @@ const TokenSaleRoundDetail = () => {
 	};
 
 	const renderInprogessBuy = () => {
+		console.log('totalSoldAmount', totalSoldAmount);
+
 		const buyProgess = Math.floor((totalSoldAmount / maxPreSaleAmount) * 100);
 		return (
 			<>
