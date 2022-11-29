@@ -26,7 +26,7 @@ import { NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
 import { useActiveWeb3React } from 'web3/hooks';
 import DNFTABI from 'modules/web3/abis/abi-dnft.json';
-import { IDNFT } from 'modules/my-profile/interfaces';
+import { DNFTType, IDNFT } from 'modules/my-profile/interfaces';
 import RefreshDNFTList from './RefreshDNFTList';
 
 const TIME_BSC_NEW_BLOCK = 3000; // ms
@@ -84,17 +84,21 @@ export default function MyDNFT() {
 				'seconds'
 			);
 			const isOnClaimTemMergeTime = dayjs().isAfter(claimTemMergeTime);
-			const isClaimTemMergeStatus =
+			const canClaimTemMerge =
 				_dnft.status === DNFTStatuses.WaitToMerge && isOnClaimTemMergeTime;
+
+			const actualClaimableTime = () => {
+				if (!isPresale2Active) return '-';
+				if (_dnft.type === DNFTType.TEMP_MERGED) {
+					return claimTemMergeTime.format('DD-MMMM-YYYY HH:mm');
+				}
+				return dayjs.unix(claimableTime).format('DD-MMMM-YYYY HH:mm');
+			};
 
 			return {
 				..._dnft,
-				claimable_date: isPresale2Active
-					? dayjs.unix(claimableTime).format('DD-MMMM-YYYY HH:mm')
-					: '-',
-				status: isClaimTemMergeStatus
-					? DNFTStatuses.ClaimTemMerge
-					: _dnft.status,
+				claimable_date: actualClaimableTime(),
+				status: canClaimTemMerge ? DNFTStatuses.ClaimTemMerge : _dnft.status,
 				onClick: () => {
 					if (_dnft.status === DNFTStatuses.Claimable) {
 						return handleClaim(_dnft._id);
@@ -197,7 +201,7 @@ export default function MyDNFT() {
 					},
 				});
 
-				Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
+				await Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
 			}
 		} catch (err) {
 			handleClaimError(err);
@@ -233,7 +237,12 @@ export default function MyDNFT() {
 
 	const handleGetDNFTs = () => {
 		dispatch(
-			getMyDNFTsRD({ page, limit: LIMIT_10, species: type, rarities: status })
+			getMyDNFTsRD({
+				page,
+				limit: LIMIT_10,
+				species: type,
+				rarities: status,
+			})
 		);
 	};
 
