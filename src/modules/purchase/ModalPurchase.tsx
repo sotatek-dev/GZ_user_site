@@ -43,7 +43,7 @@ interface IModalPurchaseProps {
 	onCancel: () => void;
 	currency: string;
 	exchangeRate: number;
-	exchangeRateConvert: number;
+	exchangeRateConvert: string;
 	detailSaleRound: ITokenSaleRoundState | undefined;
 	handleGetUserPurchasedAmount: (saleRoundId: number) => void;
 	getDetailSaleRound: () => void;
