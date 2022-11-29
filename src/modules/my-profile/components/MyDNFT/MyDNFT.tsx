@@ -336,18 +336,18 @@ export default function MyDNFT() {
 				<div className='flex gap-x-2 mb-6 justify-between'>
 					<div className='flex items-center justify-between desktop:justify-start grow gap-2.5'>
 						<Dropdown
-							emptyOption='All status'
+							emptyOption='All species'
 							onClick={(value) => {
 								setPage(1);
 								setStatus(value.key);
 							}}
 							customStyle={'!w-1/2 desktop:!w-[160px]'}
 							list={RARITY_DNFT}
-							title='All status'
+							title='All species'
 							label={status}
 						/>
 						<Dropdown
-							emptyOption='All types'
+							emptyOption='All rarities'
 							onClick={(value) => {
 								setPage(1);
 								setType(value.key);
@@ -355,7 +355,7 @@ export default function MyDNFT() {
 							customStyle='!w-1/2 desktop:!w-[160px]'
 							label={type}
 							list={SPECIES_DNFT}
-							title='All types'
+							title='All rarities'
 						/>
 					</div>
 					<button
