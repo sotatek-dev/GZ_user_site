@@ -269,6 +269,7 @@ export function formatNumber(value: any) {
 		}
 		if (comps.length === 2) {
 			suffix = '.' + (comps[1] || '0');
+			console.log('suffix', suffix);
 		}
 		while (suffix.length > 3 && suffix[suffix.length - 1] === '0') {
 			suffix = suffix.substring(0, suffix.length - 1);
@@ -294,7 +295,7 @@ export function formatNumber(value: any) {
 			Math.floor(toNumber('0' + suffix) * 10000) / 10000
 		);
 
-		if (roundNumber) {
+		if (roundNumber && String(roundNumber).split('.').length > 1) {
 			suffix = '.' + String(roundNumber).split('.')[1];
 		} else {
 			suffix = '';
