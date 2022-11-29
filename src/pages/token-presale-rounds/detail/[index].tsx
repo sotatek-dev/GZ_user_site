@@ -452,7 +452,7 @@ const TokenSaleRoundDetail = () => {
 					</div>
 				)}
 				{youCanClaimAmount > 0 && (
-					<div className='desktop:border-x-[1px] desktop:border-y-[0px] border-y-[1px] border-gray-30 desktop:px-8'>
+					<div className='desktop:border-l-[1px] desktop:border-l-[0px] border-l-[1px] border-gray-30 desktop:px-8'>
 						<div className='text-sm font-normal text-gray-40 mb-2 whitespace-nowrap desktop:pt-0 pt-4'>
 							You can claim
 						</div>
@@ -467,21 +467,32 @@ const TokenSaleRoundDetail = () => {
 
 	const renderPriceBuyInfoEnd = () => {
 		return (
-			<div>
-				<div className='text-sm font-normal text-gray-40 mb-2 '>
-					You can claim
+			<div className='flex flex-col justify-between h-ful'>
+				<div>
+					<div className='text-sm font-normal text-gray-40 mb-2 '>
+						You can claim
+					</div>
+					<div className='text-base font-semibold'>{`${formatNumber(
+						youCanClaimAmount
+					)} ${GXZ_CURRENCY}`}</div>
 				</div>
-				<div className='text-base font-semibold'>{`${formatNumber(
-					youCanClaimAmount
-				)} ${GXZ_CURRENCY}`}</div>
+				<div>
+					<div className='text-sm font-normal text-gray-40 mb-2 '>
+						Total Buy
+					</div>
+					<div className='text-base font-semibold'>
+						{`${formatNumber(totalSoldAmount)}/${formatNumber(
+							maxPreSaleAmount
+						)} ${GXZ_CURRENCY}`}
+					</div>
+				</div>
 			</div>
 		);
 	};
 
 	const renderInprogessBuy = () => {
-		console.log('totalSoldAmount', totalSoldAmount);
-
 		const buyProgess = Math.floor((totalSoldAmount / maxPreSaleAmount) * 100);
+
 		return (
 			<>
 				<div className='text-sm text font-normal pb-2'>Buy Progress:</div>
@@ -562,8 +573,8 @@ const TokenSaleRoundDetail = () => {
 					title='Buy Info'
 					customClass='desktop:w-[50%] flex flex-col bg-gray-50'
 				>
-					<div className='pt-[1.688rem]'>
-						<div className='flex justify-between w-full desktop:flex-row flex-col'>
+					<div className='pt-[1.688rem] h-full'>
+						<div className='flex justify-between w-full h-full desktop:flex-row flex-col'>
 							{(statusTimeLine === UPCOMING || statusTimeLine === BUY) &&
 								renderPriceBuyInfoUpComing()}
 							{statusTimeLine === CLAIMABLE && renderPriceBuyInfoClaimable()}
