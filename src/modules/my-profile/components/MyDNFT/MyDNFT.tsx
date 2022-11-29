@@ -29,10 +29,11 @@ import DNFTABI from 'modules/web3/abis/abi-dnft.json';
 import { IDNFT } from 'modules/my-profile/interfaces';
 import RefreshDNFTList from './RefreshDNFTList';
 
+const TIME_BSC_NEW_BLOCK = 3000; // ms
 // If Presale 2 phase not active, BE set claim date to this
 const TIMESTAMP_LIMIT_VALUE = 2147483647;
-// const AVAI_TO_UNMERGE = 30; // days
-const AVAI_TO_UNMERGE = 15 / (24 * 60); // 15min
+// const AVAI_TO_UNMERGE = 86400 * 30; // secs
+const AVAI_TO_UNMERGE = 900; // secs = 15'
 
 export default function MyDNFT() {
 	const router = useRouter();
@@ -80,7 +81,7 @@ export default function MyDNFT() {
 			const _dnft = cloneDeep(item);
 			const claimTemMergeTime = dayjs(_dnft.created_at).add(
 				AVAI_TO_UNMERGE,
-				'days'
+				'seconds'
 			);
 			const isOnClaimTemMergeTime = dayjs().isAfter(claimTemMergeTime);
 			const isClaimTemMergeStatus =
@@ -185,7 +186,9 @@ export default function MyDNFT() {
 				const tx = await dnftContract.claimPurchasedToken(1);
 				const res = await tx.wait();
 
-				await triggerRefresh(id);
+				await new Promise((res) => {
+					setTimeout(res, TIME_BSC_NEW_BLOCK * 3);
+				});
 
 				message.success({
 					content: myProfileConstants.TRANSACTION_COMPLETED,
