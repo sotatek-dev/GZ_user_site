@@ -43,6 +43,7 @@ interface IModalPurchaseProps {
 	onCancel: () => void;
 	currency: string;
 	exchangeRate: number;
+	exchangeRateConvert: number;
 	detailSaleRound: ITokenSaleRoundState | undefined;
 	handleGetUserPurchasedAmount: (saleRoundId: number) => void;
 	getDetailSaleRound: () => void;
@@ -56,6 +57,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	onCancel,
 	currency,
 	exchangeRate,
+	exchangeRateConvert,
 	detailSaleRound = {},
 	handleGetUserPurchasedAmount,
 	maxPreSaleAmount,
@@ -324,7 +326,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
 		const amountOfTokensPurchased = new BigNumber(youBought).times(
-			exchangeRate
+			exchangeRateConvert
 		);
 
 		if (currency === BUSD_CURRENCY && amount.gt(new BigNumber(busdBalance))) {
