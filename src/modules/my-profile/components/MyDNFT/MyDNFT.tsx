@@ -11,7 +11,7 @@ import {
 	SPECIES_DNFT,
 } from 'common/constants/constants';
 import dayjs from 'dayjs';
-import { cloneDeep, get, includes } from 'lodash';
+import _, { cloneDeep, get, includes } from 'lodash';
 import { getNonces } from 'modules/mint-dnft/services';
 import {
 	DNFTStatus,
@@ -29,10 +29,11 @@ import DNFTABI from 'modules/web3/abis/abi-dnft.json';
 import { IDNFT } from 'modules/my-profile/interfaces';
 import RefreshDNFTList from './RefreshDNFTList';
 
+const TIME_BSC_NEW_BLOCK = 3000; // ms
 // If Presale 2 phase not active, BE set claim date to this
 const TIMESTAMP_LIMIT_VALUE = 2147483647;
-// const AVAI_TO_UNMERGE = 30; // days
-const AVAI_TO_UNMERGE = 15 / (24 * 60); // 15min
+const AVAI_TO_UNMERGE = 86400 * 30; // secs
+// const AVAI_TO_UNMERGE = 900; // secs = 15'
 
 export default function MyDNFT() {
 	const router = useRouter();
@@ -51,7 +52,9 @@ export default function MyDNFT() {
 	const [type, setType] = useState<string>('');
 	const [status, setStatus] = useState<string>('');
 	const [page, setPage] = useState<number>(1);
-	const [loadingMap, setLoadingMap] = useState({});
+	const [loadingMap, setLoadingMap] = useState<{ [key in string]: boolean }>(
+		{}
+	);
 
 	useEffect(() => {
 		if (isLogin) {
@@ -78,7 +81,7 @@ export default function MyDNFT() {
 			const _dnft = cloneDeep(item);
 			const claimTemMergeTime = dayjs(_dnft.created_at).add(
 				AVAI_TO_UNMERGE,
-				'days'
+				'seconds'
 			);
 			const isOnClaimTemMergeTime = dayjs().isAfter(claimTemMergeTime);
 			const isClaimTemMergeStatus =
@@ -106,13 +109,17 @@ export default function MyDNFT() {
 		});
 	})();
 
+	const removeLoadingState = (id: string) => {
+		setLoadingMap((prev) => _.omit(prev, id));
+	};
+
 	const handleUnmerge = async (session_id: string) => {
 		if (!dnftContract || !account) {
 			return;
 		}
 
 		try {
-			setLoadingMap({ [session_id]: true });
+			setLoadingMap((prev) => ({ ...prev, [session_id]: true }));
 
 			const nonce = await getNonces(dnftContract, account);
 			const res = await getDNFTSignature({ session_id, nonce });
@@ -138,7 +145,7 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(session_id);
 		}
 	};
 
@@ -146,7 +153,7 @@ export default function MyDNFT() {
 		if (!dnftContract || !account) return;
 
 		try {
-			setLoadingMap({ [dnftId]: true });
+			setLoadingMap((prev) => ({ ...prev, [dnftId]: true }));
 
 			const nonce = await getNonces(dnftContract, account);
 			const res = await getDNFTSignature({ session_id: dnftId, nonce });
@@ -167,18 +174,21 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(dnftId);
 		}
 	};
 
 	const handleClaim = async (id: string) => {
 		try {
-			setLoadingMap({ [id]: true });
+			setLoadingMap((prev) => ({ ...prev, [id]: true }));
+
 			if (dnftContract) {
 				const tx = await dnftContract.claimPurchasedToken(1);
 				const res = await tx.wait();
 
-				await triggerRefresh(id);
+				await new Promise((res) => {
+					setTimeout(res, TIME_BSC_NEW_BLOCK * 3);
+				});
 
 				message.success({
 					content: myProfileConstants.TRANSACTION_COMPLETED,
@@ -192,15 +202,16 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(id);
 		}
 	};
 
 	const handleClaimAll = async (amount: number) => {
 		if (!dnftContract || !claimableDnfts) return;
+		const CLAIM_ALL_KEY = 'claimAll';
 
 		try {
-			setLoadingMap({ claimAll: true });
+			setLoadingMap((prev) => ({ ...prev, CLAIM_ALL_KEY: true }));
 			const tx = await dnftContract.claimPurchasedToken(amount);
 			const txRes = await tx.wait();
 
@@ -216,7 +227,7 @@ export default function MyDNFT() {
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
-			setLoadingMap({});
+			removeLoadingState(CLAIM_ALL_KEY);
 		}
 	};
 
@@ -325,18 +336,18 @@ export default function MyDNFT() {
 				<div className='flex gap-x-2 mb-6 justify-between'>
 					<div className='flex items-center justify-between desktop:justify-start grow gap-2.5'>
 						<Dropdown
-							emptyOption='All status'
+							emptyOption='All species'
 							onClick={(value) => {
 								setPage(1);
 								setStatus(value.key);
 							}}
 							customStyle={'!w-1/2 desktop:!w-[160px]'}
 							list={RARITY_DNFT}
-							title='All status'
+							title='All species'
 							label={status}
 						/>
 						<Dropdown
-							emptyOption='All types'
+							emptyOption='All rarities'
 							onClick={(value) => {
 								setPage(1);
 								setType(value.key);
@@ -344,7 +355,7 @@ export default function MyDNFT() {
 							customStyle='!w-1/2 desktop:!w-[160px]'
 							label={type}
 							list={SPECIES_DNFT}
-							title='All types'
+							title='All rarities'
 						/>
 					</div>
 					<button
