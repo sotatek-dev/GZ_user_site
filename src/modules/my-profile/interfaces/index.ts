@@ -1,11 +1,18 @@
 import { DNFTStatuses } from '../components/MyDNFT/MyDNFT.constant';
 
+export enum DNFTType {
+	NORMAL = 'normal', // earn by mint
+	PERMANENT_MERGED = 'permanent-merged',
+	TEMP_MERGED = 'temp-merged',
+	RESCURED = 'rescured', // earn my rescure key.
+}
+
 export interface IDNFT {
 	_id: string;
 	wallet_address: string;
 	status: DNFTStatuses;
 	metadata: IDNFTMetadata;
-	type: string;
+	type: DNFTType;
 	token_id: string;
 	species: string;
 	rank_level: string;
