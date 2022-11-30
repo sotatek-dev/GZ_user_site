@@ -28,6 +28,8 @@ import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { getRemainingClaimableAmount } from 'web3/contracts/useContractTokenSale';
 
+const TIME_COUNDOWN_BONUS = 15; //15s
+
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
 };
@@ -55,16 +57,16 @@ export const convertTimeLine = async (
 	let timeCountDown = -1;
 	let startTimeClaim = get(claimConfigs[0], 'start_time', 0) as number; // mặc định khi chưa đến phase claim sẽ lấy thời gian claim đầu tiên
 	if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.UPCOMING) {
-		timeCountDown = startTime - timestampNow;
+		timeCountDown = startTime + TIME_COUNDOWN_BONUS - timestampNow;
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.UPCOMING;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.BUY) {
-		timeCountDown = endTime - timestampNow;
+		timeCountDown = endTime + TIME_COUNDOWN_BONUS - timestampNow;
 		status = BUY;
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING) {
 		status = BUY;
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
-		timeCountDown = startTimeClaim - timestampNow;
+		timeCountDown = startTimeClaim + TIME_COUNDOWN_BONUS - timestampNow;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
 		const [youCanClaimAmount] = await getRemainingClaimableAmount(
 			addressWallet,
@@ -77,7 +79,7 @@ export const convertTimeLine = async (
 			for (let index = 0; index < claimConfigs?.length; index++) {
 				startTimeClaim = get(claimConfigs[index], 'start_time') as number;
 				if (startTimeClaim > timestampNow) {
-					timeCountDown = startTimeClaim - timestampNow;
+					timeCountDown = startTimeClaim + TIME_COUNDOWN_BONUS - timestampNow;
 				} else {
 					startTimeClaim = 0;
 				}
