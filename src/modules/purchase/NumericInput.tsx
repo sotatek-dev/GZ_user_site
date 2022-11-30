@@ -11,10 +11,11 @@ interface NumericInputProps {
 	addonAfter?: ReactNode | string;
 	value: string;
 	onChange: (value: string) => void;
+	onBlur: (value: string) => void;
 }
 
 export default function NumericInput(props: NumericInputProps) {
-	const { value, onChange } = props;
+	const { value, onChange, onBlur } = props;
 
 	const formatThousands = (num: string) => {
 		const values = num.split('.');
@@ -63,7 +64,7 @@ export default function NumericInput(props: NumericInputProps) {
 		if (value.charAt(value.length - 1) === '.' || value === '-') {
 			valueTemp = value.slice(0, -1);
 		}
-		onChange(
+		onBlur(
 			formatThousands(valueTemp.replace(/,/g, '').replace(/0*(\d+)/, '$1'))
 		);
 	};

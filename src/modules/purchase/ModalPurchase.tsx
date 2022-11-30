@@ -115,6 +115,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	const onChangeAmount = (amount: string) => {
+		console.log('onChangeAmount');
 		if (Number(amount) > 0) {
 			setLoadingCallGXZ(true);
 		}
@@ -125,9 +126,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const debounceChangeAmount = useCallback(
 		debounce((nextAmount) => {
 			if (currency === BNB_CURRENCY) {
-				handleChangeBNB(nextAmount);
+				return handleChangeBNB(nextAmount);
 			} else {
-				handleChangeBUSD(nextAmount);
+				return handleChangeBUSD(nextAmount);
 			}
 		}, 800),
 		[]
@@ -146,10 +147,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			newValue.toNumber(),
 			exchangeRate
 		);
-		if (error) {
-			handleWriteMethodError(error);
-		}
 		setLoadingCallGXZ(false);
+		if (error) {
+			return handleWriteMethodError(error);
+		}
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
 		if (
@@ -189,10 +190,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			Number(amountBUSD),
 			exchangeRate
 		);
-		if (error) {
-			handleWriteMethodError(error);
-		}
 		setLoadingCallGXZ(false);
+		if (error) {
+			return handleWriteMethodError(error);
+		}
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
 		if (
@@ -419,6 +420,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 										className='custom-input-wrapper'
 										placeholder='1,000.1234'
 										onChange={onChangeAmount}
+										onBlur={() => {}}
 										addonAfter={<div className='w-[90px]'>{currency}</div>}
 										value={amount}
 									/>
@@ -439,7 +441,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								/>
 							</Form.Item>
 							<Button
-								isDisabled={!amount || Number(amount) === 0}
+								isDisabled={
+									!amount || Number(amount) === 0 || Number(amountGXC) === 0
+								}
 								classCustom='bg-purple-30 !rounded-[40px] mx-auto !w-[200px] mt-4'
 								htmlType='submit'
 								label='Buy'
