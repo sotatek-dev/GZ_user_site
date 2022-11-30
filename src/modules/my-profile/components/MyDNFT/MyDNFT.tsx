@@ -32,8 +32,8 @@ import RefreshDNFTList from './RefreshDNFTList';
 const TIME_BSC_NEW_BLOCK = 3000; // ms
 // If Presale 2 phase not active, BE set claim date to this
 const TIMESTAMP_LIMIT_VALUE = 2147483647;
-const AVAI_TO_UNMERGE = 60 * 2; // secs
-// const AVAI_TO_UNMERGE = 900; // secs = 15'
+// const AVAI_TO_UNMERGE = 60 * 2; // 2'
+const AVAI_TO_UNMERGE = 60 * 60 * 24 * 30; // 30 days
 
 export default function MyDNFT() {
 	const router = useRouter();
