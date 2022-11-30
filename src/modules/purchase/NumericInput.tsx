@@ -42,6 +42,10 @@ export default function NumericInput(props: NumericInputProps) {
 				onChange('');
 				return;
 			}
+			if (inputValue.charAt(0) === '.') {
+				onChange(`0${inputValue}`);
+				return;
+			}
 
 			onChange(formatThousands(temp));
 			return;
