@@ -633,7 +633,7 @@ const TokenSaleRoundDetail = () => {
 					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
 						<div className='flex gap-x-2 mb-4'>
 							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
-								Total Raise:
+								Available to Purchase:
 							</div>
 							<div className='font-medium'>
 								{formatNumber(

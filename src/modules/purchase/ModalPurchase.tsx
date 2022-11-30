@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Form, Input, message } from 'antd';
+import { Form, Input, message, Spin } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
 import Button from 'common/components/button';
 import Loading from 'common/components/loading';
@@ -38,6 +38,7 @@ import { AbiPresalepool } from 'web3/abis/types';
 import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 import { useActiveWeb3React } from 'web3/hooks';
 import { handleWriteMethodError } from 'common/helpers/handleError';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface IModalPurchaseProps {
 	isShow: boolean;
@@ -71,7 +72,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const [amountGXC, setAmountGXC] = useState<string | any>('');
 	const [amount, setAmount] = useState<string>('');
 	const [buyLimit, setBuyLimit] = useState<string>('');
+	const [isLoadingCallGXZ, setLoadingCallGXZ] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
+
 	// const amountBUSDRef = useRef<HTMLInputElement>(null);
 	let checkValidate = true;
 	const presaleContract = useContract<AbiPresalepool>(
@@ -81,14 +84,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const { account } = useActiveWeb3React();
 
 	useEffect(() => {
-		if (!isShow) {
-			form.setFieldValue('amountGXC', '');
-			form.setFieldValue('amount', '');
-			setAmountGXC('');
-			setAmount('');
-		}
+		// if (!isShow) {
+		form.resetFields();
+		setAmountGXC('');
+		setAmount('');
+		// }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isShow, form, currency]);
+	}, [isShow, currency]);
 
 	useEffect(() => {
 		handleGetBuylimit();
@@ -106,6 +108,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	const onChangeAmount = (amount: string) => {
+		if (amount) {
+			setLoadingCallGXZ(true);
+		}
 		setAmount(amount);
 		debounceChangeAmount(amount);
 	};
@@ -117,8 +122,8 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			} else {
 				handleChangeBUSD(nextAmount);
 			}
-		}, 400),
-		[currency]
+		}, 800),
+		[currency, amount]
 	);
 
 	const handleChangeBUSD = async (value: string | null) => {
@@ -134,6 +139,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			newValue.toNumber(),
 			exchangeRate
 		);
+		setLoadingCallGXZ(false);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
 		if (
@@ -173,6 +179,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			Number(amountBUSD),
 			exchangeRate
 		);
+		setLoadingCallGXZ(false);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
 		if (
@@ -354,6 +361,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		return Promise.resolve();
 	};
 
+	const antIconLoading = (
+		<LoadingOutlined style={{ fontSize: 16, marginRight: '8px' }} spin />
+	);
+
 	return (
 		<ModalCustom
 			key={`presaleround-token-${isShow}`}
@@ -382,29 +393,36 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 							className='flex justify-center flex-col'
 							form={form}
 						>
+							<div className='mb-2'>
+								<Form.Item
+									label=''
+									name='amount'
+									rules={[
+										{ required: true, message: 'This field is required' },
+										{ validator: validateToken },
+									]}
+								>
+									<NumericInput
+										className='custom-input-wrapper'
+										placeholder='1,000.1234'
+										onChange={onChangeAmount}
+										addonAfter={<div className='w-[90px]'>{currency}</div>}
+										value={amount}
+									/>
+								</Form.Item>
+							</div>
 							<Form.Item label='' name='amountGXC'>
 								<Input
 									placeholder='1,000.1234'
 									className='custom-input-wrapper'
-									addonAfter={<div>GXZ</div>}
+									addonAfter={
+										<div className='w-[90px] flex justify-center'>
+											{isLoadingCallGXZ && <Spin indicator={antIconLoading} />}{' '}
+											GXZ
+										</div>
+									}
 									value={amountGXC}
 									disabled
-								/>
-							</Form.Item>
-							<Form.Item
-								label=''
-								name='amount'
-								rules={[
-									{ required: true, message: 'This field is required' },
-									{ validator: validateToken },
-								]}
-							>
-								<NumericInput
-									className='custom-input-wrapper'
-									placeholder='1,000.1234'
-									onChange={onChangeAmount}
-									addonAfter={<div>{currency}</div>}
-									value={amount}
 								/>
 							</Form.Item>
 							<Button
