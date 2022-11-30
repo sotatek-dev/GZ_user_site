@@ -93,6 +93,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	}, [isShow, currency]);
 
 	useEffect(() => {
+		if (!amount) {
+			form.resetFields();
+			setLoadingCallGXZ(false);
+		}
+	}, [amount, form]);
+
+	useEffect(() => {
 		handleGetBuylimit();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [detailSaleRound, currency]);
@@ -108,7 +115,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	const onChangeAmount = (amount: string) => {
-		if (amount) {
+		if (Number(amount) > 0) {
 			setLoadingCallGXZ(true);
 		}
 		setAmount(amount);
@@ -123,7 +130,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				handleChangeBUSD(nextAmount);
 			}
 		}, 800),
-		[currency, amount]
+		[]
 	);
 
 	const handleChangeBUSD = async (value: string | null) => {
@@ -135,10 +142,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 		setAmount(newValue.toString());
-		const [amountGXC] = await getTokenAmountFromBUSD(
+		const [amountGXC, error] = await getTokenAmountFromBUSD(
 			newValue.toNumber(),
 			exchangeRate
 		);
+		if (error) {
+			handleWriteMethodError(error);
+		}
 		setLoadingCallGXZ(false);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
@@ -175,10 +185,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 		setAmount(newValue.toString());
 		const [amountBUSD] = await convertBNBtoBUSD(newValue.toNumber());
-		const [amountGXC] = await getTokenAmountFromBUSD(
+		const [amountGXC, error] = await getTokenAmountFromBUSD(
 			Number(amountBUSD),
 			exchangeRate
 		);
+		if (error) {
+			handleWriteMethodError(error);
+		}
 		setLoadingCallGXZ(false);
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
@@ -426,7 +439,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								/>
 							</Form.Item>
 							<Button
-								isDisabled={!amount}
+								isDisabled={!amount || Number(amount) === 0}
 								classCustom='bg-purple-30 !rounded-[40px] mx-auto !w-[200px] mt-4'
 								htmlType='submit'
 								label='Buy'
