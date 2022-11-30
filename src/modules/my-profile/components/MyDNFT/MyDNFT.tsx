@@ -26,13 +26,14 @@ import { NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
 import { useActiveWeb3React } from 'web3/hooks';
 import DNFTABI from 'modules/web3/abis/abi-dnft.json';
-import { IDNFT } from 'modules/my-profile/interfaces';
+import { DNFTType, IDNFT } from 'modules/my-profile/interfaces';
 import RefreshDNFTList from './RefreshDNFTList';
 
+const TIME_BSC_NEW_BLOCK = 3000; // ms
 // If Presale 2 phase not active, BE set claim date to this
 const TIMESTAMP_LIMIT_VALUE = 2147483647;
-// const AVAI_TO_UNMERGE = 30; // days
-const AVAI_TO_UNMERGE = 15 / (24 * 60); // 15min
+// const AVAI_TO_UNMERGE = 60 * 2; // 2'
+const AVAI_TO_UNMERGE = 60 * 60 * 24 * 30; // 30 days
 
 export default function MyDNFT() {
 	const router = useRouter();
@@ -80,20 +81,24 @@ export default function MyDNFT() {
 			const _dnft = cloneDeep(item);
 			const claimTemMergeTime = dayjs(_dnft.created_at).add(
 				AVAI_TO_UNMERGE,
-				'days'
+				'seconds'
 			);
 			const isOnClaimTemMergeTime = dayjs().isAfter(claimTemMergeTime);
-			const isClaimTemMergeStatus =
+			const canClaimTemMerge =
 				_dnft.status === DNFTStatuses.WaitToMerge && isOnClaimTemMergeTime;
+
+			const actualClaimableTime = () => {
+				if (!isPresale2Active) return '-';
+				if (_dnft.type === DNFTType.TEMP_MERGED) {
+					return claimTemMergeTime.format('DD-MMMM-YYYY HH:mm');
+				}
+				return dayjs.unix(claimableTime).format('DD-MMMM-YYYY HH:mm');
+			};
 
 			return {
 				..._dnft,
-				claimable_date: isPresale2Active
-					? dayjs.unix(claimableTime).format('DD-MMMM-YYYY HH:mm')
-					: '-',
-				status: isClaimTemMergeStatus
-					? DNFTStatuses.ClaimTemMerge
-					: _dnft.status,
+				claimable_date: actualClaimableTime(),
+				status: canClaimTemMerge ? DNFTStatuses.ClaimTemMerge : _dnft.status,
 				onClick: () => {
 					if (_dnft.status === DNFTStatuses.Claimable) {
 						return handleClaim(_dnft._id);
@@ -185,7 +190,9 @@ export default function MyDNFT() {
 				const tx = await dnftContract.claimPurchasedToken(1);
 				const res = await tx.wait();
 
-				await triggerRefresh(id);
+				await new Promise((res) => {
+					setTimeout(res, TIME_BSC_NEW_BLOCK * 3);
+				});
 
 				message.success({
 					content: myProfileConstants.TRANSACTION_COMPLETED,
@@ -194,7 +201,7 @@ export default function MyDNFT() {
 					},
 				});
 
-				Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
+				await Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
 			}
 		} catch (err) {
 			handleClaimError(err);
@@ -230,7 +237,12 @@ export default function MyDNFT() {
 
 	const handleGetDNFTs = () => {
 		dispatch(
-			getMyDNFTsRD({ page, limit: LIMIT_10, species: type, rarities: status })
+			getMyDNFTsRD({
+				page,
+				limit: LIMIT_10,
+				species: type,
+				rarities: status,
+			})
 		);
 	};
 
@@ -333,18 +345,7 @@ export default function MyDNFT() {
 				<div className='flex gap-x-2 mb-6 justify-between'>
 					<div className='flex items-center justify-between desktop:justify-start grow gap-2.5'>
 						<Dropdown
-							emptyOption='All status'
-							onClick={(value) => {
-								setPage(1);
-								setStatus(value.key);
-							}}
-							customStyle={'!w-1/2 desktop:!w-[160px]'}
-							list={RARITY_DNFT}
-							title='All status'
-							label={status}
-						/>
-						<Dropdown
-							emptyOption='All types'
+							emptyOption='All species'
 							onClick={(value) => {
 								setPage(1);
 								setType(value.key);
@@ -352,7 +353,18 @@ export default function MyDNFT() {
 							customStyle='!w-1/2 desktop:!w-[160px]'
 							label={type}
 							list={SPECIES_DNFT}
-							title='All types'
+							title='All species'
+						/>
+						<Dropdown
+							emptyOption='All rarities'
+							onClick={(value) => {
+								setPage(1);
+								setStatus(value.key);
+							}}
+							customStyle={'!w-1/2 desktop:!w-[160px]'}
+							list={RARITY_DNFT}
+							title='All rarities'
+							label={status}
 						/>
 					</div>
 					<button

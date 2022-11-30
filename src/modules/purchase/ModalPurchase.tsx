@@ -11,9 +11,9 @@ import {
 	ROYALTY_FEE_PURCHASE,
 } from 'common/constants/constants';
 import { formatNumber, fromWei, toWei } from 'common/utils/functions';
-import { get } from 'lodash';
+import { debounce, get } from 'lodash';
 import { ITokenSaleRoundState } from 'pages/token-presale-rounds';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import NumericInput from './NumericInput';
 import {
 	NEXT_PUBLIC_BUSD,
@@ -37,12 +37,14 @@ import { useContract } from 'web3/contracts/useContract';
 import { AbiPresalepool } from 'web3/abis/types';
 import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 import { useActiveWeb3React } from 'web3/hooks';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 
 interface IModalPurchaseProps {
 	isShow: boolean;
 	onCancel: () => void;
 	currency: string;
 	exchangeRate: number;
+	exchangeRateConvert: string;
 	detailSaleRound: ITokenSaleRoundState | undefined;
 	handleGetUserPurchasedAmount: (saleRoundId: number) => void;
 	getDetailSaleRound: () => void;
@@ -56,6 +58,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	onCancel,
 	currency,
 	exchangeRate,
+	exchangeRateConvert,
 	detailSaleRound = {},
 	handleGetUserPurchasedAmount,
 	maxPreSaleAmount,
@@ -67,6 +70,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const { addressWallet, balance } = useAppSelector((state) => state.wallet);
 	const [amountGXC, setAmountGXC] = useState<string | any>('');
 	const [amount, setAmount] = useState<string>('');
+	const [buyLimit, setBuyLimit] = useState<string>('');
 	const [isLoading, setLoading] = useState<boolean>(false);
 	// const amountBUSDRef = useRef<HTMLInputElement>(null);
 	let checkValidate = true;
@@ -84,16 +88,38 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			setAmount('');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isShow, form]);
+	}, [isShow, form, currency]);
 
 	useEffect(() => {
-		if (currency === BNB_CURRENCY) {
-			handleChangeBNB(amount);
-		} else {
-			handleChangeBUSD(amount);
-		}
+		handleGetBuylimit();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [amount]);
+	}, [detailSaleRound, currency]);
+
+	const handleGetBuylimit = async () => {
+		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+		let buyLimit = buyLimitBUSD;
+		if (currency === BNB_CURRENCY) {
+			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
+			buyLimit = Number(buyLimitBNB) as any;
+		}
+		setBuyLimit(buyLimit);
+	};
+
+	const onChangeAmount = (amount: string) => {
+		setAmount(amount);
+		debounceChangeAmount(amount);
+	};
+
+	const debounceChangeAmount = useCallback(
+		debounce((nextAmount) => {
+			if (currency === BNB_CURRENCY) {
+				handleChangeBNB(nextAmount);
+			} else {
+				handleChangeBUSD(nextAmount);
+			}
+		}, 400),
+		[currency]
+	);
 
 	const handleChangeBUSD = async (value: string | null) => {
 		if (!value) {
@@ -203,12 +229,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					NEXT_PUBLIC_BUSD,
 					NEXT_PUBLIC_PRESALE_POOL
 				);
-				if (error) {
+				if (error as any) {
 					setLoading(false);
-					if (error?.error?.code === -32603) {
-						return message.error('Network Error!');
-					}
-					return message.error('Transaction Rejected');
+					handleWriteMethodError(error);
 				}
 			}
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
@@ -226,10 +249,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 			if (errorBuyWithBUSD) {
 				setLoading(false);
-				if (errorBuyWithBUSD?.error?.code === -32603) {
-					return message.error('Network Error!');
-				}
-				return message.error('Transaction Rejected');
+				handleWriteMethodError(errorBuyWithBUSD);
 			}
 		} else {
 			//convert BNB sang BUSD
@@ -246,10 +266,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				);
 				if (error) {
 					setLoading(false);
-					if (error?.error?.code === -32603) {
-						return message.error('Network Error!');
-					}
-					return message.error('Transaction Rejected');
+					handleWriteMethodError(error);
 				}
 			}
 			const [amountToBUSD] = await convertBNBtoBUSD(Number(amountTranform));
@@ -276,10 +293,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 			if (errorBuyWithBNB) {
 				setLoading(false);
-				if (errorBuyWithBNB?.error?.code === -32603) {
-					return message.error('Network Error!');
-				}
-				return message.error('Transaction Rejected');
+				handleWriteMethodError(errorBuyWithBNB);
 			}
 		}
 	};
@@ -300,15 +314,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const amount = new BigNumber(value.replace(/,/g, ''));
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
-		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
-		let buyLimit = buyLimitBUSD;
 		const amountOfTokensPurchased = new BigNumber(youBought).times(
-			exchangeRate
+			exchangeRateConvert
 		);
-		if (currency === BNB_CURRENCY) {
-			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
-			buyLimit = Number(buyLimitBNB) as any;
-		}
 
 		if (currency === BUSD_CURRENCY && amount.gt(new BigNumber(busdBalance))) {
 			return Promise.reject(new Error("You don't have enough BUSD"));
@@ -391,21 +399,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									{ validator: validateToken },
 								]}
 							>
-								{/* <InputNumber
-									formatter={(value) =>
-										`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-									}
-									ref={amountBUSDRef}
-									placeholder='1,000.1234'
-									className='custom-input-wrapper'
-									addonAfter={<div>{currency}</div>}
-									onChange={handleChangeBUSD}
-									value={amount}
-								/> */}
 								<NumericInput
 									className='custom-input-wrapper'
 									placeholder='1,000.1234'
-									onChange={setAmount}
+									onChange={onChangeAmount}
 									addonAfter={<div>{currency}</div>}
 									value={amount}
 								/>

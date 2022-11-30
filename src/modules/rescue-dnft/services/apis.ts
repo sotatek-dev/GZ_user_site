@@ -1,8 +1,8 @@
+import dayjs from 'dayjs';
+import { formatEther } from 'ethers/lib/utils';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 import { second } from 'common/constants/constants';
-import dayjs from 'dayjs';
-import { formatEther } from 'ethers/lib/utils';
 import { TOKEN_DECIMAL } from 'modules/mint-dnft/constants';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 
@@ -67,7 +67,7 @@ export const fetchPoolRemaining = createAsyncThunk(
 				const theRest = new BigNumber(numberOfTokenInCosmicVoid).minus(
 					totalRescued._hex
 				);
-				return theRest;
+				return theRest.integerValue(BigNumber.ROUND_DOWN);
 			}
 			return new BigNumber(0);
 		} catch (e) {
