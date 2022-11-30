@@ -27,6 +27,7 @@ import {
 import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { getRemainingClaimableAmount } from 'web3/contracts/useContractTokenSale';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 
 const TIME_COUNDOWN_BONUS = 15; //15s
 
@@ -68,10 +69,11 @@ export const convertTimeLine = async (
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 		timeCountDown = startTimeClaim + TIME_COUNDOWN_BONUS - timestampNow;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
-		const [youCanClaimAmount] = await getRemainingClaimableAmount(
-			addressWallet,
-			saleRoundId
-		);
+		const [youCanClaimAmount, errorCanClaimAmount] =
+			await getRemainingClaimableAmount(addressWallet, saleRoundId);
+		if (errorCanClaimAmount) {
+			handleWriteMethodError(errorCanClaimAmount);
+		}
 		// console.log('youCanClaimAmount', youCanClaimAmount);
 		if (Number(youCanClaimAmount) > 0) {
 			status = CLAIMABLE;
@@ -85,8 +87,8 @@ export const convertTimeLine = async (
 				}
 			}
 		} else {
-			status = CLAIMABLE;
-			statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
+			status = END;
+			statusListSaleRound = STATUS_LIST_SALE_ROUND.END;
 			startTimeClaim = 0;
 		}
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.END) {
