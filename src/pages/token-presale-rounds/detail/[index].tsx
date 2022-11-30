@@ -52,6 +52,7 @@ import {
 import { buyTimeDefault, ITokenSaleRoundState } from '..';
 import usePrevious from 'common/hooks/usePrevious';
 import { useAppSelector } from 'stores';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 
 export const selectList = [
 	{
@@ -177,10 +178,7 @@ const TokenSaleRoundDetail = () => {
 		}
 		if (errorClaim) {
 			setOpenClaimPopup(false);
-			if (errorClaim?.error?.code === -32603) {
-				return message.error('Network Error!');
-			}
-			return message.error('Transaction Rejected');
+			handleWriteMethodError(errorClaim);
 		}
 	};
 	const redirectToBSCScan = (tx: string) => (
@@ -400,10 +398,7 @@ const TokenSaleRoundDetail = () => {
 				return;
 			}
 			if (errorBuyWithFree) {
-				if (errorBuyWithFree?.error?.code === -32603) {
-					return message.error('Network Error!');
-				}
-				return message.error('Transaction Rejected');
+				handleWriteMethodError(errorBuyWithFree);
 			}
 		} else {
 			setOpenTokenPurchase(true);

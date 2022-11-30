@@ -30,6 +30,7 @@ import {
 } from 'web3/contracts/useBep20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useAppSelector } from 'stores';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 
 interface IInitImage {
 	assetBase: string;
@@ -286,10 +287,7 @@ const MergeDNFT = () => {
 			);
 			if (error) {
 				setLoadingPermanentlyMerge(false);
-				if (error?.error?.code === -32603) {
-					return messageAntd.error('Network Error!');
-				}
-				return message.error('Transaction Rejected');
+				handleWriteMethodError(error);
 			}
 		}
 		const sessionId = get(data, 'data._id', '');
@@ -308,10 +306,7 @@ const MergeDNFT = () => {
 		);
 		if (errorPushContract) {
 			setLoadingPermanentlyMerge(false);
-			if (errorPushContract?.error?.code === -32603) {
-				return messageAntd.error('Network Error!');
-			}
-			return messageAntd.error('Transaction Rejected');
+			handleWriteMethodError(errorPushContract);
 		}
 		if (responsePushContract) {
 			setTransactionHash(responsePushContract?.transactionHash);
@@ -359,10 +354,7 @@ const MergeDNFT = () => {
 				);
 				if (error) {
 					setLoadingTemporaryMerge(false);
-					if (error?.error?.code === -32603) {
-						return messageAntd.error('Network Error!');
-					}
-					return message.error('Transaction Rejected');
+					handleWriteMethodError(error);
 				}
 			}
 			const sessionId = get(data, 'data._id', '');
@@ -381,10 +373,7 @@ const MergeDNFT = () => {
 			);
 			setLoadingTemporaryMerge(false);
 			if (errorPushContract) {
-				if (errorPushContract?.error?.code === -32603) {
-					return messageAntd.error('Network Error!');
-				}
-				return messageAntd.error('Transaction Rejected');
+				handleWriteMethodError(errorPushContract);
 			}
 
 			if (responsePushContract) {
