@@ -271,7 +271,6 @@ export function formatNumber(value: any) {
 		}
 		if (comps.length === 2) {
 			suffix = '.' + (comps[1] || '0');
-			console.log('suffix', suffix);
 		}
 		while (suffix.length > 3 && suffix[suffix.length - 1] === '0') {
 			suffix = suffix.substring(0, suffix.length - 1);
