@@ -37,6 +37,7 @@ import { useContract } from 'web3/contracts/useContract';
 import { AbiPresalepool } from 'web3/abis/types';
 import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 import { useActiveWeb3React } from 'web3/hooks';
+import { handleWriteMethodError } from 'common/helpers/handleError';
 
 interface IModalPurchaseProps {
 	isShow: boolean;
@@ -228,12 +229,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					NEXT_PUBLIC_BUSD,
 					NEXT_PUBLIC_PRESALE_POOL
 				);
-				if (error) {
+				if (error as any) {
 					setLoading(false);
-					if (error?.error?.code === -32603) {
-						return message.error('Network Error!');
-					}
-					return message.error('Transaction Rejected');
+					handleWriteMethodError(error);
 				}
 			}
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
@@ -251,10 +249,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 			if (errorBuyWithBUSD) {
 				setLoading(false);
-				if (errorBuyWithBUSD?.error?.code === -32603) {
-					return message.error('Network Error!');
-				}
-				return message.error('Transaction Rejected');
+				handleWriteMethodError(errorBuyWithBUSD);
 			}
 		} else {
 			//convert BNB sang BUSD
@@ -271,10 +266,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				);
 				if (error) {
 					setLoading(false);
-					if (error?.error?.code === -32603) {
-						return message.error('Network Error!');
-					}
-					return message.error('Transaction Rejected');
+					handleWriteMethodError(error);
 				}
 			}
 			const [amountToBUSD] = await convertBNBtoBUSD(Number(amountTranform));
@@ -301,10 +293,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			}
 			if (errorBuyWithBNB) {
 				setLoading(false);
-				if (errorBuyWithBNB?.error?.code === -32603) {
-					return message.error('Network Error!');
-				}
-				return message.error('Transaction Rejected');
+				handleWriteMethodError(errorBuyWithBNB);
 			}
 		}
 	};
