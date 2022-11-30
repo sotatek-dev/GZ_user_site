@@ -85,8 +85,8 @@ export const convertTimeLine = async (
 				}
 			}
 		} else {
-			status = END;
-			statusListSaleRound = STATUS_LIST_SALE_ROUND.END;
+			status = CLAIMABLE;
+			statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE;
 			startTimeClaim = 0;
 		}
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.END) {
