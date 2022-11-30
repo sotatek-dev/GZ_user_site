@@ -348,23 +348,23 @@ export default function MyDNFT() {
 							emptyOption='All species'
 							onClick={(value) => {
 								setPage(1);
-								setStatus(value.key);
-							}}
-							customStyle={'!w-1/2 desktop:!w-[160px]'}
-							list={RARITY_DNFT}
-							title='All species'
-							label={status}
-						/>
-						<Dropdown
-							emptyOption='All rarities'
-							onClick={(value) => {
-								setPage(1);
 								setType(value.key);
 							}}
 							customStyle='!w-1/2 desktop:!w-[160px]'
 							label={type}
 							list={SPECIES_DNFT}
+							title='All species'
+						/>
+						<Dropdown
+							emptyOption='All rarities'
+							onClick={(value) => {
+								setPage(1);
+								setStatus(value.key);
+							}}
+							customStyle={'!w-1/2 desktop:!w-[160px]'}
+							list={RARITY_DNFT}
 							title='All rarities'
+							label={status}
 						/>
 					</div>
 					<button
