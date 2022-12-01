@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, message, Spin } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
@@ -76,7 +75,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const [isLoadingCallGXZ, setLoadingCallGXZ] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
 
-	// const amountBUSDRef = useRef<HTMLInputElement>(null);
 	let checkValidate = true;
 	const presaleContract = useContract<AbiPresalepool>(
 		PresalePoolAbi,
@@ -85,11 +83,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const { account } = useActiveWeb3React();
 
 	useEffect(() => {
-		// if (!isShow) {
 		form.resetFields();
 		setAmountGXC('');
 		setAmount('');
-		// }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isShow, currency]);
 
@@ -116,7 +112,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	const onChangeAmount = (amount: string) => {
-		console.log('onChangeAmount');
 		if (Number(amount) > 0) {
 			setLoadingCallGXZ(true);
 		}
@@ -124,12 +119,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		debounceChangeAmount(amount);
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceChangeAmount = useCallback(
 		debounce((nextAmount) => {
 			if (currency === BNB_CURRENCY) {
-				return handleChangeBNB(nextAmount);
+				handleChangeBNB(nextAmount);
 			} else {
-				return handleChangeBUSD(nextAmount);
+				handleChangeBUSD(nextAmount);
 			}
 		}, 800),
 		[]
@@ -144,8 +140,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 		setAmount(newValue.toString());
-		console.log('newValue.toNumber()', newValue.toNumber());
-		console.log('exchangeRate', exchangeRate);
 		const [amountGXC, error] = await getTokenAmountFromBUSD(
 			newValue.toNumber(),
 			exchangeRate
