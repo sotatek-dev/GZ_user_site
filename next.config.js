@@ -11,7 +11,10 @@ const nextConfig = {
 	},
 	swcMinify: true,
 	images: {
-		domains: [process.env.NEXT_IMAGE_DOMAIN],
+		domains: [
+			process.env.NEXT_IMAGE_DOMAIN,
+			process.env.NEXT_MERGE_IMAGE_DOMAIN,
+		],
 		dangerouslyAllowSVG: true,
 		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
 	},
