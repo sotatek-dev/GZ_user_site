@@ -59,7 +59,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	onCancel,
 	currency,
 	exchangeRate,
-	exchangeRateConvert,
 	detailSaleRound = {},
 	handleGetUserPurchasedAmount,
 	maxPreSaleAmount,
@@ -332,9 +331,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const amount = new BigNumber(value.replace(/,/g, ''));
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
-		const amountOfTokensPurchased = new BigNumber(youBought).times(
-			exchangeRateConvert
-		);
 
 		if (currency === BUSD_CURRENCY && amount.gt(new BigNumber(busdBalance))) {
 			return Promise.reject(new Error("You don't have enough BUSD"));
@@ -353,7 +349,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			);
 		} else if (
 			Number(buyLimit) !== 0 &&
-			amount.gt(new BigNumber(buyLimit).minus(amountOfTokensPurchased))
+			amount.gt(new BigNumber(buyLimit).minus(youBought))
 		) {
 			return Promise.reject(
 				new Error(
