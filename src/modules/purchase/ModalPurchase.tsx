@@ -128,7 +128,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				handleChangeBUSD(nextAmount);
 			}
 		}, 800),
-		[]
+		[exchangeRate, currency]
 	);
 
 	const handleChangeBUSD = async (value: string | null) => {
