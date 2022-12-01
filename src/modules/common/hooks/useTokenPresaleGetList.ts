@@ -39,7 +39,7 @@ export const useTokenPresaleList = (
 	payload: IPramsTokenSaleRounds,
 	addressWallet: string
 ) => {
-	return useQuery([APIs.getSaleRoundList(), payload], () =>
+	return useQuery([APIs.getSaleRoundList(), payload, addressWallet], () =>
 		fetcher(payload, addressWallet)
 	);
 };
