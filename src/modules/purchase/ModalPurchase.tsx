@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, message, Spin } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';
@@ -143,6 +144,8 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 		setAmount(newValue.toString());
+		console.log('newValue.toNumber()', newValue.toNumber());
+		console.log('exchangeRate', exchangeRate);
 		const [amountGXC, error] = await getTokenAmountFromBUSD(
 			newValue.toNumber(),
 			exchangeRate
