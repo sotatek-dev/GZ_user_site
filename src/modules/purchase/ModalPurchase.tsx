@@ -131,7 +131,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	);
 
 	const handleChangeBUSD = async (value: string | null) => {
-		if (!value) {
+		if (!value || Number(value) === 0) {
 			value = '0';
 			form.setFieldValue('amountGXC', '');
 			setAmountGXC('');
@@ -173,7 +173,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	};
 
 	const handleChangeBNB = async (value: string | null) => {
-		if (!value) {
+		if (!value || Number(value) === 0) {
 			value = '0';
 			form.setFieldValue('amountGXC', '');
 			setAmountGXC('');
@@ -332,7 +332,12 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
 
-		if (currency === BUSD_CURRENCY && amount.gt(new BigNumber(busdBalance))) {
+		if (Number(amount) === 0) {
+			return Promise.reject(new Error('Amount must be than 0'));
+		} else if (
+			currency === BUSD_CURRENCY &&
+			amount.gt(new BigNumber(busdBalance))
+		) {
 			return Promise.reject(new Error("You don't have enough BUSD"));
 		} else if (
 			currency === BNB_CURRENCY &&
@@ -406,6 +411,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 									name='amount'
 									rules={[
 										{ required: true, message: 'This field is required' },
+										{ min: 1, message: 'Amount must be than 0' },
 										{ validator: validateToken },
 									]}
 								>
