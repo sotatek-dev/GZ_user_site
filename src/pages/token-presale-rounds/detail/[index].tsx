@@ -128,7 +128,6 @@ const TokenSaleRoundDetail = () => {
 			  isCurrentSaleRound &&
 			  Number(totalSoldAmount) !== Number(maxPreSaleAmount) &&
 			  Number(totalSoldAmount) <= Number(maxPreSaleAmount) &&
-			  Number(youBought) < Number(fromWei(buyLimit)) &&
 			  detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
 	const isShowButtonClaim =
