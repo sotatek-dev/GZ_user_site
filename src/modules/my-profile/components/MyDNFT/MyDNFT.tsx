@@ -89,6 +89,10 @@ export default function MyDNFT() {
 
 			const actualClaimableTime = () => {
 				if (!isPresale2Active) return '-';
+
+				if (_dnft.status === DNFTStatuses.Claimed) {
+					return '';
+				}
 				if (_dnft.type === DNFTType.TEMP_MERGED) {
 					return claimTemMergeTime.format('DD-MMMM-YYYY HH:mm');
 				}
@@ -210,12 +214,12 @@ export default function MyDNFT() {
 		}
 	};
 
+	const CLAIM_ALL_KEY = 'claimAll';
 	const handleClaimAll = async (amount: number) => {
 		if (!dnftContract || !claimableDnfts) return;
-		const CLAIM_ALL_KEY = 'claimAll';
 
 		try {
-			setLoadingMap((prev) => ({ ...prev, CLAIM_ALL_KEY: true }));
+			setLoadingMap((prev) => ({ ...prev, [CLAIM_ALL_KEY]: true }));
 			const tx = await dnftContract.claimPurchasedToken(amount);
 			const txRes = await tx.wait();
 
@@ -281,7 +285,8 @@ export default function MyDNFT() {
 			render: (record: IDNFT & { onClick: () => void }) => {
 				const dnftStatus = get(DNFTStatus, record.status);
 				const isDoAction = get(loadingMap, record._id);
-				const isDoClaimingAll = get(loadingMap, 'claimAll');
+				const isDoClaimingAll = get(loadingMap, CLAIM_ALL_KEY);
+
 				const isEnableAction = !dnftStatus.disabled;
 
 				return (
@@ -317,14 +322,16 @@ export default function MyDNFT() {
 	}
 
 	const canClaimAll =
-		isAfterClaimTime && claimableDnfts?.length && !get(loadingMap, 'claimAll');
+		isAfterClaimTime &&
+		claimableDnfts?.length &&
+		!get(loadingMap, CLAIM_ALL_KEY);
 
 	return (
 		<BoxPool>
 			<div className='flex justify-between items-start mb-3'>
 				<div className='desktop:w-full desktop:flex desktop:justify-between'>
 					<h5 className='text-h6 font-semibold text-white'>My dNFT</h5>
-					<RefreshDNFTList handleGetDNFTs={handleGetDNFTs} />
+					<RefreshDNFTList filter={{ type, page, status }} />
 				</div>
 				<button
 					disabled={!canClaimAll}
