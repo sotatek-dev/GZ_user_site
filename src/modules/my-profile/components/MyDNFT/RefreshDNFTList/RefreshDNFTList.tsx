@@ -1,18 +1,31 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import classNames from 'classnames';
-import { useAppSelector } from 'stores';
+import { LIMIT_10 } from 'common/constants/constants';
+import { useAppDispatch, useAppSelector } from 'stores';
+import { getMyClaimableDNFTsCountRD, getMyDNFTsRD } from 'stores/my-profile';
 import LastUpdatedTime from '../LastUpdatedTime';
 
 export default function RefreshDNFTList({
-	handleGetDNFTs,
+	filter: { page, type, status },
 }: {
-	handleGetDNFTs: VoidFunction;
+	filter: { page: number; type: string; status: string };
 }) {
+	const dispatch = useAppDispatch();
 	const { loading, dnfts } = useAppSelector((state) => state.myProfile);
 
 	const handleRefresh = async () => {
-		handleGetDNFTs();
+		dispatch(
+			getMyDNFTsRD({
+				page,
+				limit: LIMIT_10,
+				species: type,
+				rarities: status,
+			})
+		);
+		if (dnfts) {
+			dispatch(getMyClaimableDNFTsCountRD(dnfts.pagination.total));
+		}
 	};
 
 	const clns = classNames('!block', {
