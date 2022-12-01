@@ -26,6 +26,7 @@ export const genDNFTContractEther = () => {
 export const genKeyNFTContractEther = () => {
 	return getContractInstanceEther(KeyNFTABI, NEXT_PUBLIC_KEYNFT);
 };
+console.log('PreSalePoolABI', PreSalePoolABI);
 
 export const genPresalePoolContractEther = () => {
 	return getContractInstanceEther(PreSalePoolABI, NEXT_PUBLIC_PRESALE_POOL);

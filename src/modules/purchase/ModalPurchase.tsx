@@ -143,6 +143,8 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 		const newValue = new BigNumber(value.replace(/,/g, ''));
 		setAmount(newValue.toString());
+		console.log('newValue.toNumber()', newValue.toNumber());
+		console.log('exchangeRate', exchangeRate);
 		const [amountGXC, error] = await getTokenAmountFromBUSD(
 			newValue.toNumber(),
 			exchangeRate
