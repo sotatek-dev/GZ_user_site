@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form, Input, message, Spin } from 'antd';
 import { getSignatureTokenSaleRound } from 'apis/tokenSaleRounds';

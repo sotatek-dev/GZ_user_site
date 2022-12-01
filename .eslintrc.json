@@ -22,7 +22,7 @@
 		"prettier"
 	],
 	"rules": {
-		"no-console": "off",
+		"no-console": "warn",
 		"no-use-before-define": "off",
 		"react/react-in-jsx-scope": "off",
 		"react-hooks/rules-of-hooks": "error",
