@@ -45,7 +45,7 @@ interface IModalPurchaseProps {
 	onCancel: () => void;
 	currency: string;
 	exchangeRate: number;
-	exchangeRateConvert: string;
+	exchangeRateConvert: number;
 	detailSaleRound: ITokenSaleRoundState | undefined;
 	handleGetUserPurchasedAmount: (saleRoundId: number) => void;
 	getDetailSaleRound: () => void;
@@ -59,6 +59,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	onCancel,
 	currency,
 	exchangeRate,
+	exchangeRateConvert,
 	detailSaleRound = {},
 	handleGetUserPurchasedAmount,
 	maxPreSaleAmount,
@@ -70,7 +71,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const { addressWallet, balance } = useAppSelector((state) => state.wallet);
 	const [amountGXC, setAmountGXC] = useState<string | any>('');
 	const [amount, setAmount] = useState<string>('');
-	const [buyLimit, setBuyLimit] = useState<string>('');
 	const [isLoadingCallGXZ, setLoadingCallGXZ] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
 
@@ -95,21 +95,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 	}, [amount, form]);
 
-	useEffect(() => {
-		handleGetBuylimit();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [detailSaleRound, currency]);
-
-	const handleGetBuylimit = async () => {
-		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
-		let buyLimit = buyLimitBUSD;
-		if (currency === BNB_CURRENCY) {
-			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
-			buyLimit = Number(buyLimitBNB) as any;
-		}
-		setBuyLimit(buyLimit);
-	};
-
 	const onChangeAmount = (amount: string) => {
 		if (Number(amount) > 0) {
 			setLoadingCallGXZ(true);
@@ -127,7 +112,14 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 				handleChangeBUSD(nextAmount);
 			}
 		}, 800),
-		[exchangeRate, currency, maxPreSaleAmount, totalSoldAmount]
+		[
+			exchangeRate,
+			currency,
+			maxPreSaleAmount,
+			totalSoldAmount,
+			youBought,
+			exchangeRateConvert,
+		]
 	);
 
 	const handleChangeBUSD = async (value: string | null) => {
@@ -331,6 +323,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const amount = new BigNumber(value.replace(/,/g, ''));
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
+		const amountOfTokensPurchased = youBought * Number(exchangeRateConvert);
+		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+		let buyLimit = buyLimitBUSD;
+		if (currency === BNB_CURRENCY) {
+			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
+			buyLimit = Number(buyLimitBNB) as any;
+		}
 
 		if (Number(amount) === 0) {
 			return Promise.reject(new Error('Amount must be than 0'));
@@ -354,14 +353,15 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			);
 		} else if (
 			Number(buyLimit) !== 0 &&
-			amount.gt(new BigNumber(buyLimit).minus(youBought))
+			Number(buyLimit) - (Number(amountOfTokensPurchased) + amount.toNumber()) <
+				0
 		) {
 			return Promise.reject(
 				new Error(
 					`User can only purchase maximum ${formatNumber(buyLimit)} ${currency}`
 				)
 			);
-		} //....
+		}
 		if (checkValidate) {
 			form.setFields([
 				{
@@ -441,7 +441,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 							</Form.Item>
 							<Button
 								isDisabled={
-									!amount || Number(amount) === 0 || Number(amountGXC) === 0
+									!amount ||
+									Number(amount) === 0 ||
+									Number(amountGXC) === 0 ||
+									isLoadingCallGXZ
 								}
 								classCustom='bg-purple-30 !rounded-[40px] mx-auto !w-[200px] mt-4'
 								htmlType='submit'
