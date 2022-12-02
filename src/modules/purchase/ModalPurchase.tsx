@@ -23,7 +23,6 @@ import {
 	buyTokenWithExactlyBNB,
 	buyTokenWithExactlyBUSD,
 	convertBNBtoBUSD,
-	convertBUSDtoBNB,
 	getPresaleTokenTax,
 	getTokenAmountFromBUSD,
 } from 'web3/contracts/useContractTokenSale';
@@ -96,19 +95,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	}, [amount, form]);
 
 	useEffect(() => {
-		handleGetBuylimit();
+		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
+		setBuyLimit(buyLimitBUSD);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [detailSaleRound, currency]);
-
-	const handleGetBuylimit = async () => {
-		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
-		let buyLimit = buyLimitBUSD;
-		if (currency === BNB_CURRENCY) {
-			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
-			buyLimit = Number(buyLimitBNB) as any;
-		}
-		setBuyLimit(buyLimit);
-	};
 
 	const onChangeAmount = (amount: string) => {
 		if (Number(amount) > 0) {
@@ -149,6 +139,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
+		const amountOfTokensPurchased = youBought + Number(amountGXC);
 		if (
 			new BigNumber(amountGXC as any).gt(
 				new BigNumber(maxPreSaleAmount).minus(totalSoldAmount)
@@ -164,6 +155,21 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								new BigNumber(totalSoldAmount)
 							)
 						)} Galactix tokens left to be purchased`,
+					],
+				},
+			]);
+		} else if (
+			Number(buyLimit) !== 0 &&
+			Number(buyLimit) - amountOfTokensPurchased < 0
+		) {
+			checkValidate = false;
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [
+						`User can only purchase maximum ${formatNumber(
+							buyLimit
+						)} ${currency}`,
 					],
 				},
 			]);
@@ -192,6 +198,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		}
 		form.setFieldValue('amountGXC', formatNumber(amountGXC));
 		setAmountGXC(amountGXC);
+		const amountOfTokensPurchased = youBought + Number(amountGXC);
 		if (
 			new BigNumber(amountGXC as any).gt(
 				new BigNumber(maxPreSaleAmount).minus(totalSoldAmount)
@@ -207,6 +214,21 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 								new BigNumber(totalSoldAmount)
 							)
 						)} Galactix tokens left to be purchased`,
+					],
+				},
+			]);
+		} else if (
+			Number(buyLimit) !== 0 &&
+			Number(buyLimit) - amountOfTokensPurchased < 0
+		) {
+			checkValidate = false;
+			form.setFields([
+				{
+					name: 'amount',
+					errors: [
+						`User can only purchase maximum ${formatNumber(
+							buyLimit
+						)} ${currency}`,
 					],
 				},
 			]);
@@ -331,7 +353,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const amount = new BigNumber(value.replace(/,/g, ''));
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
-
 		if (Number(amount) === 0) {
 			return Promise.reject(new Error('Amount must be than 0'));
 		} else if (
@@ -351,15 +372,6 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		) {
 			return Promise.reject(
 				new Error(`You don't have enough BUSD in wallet for Tax fee`)
-			);
-		} else if (
-			Number(buyLimit) !== 0 &&
-			amount.gt(new BigNumber(buyLimit).minus(youBought))
-		) {
-			return Promise.reject(
-				new Error(
-					`User can only purchase maximum ${formatNumber(buyLimit)} ${currency}`
-				)
 			);
 		} //....
 		if (checkValidate) {
@@ -441,7 +453,10 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 							</Form.Item>
 							<Button
 								isDisabled={
-									!amount || Number(amount) === 0 || Number(amountGXC) === 0
+									!amount ||
+									Number(amount) === 0 ||
+									Number(amountGXC) === 0 ||
+									isLoadingCallGXZ
 								}
 								classCustom='bg-purple-30 !rounded-[40px] mx-auto !w-[200px] mt-4'
 								htmlType='submit'
