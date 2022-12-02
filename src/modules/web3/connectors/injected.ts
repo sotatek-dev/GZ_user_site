@@ -15,4 +15,5 @@ export const walletConnect = new WalletConnectConnector({
 	rpc: RPC,
 	bridge: WALLET_CONNECT_BRIDGE_URL,
 	qrcode: true,
+	chainId: bsc_chain_id,
 });
