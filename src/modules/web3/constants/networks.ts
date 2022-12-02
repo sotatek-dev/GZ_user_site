@@ -46,12 +46,12 @@ export const NETWORK_NAME = {
 
 export const BSC_NETWORK = {
 	CHAIN_ID_HEX: BSC_CHAIN_ID_HEX,
-	CHAIN_ID_DECIMAL: 97,
-	CHAIN_NAME: 'Binance Smart Chain Testnet',
+	CHAIN_ID_DECIMAL: Number(BSC_CHAIN_ID),
+	CHAIN_NAME: process.env.NEXT_PUBLIC_BSC_CHAIN_NAME as string,
 	RPC_URLS: process.env.NEXT_PUBLIC_BSC_RPC_URL as string,
-	BLOCK_EXPLORER_URLS: 'https://testnet.bscscan.com/',
+	BLOCK_EXPLORER_URLS: process.env.NEXT_PUBLIC_BSC_RPC_URL as string,
 	NATIVE_CURRENCY: {
-		NAME: 'Binance Smart Chain Testnet',
+		NAME: process.env.NEXT_PUBLIC_BSC_CHAIN_NAME as string,
 		SYMBOL: 'tBNB',
 		DECIMAL: 18,
 	},
