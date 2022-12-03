@@ -35,24 +35,25 @@ export interface ITypeUserInfo {
 	nft_holding: number;
 }
 
+interface FetchDNFTResponse {
+	list: IDNFT[];
+	pagination: {
+		total: number;
+		page: number;
+		limit: number;
+	};
+}
+
 interface initialStateProps {
 	userInfo?: ITypeUserInfo;
 	errMessage?: string;
 	loading: boolean;
 
-	dnfts:
-		| {
-				data: IDNFT[];
-				pagination: {
-					total: number;
-					page: number;
-					limit: number;
-				};
-		  }
-		| undefined;
+	dnfts: FetchDNFTResponse | undefined;
 	lastUpdated: number;
 
-	claimableDnfts: { list: IDNFT[] | undefined; isLoading: boolean };
+	claimableDnfts: FetchDNFTResponse | undefined;
+	isFetchClaimableDnfts: boolean;
 	dnft_holding_count: number | undefined;
 }
 
@@ -60,7 +61,8 @@ const initialState: initialStateProps = {
 	loading: false,
 	dnfts: undefined,
 	lastUpdated: dayjs().unix(),
-	claimableDnfts: { list: undefined, isLoading: false },
+	claimableDnfts: undefined,
+	isFetchClaimableDnfts: false,
 	dnft_holding_count: undefined,
 };
 
@@ -112,10 +114,7 @@ const myProfileStore = createSlice({
 		});
 
 		builder.addCase(getMyDNFTsRD.fulfilled, (state, action) => {
-			state.dnfts = {
-				data: action.payload.list,
-				pagination: action.payload.pagination,
-			};
+			state.dnfts = action.payload;
 			state.loading = false;
 			state.lastUpdated = dayjs().unix();
 		});
@@ -130,16 +129,14 @@ const myProfileStore = createSlice({
 		});
 
 		builder.addCase(getMyClaimableDNFTsCountRD.pending, (state) => {
-			state.claimableDnfts = { ...state.claimableDnfts, isLoading: true };
+			state.isFetchClaimableDnfts = true;
 		});
 		builder.addCase(getMyClaimableDNFTsCountRD.rejected, (state) => {
-			state.claimableDnfts = { ...state.claimableDnfts, isLoading: false };
+			state.isFetchClaimableDnfts = false;
 		});
 		builder.addCase(getMyClaimableDNFTsCountRD.fulfilled, (state, action) => {
-			state.claimableDnfts = {
-				list: action.payload,
-				isLoading: false,
-			};
+			state.claimableDnfts = action.payload;
+			state.isFetchClaimableDnfts = false;
 		});
 
 		builder.addCase(fetchDnftHolding.rejected, (state) => {
@@ -169,14 +166,12 @@ export const getMyDNFTsRD = createAsyncThunk(
 
 export const getMyClaimableDNFTsCountRD = createAsyncThunk(
 	'profile/getMyClaimableDNFTsCountRD',
-	async (limit: number, { rejectWithValue }) => {
+	async (_, { rejectWithValue }) => {
 		try {
 			const res = await getMyDNFTs({
-				limit,
 				status: 'wait-to-claim',
-				page: 1,
 			});
-			return get(res, 'data.data.list', []);
+			return get(res, 'data.data');
 		} catch (err) {
 			return rejectWithValue(err);
 		}

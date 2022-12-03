@@ -25,8 +25,8 @@ export const updateMyProfile = async (
 };
 
 export interface IParamsGetDNFTs {
-	page: number;
-	limit: number;
+	page?: number;
+	limit?: number;
 
 	sortBy?: string;
 	direction?: string;

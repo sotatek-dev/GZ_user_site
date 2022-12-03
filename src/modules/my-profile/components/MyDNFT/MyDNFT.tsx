@@ -40,11 +40,9 @@ export default function MyDNFT() {
 	const { account } = useActiveWeb3React();
 	const dispatch = useAppDispatch();
 	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
-	const {
-		dnfts,
-		claimableDnfts: { list: claimableDnfts },
-		loading,
-	} = useAppSelector((state) => state.myProfile);
+	const { dnfts, claimableDnfts, loading } = useAppSelector(
+		(state) => state.myProfile
+	);
 
 	const { systemSetting } = useAppSelector((state) => state.systemSetting);
 	const { isLogin } = useAppSelector((state) => state.user);
@@ -77,7 +75,7 @@ export default function MyDNFT() {
 			return [];
 		}
 
-		return dnfts.data.map((item) => {
+		return dnfts.list.map((item) => {
 			const _dnft = cloneDeep(item);
 			const claimTemMergeTime = dayjs(_dnft.created_at).add(
 				AVAI_TO_UNMERGE,
@@ -216,14 +214,14 @@ export default function MyDNFT() {
 
 	const CLAIM_ALL_KEY = 'claimAll';
 	const handleClaimAll = async (amount: number) => {
-		if (!dnftContract || !claimableDnfts) return;
+		if (!dnftContract || !claimableDnfts || !claimableDnfts.list.length) return;
 
 		try {
 			setLoadingMap((prev) => ({ ...prev, [CLAIM_ALL_KEY]: true }));
 			const tx = await dnftContract.claimPurchasedToken(amount);
 			const txRes = await tx.wait();
 
-			await triggerRefresh(claimableDnfts[0]._id);
+			await triggerRefresh(claimableDnfts.list[0]._id);
 
 			message.success({
 				content: myProfileConstants.TRANSACTION_COMPLETED,
@@ -252,7 +250,7 @@ export default function MyDNFT() {
 
 	const handleGetClaimableNFTsCount = async () => {
 		if (dnfts && dnfts.pagination.total) {
-			dispatch(getMyClaimableDNFTsCountRD(dnfts.pagination.total));
+			dispatch(getMyClaimableDNFTsCountRD());
 		}
 	};
 
@@ -323,7 +321,8 @@ export default function MyDNFT() {
 
 	const canClaimAll =
 		isAfterClaimTime &&
-		claimableDnfts?.length &&
+		claimableDnfts?.pagination.total != undefined &&
+		claimableDnfts?.pagination.total > 0 &&
 		!get(loadingMap, CLAIM_ALL_KEY);
 
 	return (
@@ -337,7 +336,7 @@ export default function MyDNFT() {
 					disabled={!canClaimAll}
 					onClick={() => {
 						if (!claimableDnfts) return;
-						handleClaimAll(claimableDnfts.length);
+						handleClaimAll(claimableDnfts.pagination.total);
 					}}
 					className={`desktop:hidden text-h8 font-semibold rounded-[40px] py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
 						!canClaimAll ? 'text-white/[0.3]' : 'text-white'
@@ -378,7 +377,7 @@ export default function MyDNFT() {
 						disabled={!canClaimAll}
 						onClick={() => {
 							if (!claimableDnfts) return;
-							handleClaimAll(claimableDnfts.length);
+							handleClaimAll(claimableDnfts.pagination.total);
 						}}
 						className={`hidden desktop:block text-h8 rounded-[40px] font-semibold py-2 border-[2px] border-white/[0.3] min-w-[7.125rem] ${
 							!canClaimAll ? 'text-white/[0.3]' : 'text-white'

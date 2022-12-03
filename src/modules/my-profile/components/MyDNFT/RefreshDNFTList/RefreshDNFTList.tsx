@@ -24,7 +24,7 @@ export default function RefreshDNFTList({
 			})
 		);
 		if (dnfts) {
-			dispatch(getMyClaimableDNFTsCountRD(dnfts.pagination.total));
+			dispatch(getMyClaimableDNFTsCountRD());
 		}
 	};
 
