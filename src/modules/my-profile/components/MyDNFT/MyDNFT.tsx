@@ -229,7 +229,7 @@ export default function MyDNFT() {
 					window.open(getExploreTxLink(txRes.transactionHash));
 				},
 			});
-			Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
+			await Promise.all([handleGetDNFTs(), handleGetClaimableNFTsCount()]);
 		} catch (err) {
 			handleClaimError(err);
 		} finally {
