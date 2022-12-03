@@ -57,6 +57,7 @@ export default function BuyInfo() {
 	const busdBalance = useAppSelector(
 		(state) => state.wallet.balance.busdBalance
 	);
+	const isFetchBalance = useAppSelector((state) => state.wallet.isFetchBalance);
 	const bnbBalance = useNativeBalance();
 
 	const { buyDKeyNFT, isBuyDNFT } = useBuyDKeyNFT();
@@ -127,7 +128,8 @@ export default function BuyInfo() {
 			systemSetting == undefined ||
 			startBuyKeyUnixTime == undefined ||
 			minDnftToBuyKey == undefined ||
-			dnft_holding_count == undefined
+			dnft_holding_count == undefined ||
+			isFetchBalance == true
 		) {
 			return buyStatusConfigs[BuyStatus.Unavailable];
 		}

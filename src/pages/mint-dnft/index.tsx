@@ -66,9 +66,13 @@ const MintDNFT: React.FC = () => {
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
 	// GXZ balance
-	const gxzBalance = useBalance(process.env.NEXT_PUBLIC_GXZ_TOKEN || '');
+	const { balance: gxzBalance } = useBalance(
+		process.env.NEXT_PUBLIC_GXZ_TOKEN || ''
+	);
 	// BUSD balance
-	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
+	const { balance: busdBalance } = useBalance(
+		process.env.NEXT_PUBLIC_BUSD_ADDRESS || ''
+	);
 	// busd approve
 	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
 		useApproval(

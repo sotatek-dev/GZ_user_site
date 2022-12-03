@@ -14,6 +14,7 @@ interface IWalletState {
 	balance: {
 		[key in 'busdBalance' | 'bnbBalance']: string;
 	};
+	isFetchBalance: boolean;
 	wallerConnected: string;
 }
 
@@ -26,6 +27,7 @@ const initialState: IWalletState = {
 		busdBalance: '0',
 		bnbBalance: '0',
 	},
+	isFetchBalance: false,
 	wallerConnected: '',
 };
 
@@ -48,6 +50,10 @@ const storeWallet = createSlice({
 		setNetworkConnected: (state, action: PayloadAction<INetworkList>) => ({
 			...state,
 			network: action.payload,
+		}),
+		setIsFetchBalance: (state, action: PayloadAction<boolean>) => ({
+			...state,
+			isFetchBalance: action.payload,
 		}),
 		setBalance: (
 			state,
@@ -87,6 +93,11 @@ export const setBalance = (balance: {
 	[key in 'busdBalance' | 'bnbBalance']: string;
 }) => {
 	customStore && customStore.dispatch(storeWallet.actions.setBalance(balance));
+};
+
+export const setIsFetchBalance = (isFetchBalance: boolean) => {
+	customStore &&
+		customStore.dispatch(storeWallet.actions.setIsFetchBalance(isFetchBalance));
 };
 
 export const setWallerConnected = (wallerConnected: string) => {

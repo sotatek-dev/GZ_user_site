@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { DECIMALS, ERC20_ADDRESS, RPC_CHAIN } from 'common/constants/constants';
 import { getERC20AmountBalance } from 'web3/contracts/useBep20Contract';
 import { convertBigNumberValueToNumber } from 'web3/contracts/ether';
-import { setBalance } from 'stores/wallet';
+import { setBalance, setIsFetchBalance } from 'stores/wallet';
 import { ethers } from 'ethers';
 import { useAppSelector } from 'stores';
 
@@ -15,6 +15,7 @@ export const useUpdateBalance = () => {
 	const handleGetBalance = useCallback(async () => {
 		if (!accessToken || !library || !account) return;
 		try {
+			setIsFetchBalance(true);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const provider = ethers.getDefaultProvider(RPC_CHAIN[chainId as any]);
 			const temptNativeCoinBalance = await provider.getBalance(account);
@@ -39,7 +40,8 @@ export const useUpdateBalance = () => {
 				busdBalance: JSON.parse(numberBUSDBalance),
 				bnbBalance: JSON.parse(numberNativeBalance),
 			});
-		} catch (error) {
+		} finally {
+			setIsFetchBalance(false);
 			//
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

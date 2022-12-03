@@ -1,5 +1,6 @@
 import { Skeleton } from 'antd';
 import Image from 'next/image';
+import { useBalance } from 'web3/queries';
 import { BuyStatusConfig } from '../BuyInfo.constants';
 
 interface Props {
@@ -7,7 +8,16 @@ interface Props {
 }
 
 export default function BuyAlert({ buyStatus }: Props) {
-	if (!buyStatus) {
+	// GXZ balance
+	const { isLoading: isFetchGxzBalance } = useBalance(
+		process.env.NEXT_PUBLIC_GXZ_TOKEN || ''
+	);
+	// BUSD balance
+	const { isLoading: isFetchBUSDBalance } = useBalance(
+		process.env.NEXT_PUBLIC_BUSD_ADDRESS || ''
+	);
+
+	if (!buyStatus || isFetchGxzBalance || isFetchBUSDBalance) {
 		return <Skeleton.Input active block style={{ height: '46px' }} />;
 	}
 
