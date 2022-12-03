@@ -57,7 +57,9 @@ const RescueDNFT = () => {
 	const [token, setToken] = useState<TOKENS>(selectTokensList[0]);
 	const nativeBalance = useNativeBalance();
 	// BUSD balance
-	const busdBalance = useBalance(process.env.NEXT_PUBLIC_BUSD_ADDRESS || '');
+	const { balance: busdBalance } = useBalance(
+		process.env.NEXT_PUBLIC_BUSD_ADDRESS || ''
+	);
 
 	const { addressWallet } = useAppSelector((state) => state.wallet);
 	const price =
