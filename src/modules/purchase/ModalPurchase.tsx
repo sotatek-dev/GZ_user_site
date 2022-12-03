@@ -323,11 +323,13 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		const amount = new BigNumber(value.replace(/,/g, ''));
 		const { busdBalance, bnbBalance } = balance;
 		const royaltyFee = amount.times(ROYALTY_FEE_PURCHASE);
-		const amountOfTokensPurchased = youBought * Number(exchangeRateConvert);
+		let amountOfTokensPurchased = youBought * Number(exchangeRate);
 		const buyLimitBUSD = fromWei(get(detailSaleRound, 'details.buy_limit', 0));
 		let buyLimit = buyLimitBUSD;
 		if (currency === BNB_CURRENCY) {
 			const [buyLimitBNB] = await convertBUSDtoBNB(buyLimit);
+			const [exchangeRateBNB] = await convertBUSDtoBNB(exchangeRate);
+			amountOfTokensPurchased = youBought * Number(exchangeRateBNB);
 			buyLimit = Number(buyLimitBNB) as any;
 		}
 
@@ -353,8 +355,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			);
 		} else if (
 			Number(buyLimit) !== 0 &&
-			Number(buyLimit) - (Number(amountOfTokensPurchased) + amount.toNumber()) <
-				0
+			Number(buyLimit) - (amountOfTokensPurchased + amount.toNumber()) < 0
 		) {
 			return Promise.reject(
 				new Error(

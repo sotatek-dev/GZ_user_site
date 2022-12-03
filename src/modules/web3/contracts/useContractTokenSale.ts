@@ -37,6 +37,21 @@ export const convertBUSDtoBNB = async (price: number | string) => {
 	}
 };
 
+export const getUserTotalSpentBUSD = async (
+	address: string,
+	saleRoundId: number
+) => {
+	try {
+		const contract = await genPresalePoolContractEther();
+		const res = await contract.getUserTotalSpentBUSD(address, saleRoundId);
+		const totalSpentBUSD = convertHexToNumber(get(res, '_hex', HEX_ZERO));
+		const result = fromWei(totalSpentBUSD);
+		return [result, null];
+	} catch (error) {
+		return [null, error];
+	}
+};
+
 export const getUserPurchasedAmount = async (
 	address: string,
 	saleRoundId: number
