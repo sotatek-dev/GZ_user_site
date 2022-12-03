@@ -480,7 +480,7 @@ export default function MyDNFT() {
 				</div>
 
 				<div className='mt-[30px] w-[100%] flex justify-end'>
-					{dnfts && !!get(dnfts, 'data.length') && (
+					{dnfts && dnfts.pagination.total > 0 && (
 						<Pagination
 							defaultCurrent={1}
 							pageSize={LIMIT_10}
