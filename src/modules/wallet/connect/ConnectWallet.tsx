@@ -170,6 +170,7 @@ export default function ConnectWallet() {
 		<div className='wallet'>
 			<ModalCustom
 				isShow
+				centered
 				customClass={'!max-w-[calc(100%_-_2rem)]'}
 				onOk={handleCloseModalConnectWallet}
 				onCancel={handleCloseModalConnectWallet}
