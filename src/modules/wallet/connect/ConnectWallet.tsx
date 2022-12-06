@@ -139,7 +139,7 @@ export default function ConnectWallet() {
 							</div>
 							<div className='pt-6'>
 								<p className='font-bold text-h7 pb-4'>2. Choose Wallet</p>
-								<div className='grid grid-cols-2 gap-8'>
+								<div className='grid-cols-1 grid desktop:grid-cols-2 gap-8'>
 									{SUPPORTED_WALLETS.map((wallet) => {
 										return renderWalletBox(wallet);
 									})}
