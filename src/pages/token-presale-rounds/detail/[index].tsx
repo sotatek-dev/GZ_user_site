@@ -199,7 +199,7 @@ const TokenSaleRoundDetail = () => {
 		}
 		calculatorCurrency(currency);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [index, detailSaleRound, isLoading, isLogin]);
+	}, [index, detailSaleRound, isLoading, isLogin, currency]);
 
 	useEffect(() => {
 		checkTitleTimeCountdown(statusTimeLine);
