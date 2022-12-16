@@ -20,7 +20,7 @@ export function useEagerConnect() {
 		const walletSelected = StorageUtils.getSectionStorageItem(
 			STORAGE_KEYS.WALLET_CONNECTED
 		);
-		const isWalletConnect = StorageUtils.getItem(STORAGE_KEYS.WALLET_CONNECT);
+		const isWalletConnected = 'walletconnect' in localStorage;
 		if (!walletSelected) return;
 		if (walletSelected === ConnectorKey.injected) {
 			Injected.isAuthorized().then((isAuthorized: boolean) => {
@@ -44,7 +44,7 @@ export function useEagerConnect() {
 
 		if (
 			walletSelected === ConnectorKey.walletConnect &&
-			isWalletConnect &&
+			isWalletConnected &&
 			!library
 		) {
 			setTimeout(() => {
@@ -57,7 +57,7 @@ export function useEagerConnect() {
 			}, 500);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [active]);
+	}, []);
 
 	useEffect(() => {
 		if (!tried && active) {
