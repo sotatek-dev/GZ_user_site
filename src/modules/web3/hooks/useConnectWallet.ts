@@ -4,7 +4,7 @@ import { checkEmailUser, IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { get } from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
 	setStatusModalConnectWallet,
 	setStepModalConnectWallet,
@@ -26,6 +26,7 @@ import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider'
 import { MESSAGES } from 'common/constants/messages';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { isMobile } from 'react-device-detect';
+import { useAppSelector } from 'stores';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -37,13 +38,15 @@ export const useConnectWallet = () => {
 	const { ethereum } = windowObj;
 	const { activate, deactivate, library } = useWeb3React();
 	const dispatch = useDispatch();
-	const { network, wallerConnected } = useSelector((state) => state.wallet);
+	const { network, wallerConnected } = useAppSelector((state) => state.wallet);
 
 	async function connectWallet(walletSelected: any, networkConnected?: any) {
-		if (!ethereum?.isMetaMask)
-			return message.error('Please install or unlock MetaMask');
-		await disconnectWallet();
 		const { walletName, connector } = walletSelected;
+
+		if (walletName === ConnectorKey.injected && !ethereum?.isMetaMask)
+			return message.error('Please install or unlock MetaMask');
+
+		await disconnectWallet();
 		activateInjectedProvider(walletName);
 		StorageUtils.removeItem(STORAGE_KEYS.WALLET_CONNECT);
 		if (isMobile && walletName === ConnectorKey.walletConnect) {
