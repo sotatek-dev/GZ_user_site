@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Form, Input, message, Skeleton, Typography } from 'antd';
+import { useEffect } from 'react';
+import { Form, Input, Skeleton, Typography } from 'antd';
 import type { Rule } from 'antd/lib/form';
-import { updateMyProfile } from 'apis/myProfile';
 import BoxPool from 'common/components/boxPool';
 import { useAppDispatch, useAppSelector } from 'stores';
 import { getMyProfileRD } from 'stores/my-profile';
@@ -13,7 +12,6 @@ import {
 	NEXT_PUBLIC_KEYNFT,
 	NEXT_PUBLIC_PRESALE_POOL,
 } from 'web3/contracts/instance';
-import { isValidEmail } from 'common/helpers/email';
 import myProfileConstants from 'modules/my-profile/constant';
 import { fetchKeyBalance } from 'stores/key-dnft/key-dnft.thunks';
 import { useActiveWeb3React } from 'web3/hooks';
@@ -33,7 +31,7 @@ export default function PersonalInfo() {
 		PresalePoolAbi,
 		NEXT_PUBLIC_PRESALE_POOL
 	);
-	const [canSave, setCanSave] = useState(false);
+	// const [canSave, setCanSave] = useState(false);
 
 	useEffect(() => {
 		if (!keyNftContract || !account) return;
@@ -46,51 +44,51 @@ export default function PersonalInfo() {
 		form.setFieldValue('key_holding_count', keyBalance);
 	}, [form, keyBalance]);
 
-	const handleUpdateMyProfile = async (email: string) => {
-		await updateMyProfile(
-			{ email },
-			() => {
-				message.success('Update profile successfully');
-				setCanSave(false);
-				dispatch(getMyProfileRD({ keyNftContract, presalePoolContract }));
-			},
-			(err) => {
-				message.error(JSON.stringify(err));
-			}
-		);
-	};
+	// const handleUpdateMyProfile = async (email: string) => {
+	// 	await updateMyProfile(
+	// 		{ email },
+	// 		() => {
+	// 			message.success('Update profile successfully');
+	// 			setCanSave(false);
+	// 			dispatch(getMyProfileRD({ keyNftContract, presalePoolContract }));
+	// 		},
+	// 		(err) => {
+	// 			message.error(JSON.stringify(err));
+	// 		}
+	// 	);
+	// };
 
-	const onFinish = async (values: { email: string }) => {
-		if (canSave) {
-			await handleUpdateMyProfile(values.email);
-		}
-	};
+	// const onFinish = async (values: { email: string }) => {
+	// 	if (canSave) {
+	// 		await handleUpdateMyProfile(values.email);
+	// 	}
+	// };
 
-	const onFieldChanged = () => {
-		if (
-			form.isFieldsTouched(['email']) &&
-			!form.getFieldsError(['email']).filter(({ errors }) => errors.length)
-				.length
-		) {
-			setCanSave(true);
-			return;
-		}
-		setCanSave(false);
-	};
+	// const onFieldChanged = () => {
+	// 	if (
+	// 		form.isFieldsTouched(['email']) &&
+	// 		!form.getFieldsError(['email']).filter(({ errors }) => errors.length)
+	// 			.length
+	// 	) {
+	// 		setCanSave(true);
+	// 		return;
+	// 	}
+	// 	setCanSave(false);
+	// };
 
 	if (userInfo == undefined || (keyBalance == undefined && isLoadKeyBalance)) {
 		return (
 			<BoxPool customClass='desktop:w-[50%]'>
 				<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
 					<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
-					<Form.Item shouldUpdate className='submit'>
+					{/* <Form.Item shouldUpdate className='submit'>
 						<button
 							className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
 							disabled={!canSave}
 						>
 							Save
 						</button>
-					</Form.Item>
+					</Form.Item> */}
 				</div>
 				<Skeleton
 					title={true}
@@ -127,22 +125,21 @@ export default function PersonalInfo() {
 			<Form
 				name='verify-email'
 				layout='vertical'
-				onFinish={onFinish}
 				autoComplete='off'
 				initialValues={{ ...userInfo, key_holding_count: keyBalance }}
 				form={form}
-				onFieldsChange={onFieldChanged}
+				// onFieldsChange={onFieldChanged}
 			>
 				<div className='flex justify-between items-center pb-[12px] border-[#36c1ff1a] border-b-[3px]'>
 					<h5 className={`text-[18px] font-semibold text-white`}>My profile</h5>
-					<Form.Item shouldUpdate className='submit'>
+					{/* <Form.Item shouldUpdate className='submit'>
 						<button
 							className='rounded-[40px] border-[2px] border-[#D47AF5] font-semibold text-[#D47AF5] px-[25px] py-[8px] disabled:bg-[#2B3A51] disabled:text-[#ffffff4d] disabled:border-[#2B3A51]'
 							disabled={!canSave}
 						>
 							Save
 						</button>
-					</Form.Item>
+					</Form.Item> */}
 				</div>
 				<Form.Item
 					label='My wallet address:'
@@ -157,18 +154,6 @@ export default function PersonalInfo() {
 						disabled
 					/>
 				</Form.Item>
-				<Form.Item
-					label='Email address:'
-					name='email'
-					rules={[
-						requiredValidate(),
-						{
-							validator: emailValidator,
-						},
-					]}
-				>
-					<Input placeholder='Email address' className='custom-input-wrapper' />
-				</Form.Item>
 				<Form.Item label='Number of key(s): ' name='key_holding_count'>
 					<Input
 						value={keyBalance}
@@ -181,13 +166,6 @@ export default function PersonalInfo() {
 		</BoxPool>
 	);
 }
-
-const emailValidator = (_: unknown, value: string) => {
-	if (value && !isValidEmail(value)) {
-		return Promise.reject(new Error(myProfileConstants.INVALID_EMAIL));
-	}
-	return Promise.resolve();
-};
 
 export const requiredValidate = (): Rule => ({
 	required: true,
