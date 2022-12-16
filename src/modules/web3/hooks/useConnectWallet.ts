@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import { checkEmailUser, IPramsLogin, login } from 'apis/login';
+import { IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { get } from 'lodash';
@@ -59,8 +59,8 @@ export const useConnectWallet = () => {
 			.then(async () => {
 				setWallerConnected(walletName);
 				setNetworkConnected(networkConnected);
-				const addressWallet = await connector.getAccount();
-				checkLogin(addressWallet);
+				setStatusConnect(true);
+				setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 			})
 			.catch(async (error: Error) => {
 				if (error instanceof UnsupportedChainIdError) {
@@ -139,7 +139,7 @@ export const useConnectWallet = () => {
 		}
 	};
 
-	async function handleLogin(address: string, email?: string) {
+	async function handleLogin(address: string) {
 		try {
 			const signer = (library as any).getSigner();
 			const signature = await signer.signMessage(`${SIGN_MESSAGE}`, address);
@@ -149,7 +149,6 @@ export const useConnectWallet = () => {
 					signature,
 					sign_message: SIGN_MESSAGE,
 				} as IPramsLogin;
-				if (email) params.email = email;
 				const [response] = await login(params);
 				if (response && network && wallerConnected) {
 					const {
@@ -164,8 +163,8 @@ export const useConnectWallet = () => {
 					setAddressWallet(wallet_address);
 					setStorageWallet(wallerConnected);
 					setStorageNetwork(network);
+					message.success({ content: MESSAGES.MSC1 });
 				}
-				message.success({ content: MESSAGES.MSC1 });
 			}
 		} catch (error: any) {
 			if (error?.code === 'ACTION_REJECTED') {
@@ -176,15 +175,15 @@ export const useConnectWallet = () => {
 		}
 	}
 
-	async function checkLogin(addressWallet: string) {
-		const [dataCheckUser] = await checkEmailUser(addressWallet);
-		// check user đăng nhập lần đầu.
-		if (dataCheckUser?.is_user_exist) {
-			setStatusConnect(true);
-		} else {
-			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
-		}
-	}
+	// async function checkLogin(addressWallet: string) {
+	// 	const [dataCheckUser] = await checkEmailUser(addressWallet);
+	// 	// check user đăng nhập lần đầu.
+	// 	if (dataCheckUser?.is_user_exist) {
+	// 		setStatusConnect(true);
+	// 	} else {
+	// 		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
+	// 	}
+	// }
 
 	return { connectWallet, disconnectWallet, handleLogin };
 };
