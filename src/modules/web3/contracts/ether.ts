@@ -7,9 +7,15 @@ export const getProvider = async () => {
 	// TODO: find a better to detect what user connect by
 	// hint: redux
 	const isWc = 'walletconnect' in localStorage;
+	const windowObj = window as any;
+	const { ethereum } = windowObj;
 
 	const provider = await (isWc ? walletConnect : Injected).getProvider();
-	return new providers.Web3Provider(provider);
+	if (provider) {
+		return new providers.Web3Provider(provider);
+	}
+	await window.ethereum.enable();
+	return new ethers.providers.Web3Provider(ethereum);
 };
 
 export const getContractInstanceEther = async (
