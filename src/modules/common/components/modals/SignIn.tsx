@@ -1,21 +1,14 @@
 import { Form, Input } from 'antd';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useActiveWeb3React } from 'web3/hooks';
-import { useConnectWallet } from 'web3/hooks/useConnectWallet';
 import Button from '../button';
 
-interface IFormRule {
-	email: string;
-}
 const EMAIL_REGEX =
 	/^.{1,64}@([A-Za-z0-9]+([+.-]*[A-Za-z0-9])*){1,253}\.(com|org|net)$/;
 
 export default function ModalSignin() {
-	const { handleLogin } = useConnectWallet();
-	const { account } = useActiveWeb3React();
 	const [isDisabledConfirm, setDisableConfirm] = useState<boolean>(true);
-	const [isDoingFinish, setIsDoingFinish] = useState(false);
+	const [isDoingFinish] = useState(false);
 
 	const handlerEmailChange = (values: { email: string }) => {
 		if (values?.email && !EMAIL_REGEX.test(values?.email)) {
@@ -34,11 +27,8 @@ export default function ModalSignin() {
 		return Promise.resolve();
 	};
 
-	const onFinish = (values: IFormRule) => {
-		const { email } = values;
-		if (!account) return;
-		setIsDoingFinish(true);
-		handleLogin(account, email).finally(() => setIsDoingFinish(false));
+	const onFinish = () => {
+		// to do
 	};
 
 	return (
