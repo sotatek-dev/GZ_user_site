@@ -42,7 +42,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
 	buyTokenWithoutFee,
 	claimPurchasedToken,
-	convertBUSDtoBNB,
 	getNonces,
 	getRemainingClaimableAmount,
 	getSalePhaseInfo,
@@ -53,6 +52,11 @@ import { buyTimeDefault, ITokenSaleRoundState } from '..';
 import usePrevious from 'common/hooks/usePrevious';
 import { useAppSelector } from 'stores';
 import { handleWriteMethodError } from 'common/helpers/handleError';
+import { getBusb2Bnb } from 'modules/my-profile/services/apis';
+import { NEXT_PUBLIC_PRESALE_POOL } from 'web3/contracts/instance';
+import { useContract } from 'web3/contracts/useContract';
+import { AbiPresalepool } from 'web3/abis/types';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 
 export const selectList = [
 	{
@@ -71,6 +75,10 @@ interface claimConfig {
 }
 
 const TokenSaleRoundDetail = () => {
+	const presalePoolContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		NEXT_PUBLIC_PRESALE_POOL
+	);
 	const router = useRouter();
 	const {
 		query: { index = '' },
@@ -199,7 +207,7 @@ const TokenSaleRoundDetail = () => {
 		}
 		calculatorCurrency(currency);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [index, detailSaleRound, isLoading, isLogin]);
+	}, [index, detailSaleRound, isLoading, isLogin, currency]);
 
 	useEffect(() => {
 		checkTitleTimeCountdown(statusTimeLine);
@@ -324,13 +332,13 @@ const TokenSaleRoundDetail = () => {
 
 	const calculatorCurrency = async (val: string) => {
 		if (val === BNB_CURRENCY) {
-			const [priceBNB] = await convertBUSDtoBNB(price);
+			const priceBNB = await getBusb2Bnb(presalePoolContract, toWei(price));
 			if (Number(priceBNB) === 0) {
 				return setPriceRender('0');
 			} else if (Number(priceBNB) < 0.0001) {
 				return setPriceRender('< 0.0001');
 			} else {
-				return setPriceRender(formatNumber(Number(priceBNB)));
+				return setPriceRender(formatNumber(fromWei(priceBNB?.toString() || 0)));
 			}
 		} else {
 			const priceBUSD = fromWei(get(detailSaleRound, 'exchange_rate', 0));
