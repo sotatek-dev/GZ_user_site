@@ -20,7 +20,7 @@ import { ConnectorKey } from 'web3/connectors';
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
 	const triedEagerConnect = useEagerConnect();
-	const { account, chainId, library } = useWeb3React();
+	const { account, chainId, library, active } = useWeb3React();
 
 	const { disconnectWallet } = useConnectWallet();
 	const { updateBalance } = useUpdateBalance();
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setNetworkConnected(networkConnected);
 			setWallerConnected(wallerConnected);
 		}
-	}, [account, chainId, isLogin]);
+	}, [account, chainId, isLogin, active]);
 
 	useEffect(() => {
 		const { ethereum } = window;
@@ -64,6 +64,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 					return;
 				}
 			});
+		}
+
+		if (isLogin && !active && !account) {
+			disconnectWallet();
 		}
 
 		if (!library && !library?.provider && !account) return;
