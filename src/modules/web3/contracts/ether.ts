@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ethers, providers, utils } from 'ethers';
+import { Contract, ethers, providers, utils } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Injected, walletConnect } from 'web3/connectors/injected';
 
@@ -9,23 +9,27 @@ export const getProvider = async () => {
 	const isWc = 'walletconnect' in localStorage;
 
 	const provider = await (isWc ? walletConnect : Injected).getProvider();
-	return new providers.Web3Provider(provider);
+	return provider ? new providers.Web3Provider(provider) : null;
 };
 
 export const getContractInstanceEther = async (
 	ABIContract: any,
 	contractAddress: string
 ) => {
-	const provider = await getProvider();
-	const signer = provider.getSigner();
+	let signer = new ethers.providers.StaticJsonRpcProvider(
+		process.env.NEXT_PUBLIC_BSC_RPC_URL
+	);
 
-	return new ethers.Contract(contractAddress, ABIContract, signer);
+	const provider = await getProvider();
+	if (provider) {
+		signer = provider.getSigner() as any;
+	}
+	return new Contract(contractAddress, ABIContract, signer);
 };
 
 export const getSigner = async () => {
 	const provider = await getProvider();
-
-	return provider.getSigner();
+	return provider && provider.getSigner();
 };
 
 export const convertPriceToBigDecimals = (price: any, decimal: any): string => {

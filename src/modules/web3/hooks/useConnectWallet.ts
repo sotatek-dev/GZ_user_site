@@ -59,23 +59,45 @@ export const useConnectWallet = () => {
 			.then(async () => {
 				setWallerConnected(walletName);
 				setNetworkConnected(networkConnected);
-				setStatusConnect(true);
 				setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
+				if (walletName === ConnectorKey.walletConnect) {
+					return setTimeout(() => {
+						setStatusConnect(true);
+					}, 2000);
+				}
+				setStatusConnect(true);
 			})
 			.catch(async (error: Error) => {
 				if (error instanceof UnsupportedChainIdError) {
 					if (walletSelected.walletName === ConnectorKey.injected) {
 						const changedSuccess = await changeNetwork();
 						if (changedSuccess) {
-							return await connectWallet(walletSelected, networkConnected);
+							return await activate(connector, undefined, true).then(
+								async () => {
+									setWallerConnected(walletName);
+									setNetworkConnected(networkConnected);
+									setStepModalConnectWallet(
+										STEP_MODAL_CONNECTWALLET.CONNECT_WALLET
+									);
+									if (walletName === ConnectorKey.walletConnect) {
+										return setTimeout(() => {
+											setStatusConnect(true);
+										}, 2000);
+									}
+									setStatusConnect(true);
+								}
+							);
 						}
+						disconnectWallet();
 					} else {
+						disconnectWallet();
 						message.error('You have to switch to BSC Network');
 						setStatusModalConnectWallet(false);
 						setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 					}
 				}
 				if (error && error.message.includes('user rejected')) {
+					disconnectWallet();
 					setStatusModalConnectWallet(false);
 					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 					message.info('User rejected to sign');
@@ -84,7 +106,7 @@ export const useConnectWallet = () => {
 	}
 
 	async function disconnectWallet() {
-		await deactivate();
+		deactivate();
 		removeStorageWallet();
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
