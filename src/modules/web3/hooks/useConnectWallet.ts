@@ -63,7 +63,7 @@ export const useConnectWallet = () => {
 				if (walletName === ConnectorKey.walletConnect) {
 					return setTimeout(() => {
 						setStatusConnect(true);
-					}, 1000);
+					}, 2000);
 				}
 				setStatusConnect(true);
 			})
@@ -82,7 +82,7 @@ export const useConnectWallet = () => {
 									if (walletName === ConnectorKey.walletConnect) {
 										return setTimeout(() => {
 											setStatusConnect(true);
-										}, 1000);
+										}, 2000);
 									}
 									setStatusConnect(true);
 								}
