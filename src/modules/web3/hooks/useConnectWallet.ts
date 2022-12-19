@@ -61,7 +61,7 @@ export const useConnectWallet = () => {
 				setNetworkConnected(networkConnected);
 				setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 				if (walletName === ConnectorKey.walletConnect) {
-					setTimeout(() => {
+					return setTimeout(() => {
 						setStatusConnect(true);
 					}, 1000);
 				}
@@ -80,7 +80,7 @@ export const useConnectWallet = () => {
 										STEP_MODAL_CONNECTWALLET.CONNECT_WALLET
 									);
 									if (walletName === ConnectorKey.walletConnect) {
-										setTimeout(() => {
+										return setTimeout(() => {
 											setStatusConnect(true);
 										}, 1000);
 									}
