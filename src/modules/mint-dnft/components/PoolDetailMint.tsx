@@ -22,7 +22,7 @@ const PoolDetailMint: React.FC<Props> = (props) => {
 						<div
 							className={'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'}
 						/>
-						Total NFT
+						Total sdNFT
 					</div>
 					<div>{formatBigNumber(maxSaleAmount)}</div>
 				</div>
@@ -52,7 +52,7 @@ const PoolDetailMint: React.FC<Props> = (props) => {
 						<div
 							className={'min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2'}
 						/>
-						NFT Minted
+						sdNFT Minted
 					</div>
 					<div>{formatBigNumber(totalSold)}</div>
 				</div>

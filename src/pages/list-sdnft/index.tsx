@@ -47,7 +47,7 @@ const ListDNFT = () => {
 			<div className='flex flex-col h-full'>
 				<div className='flex mb-8 justify-between items-center'>
 					<h3 className='hidden desktop:inline-block'>
-						Select the first NFT to merge
+						Select the first sdNFT to merge
 					</h3>
 					<div className='flex flex-col-reverse justify-end w-full desktop:w-auto desktop:flex-row'>
 						<NFTFilter

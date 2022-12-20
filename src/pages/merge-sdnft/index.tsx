@@ -152,7 +152,7 @@ const MergeDNFT = () => {
 		if (error) {
 			const { message } = error;
 			if (message === 'DNFT_IS_LOCKED')
-				messageAntd.error('The used NFTs are locked.');
+				messageAntd.error('The used sdNFTs are locked.');
 			setTimeout(() => {
 				router.push(ROUTES.LIST_DNFT);
 			}, 2000);
@@ -218,7 +218,7 @@ const MergeDNFT = () => {
 							content: redirectToBSCScan(transactionHash),
 							duration: 4,
 						});
-						router.push(`/merge-dnft/detail/${sessionId}`);
+						router.push(`/merge-sdnft/detail/${sessionId}`);
 						setLoadingPermanentlyMerge(false);
 					}
 				}
@@ -242,7 +242,7 @@ const MergeDNFT = () => {
 				href={`${process.env.NEXT_PUBLIC_BSC_BLOCK_EXPLORER_URL}/tx/${tx}`}
 				rel='noreferrer'
 			>
-				You can claim your NFT in My Profile
+				You can claim your sdNFT in My Profile
 			</a>
 		</span>
 	);

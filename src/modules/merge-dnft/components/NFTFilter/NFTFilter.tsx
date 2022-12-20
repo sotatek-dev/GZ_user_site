@@ -1,7 +1,7 @@
 import { MenuProps } from 'antd';
 import Dropdown from 'common/components/dropdown';
 import { RARITY_DNFT, SPECIES_DNFT } from 'common/constants/constants';
-import { Filter } from 'pages/list-dnft';
+import { Filter } from 'pages/list-sdnft';
 
 interface Props {
 	filter: Filter;

@@ -5,14 +5,14 @@ export const ROUTES = {
 	TOKEN_PRESALE_ROUNDS: '/token-presale-rounds',
 	TOKEN_PRESALE_ROUNDS_DETAIL: '/token-presale-rounds/detail',
 	MY_PROFILE: '/my-profile',
-	MINT_DNFT: '/mint-dnft',
+	MINT_DNFT: '/mint-sdnft',
 	MINT_KEY: '/mint-key',
-	LIST_DNFT: '/list-dnft',
-	LIST_DNFT_DETAIL: '/list-dnft/',
-	MERGE_DNFT: '/merge-dnft',
+	LIST_DNFT: '/list-sdnft',
+	LIST_DNFT_DETAIL: '/list-sdnft/',
+	MERGE_DNFT: '/merge-sdnft',
 	RESCUE_NFT: '/rescue-nft',
 	LANDING: '/landing',
-	NFT_DETAIL: '/dnft-detail',
+	NFT_DETAIL: '/sdnft-detail',
 };
 
 export enum STEP_MODAL_CONNECTWALLET {
