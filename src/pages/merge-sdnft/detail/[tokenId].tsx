@@ -52,7 +52,7 @@ const MergeDNFTDetail = () => {
 					alt='CheckCircleOutlined'
 				/>
 				<div className='rounded-[5px] text-sm font-normal text-[#00D261] ml-3'>
-					Congratulation, you got a new NFT
+					Congratulation, you got a new sdNFT
 				</div>
 			</div>
 			<div className='flex flex-col desktop:flex-row desktop:justify-center justify-center gap-x-12 mt-8'>

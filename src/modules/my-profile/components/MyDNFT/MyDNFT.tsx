@@ -329,7 +329,7 @@ export default function MyDNFT() {
 		<BoxPool>
 			<div className='flex justify-between items-start mb-3'>
 				<div className='desktop:w-full desktop:flex desktop:justify-between'>
-					<h5 className='text-h6 font-semibold text-white'>My dNFT</h5>
+					<h5 className='text-h6 font-semibold text-white'>My sdNFT</h5>
 					<RefreshDNFTList filter={{ type, page, status }} />
 				</div>
 				<button
@@ -407,7 +407,7 @@ export default function MyDNFT() {
 										dnft.status
 									)
 								) {
-									router.push(`/dnft-detail/${dnft._id}`);
+									router.push(`/sdnft-detail/${dnft._id}`);
 								}
 							},
 						};
@@ -434,7 +434,7 @@ export default function MyDNFT() {
 											dnft.status
 										)
 									) {
-										router.push(`/dnft-detail/${dnft._id}`);
+										router.push(`/sdnft-detail/${dnft._id}`);
 									}
 								}}
 							>

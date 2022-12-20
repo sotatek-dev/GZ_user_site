@@ -3,7 +3,7 @@ import { Col, Pagination, Empty } from 'antd';
 import { getListDFNT, IParamsListDFNT } from 'apis/mergeDnft';
 import { LIMIT_12, STATUS_LIST_DNFT } from 'common/constants/constants';
 import { cloneDeep, get } from 'lodash';
-import { Filter } from 'pages/list-dnft';
+import { Filter } from 'pages/list-sdnft';
 import { useAppSelector } from 'stores';
 import { IDFNT } from 'types/dnft';
 import CardNft from '../NFTCard/NFTCard';
