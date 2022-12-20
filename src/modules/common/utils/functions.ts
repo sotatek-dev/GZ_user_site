@@ -28,7 +28,7 @@ import BigNumber from 'bignumber.js';
 import { constants } from 'ethers';
 import { getRemainingClaimableAmount } from 'web3/contracts/useContractTokenSale';
 
-const TIME_COUNDOWN_BONUS = 15; //15s
+const TIME_COUNDOWN_BONUS = 15 as number; //15s
 
 export const EllipsisMiddle = (account: string | null | undefined) => {
 	return account ? account.slice(0, 6) + '...' + account.slice(-3) : '';
@@ -55,7 +55,7 @@ export const convertTimeLine = async (
 	let status = UPCOMING;
 	let statusListSaleRound = STATUS_LIST_SALE_ROUND.UPCOMING;
 	let timeCountDown = -1;
-	let startTimeClaim = get(claimConfigs[0], 'start_time', 0) as number; // mặc định khi chưa đến phase claim sẽ lấy thời gian claim đầu tiên
+	let startTimeClaim = Number(get(claimConfigs[0], 'start_time', 0)) as number; // mặc định khi chưa đến phase claim sẽ lấy thời gian claim đầu tiên
 	if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.UPCOMING) {
 		timeCountDown = startTime + TIME_COUNDOWN_BONUS - timestampNow;
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.UPCOMING;
