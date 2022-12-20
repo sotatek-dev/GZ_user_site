@@ -130,7 +130,7 @@ const MergeMaterialModal: FC<IModalChooseMetarialToMergeProps> = ({
 		);
 		if (listTokenId.length < 2) return;
 		const url = {
-			pathname: '/merge-dnft',
+			pathname: '/merge-sdnft',
 			query: { listTokenId },
 		};
 		router.push(url);
@@ -146,7 +146,7 @@ const MergeMaterialModal: FC<IModalChooseMetarialToMergeProps> = ({
 			centered
 		>
 			<div className='desktop:block text-h7 text-center desktop:text-left desktop:mt-8'>
-				<span className='opacity-70'>Merged NFT rarity:</span>
+				<span className='opacity-70'>Merged sdNFT rarity:</span>
 				<span className='inline-block text-purple-30 ml-2 bg-purple-30 bg-opacity-20 px-3 rounded-md font-bold text-sm'>
 					{rankLevelMerge ? rankLevelMerge : 'TBA'}
 				</span>

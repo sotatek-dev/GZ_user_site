@@ -276,7 +276,7 @@ const RescueDNFT = () => {
 						>
 							<div className={'flex items-center'}>
 								<div className='min-w-[10px] min-h-[10px] rounded-sm bg-red-10 mr-2' />
-								Current NFTs can be rescued
+								Current sdNFTs can be rescued
 							</div>
 							<div>{formatBigNumber(poolRemaining)}</div>
 						</div>
@@ -303,9 +303,9 @@ const RescueDNFT = () => {
 							}
 						>
 							<div>
-								Notice: You can only rescue {listKey.length} dNFT this month
+								Notice: You can only rescue {listKey.length} sdNFT this month
 								<br />
-								User can use 1 key to rescue 1 dNFT. Rescue chances will be
+								User can use 1 key to rescue 1 sdNFT. Rescue chances will be
 								reset after 30 days
 							</div>
 						</div>

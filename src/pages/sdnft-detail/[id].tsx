@@ -149,7 +149,7 @@ const NFTDetail = () => {
 											className={styles['nft-material_carousel_item']}
 											key={index}
 											onClick={() => {
-												router.push(`/dnft-detail/${item._id}`);
+												router.push(`/sdnft-detail/${item._id}`);
 											}}
 										>
 											<Image
