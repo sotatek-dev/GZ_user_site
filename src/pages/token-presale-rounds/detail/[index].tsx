@@ -20,6 +20,7 @@ import {
 	END,
 	GXZ_CURRENCY,
 	HEX_ZERO,
+	SALE_ROUND_CURRENT_STATUS,
 	TIME_LINE_SALE_ROUND,
 	TITLE_TIME_COUNTDOWN,
 	TYPE_SALE_ROUND,
@@ -340,8 +341,22 @@ const TokenSaleRoundDetail = () => {
 
 	const checkTitleTimeCountdown = async (statusTimeLine: string) => {
 		let title = TITLE_TIME_COUNTDOWN.UPCOMING;
-		if (statusTimeLine === BUY) {
+		const currentStatusTimeline = get(
+			detailSaleRound,
+			'current_status_timeline',
+			''
+		);
+
+		if (
+			statusTimeLine === BUY &&
+			currentStatusTimeline === SALE_ROUND_CURRENT_STATUS.BUY
+		) {
 			title = TITLE_TIME_COUNTDOWN.BUY;
+		} else if (
+			statusTimeLine === BUY &&
+			currentStatusTimeline === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING
+		) {
+			title = TITLE_TIME_COUNTDOWN.CLAIMABLE_UPCOMMING;
 		} else if (statusTimeLine === CLAIMABLE) {
 			const claimConfigs = get(
 				detailSaleRound,

@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setNetworkConnected(networkConnected);
 			setWallerConnected(wallerConnected);
 		}
-	}, [account, chainId, isLogin, active]);
+	}, [account, chainId, isLogin]);
 
 	useEffect(() => {
 		const { ethereum } = window;
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			library?.provider?.removeListener('accountsChanged', onChangeAccount); // need func reference to remove correctly
 			library?.provider?.removeListener('chainChanged', onChangeNetwork); // need func reference to remove correctly
 		};
-	}, [account, library, wallerConnected]);
+	}, [account, library, wallerConnected, active, isLogin]);
 
 	useEffect(() => {
 		if (accessToken && account) {
