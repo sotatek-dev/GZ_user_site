@@ -121,6 +121,7 @@ export const STATUS_CODE = {
 export const TITLE_TIME_COUNTDOWN = {
 	UPCOMING: 'You can buy tokens in',
 	BUY: 'Buy phase will end in',
+	CLAIMABLE_UPCOMMING: 'You can claim tokens in',
 	CLAIMABLE_ONE_TIME_ONLY: 'You can claim amount GXZ tokens in',
 	CLAIMABLE_MORE_THAN: 'You can claim amount GXZ tokens more in',
 	END: 'Round ended',
