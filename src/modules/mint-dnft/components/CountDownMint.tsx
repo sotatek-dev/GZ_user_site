@@ -27,7 +27,7 @@ const CountDownMint = () => {
 			};
 		} else if (upcomingPhase && upcomingPhase.startTime > now()) {
 			return {
-				title: 'You can mint dNFT in',
+				title: 'You can mint sdNFT in',
 				millisecondsRemain:
 					new BigNumber(upcomingPhase.startTime)
 						.minus(now())
@@ -35,9 +35,9 @@ const CountDownMint = () => {
 						.toNumber() || -1,
 			};
 		} else if (publicPhase && publicPhase.endTime < now()) {
-			return { title: 'Presale for dNFT is ended', millisecondsRemain: -1 };
+			return { title: 'Presale for sdNFT is ended', millisecondsRemain: -1 };
 		} else {
-			return { title: 'Presale for dNFT is ended', millisecondsRemain: -1 };
+			return { title: 'Presale for sdNFT is ended', millisecondsRemain: -1 };
 		}
 	}, [runningPhase, upcomingPhase, publicPhase]);
 

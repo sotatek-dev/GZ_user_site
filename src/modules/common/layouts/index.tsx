@@ -57,13 +57,13 @@ export const LIST_SIDER = [
 	{
 		router: ROUTES.MINT_DNFT,
 		icon: '/icons/mint-dnft.svg',
-		title: 'Mint dNFT',
+		title: 'Mint sdNFT',
 	},
 
 	{
 		router: ROUTES.LIST_DNFT,
 		icon: '/icons/merge-dNFT.svg',
-		title: 'X Temporarily',
+		title: 'Merge Mint',
 	},
 	{
 		router: ROUTES.RESCUE_NFT,

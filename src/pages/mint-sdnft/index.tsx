@@ -346,7 +346,7 @@ const MintDNFT: React.FC = () => {
 						'w-full desktop:w-auto desktop:grow bg-black-10 p-8 rounded-[10px]'
 					}
 				>
-					<h6 className={'text-h3 font-semibold mb-4'}>Mint dNFT</h6>
+					<h6 className={'text-h3 font-semibold mb-4'}>Mint sdNFT</h6>
 
 					{/* divider*/}
 					<hr className={'border-t border-white/[.07] mb-4'} />
@@ -431,7 +431,7 @@ const MintDNFT: React.FC = () => {
 							{runningPhase?.type !== MINT_PHASE.PUBLIC && (
 								<>
 									<div className={'text-h8 mt-4'}>
-										Notice: to mint this dNFT requires{' '}
+										Notice: to mint this sdNFT requires{' '}
 										{formatBigNumber(minimumGXZBalanceRequired)} GXZ Token
 									</div>
 								</>

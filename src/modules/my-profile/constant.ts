@@ -6,7 +6,7 @@ const myProfileConstants = {
 	TRANSACTION_COMFIRMATION: 'Transaction confirmation Metamask',
 	NETWORK_ERROR: 'Network Error!',
 
-	BUYINFO_MESSAGE_UPCOMMING: 'Key can be mint when the dNFT sale round start',
+	BUYINFO_MESSAGE_UPCOMMING: 'Key can be mint when the sdNFT sale round start',
 	BUYINFO_MESSAGE_AVAILABLE: 'Great! You are eligible to buy the key',
 	BUYINFO_MESSAGE_NFT_REQUIRED: 'You are not elegible to buy this key',
 	BUYINFO_MESSAGE_NOT_ENOUGH_ROYALTY: "You don't have enough BUSD for tax",
