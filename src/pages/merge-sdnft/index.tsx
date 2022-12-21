@@ -171,6 +171,7 @@ const MergeDNFT = () => {
 	const onChangeValue = (event: any, propertyName: string) => {
 		const { key } = event;
 		const initImagesClone = cloneDeep(initImages);
+		const valueFur = propertyName === PROPERTY.FUR ? key : '';
 		const newInitImages = initImagesClone.map((propertyImgae: IInitImage) => {
 			const { valuesSpecialOrder, specialOrderLayer, orderLayer } =
 				propertyImgae;
@@ -184,6 +185,9 @@ const MergeDNFT = () => {
 					value: key,
 					zIndex: isValueSpecial ? specialOrderLayer : orderLayer,
 				};
+			}
+			if (propertyImgae.propertyName === PROPERTY.GLOVESDEFAULT && valueFur) {
+				return { ...propertyImgae, value: valueFur };
 			}
 			return { ...propertyImgae };
 		});
