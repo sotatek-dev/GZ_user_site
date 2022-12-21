@@ -38,6 +38,7 @@ export const MergeNftRule: IMergeNftRule = {
 
 export const PROPERTY = {
 	FUR: 'fur',
+	EYES: 'eyes',
 	GLOVES: 'gloves',
 	GLOVESDEFAULT: 'glovesDefault',
 };
