@@ -22,7 +22,7 @@ export const useBalance = (address: string) => {
 	};
 
 	const { data: balance = BIG_ZERO, isLoading } = useQuery(
-		['getBalance', account],
+		['getBalance', address, account],
 		getBalance
 	);
 	return { balance, isLoading };
