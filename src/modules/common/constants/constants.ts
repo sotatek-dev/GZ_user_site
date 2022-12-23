@@ -43,6 +43,7 @@ export const TIME_LINE_SALE_ROUND = [UPCOMING, BUY, CLAIMABLE, END];
 export const STATUS_LIST_SALE_ROUND = {
 	UPCOMING: 'Upcoming',
 	BUY: 'Buyable',
+	CLAIMABLE_UPCOMING: 'Claimable soon',
 	CLAIMABLE: 'Claimable',
 	END: 'Ended',
 };
