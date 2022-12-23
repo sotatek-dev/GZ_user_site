@@ -65,7 +65,7 @@ export const convertTimeLine = async (
 		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE_UPCOMING) {
 		status = BUY;
-		statusListSaleRound = STATUS_LIST_SALE_ROUND.BUY;
+		statusListSaleRound = STATUS_LIST_SALE_ROUND.CLAIMABLE_UPCOMING;
 		timeCountDown = startTimeClaim + TIME_COUNDOWN_BONUS - timestampNow;
 	} else if (currentTimeLine === SALE_ROUND_CURRENT_STATUS.CLAIMABLE) {
 		const [youCanClaimAmount] = await getRemainingClaimableAmount(
