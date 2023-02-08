@@ -563,6 +563,8 @@ const TokenSaleRoundDetail = () => {
 		);
 	};
 
+	const isShowTime = !!(tokenClaimTime > 0 || (start_time && end_time));
+
 	return (
 		<div className='flex flex-col gap-2.5 desktop:gap-8'>
 			<div className='flex flex-col desktop:flex-row gap-2.5 desktop:gap-8 justify-between'>
@@ -573,11 +575,13 @@ const TokenSaleRoundDetail = () => {
 					<div className='py-6'>
 						<Stepper steps={TIME_LINE_SALE_ROUND} activeStep={statusTimeLine} />
 					</div>
-					<Countdown
-						millisecondsRemain={timeCountDow}
-						title={titleTimeCountDown}
-						callBackApi={getDetailSaleRound}
-					/>
+					{timeCountDow > -1 && (
+						<Countdown
+							millisecondsRemain={timeCountDow}
+							title={titleTimeCountDown}
+							callBackApi={getDetailSaleRound}
+						/>
+					)}
 				</BoxPool>
 				<BoxPool
 					title='Buy Info'
@@ -621,30 +625,35 @@ const TokenSaleRoundDetail = () => {
 			</div>
 			<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
 				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
-					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-						<div className='flex gap-x-2 mb-4'>
-							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
-								Token Buy Time:
-							</div>
-							<div className='font-medium'>
-								{start_time && end_time
-									? renderTokenBuyTime(start_time, end_time)
-									: 'TBA'}
-							</div>
-						</div>
-						<div className='flex gap-x-2'>
-							{tokenClaimTime > 0 && (
-								<>
+					{isShowTime && (
+						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
+							{start_time && end_time && (
+								<div className='flex gap-x-2 mb-4'>
 									<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
-										Token Claim Time:
+										Token Buy Time:
 									</div>
 									<div className='font-medium'>
-										{convertTimeStampToDate(tokenClaimTime)}
+										{start_time && end_time
+											? renderTokenBuyTime(start_time, end_time)
+											: 'TBA'}
 									</div>
-								</>
+								</div>
 							)}
+							<div className='flex gap-x-2'>
+								{tokenClaimTime > 0 && (
+									<>
+										<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
+											Token Claim Time:
+										</div>
+										<div className='font-medium'>
+											{convertTimeStampToDate(tokenClaimTime)}
+										</div>
+									</>
+								)}
+							</div>
 						</div>
-					</div>
+					)}
+
 					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
 						<div className='flex gap-x-2 mb-4'>
 							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
