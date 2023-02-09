@@ -563,7 +563,9 @@ const TokenSaleRoundDetail = () => {
 		);
 	};
 
-	const isShowTime = !!(tokenClaimTime > 0 || (start_time && end_time));
+	const isShowTime =
+		!detailSaleRound?.is_claim_configs_hidden ||
+		!detailSaleRound?.is_buy_time_hidden;
 
 	return (
 		<div className='flex flex-col gap-2.5 desktop:gap-8'>
@@ -627,7 +629,7 @@ const TokenSaleRoundDetail = () => {
 				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
 					{isShowTime && (
 						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-							{start_time && end_time && (
+							{!detailSaleRound?.is_buy_time_hidden && (
 								<div className='flex gap-x-2 mb-4'>
 									<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
 										Token Buy Time:
@@ -640,7 +642,7 @@ const TokenSaleRoundDetail = () => {
 								</div>
 							)}
 							<div className='flex gap-x-2'>
-								{tokenClaimTime > 0 && (
+								{!detailSaleRound?.is_claim_configs_hidden && (
 									<>
 										<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
 											Token Claim Time:
