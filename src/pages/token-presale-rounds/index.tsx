@@ -29,7 +29,9 @@ export interface ITokenSaleRoundState {
 	event_data: string;
 	exchange_rate: number;
 	have_list_user: boolean;
+	is_buy_time_hidden: boolean;
 	is_current_sale_round: boolean;
+	is_claim_configs_hidden: boolean;
 	last_event: string;
 	last_event_status: string;
 	name: string;
