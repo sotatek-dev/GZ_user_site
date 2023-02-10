@@ -564,7 +564,7 @@ const TokenSaleRoundDetail = () => {
 	};
 
 	const isShowTime =
-		!detailSaleRound?.is_claim_configs_hidden ||
+		(!detailSaleRound?.is_claim_configs_hidden && tokenClaimTime) ||
 		!detailSaleRound?.is_buy_time_hidden;
 
 	return (
@@ -642,16 +642,17 @@ const TokenSaleRoundDetail = () => {
 								</div>
 							)}
 							<div className='flex gap-x-2'>
-								{!detailSaleRound?.is_claim_configs_hidden && (
-									<>
-										<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
-											Token Claim Time:
-										</div>
-										<div className='font-medium'>
-											{convertTimeStampToDate(tokenClaimTime)}
-										</div>
-									</>
-								)}
+								{!detailSaleRound?.is_claim_configs_hidden ||
+									(!tokenClaimTime && (
+										<>
+											<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
+												Token Claim Time:
+											</div>
+											<div className='font-medium'>
+												{convertTimeStampToDate(tokenClaimTime)}
+											</div>
+										</>
+									))}
 							</div>
 						</div>
 					)}
