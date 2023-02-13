@@ -195,12 +195,12 @@ const TokenSaleRoundDetail = () => {
 	);
 
 	useEffect(() => {
-		if (index && !prevLoading) {
+		if (index && !prevLoading && addressWallet) {
 			getDetailSaleRound();
 		}
 		calculatorCurrency(currency);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [index, detailSaleRound, isLoading, isLogin, currency]);
+	}, [index, detailSaleRound, isLoading, isLogin, currency, addressWallet]);
 
 	useEffect(() => {
 		checkTitleTimeCountdown(statusTimeLine);
