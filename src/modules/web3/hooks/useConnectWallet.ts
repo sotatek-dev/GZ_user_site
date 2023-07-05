@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { UnsupportedChainIdError } from '@web3-react/core';
 import { IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
@@ -36,7 +36,7 @@ import { useAppSelector } from 'stores';
 export const useConnectWallet = () => {
 	const windowObj = typeof window !== 'undefined' && (window as any);
 	const { ethereum } = windowObj;
-	const { activate, deactivate, library } = useWeb3React();
+	// const { activate, deactivate, library } = useWeb3React();
 	const dispatch = useDispatch();
 	const { network, wallerConnected } = useAppSelector((state) => state.wallet);
 
@@ -55,6 +55,8 @@ export const useConnectWallet = () => {
 		if (connector instanceof WalletConnectConnector) {
 			connector.walletConnectProvider = undefined;
 		}
+		return null;
+		// follow new method v2
 		await activate(connector, undefined, true)
 			.then(async () => {
 				setWallerConnected(walletName);
@@ -106,7 +108,7 @@ export const useConnectWallet = () => {
 	}
 
 	async function disconnectWallet() {
-		deactivate();
+		// deactivate();
 		removeStorageWallet();
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
@@ -149,12 +151,12 @@ export const useConnectWallet = () => {
 					});
 					return true;
 				} catch (addError) {
-					deactivate();
+					// deactivate();
 					setStatusModalConnectWallet(false);
 					return false;
 				}
 			} else {
-				deactivate();
+				// deactivate();
 				setStatusModalConnectWallet(false);
 				return false;
 			}

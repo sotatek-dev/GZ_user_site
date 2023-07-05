@@ -24,7 +24,7 @@ interface WalletType {
 }
 
 export default function ConnectWallet() {
-	const { deactivate, account, library } = useActiveWeb3React();
+	const { account, library } = useActiveWeb3React();
 	const { connectWallet, handleLogin } = useConnectWallet();
 	const { modalConnectWallet, stepModalConnectWallet } = useAppSelector(
 		(state) => state.modal
@@ -55,7 +55,7 @@ export default function ConnectWallet() {
 	const handleCloseModalConnectWallet = () => {
 		setStatusModalConnectWallet(false);
 		setConnector({});
-		deactivate();
+		// deactivate();
 	};
 
 	const renderNetworkBox = (network: INetworkList) => {
