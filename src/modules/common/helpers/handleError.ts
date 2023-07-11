@@ -17,6 +17,7 @@ export const handleWriteMethodError = (e?: any) => {
 		e?.code === ErrorCode.TIMEOUT ||
 		e?.code === ErrorCode.UNKNOWN_ERROR
 	) {
+		console.log('==');
 		showError(ErrorMessage.NETWORK_ERROR);
 	} else {
 		handleCommonError();
