@@ -1,7 +1,11 @@
 // Horizontal scroll fliker
 .ant-modal-root {
 	.ant-modal-wrap {
-		@apply max-w-full overflow-x-hidden;
+		@apply max-w-full overflow-x-hidden z-10;
+	}
+
+	.ant-modal-mask {
+		@apply z-10;
 	}
 }
 

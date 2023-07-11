@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Web3Provider } from '@ethersproject/providers';
+import { useWeb3React } from '@web3-react/core';
+import { MetaMask } from '@web3-react/metamask';
+import { WalletConnect } from '@web3-react/walletconnect-v2';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import Loading from 'common/components/loading';
 import ModalCustom from 'common/components/modals';
@@ -12,61 +16,67 @@ import {
 	setStepModalConnectWallet,
 } from 'stores/modal';
 import { setStatusConnect } from 'stores/wallet';
+import { ConnectorKey, connectors } from 'web3/connectors';
 import { INetworkList, NETWORK_LIST } from 'web3/constants/networks';
 import { SUPPORTED_WALLETS } from 'web3/constants/wallets';
-import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
+import { useConnectWallet } from 'web3/hooks';
 
-interface WalletType {
-	connector: any;
-	walletName: string;
+export interface WalletType {
+	connector: MetaMask | WalletConnect;
+	walletName: ConnectorKey;
 	icon: string;
 	isDisabled: boolean;
 }
 
 export default function ConnectWallet() {
-	const { deactivate, account, library } = useActiveWeb3React();
+	const { connector, account } = useWeb3React();
+
 	const { connectWallet, handleLogin } = useConnectWallet();
 	const { modalConnectWallet, stepModalConnectWallet } = useAppSelector(
 		(state) => state.modal
 	);
 	const { isLogin } = useAppSelector((state) => state.user);
-	const { isConnect } = useAppSelector((state) => state.wallet);
-	const [selectedNetwork, setSelectedNetwork] = useState(NETWORK_LIST[0]);
-	const [connector, setConnector] = useState<any>();
+	const { isConnect, wallerConnected } = useAppSelector(
+		(state) => state.wallet
+	);
+	const [connectedWallet, setConnectedWallet] = useState<any>();
+	const selectedNetwork = NETWORK_LIST[0];
 
 	useEffect(() => {
 		if (!modalConnectWallet) {
-			setConnector({});
+			setConnectedWallet({});
 		}
 	}, [modalConnectWallet]);
 
 	useEffect(() => {
-		if (!isLogin && account && library && isConnect) {
-			setStatusConnect(false);
-			handleLogin(account);
-		}
-	}, [isLogin, library, account, handleLogin, isConnect]);
+		if (!isLogin && account && wallerConnected && isConnect) {
+			const targetConnector = connectors[wallerConnected];
 
-	const handleConnect = (walletName: any) => {
+			if (targetConnector.provider) {
+				setStatusConnect(false);
+				handleLogin(new Web3Provider(targetConnector.provider));
+			}
+		}
+	}, [isLogin, account, handleLogin, isConnect, wallerConnected]);
+
+	const handleConnect = (walletName: WalletType) => {
 		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 		connectWallet(walletName, selectedNetwork);
 	};
 
 	const handleCloseModalConnectWallet = () => {
 		setStatusModalConnectWallet(false);
-		setConnector({});
-		deactivate();
+		setConnectedWallet({});
+		connector.deactivate?.();
 	};
 
 	const renderNetworkBox = (network: INetworkList) => {
 		const { icon, networkName } = network;
-		// const { icon, networkName, isDisabled, supportedNetwork } = network;
 		const isActive = get(selectedNetwork, 'networkName', '') === networkName;
 
 		return (
 			<div
 				key={networkName}
-				onClick={() => setSelectedNetwork(network)}
 				className={`p-4 bg-[#ffffff0d] rounded-lg w-fit max-w-[180px] max-h-[110px] relative  text-blue-zodiac font-medium text-sm cursor-pointer ${
 					isActive ? 'chosse-active' : 'chosse-disable'
 				}`}
@@ -88,13 +98,14 @@ export default function ConnectWallet() {
 
 	const renderWalletBox = (wallet: WalletType) => {
 		const { icon, walletName } = wallet;
-		const isActive = get(connector, 'walletName', '') === walletName;
+		const isActive = get(connectedWallet, 'walletName', '') === walletName;
+
 		return (
 			<div
 				key={walletName}
 				onClick={() => {
 					handleConnect(wallet);
-					setConnector(wallet);
+					setConnectedWallet(wallet);
 				}}
 				className={`p-4 bg-[#ffffff0d] shadow-[0px 3px 50px rgba(0, 0, 0, 0.078)] rounded-lg w-fit font-medium max-w-[180px] relative max-h-[110px] text-sm cursor-pointer border-2 border-solid border-[#36c1ff] border-opacity-0 hover:border-opacity-100 transition ease-in-out duration-200 opacity-60 hover:opacity-100 ${
 					isActive ? 'chosse-active' : 'chosse-disable'
@@ -107,11 +118,7 @@ export default function ConnectWallet() {
 					/>
 				)}
 				<div className='flex flex-col justify-center items-center px-[4.375rem] '>
-					<IconDynamic
-						image={icon}
-						className='mb-[10px] w-[40px] h-[40px]'
-						// imageClass={'mix-blend-luminosity'}
-					/>
+					<IconDynamic image={icon} className='mb-[10px] w-[40px] h-[40px]' />
 					<span>{walletName}</span>
 				</div>
 			</div>
@@ -123,7 +130,7 @@ export default function ConnectWallet() {
 			case STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET:
 				return (
 					<div>
-						<h5 className='font-bold desktop:text-h3 text-lg text-white text-center pb-6'>
+						<h5 className='pb-6 text-lg font-bold text-center text-white desktop:text-h3'>
 							Connect Wallet
 						</h5>
 						<div
@@ -132,14 +139,14 @@ export default function ConnectWallet() {
 							}
 						>
 							<div className='pt-6'>
-								<p className='font-bold text-h7 pb-4'>1. Choose Network</p>
+								<p className='pb-4 font-bold text-h7'>1. Choose Network</p>
 								{NETWORK_LIST.map((network) => {
 									return renderNetworkBox(network);
 								})}
 							</div>
 							<div className='pt-6'>
-								<p className='font-bold text-h7 pb-4'>2. Choose Wallet</p>
-								<div className='grid-cols-1 grid desktop:grid-cols-2 gap-8'>
+								<p className='pb-4 font-bold text-h7'>2. Choose Wallet</p>
+								<div className='grid grid-cols-1 gap-8 desktop:grid-cols-2'>
 									{SUPPORTED_WALLETS.map((wallet) => {
 										return renderWalletBox(wallet);
 									})}
@@ -151,7 +158,7 @@ export default function ConnectWallet() {
 			case STEP_MODAL_CONNECTWALLET.CONNECT_WALLET:
 				return (
 					<div>
-						<h5 className='font-bold text-h4 desktop:text-h3 text-white text-center pb-6'>
+						<h5 className='pb-6 font-bold text-center text-white text-h4 desktop:text-h3'>
 							Connect Wallet
 						</h5>
 						<div>

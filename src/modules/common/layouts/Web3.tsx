@@ -6,7 +6,6 @@ interface Props {
 
 export default function Web3Layout({ children }: Props) {
 	useEagerConnect();
-	// useWalletListener();
 
 	return children;
 }

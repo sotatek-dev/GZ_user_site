@@ -2,11 +2,12 @@ import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import { EllipsisMiddle } from 'common/utils/functions';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import { useAppSelector } from 'stores';
-import { useActiveWeb3React, useConnectWallet } from 'web3/hooks';
+import { useConnectWallet } from 'web3/hooks';
 import ConnectButton from '../../ConnectButton';
+import { useWeb3React } from '@web3-react/core';
 
 export default function ConnectedWalletSP() {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const { disconnectWallet } = useConnectWallet();
 	const isLogin = useAppSelector((state) => state.user.isLogin);
 	const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
@@ -20,7 +21,7 @@ export default function ConnectedWalletSP() {
 						<div className='mx-[12px] text-[#ffffff80]'>|</div>
 						<IconDynamic
 							image='/icons/wallet-color.svg'
-							className='mr-3 w-6 h-6'
+							className='w-6 h-6 mr-3'
 						/>
 						<div className='text-purple-30 font-semibold leading-[1.5rem] mr-[0.75rem]'>
 							{EllipsisMiddle(account)}
@@ -29,7 +30,7 @@ export default function ConnectedWalletSP() {
 
 					<div
 						onClick={disconnectWallet}
-						className='text-red-10 font-medium text-h7 cursor-pointer w-fit'
+						className='font-medium cursor-pointer text-red-10 text-h7 w-fit'
 					>
 						<div className='flex items-center justify-center'>
 							<IconDynamic

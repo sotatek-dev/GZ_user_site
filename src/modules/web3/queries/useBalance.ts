@@ -2,12 +2,12 @@ import BigNumber from 'bignumber.js';
 import { formatEther } from 'ethers/lib/utils';
 // import { useQuery } from 'react-query';
 import { BIG_ZERO } from 'common/constants/bignumbers';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 import { useBep20Contract } from 'web3/contracts/useBep20Contract';
 import { useQuery } from 'react-query';
 
 export const useBalance = (address: string) => {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const tokenContract = useBep20Contract(address);
 
 	const getBalance = async () => {

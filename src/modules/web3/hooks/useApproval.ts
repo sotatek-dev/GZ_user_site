@@ -5,7 +5,7 @@ import { formatEther } from 'ethers/lib/utils';
 import myProfileConstants from 'modules/my-profile/constant';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useBep20Contract } from '../contracts/useBep20Contract';
-import { useActiveWeb3React } from './useActiveWeb3React';
+import { useWeb3React } from '@web3-react/core';
 
 /**
  * Hook for token approving
@@ -16,7 +16,7 @@ import { useActiveWeb3React } from './useActiveWeb3React';
 export const useApproval = (tokenAddress: string, spender: string) => {
 	const queryClient = useQueryClient();
 	const tokenContract = useBep20Contract(tokenAddress);
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 
 	const getAllowance = async () => {
 		if (!tokenContract || !account) return;

@@ -4,17 +4,17 @@ import { EllipsisMiddle } from 'common/utils/functions';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
 import Image from 'next/image';
 import { useAppSelector } from 'stores';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 import ConnectButton from '../ConnectButton';
 import DisconnectButton from './DisconnectButton';
 
 export default function HeaderPC() {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const isLogin = useAppSelector((state) => state.user.isLogin);
 	const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
 
 	return (
-		<div className='hidden desktop:flex justify-end w-full'>
+		<div className='justify-end hidden w-full desktop:flex'>
 			{isLogin ? (
 				<Dropdown
 					overlay={<DisconnectButton />}
@@ -26,7 +26,7 @@ export default function HeaderPC() {
 						<div className='mx-[12px] text-[#ffffff80]'>|</div>
 						<IconDynamic
 							image='/icons/wallet-color.svg'
-							className='mr-3 w-6 h-6'
+							className='w-6 h-6 mr-3'
 						/>
 						<div className='text-[#D47AF5] font-semibold leading-[1.5rem] mr-[0.75rem]'>
 							{EllipsisMiddle(account)}
