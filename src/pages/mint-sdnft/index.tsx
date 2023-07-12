@@ -18,7 +18,7 @@ import {
 	TOKENS,
 } from 'modules/mint-dnft/constants';
 import { ROUTES } from 'common/constants/constants';
-import { useActiveWeb3React, useApproval, useNativeBalance } from 'web3/hooks';
+import { useApproval, useNativeBalance } from 'web3/hooks';
 import { AbiDnft, AbiPresalepool } from 'web3/abis/types';
 import { getMintDnftSignature, getNonces } from 'modules/mint-dnft/services';
 import { handleWriteMethodError } from 'common/helpers/handleError';
@@ -42,12 +42,12 @@ import Image from 'next/image';
 import dayjs from 'dayjs';
 import CountDownMint from 'modules/mint-dnft/components/CountDownMint';
 import PoolDetailMint from 'modules/mint-dnft/components/PoolDetailMint';
+import { useWeb3React } from '@web3-react/core';
 
 const TIME_APPLY_PRICE_AFTER = 1; // days
-// const TIME_APPLY_PRICE_AFTER = 5 / (24 * 60); // days
 
 const MintDNFT: React.FC = () => {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const {

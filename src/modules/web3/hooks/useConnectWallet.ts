@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { IPramsLogin, login } from 'apis/login';
 import { STEP_MODAL_CONNECTWALLET } from 'common/constants/constants';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
@@ -18,15 +16,17 @@ import {
 	setStatusConnect,
 	setWallerConnected,
 } from 'stores/wallet';
-import { ConnectorKey } from 'web3/connectors';
-import { SIGN_MESSAGE } from 'web3/constants/envs';
-import { BSC_NETWORK, INetworkList } from 'web3/constants/networks';
+import { BSC_CHAIN_ID, SIGN_MESSAGE } from 'web3/constants/envs';
+import { INetworkList } from 'web3/constants/networks';
 import { message } from 'antd';
-import { activateInjectedProvider } from 'web3/helpers/activateInjectedProvider';
 import { MESSAGES } from 'common/constants/messages';
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
-import { isMobile } from 'react-device-detect';
 import { useAppSelector } from 'stores';
+import { WalletType } from 'wallet/connect/ConnectWallet';
+import { useWeb3React } from '@web3-react/core';
+import { Web3Provider } from '@ethersproject/providers';
+import { useEffect } from 'react';
+import { ConnectorKey, connectors } from 'web3/connectors';
+import { NoMetaMaskError } from '@web3-react/metamask';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -34,144 +34,97 @@ import { useAppSelector } from 'stores';
  */
 
 export const useConnectWallet = () => {
-	const windowObj = typeof window !== 'undefined' && (window as any);
-	const { ethereum } = windowObj;
-	const { activate, deactivate, library } = useWeb3React();
 	const dispatch = useDispatch();
+	const { connector } = useWeb3React();
 	const { network, wallerConnected } = useAppSelector((state) => state.wallet);
 
-	async function connectWallet(walletSelected: any, networkConnected?: any) {
-		const { walletName, connector } = walletSelected;
+	useEffect(() => {
+		const walletSelected = StorageUtils.getSectionStorageItem(
+			STORAGE_KEYS.WALLET_CONNECTED
+		);
+		if (!walletSelected) return;
 
-		if (walletName === ConnectorKey.injected && !ethereum?.isMetaMask)
-			return message.error('Please install or unlock MetaMask');
-
-		await disconnectWallet();
-		activateInjectedProvider(walletName);
-		StorageUtils.removeItem(STORAGE_KEYS.WALLET_CONNECT);
-		if (isMobile && walletName === ConnectorKey.walletConnect) {
-			// window.open(DEEP_LINK_METAMASK);
-		}
-		if (connector instanceof WalletConnectConnector) {
-			connector.walletConnectProvider = undefined;
-		}
-		await activate(connector, undefined, true)
-			.then(async () => {
-				setWallerConnected(walletName);
-				setNetworkConnected(networkConnected);
+		const connector = connectors[walletSelected as ConnectorKey];
+		void connector
+			.connectEagerly?.()
+			?.then(() => {
 				setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
-				if (walletName === ConnectorKey.walletConnect) {
-					return setTimeout(() => {
-						setStatusConnect(true);
-					}, 2000);
-				}
 				setStatusConnect(true);
 			})
-			.catch(async (error: Error) => {
-				if (error instanceof UnsupportedChainIdError) {
-					if (walletSelected.walletName === ConnectorKey.injected) {
-						const changedSuccess = await changeNetwork();
-						if (changedSuccess) {
-							return await activate(connector, undefined, true).then(
-								async () => {
-									setWallerConnected(walletName);
-									setNetworkConnected(networkConnected);
-									setStepModalConnectWallet(
-										STEP_MODAL_CONNECTWALLET.CONNECT_WALLET
-									);
-									if (walletName === ConnectorKey.walletConnect) {
-										return setTimeout(() => {
-											setStatusConnect(true);
-										}, 2000);
-									}
-									setStatusConnect(true);
-								}
-							);
-						}
-						disconnectWallet();
-					} else {
-						disconnectWallet();
-						message.error('You have to switch to BSC Network');
-						setStatusModalConnectWallet(false);
-						setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
+			?.catch(() => {
+				console.error('Failed to connect eagerly to wallet');
+			});
+	}, []);
+
+	async function connectWallet(
+		walletSelected: WalletType,
+		networkConnected: INetworkList
+	) {
+		try {
+			const { walletName, connector } = walletSelected;
+			await connector
+				.activate(Number(BSC_CHAIN_ID))
+				.then(() => {
+					setWallerConnected(walletName);
+					setNetworkConnected(networkConnected);
+					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
+					setStatusConnect(true);
+				})
+				.catch(async (error) => {
+					if (error instanceof NoMetaMaskError) {
+						message.error('Please install or unlock MetaMask');
 					}
-				}
-				if (error && error.message.includes('user rejected')) {
+					if ((error as { code: number }).code === 4001) {
+						message.info('User rejected to connect');
+					}
+					if (error && error.message.includes('user rejected')) {
+						message.info('User rejected to sign');
+					}
 					disconnectWallet();
 					setStatusModalConnectWallet(false);
 					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
-					message.info('User rejected to sign');
-				}
-			});
+					throw error;
+				});
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	async function disconnectWallet() {
-		deactivate();
+		connector.deactivate && connector.deactivate();
 		removeStorageWallet();
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
+		const walletSelected = StorageUtils.getSectionStorageItem(
+			STORAGE_KEYS.WALLET_CONNECTED
+		);
+		if (walletSelected === ConnectorKey.walletConnect) {
+			connector.provider = undefined;
+		}
 		setLogin(false);
 		dispatch(cleanDNFTs());
 		dispatch(setUserInfo(undefined));
 		dispatch(setSystemSettings(undefined));
 		setAddressWallet('');
+		setWallerConnected('');
 		setStepModalConnectWallet(
 			STEP_MODAL_CONNECTWALLET.SELECT_NETWORK_AND_WALLET
 		);
 	}
 
-	const changeNetwork = async () => {
+	async function handleLogin(provider: Web3Provider) {
 		try {
-			await ethereum?.request({
-				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: BSC_NETWORK.CHAIN_ID_HEX }],
-			});
-			return true;
-		} catch (switchError: any) {
-			if (switchError.code === 4902) {
-				try {
-					await ethereum?.request({
-						method: 'wallet_addEthereumChain',
-						params: [
-							{
-								chainId: BSC_NETWORK.CHAIN_ID_HEX,
-								rpcUrls: [BSC_NETWORK.RPC_URLS],
-								chainName: BSC_NETWORK.CHAIN_NAME,
-								blockExplorerUrls: [BSC_NETWORK.BLOCK_EXPLORER_URLS],
-								nativeCurrency: {
-									name: BSC_NETWORK.NATIVE_CURRENCY.NAME,
-									symbol: BSC_NETWORK.NATIVE_CURRENCY.SYMBOL,
-									decimals: BSC_NETWORK.NATIVE_CURRENCY.DECIMAL,
-								},
-							},
-						],
-					});
-					return true;
-				} catch (addError) {
-					deactivate();
-					setStatusModalConnectWallet(false);
-					return false;
-				}
-			} else {
-				deactivate();
-				setStatusModalConnectWallet(false);
-				return false;
-			}
-		}
-	};
-
-	async function handleLogin(address: string) {
-		try {
-			const signer = (library as any).getSigner();
-			const signature = await signer.signMessage(`${SIGN_MESSAGE}`, address);
+			const signer = provider.getSigner();
+			const address = await signer.getAddress();
+			const signature = await signer.signMessage(`${SIGN_MESSAGE}`);
 			if (signature) {
 				const params = {
 					wallet_address: address,
 					signature,
 					sign_message: SIGN_MESSAGE,
 				} as IPramsLogin;
-				const [response] = await login(params);
+				const [response, error] = await login(params);
 				if (response && network && wallerConnected) {
 					const {
 						auth: { expire_in, token },
@@ -186,26 +139,20 @@ export const useConnectWallet = () => {
 					setStorageWallet(wallerConnected);
 					setStorageNetwork(network);
 					message.success({ content: MESSAGES.MSC1 });
+				} else {
+					throw error;
 				}
 			}
-		} catch (error: any) {
-			if (error?.code === 'ACTION_REJECTED') {
+		} catch (error) {
+			if ((error as { code: string }).code === 'ACTION_REJECTED') {
 				message.warning('User rejected to sign');
+			} else {
+				message.error('Failed to connect');
 			}
 		} finally {
 			setStatusModalConnectWallet(false);
 		}
 	}
-
-	// async function checkLogin(addressWallet: string) {
-	// 	const [dataCheckUser] = await checkEmailUser(addressWallet);
-	// 	// check user đăng nhập lần đầu.
-	// 	if (dataCheckUser?.is_user_exist) {
-	// 		setStatusConnect(true);
-	// 	} else {
-	// 		setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.SIGN_IN);
-	// 	}
-	// }
 
 	return { connectWallet, disconnectWallet, handleLogin };
 };

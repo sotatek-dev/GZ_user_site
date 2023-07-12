@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Contract, ethers, providers, utils } from 'ethers';
-import BigNumber from 'bignumber.js';
-import { Injected, walletConnect } from 'web3/connectors/injected';
+import { metaMask } from 'web3/connectors/metamask';
+import { walletConnect } from 'web3/connectors/walletConnectV2';
 
 export const getProvider = async () => {
 	// TODO: find a better to detect what user connect by
 	// hint: redux
 	const isWc = 'walletconnect' in localStorage;
 
-	const provider = await (isWc ? walletConnect : Injected).getProvider();
+	const provider = (isWc ? walletConnect : metaMask).provider;
 	return provider ? new providers.Web3Provider(provider) : null;
 };
 
@@ -27,21 +26,6 @@ export const getContractInstanceEther = async (
 	return new Contract(contractAddress, ABIContract, signer);
 };
 
-export const getSigner = async () => {
-	const provider = await getProvider();
-	return provider && provider.getSigner();
-};
-
-export const convertPriceToBigDecimals = (price: any, decimal: any): string => {
-	const res = ethers.utils.parseUnits(price.toString(), decimal);
-
-	return res.toString();
-};
-
-export const multiply = (a: any, b: any) => {
-	return new BigNumber(a).multipliedBy(new BigNumber(b)).toString();
-};
-
 export const convertBigNumberValueToNumber = (
 	weiBalance: any,
 	decimal: number
@@ -58,7 +42,14 @@ export const convertBigNumberValueToNumber = (
  */
 export const getBalance = async (
 	address: string,
-	unit = 'ether',
+	unit:
+		| 'wei'
+		| 'kwei'
+		| 'mwei'
+		| 'gwei'
+		| 'szabo'
+		| 'finney'
+		| 'ether' = 'ether',
 	provider = null
 ) => {
 	if (!provider) {

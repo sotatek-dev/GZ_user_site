@@ -36,7 +36,7 @@ import { useAppSelector } from 'stores';
 import { useContract } from 'web3/contracts/useContract';
 import { AbiPresalepool } from 'web3/abis/types';
 import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 import { handleWriteMethodError } from 'common/helpers/handleError';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -79,7 +79,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		PresalePoolAbi,
 		NEXT_PUBLIC_PRESALE_POOL
 	);
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 
 	useEffect(() => {
 		form.resetFields();

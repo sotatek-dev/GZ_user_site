@@ -1,10 +1,11 @@
 import { ConnectorKey } from 'web3/connectors';
-import { Injected, walletConnect } from 'web3/connectors/injected';
+import { metaMask } from 'web3/connectors/metamask';
+import { walletConnect } from 'web3/connectors/walletConnectV2';
 
 export const SUPPORTED_WALLETS = [
 	{
-		connector: Injected,
-		walletName: ConnectorKey.injected,
+		connector: metaMask,
+		walletName: ConnectorKey.metamask,
 		icon: '/icons/metamask.svg',
 		isDisabled: false,
 	},

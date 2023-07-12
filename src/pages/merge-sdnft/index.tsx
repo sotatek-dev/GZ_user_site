@@ -407,12 +407,18 @@ const MergeDNFT = () => {
 				value,
 				valueDefault,
 			} = property;
-			const linkImage = value ? `${assetBase}/${value}${extension}` : '';
-			const linkImageDefault = valueDefault
+			let linkImage = value ? `${assetBase}/${value}${extension}` : '';
+			let linkImageDefault = valueDefault
 				? `${assetBase}/${valueDefault}${extension}`
 				: '';
-			if (!isAsset || (!linkImage && !linkImageDefault)) return null;
 
+			if (!isAsset || (!linkImage && !linkImageDefault)) return null;
+			if (linkImage) {
+				linkImage = `https://${linkImage}`;
+			}
+			if (linkImageDefault) {
+				linkImageDefault = `https://${linkImageDefault}`;
+			}
 			return (
 				<Image
 					key={index}

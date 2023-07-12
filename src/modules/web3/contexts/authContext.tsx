@@ -11,17 +11,14 @@ import {
 	setWallerConnected,
 } from 'stores/wallet';
 import { BSC_CHAIN_ID_HEX } from 'web3/constants/envs';
-import { useConnectWallet, useEagerConnect } from 'web3/hooks';
+import { useConnectWallet } from 'web3/hooks';
 import { useUpdateBalance } from 'web3/hooks/useUpdateBalance';
 import { useAppSelector } from 'stores';
-import { useInactiveListener } from 'web3/hooks/useEagerConnect';
 import { ConnectorKey } from 'web3/connectors';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
-	const triedEagerConnect = useEagerConnect();
-	const { account, chainId, library, active } = useWeb3React();
-
+	const { account, chainId, connector } = useWeb3React();
 	const { disconnectWallet } = useConnectWallet();
 	const { updateBalance } = useUpdateBalance();
 	const { isLogin, accessToken } = useAppSelector((state) => state.user);
@@ -51,13 +48,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			setAccessToken(accessToken);
 			setAddressWallet(account);
 			setNetworkConnected(networkConnected);
-			setWallerConnected(wallerConnected);
+			setWallerConnected(wallerConnected as ConnectorKey);
 		}
 	}, [account, chainId, isLogin]);
 
 	useEffect(() => {
 		const { ethereum } = window;
-		if (wallerConnected === ConnectorKey.injected) {
+		if (wallerConnected === ConnectorKey.metamask) {
 			ethereum?._metamask?.isUnlocked()?.then((isUnlocked: boolean) => {
 				if (!isUnlocked) {
 					disconnectWallet();
@@ -66,11 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			});
 		}
 
-		if (isLogin && !active && !account) {
-			disconnectWallet();
-		}
-
-		if (!library && !library?.provider && !account) return;
+		if (!connector?.provider && !account) return;
 
 		const onChangeAccount = ([accountConnected]: Array<string>) => {
 			if (
@@ -86,24 +79,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 			if (chainId !== BSC_CHAIN_ID_HEX) return disconnectWallet();
 		};
 
-		if (library?.provider && library.provider?.on) {
-			library.provider &&
-				library.provider?.on('accountsChanged', onChangeAccount);
-			library.provider && library.provider?.on('chainChanged', onChangeNetwork);
+		if (connector?.provider && connector.provider?.on) {
+			connector.provider &&
+				connector.provider?.on('accountsChanged', onChangeAccount);
+			connector.provider &&
+				connector.provider?.on('chainChanged', onChangeNetwork);
 		}
 		return () => {
-			library?.provider?.removeListener('accountsChanged', onChangeAccount); // need func reference to remove correctly
-			library?.provider?.removeListener('chainChanged', onChangeNetwork); // need func reference to remove correctly
+			connector?.provider?.removeListener('accountsChanged', onChangeAccount); // need func reference to remove correctly
+			connector?.provider?.removeListener('chainChanged', onChangeNetwork); // need func reference to remove correctly
 		};
-	}, [account, library, wallerConnected, active, isLogin]);
+	}, [account, connector, wallerConnected, isLogin]);
 
 	useEffect(() => {
 		if (accessToken && account) {
 			updateBalance();
 		}
 	}, [accessToken, account]);
-
-	useInactiveListener(!triedEagerConnect);
 
 	return (
 		<div
