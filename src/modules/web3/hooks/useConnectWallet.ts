@@ -26,6 +26,7 @@ import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { useEffect } from 'react';
 import { ConnectorKey, connectors } from 'web3/connectors';
+import { NoMetaMaskError } from '@web3-react/metamask';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -70,10 +71,12 @@ export const useConnectWallet = () => {
 					setStatusConnect(true);
 				})
 				.catch(async (error) => {
+					if (error instanceof NoMetaMaskError) {
+						message.error('Please install or unlock MetaMask');
+					}
 					if ((error as { code: number }).code === 4001) {
 						message.info('User rejected to connect');
 					}
-
 					if (error && error.message.includes('user rejected')) {
 						message.info('User rejected to sign');
 					}
@@ -93,6 +96,12 @@ export const useConnectWallet = () => {
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
+		const walletSelected = StorageUtils.getSectionStorageItem(
+			STORAGE_KEYS.WALLET_CONNECTED
+		);
+		if (walletSelected === ConnectorKey.walletConnect) {
+			connector.provider = undefined;
+		}
 		setLogin(false);
 		dispatch(cleanDNFTs());
 		dispatch(setUserInfo(undefined));

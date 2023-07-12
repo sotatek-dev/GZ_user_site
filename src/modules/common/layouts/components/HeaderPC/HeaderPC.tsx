@@ -1,4 +1,4 @@
-import { Dropdown } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { IconDynamic } from 'common/assets/iconography/iconBundle';
 import { EllipsisMiddle } from 'common/utils/functions';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
@@ -6,9 +6,10 @@ import Image from 'next/image';
 import { useAppSelector } from 'stores';
 import { useWeb3React } from '@web3-react/core';
 import ConnectButton from '../ConnectButton';
-import DisconnectButton from './DisconnectButton';
+import { useConnectWallet } from 'web3/hooks';
 
 export default function HeaderPC() {
+	const { disconnectWallet } = useConnectWallet();
 	const { account } = useWeb3React();
 	const isLogin = useAppSelector((state) => state.user.isLogin);
 	const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
@@ -17,7 +18,23 @@ export default function HeaderPC() {
 		<div className='justify-end hidden w-full desktop:flex'>
 			{isLogin ? (
 				<Dropdown
-					overlay={<DisconnectButton />}
+					overlay={
+						<Menu className='remove-ant-menu'>
+							<Menu.Item
+								key='disconnect'
+								onClick={disconnectWallet}
+								className='rounded-[20px] !bg-black-russian text-white py-2 px-5 !h-[40px] font-medium text-base cursor-pointer'
+							>
+								<div className='flex items-center justify-center'>
+									<IconDynamic
+										image='/icons/disconnect.svg'
+										className='!w-7 !h-7 !mr-2'
+									/>
+									Disconnect
+								</div>
+							</Menu.Item>
+						</Menu>
+					}
 					trigger={['click']}
 					className='w-fit'
 				>
