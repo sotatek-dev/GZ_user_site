@@ -39,6 +39,7 @@ import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
 import { useWeb3React } from '@web3-react/core';
 import { handleWriteMethodError } from 'common/helpers/handleError';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useApproval } from 'web3/hooks';
 
 interface IModalPurchaseProps {
 	isShow: boolean;
@@ -73,6 +74,9 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 	const [amount, setAmount] = useState<string>('');
 	const [isLoadingCallGXZ, setLoadingCallGXZ] = useState<boolean>(false);
 	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const { allowanceAmount: allowanceBusdAmount, tryApproval: tryApproveBusd } =
+		useApproval(NEXT_PUBLIC_BUSD, NEXT_PUBLIC_PRESALE_POOL);
 
 	let checkValidate = true;
 	const presaleContract = useContract<AbiPresalepool>(
@@ -219,6 +223,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 		setLoading(true);
 		const presaleNonces = await getNonces(presaleContract, account);
 		const [presaleTokenTax] = await getPresaleTokenTax(Number(amountTranform));
+
 		if (currency === BUSD_CURRENCY) {
 			const params = {
 				amount: toWei(amountTranform),
@@ -227,23 +232,17 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 			};
 			const [dataSignature] = await getSignatureTokenSaleRound(params);
 			const signature = get(dataSignature, 'data.signature', '');
-			const isUserApproved = await isUserApprovedERC20(
-				NEXT_PUBLIC_BUSD,
-				addressWallet,
-				Number(amountTranform) + Number(presaleTokenTax),
-				NEXT_PUBLIC_PRESALE_POOL
-			);
-			if (!isUserApproved) {
-				const [, error] = await handleUserApproveERC20(
-					NEXT_PUBLIC_BUSD,
-					NEXT_PUBLIC_PRESALE_POOL
-				);
-				if (error as any) {
-					setLoading(false);
-					handleWriteMethodError(error);
-				}
+
+			if (
+				allowanceBusdAmount?.lt(
+					Number(amountTranform) + Number(presaleTokenTax)
+				)
+			) {
+				await tryApproveBusd(true);
 			}
+
 			const [resBuyWithBUSD, errorBuyWithBUSD] = await buyTokenWithExactlyBUSD(
+				presaleContract,
 				saleRoundId,
 				addressWallet,
 				Number(amountTranform),
@@ -393,7 +392,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 					<Loading />
 				) : (
 					<>
-						<div className='text-gray-20 text-base font-normal mb-6'>
+						<div className='mb-6 text-base font-normal text-gray-20'>
 							Choose the amount of token you want to purchase
 						</div>
 						<Form
@@ -403,7 +402,7 @@ const ModalPurchase: FC<IModalPurchaseProps> = ({
 							onFinishFailed={() => {}}
 							autoComplete='off'
 							initialValues={{}}
-							className='flex justify-center flex-col'
+							className='flex flex-col justify-center'
 							form={form}
 						>
 							<div className='mb-2'>
