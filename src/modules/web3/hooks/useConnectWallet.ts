@@ -62,6 +62,7 @@ export const useConnectWallet = () => {
 	) {
 		try {
 			const { walletName, connector } = walletSelected;
+			await disconnectWallet();
 			await connector
 				.activate(Number(BSC_CHAIN_ID))
 				.then(() => {
@@ -71,6 +72,8 @@ export const useConnectWallet = () => {
 					setStatusConnect(true);
 				})
 				.catch(async (error) => {
+					console.log({ error });
+
 					if (error instanceof NoMetaMaskError) {
 						message.error('Please install or unlock MetaMask');
 					}
