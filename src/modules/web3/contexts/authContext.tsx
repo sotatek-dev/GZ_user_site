@@ -55,12 +55,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	useEffect(() => {
 		const { ethereum } = window;
 		if (wallerConnected === ConnectorKey.metamask) {
-			ethereum?._metamask?.isUnlocked()?.then((isUnlocked: boolean) => {
-				if (!isUnlocked) {
-					disconnectWallet();
-					return;
-				}
-			});
+			(ethereum as any)?._metamask
+				?.isUnlocked()
+				?.then((isUnlocked: boolean) => {
+					if (!isUnlocked) {
+						disconnectWallet();
+						return;
+					}
+				});
 		}
 
 		if (!connector?.provider && !account) return;
