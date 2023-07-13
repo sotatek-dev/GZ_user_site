@@ -10,11 +10,13 @@ import {
 	setNetworkConnected,
 	setWallerConnected,
 } from 'stores/wallet';
-import { BSC_CHAIN_ID_HEX } from 'web3/constants/envs';
+import { BSC_CHAIN_ID_HEX, BSC_CHAIN_NAME } from 'web3/constants/envs';
 import { useConnectWallet } from 'web3/hooks';
 import { useUpdateBalance } from 'web3/hooks/useUpdateBalance';
 import { useAppSelector } from 'stores';
 import { ConnectorKey } from 'web3/connectors';
+import { WalletConnect } from '@web3-react/walletconnect-v2';
+import { message } from 'antd';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
@@ -78,7 +80,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 		const onChangeNetwork = (chainId: string | number) => {
 			router.push(ROUTES.TOKEN_PRESALE_ROUNDS);
-			if (chainId !== BSC_CHAIN_ID_HEX) return disconnectWallet();
+			if (chainId !== BSC_CHAIN_ID_HEX) {
+				if (connector instanceof WalletConnect) {
+					message.error({
+						content: `Wrong network! Please switch network to ${BSC_CHAIN_NAME}`,
+						key: chainId,
+					});
+				}
+				return disconnectWallet();
+			}
 		};
 
 		if (connector?.provider && connector.provider?.on) {

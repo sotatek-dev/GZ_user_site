@@ -16,7 +16,13 @@ import {
 	setStatusConnect,
 	setWallerConnected,
 } from 'stores/wallet';
-import { BSC_CHAIN_ID, SIGN_MESSAGE } from 'web3/constants/envs';
+import {
+	BSC_BLOCK_EXPLORER_URL,
+	BSC_CHAIN_ID,
+	BSC_CHAIN_NAME,
+	BSC_RPC_URL,
+	SIGN_MESSAGE,
+} from 'web3/constants/envs';
 import { INetworkList } from 'web3/constants/networks';
 import { message } from 'antd';
 import { MESSAGES } from 'common/constants/messages';
@@ -27,6 +33,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useEffect } from 'react';
 import { ConnectorKey, connectors } from 'web3/connectors';
 import { NoMetaMaskError } from '@web3-react/metamask';
+import { AddEthereumChainParameter } from '@web3-react/types';
+import { WalletConnect } from '@web3-react/walletconnect-v2';
 
 /**
  * Hook for connect/disconnect to a wallet
@@ -62,33 +70,45 @@ export const useConnectWallet = () => {
 	) {
 		try {
 			const { walletName, connector } = walletSelected;
-			await connector
-				.activate(Number(BSC_CHAIN_ID))
-				.then(() => {
-					setWallerConnected(walletName);
-					setNetworkConnected(networkConnected);
-					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
-					setStatusConnect(true);
-				})
-				.catch(async (error) => {
-					console.log({ error });
+			const connectParams: AddEthereumChainParameter = {
+				chainId: Number(BSC_CHAIN_ID),
+				chainName: BSC_CHAIN_NAME,
+				nativeCurrency: {
+					name: 'BNB',
+					symbol: 'BNB',
+					decimals: 18,
+				},
+				rpcUrls: [BSC_RPC_URL],
+				blockExplorerUrls: [BSC_BLOCK_EXPLORER_URL],
+			};
 
-					if (error instanceof NoMetaMaskError) {
-						message.error('Please install or unlock MetaMask');
-					}
-					if ((error as { code: number }).code === 4001) {
-						message.info('User rejected to connect');
-					}
-					if (error && error.message.includes('user rejected')) {
-						message.info('User rejected to sign');
-					}
-					disconnectWallet();
-					setStatusModalConnectWallet(false);
-					setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
-					throw error;
-				});
+			if (connector instanceof WalletConnect) {
+				console.log('===');
+				await connector.activate(connectParams.chainId);
+			} else {
+				await connector.activate({ ...connectParams });
+			}
+
+			setWallerConnected(walletName);
+			setNetworkConnected(networkConnected);
+			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
+			setStatusConnect(true);
 		} catch (error) {
-			console.error(error);
+			if (error instanceof NoMetaMaskError) {
+				message.error('Please install or unlock MetaMask');
+			}
+			if ((error as { code: number }).code === 4001) {
+				message.info('User rejected to connect');
+			}
+			if (
+				error &&
+				(error as { message: string }).message.includes('user rejected')
+			) {
+				message.info('User rejected to sign');
+			}
+			disconnectWallet();
+			setStatusModalConnectWallet(false);
+			setStepModalConnectWallet(STEP_MODAL_CONNECTWALLET.CONNECT_WALLET);
 		}
 	}
 

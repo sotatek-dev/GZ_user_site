@@ -2,22 +2,23 @@ import { HEX_ZERO } from 'common/constants/constants';
 import { convertHexToNumber, fromWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { genDNFTContractEther } from './instance';
+import { Contract } from 'ethers';
 
 export const permanentMerge = async (
+	dnftContract: Contract,
 	listTokenId: number[],
 	timesTamp: number,
 	sessionId: string,
 	signature: string
 ) => {
 	try {
-		const contract = await genDNFTContractEther();
-		const estimatedGas = await contract.estimateGas.permanentMerge(
+		const estimatedGas = await dnftContract.estimateGas.permanentMerge(
 			listTokenId,
 			timesTamp,
 			sessionId,
 			signature
 		);
-		const res = await contract.permanentMerge(
+		const res = await dnftContract.permanentMerge(
 			listTokenId,
 			timesTamp,
 			sessionId,
@@ -34,6 +35,7 @@ export const permanentMerge = async (
 };
 
 export const temporaryMerge = async (
+	dnftContract: Contract,
 	listTokenId: number[],
 	timesTamp: number,
 	sessionId: string,
