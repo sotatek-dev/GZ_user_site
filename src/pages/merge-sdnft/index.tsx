@@ -283,7 +283,7 @@ const MergeDNFT = () => {
 		}
 		setDisableMerge(true);
 		// get merge tax(thuế setting trên admin)
-		const [mergeTax, errorGetMergeTax] = await getMergeTax();
+		const [mergeTax, errorGetMergeTax] = await getMergeTax(dnftContract);
 		if (errorGetMergeTax) return;
 		// check approve khi user merge
 		if (allowanceAmount.lte(Number(mergeTax))) {
@@ -349,7 +349,7 @@ const MergeDNFT = () => {
 		if (data?.statusCode === STATUS_CODE.SUCCESS) {
 			setDisableMerge(true);
 			// get merge tax(thuế setting trên admin)
-			const [mergeTax, errorGetMergeTax] = await getMergeTax();
+			const [mergeTax, errorGetMergeTax] = await getMergeTax(dnftContract);
 			if (errorGetMergeTax) return;
 			// check approve khi user merge
 			if (allowanceAmount.lte(Number(mergeTax))) {

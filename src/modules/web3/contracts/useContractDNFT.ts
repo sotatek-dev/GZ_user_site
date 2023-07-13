@@ -42,14 +42,13 @@ export const temporaryMerge = async (
 	signature: string
 ) => {
 	try {
-		const contract = await genDNFTContractEther();
-		const estimatedGas = await contract.estimateGas.temporaryMerge(
+		const estimatedGas = await dnftContract.estimateGas.temporaryMerge(
 			listTokenId,
 			timesTamp,
 			sessionId,
 			signature
 		);
-		const res = await contract.temporaryMerge(
+		const res = await dnftContract.temporaryMerge(
 			listTokenId,
 			timesTamp,
 			sessionId,
@@ -65,10 +64,9 @@ export const temporaryMerge = async (
 	}
 };
 
-export const getMergeTax = async () => {
+export const getMergeTax = async (dnftContract: Contract) => {
 	try {
-		const contract = await genDNFTContractEther();
-		const res = await contract.getMergeTax();
+		const res = await dnftContract.getMergeTax();
 		const mergeTax = fromWei(convertHexToNumber(get(res, '_hex')));
 		return [mergeTax, null];
 	} catch (error) {
