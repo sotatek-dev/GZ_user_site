@@ -62,7 +62,6 @@ export const useConnectWallet = () => {
 	) {
 		try {
 			const { walletName, connector } = walletSelected;
-			await disconnectWallet();
 			await connector
 				.activate(Number(BSC_CHAIN_ID))
 				.then(() => {
@@ -94,17 +93,11 @@ export const useConnectWallet = () => {
 	}
 
 	async function disconnectWallet() {
-		connector.deactivate && connector.deactivate();
+		connector.deactivate && (await connector.deactivate());
 		removeStorageWallet();
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.EXPIRE_IN);
-		const walletSelected = StorageUtils.getSectionStorageItem(
-			STORAGE_KEYS.WALLET_CONNECTED
-		);
-		if (walletSelected === ConnectorKey.walletConnect) {
-			connector.provider = undefined;
-		}
 		setLogin(false);
 		dispatch(cleanDNFTs());
 		dispatch(setUserInfo(undefined));
