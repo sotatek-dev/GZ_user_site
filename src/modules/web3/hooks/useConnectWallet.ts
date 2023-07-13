@@ -93,7 +93,9 @@ export const useConnectWallet = () => {
 	}
 
 	async function disconnectWallet() {
-		connector.deactivate && (await connector.deactivate());
+		connector.deactivate
+			? await connector.deactivate()
+			: await connector.resetState();
 		removeStorageWallet();
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
 		StorageUtils.removeSessionStorageItem(STORAGE_KEYS.ACCOUNT);
