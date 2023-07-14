@@ -25,7 +25,7 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		return new BigNumber(formatEther(allowanceAmount));
 	};
 
-	const { data: allowanceAmount } = useQuery(
+	const { data: allowanceAmount, refetch: refetchAllowance } = useQuery(
 		['getAllowance', tokenAddress, account],
 		getAllowance
 	);
@@ -64,6 +64,7 @@ export const useApproval = (tokenAddress: string, spender: string) => {
 		allowanceAmount,
 		tryApproval,
 		isApproving,
+		refetchAllowance,
 	};
 };
 

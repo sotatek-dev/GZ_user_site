@@ -84,7 +84,7 @@ const MergeDNFT = () => {
 	const [isDisableMerge, setDisableMerge] = useState<boolean>(false);
 	const [sessionId, setSessionId] = useState<string>('');
 	const [transactionHash, setTransactionHash] = useState<string>('');
-	const { tryApproval, allowanceAmount } = useApproval(
+	const { tryApproval, allowanceAmount, refetchAllowance } = useApproval(
 		NEXT_PUBLIC_BUSD,
 		NEXT_PUBLIC_DNFT
 	);
@@ -286,6 +286,7 @@ const MergeDNFT = () => {
 		const [mergeTax, errorGetMergeTax] = await getMergeTax(dnftContract);
 		if (errorGetMergeTax) return;
 		// check approve khi user merge
+		await refetchAllowance();
 		if (allowanceAmount.lte(Number(mergeTax))) {
 			try {
 				tryApproval(true);
@@ -352,6 +353,7 @@ const MergeDNFT = () => {
 			const [mergeTax, errorGetMergeTax] = await getMergeTax(dnftContract);
 			if (errorGetMergeTax) return;
 			// check approve khi user merge
+			await refetchAllowance();
 			if (allowanceAmount.lte(Number(mergeTax))) {
 				try {
 					tryApproval(true);
