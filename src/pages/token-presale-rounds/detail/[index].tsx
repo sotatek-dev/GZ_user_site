@@ -54,6 +54,10 @@ import { buyTimeDefault, ITokenSaleRoundState } from '..';
 import usePrevious from 'common/hooks/usePrevious';
 import { useAppSelector } from 'stores';
 import { handleWriteMethodError } from 'common/helpers/handleError';
+import { useContract } from 'web3/contracts/useContract';
+import { AbiPresalepool } from 'web3/abis/types';
+import PresalePoolAbi from 'web3/abis/abi-presalepool.json';
+import { NEXT_PUBLIC_PRESALE_POOL } from 'web3/contracts/instance';
 
 export const selectList = [
 	{
@@ -76,7 +80,10 @@ const TokenSaleRoundDetail = () => {
 	const {
 		query: { index = '' },
 	} = router;
-
+	const presaleContract = useContract<AbiPresalepool>(
+		PresalePoolAbi,
+		NEXT_PUBLIC_PRESALE_POOL
+	);
 	const [detailSaleRound, setDetailSaleRound] = useState<
 		ITokenSaleRoundState | undefined
 	>();
@@ -170,8 +177,13 @@ const TokenSaleRoundDetail = () => {
 	}, [index, isLoading, addressWallet]);
 
 	const handleClaimToken = async () => {
+		if (!presaleContract) return;
+
 		setOpenClaimPopup(true);
-		const [resClamin, errorClaim] = await claimPurchasedToken(saleRoundId);
+		const [resClamin, errorClaim] = await claimPurchasedToken(
+			presaleContract,
+			saleRoundId
+		);
 		if (resClamin) {
 			getDetailSaleRound();
 			message.success(redirectToBSCScan(resClamin?.transactionHash));
@@ -436,10 +448,10 @@ const TokenSaleRoundDetail = () => {
 				</div>
 				{youBought > 0 && (
 					<div className='desktop:border-x-[1px] desktop:border-y-[0px] border-y-[1px] border-gray-30 desktop:px-8'>
-						<div className='text-sm font-normal text-gray-40 mb-2 whitespace-nowrap desktop:pt-0 pt-4'>
+						<div className='pt-4 mb-2 text-sm font-normal text-gray-40 whitespace-nowrap desktop:pt-0'>
 							You bought
 						</div>
-						<div className='text-base font-semibold desktop:pb-0 pb-4'>{`${formatNumber(
+						<div className='pb-4 text-base font-semibold desktop:pb-0'>{`${formatNumber(
 							youBought
 						)} ${GXZ_CURRENCY}`}</div>
 					</div>
@@ -453,20 +465,20 @@ const TokenSaleRoundDetail = () => {
 			<>
 				{youBought > 0 && (
 					<div className='pr-8'>
-						<div className='text-sm font-normal text-gray-40 mb-2'>
+						<div className='mb-2 text-sm font-normal text-gray-40'>
 							You bought
 						</div>
-						<div className='text-base font-semibold desktop:pb-0 pb-4'>{`${formatNumber(
+						<div className='pb-4 text-base font-semibold desktop:pb-0'>{`${formatNumber(
 							youBought
 						)} ${GXZ_CURRENCY}`}</div>
 					</div>
 				)}
 				{youCanClaimAmount > 0 && (
 					<div className='desktop:border-l-[1px] desktop:border-l-[0px] border-l-[1px] border-gray-30 desktop:px-8'>
-						<div className='text-sm font-normal text-gray-40 mb-2 whitespace-nowrap desktop:pt-0 pt-4'>
+						<div className='pt-4 mb-2 text-sm font-normal text-gray-40 whitespace-nowrap desktop:pt-0'>
 							You can claim
 						</div>
-						<div className='text-base font-semibold desktop:pb-0 pb-4'>{`${formatNumber(
+						<div className='pb-4 text-base font-semibold desktop:pb-0'>{`${formatNumber(
 							youCanClaimAmount
 						)} ${GXZ_CURRENCY}`}</div>
 					</div>
@@ -479,7 +491,7 @@ const TokenSaleRoundDetail = () => {
 		return (
 			<div className='flex flex-col justify-between h-ful'>
 				<div>
-					<div className='text-sm font-normal text-gray-40 mb-2 '>
+					<div className='mb-2 text-sm font-normal text-gray-40 '>
 						You can claim
 					</div>
 					<div className='text-base font-semibold'>{`${formatNumber(
@@ -487,7 +499,7 @@ const TokenSaleRoundDetail = () => {
 					)} ${GXZ_CURRENCY}`}</div>
 				</div>
 				<div>
-					<div className='text-sm font-normal text-gray-40 mb-2 '>
+					<div className='mb-2 text-sm font-normal text-gray-40 '>
 						Total Buy
 					</div>
 					<div className='text-base font-semibold'>
@@ -505,7 +517,7 @@ const TokenSaleRoundDetail = () => {
 
 		return (
 			<>
-				<div className='text-sm text font-normal pb-2'>Buy Progress:</div>
+				<div className='pb-2 text-sm font-normal text'>Buy Progress:</div>
 				<Progress
 					strokeColor={{
 						'0%': '#40bbfd',
@@ -537,7 +549,7 @@ const TokenSaleRoundDetail = () => {
 
 		return (
 			<>
-				<div className='text-sm text font-normal pb-2'>Claim Progress:</div>
+				<div className='pb-2 text-sm font-normal text'>Claim Progress:</div>
 				<Progress
 					strokeColor={{
 						'0%': '#40bbfd',
@@ -590,7 +602,7 @@ const TokenSaleRoundDetail = () => {
 					customClass='desktop:w-[50%] flex flex-col bg-gray-50'
 				>
 					<div className='pt-[1.688rem] h-full'>
-						<div className='flex justify-between w-full h-full desktop:flex-row flex-col'>
+						<div className='flex flex-col justify-between w-full h-full desktop:flex-row'>
 							{(statusTimeLine === UPCOMING || statusTimeLine === BUY) &&
 								renderPriceBuyInfoUpComing()}
 							{statusTimeLine === CLAIMABLE && renderPriceBuyInfoClaimable()}
@@ -626,11 +638,11 @@ const TokenSaleRoundDetail = () => {
 				</BoxPool>
 			</div>
 			<BoxPool title='Pool Details' customClass='w-full bg-gray-50'>
-				<div className='py-9 flex flex-col desktop:flex-row gap-6 text-sm'>
+				<div className='flex flex-col gap-6 text-sm py-9 desktop:flex-row'>
 					{isShowTime && (
 						<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
 							{!detailSaleRound?.is_buy_time_hidden && (
-								<div className='flex gap-x-2 mb-4'>
+								<div className='flex mb-4 gap-x-2'>
 									<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
 										Token Buy Time:
 									</div>
@@ -657,7 +669,7 @@ const TokenSaleRoundDetail = () => {
 					)}
 
 					<div className='flex flex-col gap-6 desktop:gap-4 desktop:w-[50%]'>
-						<div className='flex gap-x-2 mb-4'>
+						<div className='flex mb-4 gap-x-2'>
 							<div className='text-[#36C1FF] desktop:text-[#FFFFFF80] font-normal whitespace-nowrap'>
 								Available to Purchase:
 							</div>
@@ -680,7 +692,7 @@ const TokenSaleRoundDetail = () => {
 						</div>
 					</div>
 				</div>
-				<Divider className='bg-black-velvet mt-0' />
+				<Divider className='mt-0 bg-black-velvet' />
 				<div className='flex gap-x-2'>
 					{detailSaleRound?.description && (
 						<>

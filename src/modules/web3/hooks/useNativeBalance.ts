@@ -1,11 +1,11 @@
 import BigNumber from 'bignumber.js';
 import { formatEther } from 'ethers/lib/utils';
-import { useActiveWeb3React } from 'web3/hooks/useActiveWeb3React';
 import { useQuery } from 'react-query';
 import { BIG_ZERO } from 'common/constants/bignumbers';
+import { useWeb3React } from '@web3-react/core';
 
 export const useNativeBalance = () => {
-	const { library: provider, account } = useActiveWeb3React();
+	const { provider, account } = useWeb3React();
 
 	const getBalance = async () => {
 		if (!provider || !account) {

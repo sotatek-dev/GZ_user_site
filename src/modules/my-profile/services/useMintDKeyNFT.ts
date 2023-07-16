@@ -7,14 +7,15 @@ import {
 	NEXT_PUBLIC_KEYNFT,
 	NEXT_PUBLIC_PRESALE_POOL,
 } from 'web3/contracts/instance';
-import { useActiveWeb3React, useApproval } from 'web3/hooks';
+import { useApproval } from 'web3/hooks';
 import { Token2Buy } from 'modules/my-profile/components/BuyInfo/BuyInfo.constants';
 import { getBusb2Bnb, getKeyPriceBusd } from './apis';
 import { handleBuyInfoError } from '../helpers/handleError';
 import { isApproved } from 'common/utils/functions';
+import { useWeb3React } from '@web3-react/core';
 
 export const useMintDKeyNFT = () => {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const keyNFTContract = useContract<AbiKeynft>(KeyNFTAbi, NEXT_PUBLIC_KEYNFT);
 	const presalePoolContract = useContract<AbiPresalepool>(
 		PresalePoolAbi,

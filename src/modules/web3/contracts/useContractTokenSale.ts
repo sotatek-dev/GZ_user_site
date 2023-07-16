@@ -2,6 +2,7 @@ import { HEX_ZERO } from 'common/constants/constants';
 import { convertHexToNumber, fromWei, toWei } from 'common/utils/functions';
 import { get } from 'lodash';
 import { genPresalePoolContractEther } from './instance';
+import { Contract } from 'ethers';
 // const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const getSalePhaseInfo = async (saleRoundId: number) => {
@@ -135,14 +136,14 @@ export const getNonces = async (address: string) => {
 };
 
 export const buyTokenWithExactlyBUSD = async (
+	presaleContract: Contract,
 	saleRoundId: number,
 	address: string,
 	BUSDAmount: number,
 	signature: string
 ) => {
 	try {
-		const contract = await genPresalePoolContractEther();
-		const res = await contract.buyTokenWithExactlyBUSD(
+		const res = await presaleContract.buyTokenWithExactlyBUSD(
 			saleRoundId,
 			address,
 			toWei(BUSDAmount),
@@ -176,10 +177,12 @@ export const buyTokenWithExactlyBNB = async (
 	}
 };
 
-export const claimPurchasedToken = async (saleRoundId: number | undefined) => {
+export const claimPurchasedToken = async (
+	presaleContract: Contract,
+	saleRoundId: number | undefined
+) => {
 	try {
-		const contract = await genPresalePoolContractEther();
-		const res = await contract.claimPurchasedToken(saleRoundId);
+		const res = await presaleContract.claimPurchasedToken(saleRoundId);
 		const result = await res.wait(1);
 		return [result, null];
 	} catch (error) {

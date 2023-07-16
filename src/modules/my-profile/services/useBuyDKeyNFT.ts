@@ -7,11 +7,11 @@ import { useContract } from 'web3/contracts/useContract';
 import { AbiKeynft } from 'web3/abis/types';
 import KeyNftAbi from 'web3/abis/abi-keynft.json';
 import { NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 import { handleBuyInfoError } from '../helpers/handleError';
 
 export const useBuyDKeyNFT = () => {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
 	const [isBuyDNFT, setIsBuyDNFT] = useState(false);
 	const { mintDKeyNFT } = useMintDKeyNFT();

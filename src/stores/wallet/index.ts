@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, Store } from '@reduxjs/toolkit';
+import { ConnectorKey } from 'web3/connectors';
 import { INetworkList } from 'web3/constants/networks';
 
 let customStore: Store | undefined;
@@ -15,7 +16,7 @@ interface IWalletState {
 		[key in 'busdBalance' | 'bnbBalance']: string;
 	};
 	isFetchBalance: boolean;
-	wallerConnected: string;
+	wallerConnected: ConnectorKey | '';
 }
 
 const initialState: IWalletState = {
@@ -62,7 +63,7 @@ const storeWallet = createSlice({
 			...state,
 			balance: action.payload,
 		}),
-		setWallerConnected: (state, action: PayloadAction<string>) => ({
+		setWallerConnected: (state, action: PayloadAction<ConnectorKey | ''>) => ({
 			...state,
 			wallerConnected: action.payload,
 		}),
@@ -100,7 +101,7 @@ export const setIsFetchBalance = (isFetchBalance: boolean) => {
 		customStore.dispatch(storeWallet.actions.setIsFetchBalance(isFetchBalance));
 };
 
-export const setWallerConnected = (wallerConnected: string) => {
+export const setWallerConnected = (wallerConnected: ConnectorKey | '') => {
 	customStore &&
 		customStore.dispatch(
 			storeWallet.actions.setWallerConnected(wallerConnected)
