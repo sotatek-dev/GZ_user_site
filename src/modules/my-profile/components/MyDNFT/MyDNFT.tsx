@@ -24,7 +24,7 @@ import { getMyClaimableDNFTsCountRD, getMyDNFTsRD } from 'stores/my-profile';
 import { AbiDnft } from 'web3/abis/types';
 import { NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 import DNFTABI from 'modules/web3/abis/abi-dnft.json';
 import { DNFTType, IDNFT } from 'modules/my-profile/interfaces';
 import RefreshDNFTList from './RefreshDNFTList';
@@ -37,7 +37,7 @@ const AVAI_TO_UNMERGE = 60 * 60 * 24 * 30; // 30 days
 
 export default function MyDNFT() {
 	const router = useRouter();
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const dispatch = useAppDispatch();
 	const dnftContract = useContract<AbiDnft>(DNFTABI, NEXT_PUBLIC_DNFT);
 	const { dnfts, claimableDnfts, loading } = useAppSelector(

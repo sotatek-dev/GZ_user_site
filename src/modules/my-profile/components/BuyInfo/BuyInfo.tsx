@@ -11,7 +11,7 @@ import DnftAbi from 'web3/abis/abi-dnft.json';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 import { NEXT_PUBLIC_DNFT, NEXT_PUBLIC_KEYNFT } from 'web3/contracts/instance';
 import { useContract } from 'web3/contracts/useContract';
-import { useActiveWeb3React, useNativeBalance } from 'web3/hooks';
+import { useNativeBalance } from 'web3/hooks';
 import Button from '../Button';
 import Token2BuyRadio from '../Token2BuyRadio';
 import { BuyStatus, buyStatusConfigs, Token2Buy } from './BuyInfo.constants';
@@ -29,9 +29,10 @@ import {
 import BuyTimeCountdown from './BuyTimeCountdown';
 import { formatBigNumber } from 'common/utils/functions';
 import { fetchDnftHolding } from 'stores/my-profile/my-profile.thunks';
+import { useWeb3React } from '@web3-react/core';
 
 export default function BuyInfo() {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const dispatch = useAppDispatch();
 	const keyNftContract = useContract<AbiKeynft>(KeyNftAbi, NEXT_PUBLIC_KEYNFT);
 	const dnftContract = useContract<AbiDnft>(DnftAbi, NEXT_PUBLIC_DNFT);

@@ -8,12 +8,12 @@ import { ethers } from 'ethers';
 import { useAppSelector } from 'stores';
 
 export const useUpdateBalance = () => {
-	const { library, account, chainId } = useWeb3React();
+	const { connector, account, chainId } = useWeb3React();
 	const [refresh, setRefresh] = useState<number>(0);
 	const accessToken = useAppSelector((state) => state.user.accessToken);
 
 	const handleGetBalance = useCallback(async () => {
-		if (!accessToken || !library || !account) return;
+		if (!accessToken || !connector || !account) return;
 		try {
 			setIsFetchBalance(true);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +45,7 @@ export const useUpdateBalance = () => {
 			//
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [library, account, accessToken, chainId]);
+	}, [connector, account, accessToken, chainId]);
 
 	useEffect(() => {
 		if (refresh) {

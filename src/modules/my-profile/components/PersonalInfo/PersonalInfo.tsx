@@ -14,12 +14,12 @@ import {
 } from 'web3/contracts/instance';
 import myProfileConstants from 'modules/my-profile/constant';
 import { fetchKeyBalance } from 'stores/key-dnft/key-dnft.thunks';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 
 const { Paragraph } = Typography;
 
 export default function PersonalInfo() {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const form = Form.useForm()[0];
 	const dispatch = useAppDispatch();
 	const { userInfo } = useAppSelector((state) => state.myProfile);

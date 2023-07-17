@@ -1,9 +1,9 @@
 import { EllipsisMiddle } from 'common/utils/functions';
 import StorageUtils, { STORAGE_KEYS } from 'common/utils/storage';
-import { useActiveWeb3React } from 'web3/hooks';
+import { useWeb3React } from '@web3-react/core';
 
 export default function ConnectedWallet() {
-	const { account } = useActiveWeb3React();
+	const { account } = useWeb3React();
 	const { networkName } = StorageUtils.getItemObject(STORAGE_KEYS.NETWORK);
 
 	return (

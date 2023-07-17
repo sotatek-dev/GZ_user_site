@@ -24,13 +24,13 @@ import {
 	temporaryMerge,
 } from 'web3/contracts/useContractDNFT';
 import DropdownMegeDnft from 'common/components/dropdown/DropdownMegeDnft';
-import {
-	handleUserApproveERC20,
-	isUserApprovedERC20,
-} from 'web3/contracts/useBep20Contract';
 import { NEXT_PUBLIC_BUSD, NEXT_PUBLIC_DNFT } from 'web3/contracts/instance';
 import { useAppSelector } from 'stores';
 import { handleWriteMethodError } from 'common/helpers/handleError';
+import { useApproval } from 'web3/hooks';
+import { useContract } from 'web3/contracts/useContract';
+import { AbiDnft } from 'web3/abis/types';
+import DnftAbi from 'web3/abis/abi-dnft.json';
 
 interface IInitImage {
 	assetBase: string;
@@ -84,6 +84,11 @@ const MergeDNFT = () => {
 	const [isDisableMerge, setDisableMerge] = useState<boolean>(false);
 	const [sessionId, setSessionId] = useState<string>('');
 	const [transactionHash, setTransactionHash] = useState<string>('');
+	const { tryApproval, allowanceAmount, refetchAllowance } = useApproval(
+		NEXT_PUBLIC_BUSD,
+		NEXT_PUBLIC_DNFT
+	);
+	const dnftContract = useContract<AbiDnft>(DnftAbi, NEXT_PUBLIC_DNFT);
 
 	//state store
 	const { isLogin } = useAppSelector((state) => state.user);
@@ -252,6 +257,9 @@ const MergeDNFT = () => {
 	);
 
 	const handlePermanentlyMerge = async () => {
+		if (!allowanceAmount || !dnftContract) {
+			return;
+		}
 		setLoadingPermanentlyMerge(true);
 		const properties = handleConvertPropertyWhenPush(initImages);
 		const params = {
@@ -275,25 +283,21 @@ const MergeDNFT = () => {
 		}
 		setDisableMerge(true);
 		// get merge tax(thuế setting trên admin)
-		const [mergeTax, errorGetMergeTax] = await getMergeTax();
+		const [mergeTax, errorGetMergeTax] = await getMergeTax(dnftContract);
 		if (errorGetMergeTax) return;
 		// check approve khi user merge
-		const isUserApproved = await isUserApprovedERC20(
-			NEXT_PUBLIC_BUSD,
-			addressWallet,
-			Number(mergeTax),
-			NEXT_PUBLIC_DNFT
-		);
-		if (!isUserApproved) {
-			const [, error] = await handleUserApproveERC20(
-				NEXT_PUBLIC_BUSD,
-				NEXT_PUBLIC_DNFT
-			);
-			if (error) {
-				setLoadingPermanentlyMerge(false);
-				handleWriteMethodError(error);
+		await refetchAllowance();
+		if (allowanceAmount.lte(Number(mergeTax))) {
+			try {
+				tryApproval(true);
+			} catch (error) {
+				if (error) {
+					setLoadingPermanentlyMerge(false);
+					handleWriteMethodError(error);
+				}
 			}
 		}
+
 		const sessionId = get(data, 'data._id', '');
 		const [nonce] = await getNonces(addressWallet);
 		const paramsSignature = {
@@ -303,6 +307,7 @@ const MergeDNFT = () => {
 		const [dataSignature] = await getSignatureMerge(paramsSignature);
 		const { session_id, signature, time_stamp, token_ids } = dataSignature;
 		const [responsePushContract, errorPushContract] = await permanentMerge(
+			dnftContract,
 			token_ids,
 			time_stamp,
 			session_id,
@@ -319,6 +324,9 @@ const MergeDNFT = () => {
 	};
 
 	const handleTemporaryMerge = async () => {
+		if (!allowanceAmount || !dnftContract) {
+			return;
+		}
 		setLoadingTemporaryMerge(true);
 		const properties = handleConvertPropertyWhenPush(initImages);
 		const params = {
@@ -342,23 +350,18 @@ const MergeDNFT = () => {
 		if (data?.statusCode === STATUS_CODE.SUCCESS) {
 			setDisableMerge(true);
 			// get merge tax(thuế setting trên admin)
-			const [mergeTax, errorGetMergeTax] = await getMergeTax();
+			const [mergeTax, errorGetMergeTax] = await getMergeTax(dnftContract);
 			if (errorGetMergeTax) return;
 			// check approve khi user merge
-			const isUserApproved = await isUserApprovedERC20(
-				NEXT_PUBLIC_BUSD,
-				addressWallet,
-				Number(mergeTax),
-				NEXT_PUBLIC_DNFT
-			);
-			if (!isUserApproved) {
-				const [, error] = await handleUserApproveERC20(
-					NEXT_PUBLIC_BUSD,
-					NEXT_PUBLIC_DNFT
-				);
-				if (error) {
-					setLoadingTemporaryMerge(false);
-					handleWriteMethodError(error);
+			await refetchAllowance();
+			if (allowanceAmount.lte(Number(mergeTax))) {
+				try {
+					tryApproval(true);
+				} catch (error) {
+					if (error) {
+						setLoadingPermanentlyMerge(false);
+						handleWriteMethodError(error);
+					}
 				}
 			}
 			const sessionId = get(data, 'data._id', '');
@@ -370,6 +373,7 @@ const MergeDNFT = () => {
 			const [dataSignature] = await getSignatureMerge(paramsSignature);
 			const { session_id, signature, time_stamp, token_ids } = dataSignature;
 			const [responsePushContract, errorPushContract] = await temporaryMerge(
+				dnftContract,
 				token_ids,
 				time_stamp,
 				session_id,
@@ -407,12 +411,18 @@ const MergeDNFT = () => {
 				value,
 				valueDefault,
 			} = property;
-			const linkImage = value ? `${assetBase}/${value}${extension}` : '';
-			const linkImageDefault = valueDefault
+			let linkImage = value ? `${assetBase}/${value}${extension}` : '';
+			let linkImageDefault = valueDefault
 				? `${assetBase}/${valueDefault}${extension}`
 				: '';
-			if (!isAsset || (!linkImage && !linkImageDefault)) return null;
 
+			if (!isAsset || (!linkImage && !linkImageDefault)) return null;
+			if (linkImage) {
+				linkImage = `https://${linkImage}`;
+			}
+			if (linkImageDefault) {
+				linkImageDefault = `https://${linkImageDefault}`;
+			}
 			return (
 				<Image
 					key={index}
@@ -437,17 +447,17 @@ const MergeDNFT = () => {
 				classCustom='bg-purple-20 rounded-[40px] !rounded-[40px] bg-purple-30 hover:bg-purple-30 focus:bg-purple-30 !py-3 px-8'
 			/>
 
-			<div className='px-4 py-3 bg-pink-10 text-red-20 text-sm font-normal flex items-center mt-8'>
+			<div className='flex items-center px-4 py-3 mt-8 text-sm font-normal bg-pink-10 text-red-20'>
 				<ExclamationCircleOutlined twoToneColor='#F02727' className='mr-3' />
 				Notice: choosen NFT will be burned after 30 days if you agree to
 				Temporary merge (immediately if permantly merge)
 			</div>
-			<div className='flex flex-col desktop:flex-row desktop:justify-center items-center justify-center gap-x-12 mt-6'>
+			<div className='flex flex-col items-center justify-center mt-6 desktop:flex-row desktop:justify-center gap-x-12'>
 				<div className='w-full desktop:w-auto'>
 					<div className='relative w-full h-[350px] desktop:w-[345px] desktop:h-[345px]'>
 						{renderImages()}
 					</div>
-					<div className='hidden desktop:flex flex-col items-center gap-3 mt-8'>
+					<div className='flex-col items-center hidden gap-3 mt-8 desktop:flex'>
 						<Button
 							isDisabled={isDisableMerge}
 							isLoading={isLoadingPermanentlyMerge}
