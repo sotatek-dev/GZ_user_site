@@ -82,7 +82,6 @@ export const convertTimeLine = async (
 				) as number;
 				if (startTimeClaim > timestampNow) {
 					timeCountDown = startTimeClaim + TIME_COUNDOWN_BONUS - timestampNow;
-					break;
 				} else {
 					startTimeClaim = 0;
 				}

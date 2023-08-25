@@ -138,9 +138,11 @@ const TokenSaleRoundDetail = () => {
 			  Number(totalSoldAmount) <= Number(maxPreSaleAmount) &&
 			  detailSaleRound?.current_status_timeline !== 'claimable_upcoming';
 
-	const isEnableClaimButton = claimedAmount > 0;
 	const isShowButtonClaim =
-		statusTimeLine === CLAIMABLE && isLogin && isWhitelist;
+		statusTimeLine === CLAIMABLE &&
+		isLogin &&
+		isWhitelist &&
+		youCanClaimAmount > 0;
 
 	const getDetailSaleRound = useCallback(async () => {
 		if (isLoading || !index) return;
@@ -619,7 +621,6 @@ const TokenSaleRoundDetail = () => {
 											onClick={handleClaimToken}
 											label='Claim'
 											classCustom='buy-token'
-											isDisabled={!isEnableClaimButton}
 										/>
 									)}
 								</div>
