@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { formatEther } from 'ethers/lib/utils';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-import { second } from 'common/constants/constants';
 import { TOKEN_DECIMAL } from 'modules/mint-dnft/constants';
 import { AbiDnft, AbiKeynft } from 'web3/abis/types';
 
@@ -27,11 +26,7 @@ export const fetchListKey = createAsyncThunk(
 				await Promise.all(
 					allKeys.map(async (item) => {
 						const nextTimeUsingKey = await dnftContract.nextTimeUsingKey(item);
-						if (
-							new BigNumber(nextTimeUsingKey._hex)
-								.times(second)
-								.lt(dayjs().unix())
-						) {
+						if (nextTimeUsingKey.lt(dayjs().unix())) {
 							usableKeys.push(item);
 						}
 					})
